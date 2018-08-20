@@ -7,29 +7,33 @@ import QtGraphicalEffects 1.0
 import QtQuick.Extras 1.4
 import Qt.labs.calendar 1.0
 
+import Qt.labs.platform 1.0
+
 Item {
     width: 1100
     height: 800
-    property alias timeBar: timeBar
+    property alias statusBar: statusBar
+
     Rectangle {
-        id: view
+        id: vewRootForm
         color: "#ffffff"
         anchors.fill: parent
 
         Rectangle {
-            id: rectangle
-            height: 60
+            id: statusBarRecangle
+            height: 30
             color: "#0029bb"
-            radius: 15
+            radius: 0
+            border.width: 0
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 0
             anchors.right: parent.right
-            anchors.rightMargin: 10
+            anchors.rightMargin: 0
             anchors.left: parent.left
-            anchors.leftMargin: 10
-            anchors.top: parent.top
-            anchors.topMargin: 10
+            anchors.leftMargin: 0
 
             Label {
-                id: timeBar
+                id: statusBar
                 color: "#ffffff"
                 text: qsTr("Label")
                 verticalAlignment: Text.AlignVCenter
@@ -37,112 +41,80 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
             }
-
-            ToolButton {
-                id: toolButton
-                x: -452
-                width: 50
-                height: 60
-                text: qsTr(": : :")
-                flat: false
-                highlighted: false
-                anchors.top: parent.top
-                anchors.topMargin: 0
-                anchors.right: parent.right
-                anchors.rightMargin: 10
-            }
         }
 
         Rectangle {
-            id: rectangle1
+            id: projectRecangle
             color: "#ffffff"
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 15
+            anchors.bottom: statusBarRecangle.top
             anchors.right: parent.right
-            anchors.rightMargin: 15
             anchors.left: parent.left
-            anchors.leftMargin: 15
-            anchors.top: rectangle.bottom
-            anchors.topMargin: 0
+            anchors.top: parent.top
+            anchors.bottomMargin: 0
 
-            Row {
-                id: row55
+            BattleList {
+                id: stackView
+                anchors.fill: parent
+            }
+
+            Rectangle {
+                id: currentStateRectangle
+                width: 300
+                color: "#fdfdfd"
+                radius: 0
+                border.width: 1
+                border.color: "#9899a7"
+                anchors.bottom: stackView.bottom
+                anchors.bottomMargin: 10
                 anchors.top: parent.top
-                anchors.topMargin: 15
+                anchors.topMargin: 10
                 anchors.right: parent.right
-                anchors.bottom: parent.bottom
-                anchors.left: parent.left
-                layoutDirection: Qt.LeftToRight
-                spacing: 15
+                anchors.rightMargin: 10
 
-                Rectangle {
-                    id: rectangle3
-                    width: parent.width / 2
-                    height: parent.height
-                    color: "#ecf1fc"
-                    radius: 0
+                StackView {
+                    id: stackView1
+                    anchors.fill: parent
 
-                    Flickable {
-                        id: containerUsers
-                        boundsBehavior: Flickable.DragAndOvershootBounds
-                        flickableDirection: Flickable.VerticalFlick
-                        contentHeight: 128
-                        contentWidth: parent.width
-                        anchors.fill: parent
+                    TabBar {
+                        id: tabBar
+                        anchors.left: parent.left
+                        anchors.leftMargin: 1
+                        anchors.right: parent.right
+                        anchors.rightMargin: 1
+                        anchors.top: parent.top
+                        anchors.topMargin: 1
 
-                        Rectangle {
-                            height: 3
-                            color: "#0714ea"
-                            radius: 0
-                            anchors.left: parent.left
-                            anchors.leftMargin: 0
-                            anchors.bottom: parent.bottom
-                            anchors.bottomMargin: 0
-                            anchors.right: parent.right
-                            Label {
-                                height: 128
-                                verticalAlignment: Text.AlignVCenter
-                                horizontalAlignment: Text.AlignHCenter
-                                color: "#000000"
-                                text: "Иванов Vs Петров"
-                                anchors.topMargin: -70
-                                anchors.fill: parent
-                                lineHeight: 0.9
-                                renderType: Text.NativeRendering
-                                font.pointSize: 26
-                            }
+                        TabButton {
+                            id: currentData
+                            text: qsTr("Текущие данные")
+                            focusPolicy: Qt.TabFocus
                         }
-                        Rectangle {
-                            height: 3
-                            color: "#0714ea"
-                            radius: 0
-                            anchors.left: parent.left
-                            anchors.leftMargin: 0
-                            anchors.bottom: parent.bottom
-                            anchors.bottomMargin: -100
-                            anchors.right: parent.right
-                            Label {
-                                height: 128
-                                verticalAlignment: Text.AlignVCenter
-                                horizontalAlignment: Text.AlignHCenter
-                                color: "#000000"
-                                text: "Иванов Vs Петров"
-                                anchors.topMargin: -70
-                                anchors.fill: parent
-                                lineHeight: 0.9
-                                renderType: Text.NativeRendering
-                                font.pointSize: 26
-                            }
+
+                        TabButton {
+                            id: slaves
+                            text: qsTr("Ведомые")
+                        }
+
+                        TabButton {
+                            id: log
+                            text: qsTr("Журнал")
                         }
                     }
                 }
+            }
 
-                Rectangle {
-                    id: rectangle2
-                    width: parent.width / 2 - 15
-                    height: parent.height
-                    color: "#fdeded"
-                }
+            Rectangle {
+                id: parametersRectangle
+                color: "#ffffff"
+                border.color: "#81a8b9"
+                anchors.right: currentStateRectangle.right
+                anchors.rightMargin: currentStateRectangle.width + 10
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                anchors.bottom: currentStateRectangle.bottom
+                anchors.bottomMargin: 0
+                anchors.top: parent.top
+                anchors.topMargin: 10
             }
         }
     }

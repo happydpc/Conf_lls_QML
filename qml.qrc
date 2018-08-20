@@ -3,5 +3,10 @@
         <file>app.qml</file>
         <file>View.qml</file>
         <file>ViewForm.ui.qml</file>
+        <file>BattleList.qml</file>
+        <file>Test.qml</file>
+        <file>ProjectMenu.qml</file>
+        <file>TestPoligon.qml</file>
+        <file>TestPoligonForm.ui.qml</file>
     </qresource>
 </RCC>

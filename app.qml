@@ -8,7 +8,9 @@ ApplicationWindow {
     title: qsTr("Tabs")
 
     View {
-
+        id: view
+        height: parent.height
+        width: parent.width
     }
 
 }
