@@ -244,6 +244,7 @@ Makefile: Lls_QML_conf.pro ../../../Qt/5.11.1/mingw53_32/mkspecs/win32-g++/qmake
 		../../../Qt/5.11.1/mingw53_32/lib/Qt5Gui.prl \
 		../../../Qt/5.11.1/mingw53_32/lib/Qt5Qml.prl \
 		../../../Qt/5.11.1/mingw53_32/lib/Qt5Network.prl \
+		../../../Qt/5.11.1/mingw53_32/lib/Qt5SerialPort.prl \
 		../../../Qt/5.11.1/mingw53_32/lib/Qt5Core.prl
 	$(QMAKE) -o Makefile Lls_QML_conf.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"
 ../../../Qt/5.11.1/mingw53_32/mkspecs/features/spec_pre.prf:
@@ -429,6 +430,7 @@ Lls_QML_conf.pro:
 ../../../Qt/5.11.1/mingw53_32/lib/Qt5Gui.prl:
 ../../../Qt/5.11.1/mingw53_32/lib/Qt5Qml.prl:
 ../../../Qt/5.11.1/mingw53_32/lib/Qt5Network.prl:
+../../../Qt/5.11.1/mingw53_32/lib/Qt5SerialPort.prl:
 ../../../Qt/5.11.1/mingw53_32/lib/Qt5Core.prl:
 qmake: FORCE
 	@$(QMAKE) -o Makefile Lls_QML_conf.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"

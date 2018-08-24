@@ -1,7 +1,9 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
-#include "timegame.h"
+#include "connectionFactory.h"
+
+//#include "timegame.h"
 #include "settings.h"
 
 int main(int argc, char *argv[])
@@ -10,8 +12,8 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    qmlRegisterType<TimeGame>("timeGame", 1, 0, "TimeGame");
-    qmlRegisterType<Settings>("settings", 1, 0, "Settings");
+    qmlRegisterType<ConnectionFactory>("ConnectionFactory", 0, 0, "ConnectionFactory");
+    qmlRegisterType<Settings>("Settings", 0, 0, "Settings");
 
     QQmlApplicationEngine engine;
 

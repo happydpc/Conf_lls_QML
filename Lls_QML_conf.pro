@@ -1,4 +1,5 @@
 QT += quick
+QT += serialport
 CONFIG += c++14
 
 # The following define makes your compiler emit warnings if you use
@@ -14,13 +15,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-    battlestack.cpp \
     settings.cpp \
-    apidata.cpp \
-    battle.cpp \
-    battleresult.cpp \
-    gamer.cpp \
-    timegame.cpp
+    timegame.cpp \
+    interfacesAbstract.cpp \
+    interfaceEthernet.cpp \
+    interfaceBLE.cpp \
+    connectionFactory.cpp \
+    interfaceSerial.cpp
 
 RESOURCES += \
     qml.qrc
@@ -37,12 +38,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    battlestack.h \
     settings.h \
-    apidata.h \
-    battle.h \
-    battleresult.h \
-    gamer.h \
-    timegame.h
+    timegame.h \
+    interfacesAbstract.h \
+    interfaceEthernet.h \
+    interfaceSerial.h \
+    interfaceBLE.h \
+    connectionFactory.h
 
 DISTFILES +=

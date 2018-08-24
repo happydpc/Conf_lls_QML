@@ -5,37 +5,45 @@
 #include <QVector>
 #include <iostream>
 #include <memory>
+#include <QVector>
 
-#include "gamer.h"
+#include "interfacesAbstract.h"
 
 class Settings : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int getGamersCount READ getGamersCount NOTIFY updateGamerCount)
+//    Q_PROPERTY(int getGamersCount READ getGamersCount NOTIFY updateGamerCount)
 public:
     Settings();
+    Settings(QString pathSettings);
     ~Settings();
 
-    int getGamersCount();
-    QString getGamerToNumberName(int num);
-    QString getGamerToNumberCard(int num);
-
-signals:
-    void updateGamerCount(int size);
+//signals:
+//    void updateGamerCount(int size);
 
 private:
 
-    typedef struct {
-        QString ipAddApi;
-        int portApi;
-    }sBaseSettings;
+//    QString pathSettings;
 
-    void getGamerList(QVector<Gamer> &gamers);
-    sBaseSettings getBaseSettings();
 
-    sBaseSettings baseSettings;
-    QVector<Gamer>gamersMap;
+//    typedef struct {
+//        bool isUsed;
+//        //uint8_t *data; TODO:
+//    }sDeviceSignatureStruct;
 
+//    typedef struct {
+//        QString name;
+//        sDeviceSignatureStruct signature;
+//    }sDeviceStruct;
+
+//    typedef struct {
+//        QString confName;
+//    }sBaseSettings;
+
+//public:
+//    sBaseSettings getBaseSettings();
+
+//    sBaseSettings baseSettings;
 };
 
 #endif // SETTINGS_H
