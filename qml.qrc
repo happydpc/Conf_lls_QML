@@ -8,5 +8,7 @@
         <file>images/logo/logo_progress.png</file>
         <file>SerialPortForm.ui.qml</file>
         <file>SerialPort.qml</file>
+        <file>TestForm.qml</file>
+        <file>TestFormForm.ui.qml</file>
     </qresource>
 </RCC>

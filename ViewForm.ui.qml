@@ -4,6 +4,7 @@ import QtQuick.Controls 2.4
 Item {
     width: 1100
     height: 800
+    property alias statusBarRecangle: statusBarRecangle
     property alias projectStack: projectStack
     property alias projectDeviceScreen: projectDeviceScreen
     property alias projectStartSceen: projectStartSceen
@@ -33,18 +34,17 @@ Item {
 
             Label {
                 id: statusBar
-                color: "#ffffff"
+                color: "#04203b"
                 text: qsTr("Label")
+                anchors.fill: parent
                 verticalAlignment: Text.AlignVCenter
                 font.pointSize: 15
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
             }
         }
 
         StackView {
             id: projectStack
-            height: parent.height
+            height: parent.height - statusBarRecangle.height
             width: parent.width
             initialItem: projectStartSceen
 

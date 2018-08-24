@@ -7,6 +7,8 @@ Component {
         id: projectMainLayout
         color: "#ffffff"
 
+
+
         Rectangle {
             id: currentStateRectangle
             width: 300
