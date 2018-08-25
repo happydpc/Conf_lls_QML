@@ -5,7 +5,7 @@
 #include "interfaceSerial.h"
 #include "interfaceBLE.h"
 #include "interfaceEthernet.h"
-#include <QVector>
+#include <QMultiMap>
 
 class ConnectionFactory : public QObject
 {
@@ -38,10 +38,9 @@ private slots:
 
 private:
 
-    InterfaceSerial *interfaceSerial;
-    InterfaceEthernet *interfaceEthernet;
-    InterfaceBLE *interfaceBLE;
-
+    QMultiMap<QString, InterfaceSerial>interfacesSerial;
+    QMultiMap<QString, InterfaceSerial>interfaceEthernet;
+    QMultiMap<QString, InterfaceSerial>interfaceBLE;
 };
 
 #endif // CONNECTIONFACTORY_H

@@ -4,6 +4,10 @@ InterfaceSerial::InterfaceSerial() {
     this->portHandler = new QSerialPort();
 }
 
+InterfaceSerial::InterfaceSerial(const InterfaceSerial & interface) {
+    this->portHandler = interface.portHandler;
+}
+
 InterfaceSerial::~InterfaceSerial() {
 
 }

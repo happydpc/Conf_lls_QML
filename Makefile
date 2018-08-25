@@ -708,16 +708,15 @@ qrc_qml.cpp: qml.qrc \
 		/opt/qt/5.11.0/gcc_64/bin/rcc \
 		app.qml \
 		DevPropertySerialPort.qml \
-		TestForm.qml \
 		SerialPortForm.ui.qml \
+		DevicePanels.qml \
 		View.qml \
 		TestFormForm.ui.qml \
 		MainMenuBar.qml \
 		DevPropertyLlsTMK324.qml \
+		ProjectPanels.qml \
+		StartScreen.qml \
 		SerialPort.qml \
-		ViewForm.ui.qml \
-		ProjectMainStack.qml \
-		ProjectStartScreen.qml \
 		images/logo/logo_progress.png
 	/opt/qt/5.11.0/gcc_64/bin/rcc -name qml qml.qrc -o qrc_qml.cpp
 
@@ -1317,8 +1316,9 @@ main.o: main.cpp /opt/qt/5.11.0/gcc_64/include/QtGui/QGuiApplication \
 		/opt/qt/5.11.0/gcc_64/include/QtQml/qqmllist.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qmetaobject.h \
 		/opt/qt/5.11.0/gcc_64/include/QtQml/qqmlerror.h \
-		connectionFactory.h \
+		connection.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
+		connectionFactory.h \
 		interfaceSerial.h \
 		interfacesAbstract.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QStringList \

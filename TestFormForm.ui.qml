@@ -3,12 +3,13 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.1
 
 Rectangle {
-    id: devPropertyLlsTMK24
+    id: devPropertySerialPort
     color: "#e7e9eb"
     property alias addDevButton: addDevButton
 
     width: 800
     height: 500
+
 
     //    anchors.fill: parent
 
@@ -77,6 +78,9 @@ Rectangle {
             y: 174
             width: 250
             text: qsTr("Добавить устройство")
+            //            onClicked: {
+
+            //            }
         }
     }
 }

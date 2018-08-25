@@ -6,23 +6,10 @@ import Connection 0.0
 Item {
     id: root
 
-    ViewForm {
-        id: viewForm
+    ProjectPanels {
         height: parent.height
         width: parent.width
-
-        ProjectStartScreen {
-            id: projectStartSceen
-            visible: false
-        }
-
-        ProjectMainStack {
-            id: projectDeviceScreen
-            visible: false
-            onDeviceButtonClicked: {
-                viewForm.projectStack.push(projectDeviceScreen)
-            }
-        }
+        id:projectPanels
     }
 
     MainMenuBar {
@@ -52,6 +39,14 @@ Item {
         onConnectionOpened: {
             console.log("onConnectionOpened: " + nameInterface + " " + subName)
             serialPort.close()
+            projectPanels.openDeviceProject()
+            projectPanels.addInterface(subName)
+
+            projectPanels.addDevice("Test1")
+            projectPanels.addDevice("Test1")
+            projectPanels.addDevice("Test1")
+            projectPanels.addDevice("Test1")
+            projectPanels.addDevice("Test1")
         }
     }
 

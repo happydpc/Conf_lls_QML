@@ -2,13 +2,7 @@
 
 ConnectionFactory::ConnectionFactory(QObject *parent) : QObject(parent)
 {
-    this->interfaceSerial = new InterfaceSerial();
-    this->interfaceEthernet = new InterfaceEthernet();
-    this->interfaceBLE = new InterfaceBLE();
 
-    connect(this->interfaceSerial,
-            SIGNAL(portMessage(InterfaceSerial::eInterfaceMessageType, QString)),
-            SLOT(interfaceMessageSlot(InterfaceSerial::eInterfaceMessageType, QString)));
 }
 
 ConnectionFactory::~ConnectionFactory(){
@@ -16,7 +10,8 @@ ConnectionFactory::~ConnectionFactory(){
 }
 
 bool ConnectionFactory::serialPortIsAvailable() {
-    return !interfaceSerial->getAvailableInterfaceList().empty();
+    InterfaceSerial tSerial;
+    return !tSerial.getAvailableInterfaceList().empty();
 }
 
 bool ConnectionFactory::bleIsAvailable() {
@@ -68,7 +63,11 @@ QStringList ConnectionFactory::getAvailableInterfacesToEthernet() {
 bool ConnectionFactory::addConnection(interfacesAbstract::eInterfaceTypes type, QString name, int *arg) {
     bool res = false;
     if(type == interfacesAbstract::InterfaceTypeSerialPort) {
-        res = interfaceSerial->openInterface(name, arg);
+        InterfaceSerial tSerial;
+        res = tSerial.openInterface(name, arg);
+        if(res) {
+            interfacesSerial.insert(name, std::move(tSerial));
+        }
     }
     return res;
 }
@@ -80,7 +79,8 @@ bool ConnectionFactory::removeConnection(interfacesAbstract::eInterfaceTypes, QS
 QStringList ConnectionFactory::getAvailableInterfacesFromType(interfacesAbstract::eInterfaceTypes type) {
     QStringList connectionList;
     if(type == interfacesAbstract::InterfaceTypeSerialPort) {
-        connectionList = interfaceSerial->getAvailableInterfaceList();
+        InterfaceSerial tSerial;
+        connectionList = tSerial.getAvailableInterfaceList();
     } else if(type == interfacesAbstract::InterfaceTypeEthrnet) {
         //        connectionList = interfaceEthernet->getAvailableInterfaceList();
     } else if(type == interfacesAbstract::InterfaceTypeBle) {

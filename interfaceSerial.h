@@ -12,6 +12,8 @@ class InterfaceSerial : public interfacesAbstract
 public:
     explicit InterfaceSerial();
     ~InterfaceSerial();
+    InterfaceSerial(const InterfaceSerial &);
+
 
     QStringList getAvailableInterfaceList() override;
     bool openInterface(QString, int *arg) override;
