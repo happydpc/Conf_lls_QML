@@ -13,12 +13,22 @@ public:
     explicit InterfaceSerial();
     ~InterfaceSerial();
 
-    QStringList getAvailableInterfaceList();
+    QStringList getAvailableInterfaceList() override;
+    bool openInterface(QString, int *arg) override;
+    bool closeInterface() override;
+    QString getPortName();
+    QStringList getInfoAbortPort(QString portName);
 
 signals:
     QStringList updateAvailableInterfaceList();
 
+    void portMessage(InterfaceSerial::eInterfaceMessageType, QString name);
+
 public slots:
+
+private:
+    QSerialPort *portHandler;
+
 };
 
 #endif // INTERFACESERIAL_H

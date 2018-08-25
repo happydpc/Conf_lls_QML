@@ -5,23 +5,42 @@ ConnectionFactory::ConnectionFactory(QObject *parent) : QObject(parent)
     this->interfaceSerial = new InterfaceSerial();
     this->interfaceEthernet = new InterfaceEthernet();
     this->interfaceBLE = new InterfaceBLE();
+
+    connect(this->interfaceSerial,
+            SIGNAL(portMessage(InterfaceSerial::eInterfaceMessageType, QString)),
+            SLOT(interfaceMessageSlot(InterfaceSerial::eInterfaceMessageType, QString)));
 }
 
 ConnectionFactory::~ConnectionFactory(){
 
 }
 
+bool ConnectionFactory::serialPortIsAvailable() {
+    return !interfaceSerial->getAvailableInterfaceList().empty();
+}
+
+bool ConnectionFactory::bleIsAvailable() {
+    return false;
+}
+
+bool ConnectionFactory::ethernetIsAvailable() {
+    return false;
+}
+
+
+
+
 //-----------------------------------------------------/
 //---------------         QML block         -----------/
 //-----------------------------------------------------/
-bool ConnectionFactory::addConnectionToSerialPort(QString portName) {
-    return addConnection(interfacesAbstract::InterfaceTypeSerialPort, portName);
+bool ConnectionFactory::addConnectionToSerialPort(QString portName, int baudrate) {
+    return addConnection(interfacesAbstract::InterfaceTypeSerialPort, portName, &baudrate);
 }
 bool ConnectionFactory::addConnectionToBLE(QString portName) {
-    return addConnection(interfacesAbstract::InterfaceTypeBle, portName);
+    return addConnection(interfacesAbstract::InterfaceTypeBle, portName, nullptr);
 }
 bool ConnectionFactory::addConnectionToEthernet(QString portName) {
-    return addConnection(interfacesAbstract::InterfaceTypeEthrnet, portName);
+    return addConnection(interfacesAbstract::InterfaceTypeEthrnet, portName, nullptr);
 }
 
 bool ConnectionFactory::removeConnectionToSerialPort(QString portName) {
@@ -46,23 +65,26 @@ QStringList ConnectionFactory::getAvailableInterfacesToEthernet() {
 //-----------------------------------------------------/
 //---------------       private block        ----------/
 //-----------------------------------------------------/
-bool ConnectionFactory::addConnection(interfacesAbstract::eInterfaceTypes, QString name) {
-
+bool ConnectionFactory::addConnection(interfacesAbstract::eInterfaceTypes type, QString name, int *arg) {
+    bool res = false;
+    if(type == interfacesAbstract::InterfaceTypeSerialPort) {
+        res = interfaceSerial->openInterface(name, arg);
+    }
+    return res;
 }
 
 bool ConnectionFactory::removeConnection(interfacesAbstract::eInterfaceTypes, QString name) {
-
+    return true;
 }
 
-QStringList ConnectionFactory::getAvailableInterfacesFromType(
-        interfacesAbstract::eInterfaceTypes type) {
+QStringList ConnectionFactory::getAvailableInterfacesFromType(interfacesAbstract::eInterfaceTypes type) {
     QStringList connectionList;
     if(type == interfacesAbstract::InterfaceTypeSerialPort) {
         connectionList = interfaceSerial->getAvailableInterfaceList();
     } else if(type == interfacesAbstract::InterfaceTypeEthrnet) {
-//        connectionList = interfaceEthernet->getAvailableInterfaceList();
+        //        connectionList = interfaceEthernet->getAvailableInterfaceList();
     } else if(type == interfacesAbstract::InterfaceTypeBle) {
-//        connectionList = interfaceBLE->getAvailableInterfaceList();
+        //        connectionList = interfaceBLE->getAvailableInterfaceList();
     } else {
         throw QString("getAvailableInterfacesFromType: Unsuported type");
     }

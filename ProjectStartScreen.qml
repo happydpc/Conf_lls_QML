@@ -2,7 +2,7 @@ import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.4
 
-Component {
+Item {
     id:projectStartScreen
     Rectangle {
         color: "#ffffff"
@@ -20,10 +20,8 @@ Component {
             anchors.rightMargin: 200
             anchors.leftMargin: 200
         }
-
     }
 }
-
 /*##^## Designer {
     D{i:0;autoSize:true;height:480;width:640}
 }

@@ -15,7 +15,11 @@ public:
     explicit ConnectionFactory(QObject *parent = nullptr);
     ~ConnectionFactory();
 
-    Q_INVOKABLE bool addConnectionToSerialPort(QString portName);
+    bool serialPortIsAvailable();
+    bool bleIsAvailable();
+    bool ethernetIsAvailable();
+
+    Q_INVOKABLE bool addConnectionToSerialPort(QString portName, int baudrate);
     Q_INVOKABLE bool addConnectionToBLE(QString portName);
     Q_INVOKABLE bool addConnectionToEthernet(QString portName);
 
@@ -27,10 +31,8 @@ public:
     Q_INVOKABLE QStringList getAvailableInterfacesToBLE();
     Q_INVOKABLE QStringList getAvailableInterfacesToEthernet();
 
-signals:
-
 private slots:
-    bool addConnection(interfacesAbstract::eInterfaceTypes, QString name);
+    bool addConnection(interfacesAbstract::eInterfaceTypes, QString name, int *arg);
     bool removeConnection(interfacesAbstract::eInterfaceTypes, QString name);
     QStringList getAvailableInterfacesFromType(interfacesAbstract::eInterfaceTypes);
 
@@ -39,8 +41,6 @@ private:
     InterfaceSerial *interfaceSerial;
     InterfaceEthernet *interfaceEthernet;
     InterfaceBLE *interfaceBLE;
-
-//    QVector
 
 };
 

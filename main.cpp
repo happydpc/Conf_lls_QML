@@ -1,9 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
-#include "connectionFactory.h"
-
-//#include "timegame.h"
+#include "connection.h"
 #include "settings.h"
 
 int main(int argc, char *argv[])
@@ -11,11 +9,11 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication app(argc, argv);
-
-    qmlRegisterType<ConnectionFactory>("ConnectionFactory", 0, 0, "ConnectionFactory");
-    qmlRegisterType<Settings>("Settings", 0, 0, "Settings");
-
     QQmlApplicationEngine engine;
+
+    qmlRegisterType<Settings>("Settings", 0, 0, "Settings");
+    qmlRegisterType<Connection>("Connection", 0, 0, "Connection");
+    //    qmlRegisterType<ConnectionFactory>("ConnectionFactory", 0, 0, "ConnectionFactory");
 
     engine.load(QUrl(QStringLiteral("qrc:/app.qml")));
     if (engine.rootObjects().isEmpty())

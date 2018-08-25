@@ -21,7 +21,8 @@ SOURCES += \
     interfaceEthernet.cpp \
     interfaceBLE.cpp \
     connectionFactory.cpp \
-    interfaceSerial.cpp
+    interfaceSerial.cpp \
+    connection.cpp
 
 RESOURCES += \
     qml.qrc
@@ -44,6 +45,7 @@ HEADERS += \
     interfaceEthernet.h \
     interfaceSerial.h \
     interfaceBLE.h \
-    connectionFactory.h
+    connectionFactory.h \
+    connection.h
 
 DISTFILES +=

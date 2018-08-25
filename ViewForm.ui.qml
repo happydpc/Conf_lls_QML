@@ -6,15 +6,13 @@ Item {
     height: 800
     property alias statusBarRecangle: statusBarRecangle
     property alias projectStack: projectStack
-    property alias projectDeviceScreen: projectDeviceScreen
-    property alias projectStartSceen: projectStartSceen
     property alias statusBar: statusBar
 
     Rectangle {
         id: vewRootForm
         color: "#e4dbdb"
         anchors.top: parent.top
-        anchors.topMargin: menuMain.height - 5
+        anchors.topMargin: mainMenuBar.height - 5
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
@@ -22,7 +20,7 @@ Item {
         Rectangle {
             id: statusBarRecangle
             height: 30
-            color: "#0029bb"
+            color: "#dfe1e9"
             radius: 0
             border.width: 0
             anchors.bottom: parent.bottom
@@ -47,13 +45,6 @@ Item {
             height: parent.height - statusBarRecangle.height
             width: parent.width
             initialItem: projectStartSceen
-
-            ProjectMainStack {
-                id: projectDeviceScreen
-            }
-            ProjectStartScreen {
-                id: projectStartSceen
-            }
         }
     }
 }

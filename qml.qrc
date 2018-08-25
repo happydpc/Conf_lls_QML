@@ -10,5 +10,8 @@
         <file>SerialPort.qml</file>
         <file>TestForm.qml</file>
         <file>TestFormForm.ui.qml</file>
+        <file>MainMenuBar.qml</file>
+        <file>DevPropertyLlsTMK324.qml</file>
+        <file>DevPropertySerialPort.qml</file>
     </qresource>
 </RCC>
