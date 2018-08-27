@@ -30,7 +30,7 @@ Component {
     }
 
     Rectangle {
-        id: projectMainLayout
+        id: projectDevicePanel
         color: "#ffffff"
 
         Rectangle {
@@ -220,7 +220,7 @@ Component {
             anchors.right: currentStateRectangle.left
             anchors.rightMargin: 10
             anchors.left: deviceList.left
-            anchors.leftMargin: -projectMainLayout.width + deviceList.width + currentStateRectangle.width + 20
+            anchors.leftMargin: -projectDevicePanel.width + deviceList.width + currentStateRectangle.width + 20
 
             StackView {
                 id: parametersStackItem

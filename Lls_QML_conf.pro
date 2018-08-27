@@ -15,7 +15,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-    connection/connection.cpp \
     connection/connectionFactory.cpp \
     device/device.cpp \
     device/deviceAbstract.cpp \
@@ -24,7 +23,10 @@ SOURCES += \
     interfaces/interfaceEthernet.cpp \
     interfaces/interfacesAbstract.cpp \
     interfaces/interfaceSerial.cpp \
-    settings/settings.cpp
+    settings/settings.cpp \
+    connection/connectionController.cpp \
+    device/deviceController.cpp \
+    view/viewController.cpp
 
 RESOURCES += \
     qml.qrc
@@ -41,7 +43,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    connection/connection.h \
     connection/connectionFactory.h \
     device/device.h \
     device/deviceAbstract.h \
@@ -50,6 +51,9 @@ HEADERS += \
     interfaces/interfaceEthernet.h \
     interfaces/interfacesAbstract.h \
     interfaces/interfaceSerial.h \
-    settings/settings.h
+    settings/settings.h \
+    connection/connectionController.h \
+    device/deviceController.h \
+    view/viewController.h
 
 DISTFILES +=

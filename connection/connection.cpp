@@ -2,15 +2,16 @@
 #include "./interfaces/interfacesAbstract.h"
 
 Connection::Connection() {
-    this->connectionFactory = new ConnectionFactory();
+    this->connectionController = new ConnectionController();
 }
 
+// TODO: для расширения - когда будет несколько видов интерфейсов
 void Connection::addConnectionRequest() {
     int availableCountTypesInterface = 0;
-    availableCountTypesInterface += connectionFactory->bleIsAvailable();
-    availableCountTypesInterface += connectionFactory->ethernetIsAvailable();
-    availableCountTypesInterface += connectionFactory->serialPortIsAvailable();
-
+//    availableCountTypesInterface += connectionFactory->bleIsAvailable();
+//    availableCountTypesInterface += connectionFactory->ethernetIsAvailable();
+//    availableCountTypesInterface += connectionFactory->serialPortIsAvailable();
+    availableCountTypesInterface += 1;
     // отсылаем сколько типов интрефейсов можно юзать
     emit readyCreateNewConnections(availableCountTypesInterface);
 }
@@ -20,7 +21,7 @@ QStringList Connection::getAvailableListInterfaceOfType(int indexType) {
     QStringList strList;
     interfacesAbstract::eInterfaceTypes tIndex = (interfacesAbstract::eInterfaceTypes)indexType;
     if(indexType == interfacesAbstract::InterfaceTypeSerialPort) {
-        strList = connectionFactory->getAvailableInterfacesToSerialPort();
+        strList = connectionController->getAvailableInterfacesToSerialPort();
     }
     if(indexType == interfacesAbstract::InterfaceTypeBle) {}
     if(indexType == interfacesAbstract::InterfaceTypeEthrnet) {}
@@ -29,8 +30,18 @@ QStringList Connection::getAvailableListInterfaceOfType(int indexType) {
 
 void Connection::addConnection(QString nameInterface, QString subName, QString param) {
     if(nameInterface.contains("SerialPort")) {
-        if(connectionFactory->addConnectionToSerialPort(subName, param.toInt())) {
+        if(connectionController->addConnectionToSerialPort(subName, param.toInt())) {
             emit connectionOpened(nameInterface, subName);
         }
+    }
+}
+
+
+
+void Connection::currentActiveConnectionIsChanged(interfacesAbstract::eInterfaceTypes interfaceType, QString name, int index) {
+    int activeDevice = 0;
+
+    if(interfaceType == interfacesAbstract::InterfaceTypeSerialPort) {
+        emit activeCurrentInterface(name, index, activeDevice);
     }
 }

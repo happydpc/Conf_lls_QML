@@ -10,7 +10,6 @@ Rectangle {
     width: 800
     height: 500
 
-
     //    anchors.fill: parent
 
     //    function setInformation(arg) {
@@ -19,15 +18,13 @@ Rectangle {
     GridLayout {
         id: gridLayout
         width: 384
-        anchors.bottomMargin: 305
         columnSpacing: 5
         anchors.right: tabBar.left
         anchors.rightMargin: 10
         anchors.left: parent.left
         anchors.leftMargin: 10
-        anchors.bottom: parent.bottom
         anchors.top: parent.top
-        anchors.topMargin: 10
+        anchors.topMargin: 150
         rowSpacing: 5
         rows: 3
         columns: 2
@@ -72,15 +69,24 @@ Rectangle {
             anchors.leftMargin: 150
             readOnly: true
         }
-        Button {
-            id: addDevButton
-            x: -402
-            y: 174
-            width: 250
-            text: qsTr("Добавить устройство")
-            //            onClicked: {
+    }
 
-            //            }
-        }
+    Button {
+        id: addDevButton
+        x: 271
+        width: 230
+        text: qsTr("Добавить устройство")
+        anchors.right: gridLayout.right
+        anchors.rightMargin: 0
+        anchors.top: gridLayout.bottom
+        anchors.topMargin: 20
+        //            onClicked: {
+
+        //            }
     }
 }
+
+/*##^## Designer {
+    D{i:6;anchors_x:271;anchors_y:213}
+}
+ ##^##*/

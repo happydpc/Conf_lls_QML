@@ -1,7 +1,7 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.4
 
-import Connection 0.0
+import ViewController 0.0
 
 Item {
     id: root
@@ -25,7 +25,7 @@ Item {
         }
     }
 
-    Connection {
+    ViewController {
         id:connection
         onReadyCreateNewConnections: {
             console.log("onReadyCreateNewConnections -y" + connecionsCountTypes);
@@ -42,7 +42,7 @@ Item {
             projectPanels.openDeviceProject()
             projectPanels.addInterface(subName)
 
-            projectPanels.addDevice("Test1")
+//            projectPanels.addDevice("Test1")
         }
     }
 

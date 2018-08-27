@@ -1,7 +1,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
-#include "./connection/connection.h"
+#include "./view/viewController.h"
 
 int main(int argc, char *argv[])
 {
@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    qmlRegisterType<Connection>("Connection", 0, 0, "Connection");
+    qmlRegisterType<ViewController>("ViewController", 0, 0, "ViewController");
 
     QQmlApplicationEngine engine;
 

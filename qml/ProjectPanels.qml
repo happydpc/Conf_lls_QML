@@ -27,9 +27,9 @@ Item {
     DevicePanels {
         id: projectDeviceScreen
         visible: false
-        onDeviceButtonClicked: {
-            viewForm.projectStack.push(projectDeviceScreen)
-        }
+//        onDeviceButtonClicked: {
+//            viewForm.projectStack.push(projectDeviceScreen)
+//        }
     }
 
     Rectangle {

@@ -3,7 +3,7 @@ import QtQuick.Controls 2.3
 import Qt.labs.platform 1.0
 
 Item {
-    id: projectMainLayout
+    id: projectDevicePanel
 
     signal deviceButtonClicked(var index)
 
@@ -20,6 +20,27 @@ Item {
         console.log("addDevice: " + name)
         listDeviceView.model.append({"name":name,"colorCode":"#D5F9AE","identId": "0"})
     }
+
+    function setCurrentActiveInterface(nameInterface, indexInterface, activeDeviceIndex) {
+//        StackView {
+//            id: devicePropertieslistModel1
+//            anchors.left: parent.left
+//            anchors.leftMargin: 0
+//            anchors.bottom: parent.bottom
+//            anchors.bottomMargin: 0
+//            anchors.right: parent.right
+//            anchors.top: parent.top
+//            anchors.topMargin: 1
+//            anchors.rightMargin: 1
+//            initialItem: devPropertySerialPort
+
+//            DevPropertyLlsTMK324 {
+//                id: devPropertyLlsTMK24
+//            }
+//            DevPropertySerialPort {
+//                id: devPropertySerialPort
+    }
+
     Rectangle {
         id: interfaceList
         width: 200
