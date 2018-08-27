@@ -7,8 +7,9 @@ class InterfaceEthernet : public QObject
 {
     Q_OBJECT
 public:
-    explicit InterfaceEthernet(QObject *parent = nullptr);
-
+    explicit InterfaceEthernet();
+    InterfaceEthernet(const InterfaceEthernet & interface);
+    ~InterfaceEthernet();
 signals:
 
 public slots:

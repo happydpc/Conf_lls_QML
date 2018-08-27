@@ -3,10 +3,11 @@ INPUT(
 ./debug\settings.o
 ./debug\timegame.o
 ./debug\interfacesAbstract.o
-./debug\interfaceEthernet.o
 ./debug\interfaceBLE.o
 ./debug\connectionFactory.o
 ./debug\interfaceSerial.o
+./debug\connection.o
+./debug\interfaceEthernet.o
 ./debug\qrc_qml.o
 ./debug\moc_settings.o
 ./debug\moc_timegame.o
@@ -15,4 +16,5 @@ INPUT(
 ./debug\moc_interfaceSerial.o
 ./debug\moc_interfaceBLE.o
 ./debug\moc_connectionFactory.o
+./debug\moc_connection.o
 );

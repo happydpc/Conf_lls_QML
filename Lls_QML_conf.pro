@@ -18,11 +18,11 @@ SOURCES += \
     settings.cpp \
     timegame.cpp \
     interfacesAbstract.cpp \
-    interfaceEthernet.cpp \
     interfaceBLE.cpp \
     connectionFactory.cpp \
     interfaceSerial.cpp \
-    connection.cpp
+    connection.cpp \
+    interfaceEthernet.cpp
 
 RESOURCES += \
     qml.qrc

@@ -3,10 +3,11 @@ INPUT(
 ./release\settings.o
 ./release\timegame.o
 ./release\interfacesAbstract.o
-./release\interfaceEthernet.o
 ./release\interfaceBLE.o
 ./release\connectionFactory.o
 ./release\interfaceSerial.o
+./release\connection.o
+./release\interfaceEthernet.o
 ./release\qrc_qml.o
 ./release\moc_settings.o
 ./release\moc_timegame.o
@@ -15,4 +16,5 @@ INPUT(
 ./release\moc_interfaceSerial.o
 ./release\moc_interfaceBLE.o
 ./release\moc_connectionFactory.o
+./release\moc_connection.o
 );

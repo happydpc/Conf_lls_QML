@@ -10,7 +10,11 @@
         <file>TestFormForm.ui.qml</file>
         <file>MainMenuBar.qml</file>
         <file>DevPropertyLlsTMK324.qml</file>
-        <file>DevPropertySerialPort.qml</file>
         <file>ProjectPanels.qml</file>
+        <file>ProjectMainStack.qml</file>
+        <file>ProjectMenu.qml</file>
+        <file>ProjectStartScreen.qml</file>
+        <file>ViewForm.ui.qml</file>
+        <file>DevPropertySerialPort.qml</file>
     </qresource>
 </RCC>
