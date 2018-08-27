@@ -1,20 +1,20 @@
 <RCC>
     <qresource prefix="/">
-        <file>app.qml</file>
-        <file>View.qml</file>
-        <file>DevicePanels.qml</file>
-        <file>StartScreen.qml</file>
         <file>images/logo/logo_progress.png</file>
-        <file>SerialPortForm.ui.qml</file>
-        <file>SerialPort.qml</file>
-        <file>TestFormForm.ui.qml</file>
-        <file>MainMenuBar.qml</file>
-        <file>DevPropertyLlsTMK324.qml</file>
-        <file>ProjectPanels.qml</file>
-        <file>ProjectMainStack.qml</file>
-        <file>ProjectMenu.qml</file>
-        <file>ProjectStartScreen.qml</file>
-        <file>ViewForm.ui.qml</file>
-        <file>DevPropertySerialPort.qml</file>
+        <file>qml/app.qml</file>
+        <file>qml/DevicePanels.qml</file>
+        <file>qml/DevPropertyLlsTMK324.qml</file>
+        <file>qml/DevPropertySerialPort.qml</file>
+        <file>qml/MainMenuBar.qml</file>
+        <file>qml/ProjectMainStack.qml</file>
+        <file>qml/ProjectMenu.qml</file>
+        <file>qml/ProjectPanels.qml</file>
+        <file>qml/ProjectStartScreen.qml</file>
+        <file>qml/SerialPort.qml</file>
+        <file>qml/SerialPortForm.ui.qml</file>
+        <file>qml/StartScreen.qml</file>
+        <file>qml/TestFormForm.ui.qml</file>
+        <file>qml/View.qml</file>
+        <file>qml/ViewForm.ui.qml</file>
     </qresource>
 </RCC>

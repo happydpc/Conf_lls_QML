@@ -15,14 +15,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-    settings.cpp \
-    timegame.cpp \
-    interfacesAbstract.cpp \
-    interfaceBLE.cpp \
-    connectionFactory.cpp \
-    interfaceSerial.cpp \
-    connection.cpp \
-    interfaceEthernet.cpp
+    connection/connection.cpp \
+    connection/connectionFactory.cpp \
+    device/device.cpp \
+    device/deviceAbstract.cpp \
+    device/devicesFactory.cpp \
+    interfaces/interfaceBLE.cpp \
+    interfaces/interfaceEthernet.cpp \
+    interfaces/interfacesAbstract.cpp \
+    interfaces/interfaceSerial.cpp \
+    settings/settings.cpp
 
 RESOURCES += \
     qml.qrc
@@ -39,13 +41,15 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    settings.h \
-    timegame.h \
-    interfacesAbstract.h \
-    interfaceEthernet.h \
-    interfaceSerial.h \
-    interfaceBLE.h \
-    connectionFactory.h \
-    connection.h
+    connection/connection.h \
+    connection/connectionFactory.h \
+    device/device.h \
+    device/deviceAbstract.h \
+    device/devicesFactory.h \
+    interfaces/interfaceBLE.h \
+    interfaces/interfaceEthernet.h \
+    interfaces/interfacesAbstract.h \
+    interfaces/interfaceSerial.h \
+    settings/settings.h
 
 DISTFILES +=

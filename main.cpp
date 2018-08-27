@@ -1,21 +1,19 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
-#include "connection.h"
-#include "settings.h"
+#include "./connection/connection.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication app(argc, argv);
+
+    qmlRegisterType<Connection>("Connection", 0, 0, "Connection");
+
     QQmlApplicationEngine engine;
 
-    qmlRegisterType<Settings>("Settings", 0, 0, "Settings");
-    qmlRegisterType<Connection>("Connection", 0, 0, "Connection");
-    //    qmlRegisterType<ConnectionFactory>("ConnectionFactory", 0, 0, "ConnectionFactory");
-
-    engine.load(QUrl(QStringLiteral("qrc:/app.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/qml/app.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;
 
