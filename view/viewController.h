@@ -3,8 +3,7 @@
 
 #include <QObject>
 
-#include "connection/connectionController.h"
-#include "connection/connection.h"
+#include "connection/connectionFactory.h"
 
 class ViewController : public QObject
 {
@@ -22,6 +21,9 @@ public:
 //    Q_INVOKABLE QStringList getAvailableListInterfaceOfType(int indexType); // первый - это имя интерфейса (SerialPort,Ble,Ethernet)
 
 signals:
+    // otsilaet cakie connecti dostypni
+    void addConnReplyList(QStringList);
+
     // отсылает сколько каких коннектов можно создать
 //    void readyCreateNewConnections(int connecionsCountTypes);
 //    // горит что что-то там открылось
@@ -36,7 +38,9 @@ signals:
 //                                int activeDeviceIndex);
 
 private slots:
-    void currentActiveConnectionIsChanged(interfacesAbstract::eInterfaceTypes, QString name, int index);
+    void connectionIsLost(interfacesAbstract::eInterfaceTypes, QString nameInterface);
+
+//    void currentActiveConnectionIsChanged(interfacesAbstract::eInterfaceTypes, QString name, int index);
 
 
 
@@ -46,6 +50,7 @@ public slots:
 
 
 private:
+    ConnectionFactory *connFactory;
 
 
     int currentInterfaceType;

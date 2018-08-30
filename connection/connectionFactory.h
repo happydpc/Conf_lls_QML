@@ -3,29 +3,34 @@
 
 #include <QObject>
 #include <QMultiMap>
-#include "./interfaces/interfaceSerial.h"
-#include "./interfaces/interfaceBLE.h"
-#include "./interfaces/interfaceEthernet.h"
+#include "interfaces/interface.h"
 
 class ConnectionFactory : public QObject
 {
     Q_OBJECT
 public:
-    explicit ConnectionFactory(QObject *parent = nullptr);
+    explicit ConnectionFactory();
     ~ConnectionFactory();
 
 public slots:
-//    bool addConnection(interfacesAbstract::eInterfaceTypes, QString name, int *arg);
-//    bool removeConnection(interfacesAbstract::eInterfaceTypes, QString name);
 
-    QStringList getAvailableInterfaces();
-    QStringList getAvailableSubIterfaces(interfacesAbstract::eInterfaceTypes);
+    bool addConnection(interfacesAbstract::eInterfaceTypes type, QString name, QStringList param);
+    QStringList getAvailableName(interfacesAbstract::eInterfaceTypes type);
+    void removeConnection(interfacesAbstract::eInterfaceTypes type, QString name);
+    int getCountConnection();
+
+    QString getNameConnection();
+    QString getTypeConnection();
+
+    void errorFromConnection(interfacesAbstract::eInterfaceTypes, QString name);
+
+signals:
+    void connectionIsLost(interfacesAbstract::eInterfaceTypes, QString);
 
 private:
 
-    QMultiMap<QString, InterfaceSerial>interfacesSerial;
-    QMultiMap<QString, InterfaceEthernet>interfaceEthernet;
-    QMultiMap<QString, InterfaceBLE>interfaceBLE;
+    QMultiMap<QString, Interface>interface;
+
 };
 
 #endif // CONNECTIONFACTORY_H

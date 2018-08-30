@@ -5,31 +5,33 @@
 #include "interfacesAbstract.h"
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
+#include <QTimer>
 
 class InterfaceSerial : public interfacesAbstract
 {
     Q_OBJECT
 public:
-    explicit InterfaceSerial();
+    InterfaceSerial();
     ~InterfaceSerial();
     InterfaceSerial(const InterfaceSerial &);
 
-
-    QStringList getAvailableInterfaceList() override;
-    bool openInterface(QString, int *arg) override;
-    bool closeInterface() override;
-    QString getPortName();
-    QStringList getInfoAbortPort(QString portName);
-
-signals:
-    QStringList updateAvailableInterfaceList();
-
-    void portMessage(InterfaceSerial::eInterfaceMessageType, QString name);
-
 public slots:
 
+    void initInterface() override;
+    bool openInterface(QString name, QStringList arg) override;
+    bool isOpen() override;
+    void closeInterface() override;
+    bool sendData(QByteArray &pData) override;
+    bool readData(QByteArray &pData) override;
+    QString getInterfaceName() override;
+    QStringList getInfoInterface(QString name) override;
+    QStringList getAvailableList() override;
+
+private slots:
+    void aboutClose() override;
+
 private:
-    QSerialPort *portHandler;
+    QSerialPort *portHandler = nullptr;
 
 };
 

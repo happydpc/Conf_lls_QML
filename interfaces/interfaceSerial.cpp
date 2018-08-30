@@ -1,4 +1,5 @@
 #include "./interfaces/interfaceSerial.h"
+#include "QDebug"
 
 InterfaceSerial::InterfaceSerial() {
     this->portHandler = new QSerialPort();
@@ -8,35 +9,54 @@ InterfaceSerial::InterfaceSerial(const InterfaceSerial & interface) {
     this->portHandler = interface.portHandler;
 }
 
-InterfaceSerial::~InterfaceSerial() {
+InterfaceSerial::~InterfaceSerial() {}
+void InterfaceSerial::initInterface()  {}
 
-}
-
-QStringList InterfaceSerial::getAvailableInterfaceList() {
-    QStringList portList;
-    portList << "SerialPort";
-    const auto infos = QSerialPortInfo::availablePorts();
-    for(const QSerialPortInfo &info : infos) {
-        portList << info.portName();
+bool InterfaceSerial::openInterface(QString name, QStringList arg) {
+    if(arg.size() > 0) {
+        portHandler->setPortName(name);
+        portHandler->setBaudRate(QString(arg.at(0)).toInt());
+        portHandler->setDataBits(QSerialPort::Data8);
+        portHandler->setParity(QSerialPort::NoParity);
+        portHandler->setStopBits(QSerialPort::OneStop);
+        portHandler->setFlowControl(QSerialPort::NoFlowControl);
+        return portHandler->open(QIODevice::ReadWrite);
     }
-    return portList;
+    return false;
 }
 
-bool InterfaceSerial::openInterface(QString name, int *arg) {
-    bool res = false;
-    portHandler->setPortName(name);
-    portHandler->setBaudRate(*arg);
-    portHandler->setDataBits(QSerialPort::Data8);
-    portHandler->setParity(QSerialPort::NoParity);
-    portHandler->setStopBits(QSerialPort::OneStop);
-    portHandler->setFlowControl(QSerialPort::NoFlowControl);
-    if(portHandler->open(QIODevice::ReadWrite)) {
-        res = portHandler->isOpen();
+bool InterfaceSerial::isOpen() {
+    return portHandler->isOpen();
+}
+
+void InterfaceSerial::closeInterface() {
+    if(portHandler != nullptr) {
+        if(portHandler->isOpen()) {
+            portHandler->close();
+        }
     }
-    return res;
 }
 
-QStringList InterfaceSerial::getInfoAbortPort(QString portName) {
+bool InterfaceSerial::sendData(QByteArray &pData)  {
+    if(!portHandler->isOpen()) {
+        return false;
+    }
+    return (bool)portHandler->write(pData);
+}
+
+bool InterfaceSerial::readData(QByteArray &pData)  {
+    if(!portHandler->isOpen()) {
+        return false;
+    }
+    pData = portHandler->readAll();
+    return (bool)pData.length();
+}
+
+QString InterfaceSerial::getInterfaceName() {
+    return portHandler->portName();
+}
+
+QStringList InterfaceSerial::getInfoInterface(QString name) {
     QString description;
     QString manufacturer;
     QString serialNumber;
@@ -44,7 +64,7 @@ QStringList InterfaceSerial::getInfoAbortPort(QString portName) {
     QStringList list;
     const auto infos = QSerialPortInfo::availablePorts();
     for(const QSerialPortInfo &info : infos) {
-        if(info.portName().contains(portName)) {
+        if(info.portName().contains(name)) {
             description = info.description();
             manufacturer = info.manufacturer();
             serialNumber = info.serialNumber();
@@ -62,29 +82,23 @@ QStringList InterfaceSerial::getInfoAbortPort(QString portName) {
     return list;
 }
 
-bool InterfaceSerial::closeInterface() {
-    QString portName;
-    if(portHandler != nullptr) {
-        if(portHandler->isOpen()) {
-            portName = portHandler->portName();
-            portHandler->close();
+QStringList InterfaceSerial::getAvailableList() {
+    QStringList list;
+    const auto infos = QSerialPortInfo::availablePorts();
+    for(const QSerialPortInfo &info : infos) {
+        if(portHandler != nullptr) {
+            if(!portHandler->isOpen()) {
+                list << info.portName();
+            }
         }
     }
-    emit portMessage(InterfaceSerial::IntefaceMessage_Closed, portName);
-    return portHandler->isOpen();
-}
-
-QString InterfaceSerial::getPortName() {
-    return portHandler->portName();
+    return list;
 }
 
 
-
-
-
-
-
-
+void InterfaceSerial::aboutClose() {
+    emit closeIsNormal();
+}
 
 //#include <QSerialPortInfo>
 //#include <QMessageBox>

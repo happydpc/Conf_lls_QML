@@ -1,95 +1,121 @@
 #include "./connection/connectionFactory.h"
+#include <QDebug>
 
-ConnectionFactory::ConnectionFactory(QObject *parent) : QObject(parent)
+ConnectionFactory::ConnectionFactory()
 {
 
 }
+ConnectionFactory::~ConnectionFactory() {}
 
-ConnectionFactory::~ConnectionFactory(){
-
-}
-
-QStringList ConnectionFactory::getAvailableInterfaces() {
-    QStringList availIntfaces;
-    availIntfaces << "SerialPort" << "Bluetooth";
-    return availIntfaces;
-}
-
-QStringList ConnectionFactory::getAvailableSubIterfaces(interfacesAbstract::eInterfaceTypes type) {
-    QStringList inList;
-    interfacesAbstract::eInterfaceTypes tIndex = (interfacesAbstract::eInterfaceTypes)type;
-    if(indexType == interfacesAbstract::InterfaceTypeSerialPort) {
-        strList = connectionController->getAvailableInterfacesToSerialPort();
+bool ConnectionFactory::addConnection(interfacesAbstract::eInterfaceTypes type, QString name, QStringList param) {
+    bool res = false;
+    QString conCaption;
+    if(type == interfacesAbstract::InterfaceTypeSerialPort) {
+        conCaption = "SerialPort";
+    } else if(type  == interfacesAbstract::InterfaceTypeBle) {
+        conCaption = "Ble";
+    } else if(type == interfacesAbstract::InterfaceTypeEthrnet) {
+        conCaption = "SerialPort";
+    } else {
+        conCaption = "UNKNOWN";
     }
-    if(indexType == interfacesAbstract::InterfaceTypeBle) {}
-    if(indexType == interfacesAbstract::InterfaceTypeEthrnet) {}
-    return strList;
+    Interface tInterface(type, name, param);
+    res  = tInterface.openInterface(name, param);
+    if(res) {;
+        connect(&tInterface,
+                SIGNAL(errorConnection(interfacesAbstract::eInterfaceTypes, QString)), this,
+                SLOT(errorFromConnection(interfacesAbstract::eInterfaceTypes, QString)));
+        interface.insert(conCaption, std::move(tInterface));
+    }
+    return res;
 }
 
-//bool ConnectionFactory::addConnection(QString interface, QString name, QStringList param) {
+QStringList ConnectionFactory::getAvailableName(interfacesAbstract::eInterfaceTypes type) {
+    Interface tInterface(type, "", QStringList(""));
+    return tInterface.getAvailableList();
+}
 
+void ConnectionFactory::removeConnection(interfacesAbstract::eInterfaceTypes type, QString name) {
+
+}
+
+int ConnectionFactory::getCountConnection() {
+
+}
+
+QString ConnectionFactory::getNameConnection() {
+
+}
+
+QString ConnectionFactory::getTypeConnection() {
+
+}
+
+////-----------------------------------------------------/
+////---------------         SLOTS             -----------/
+////-----------------------------------------------------/
+
+void ConnectionFactory::errorFromConnection(interfacesAbstract::eInterfaceTypes, QString name) {
+        qDebug() << "errorFromConnection -" << name;
+}
+
+
+//QStringList ConnectionFactory::getAvailableInterfaces() {
+//    QStringList availIntfaces;
+//    availIntfaces << "SerialPort" << "Bluetooth";
+//    return availIntfaces;
 //}
 
-//bool ConnectionFactory::removeConnection(QString interface, QString name, QString name) {
-
-
-
-
-
-
-
-
-//QStringList ConnectionFactory::getAvailableInterfaceItemsFromType(int intexType) {
-
-//}
-
-////void Connection::addConnection(QString nameInterface, QString subName, QString param) {
-////    if(nameInterface.contains("SerialPort")) {
-////        if(connectionController->addConnectionToSerialPort(subName, param.toInt())) {
-////            emit connectionOpened(nameInterface, subName);
-////        }
-////    }
-////}
-
-
-
-//void Connection::currentActiveConnectionIsChanged(interfacesAbstract::eInterfaceTypes interfaceType, QString name, int index) {
-//    int activeDevice = 0;
-
-//    if(interfaceType == interfacesAbstract::InterfaceTypeSerialPort) {
-//        emit activeCurrentInterface(name, index, activeDevice);
-//    }
-//}
-
-
-
-//bool ConnectionFactory::addConnection(interfacesAbstract::eInterfaceTypes type, QString name, int *arg) {
-//    bool res = false;
+//QStringList ConnectionFactory::getAvailableSubIterfaces(interfacesAbstract::eInterfaceTypes type) {
+//    QStringList strList;
 //    if(type == interfacesAbstract::InterfaceTypeSerialPort) {
 //        InterfaceSerial tSerial;
-//        res = tSerial.openInterface(name, arg);
-//        if(res) {
-//            interfacesSerial.insert(name, std::move(tSerial));
-//        }
+//        tSerial.getAvailableList();
 //    }
-//    return res;
+//    return strList;
 //}
 
-//bool ConnectionFactory::removeConnection(interfacesAbstract::eInterfaceTypes, QString name) {
-//    return true;
+
+//-----------------------------------------------------/
+//---------------   ConnectionFactory       -----------/
+//-----------------------------------------------------/
+//QStringList Connection::getAvailableListInterfaceOfType(int indexType) {
+//    QStringList strList;
+//    interfacesAbstract::eInterfaceTypes tIndex = (interfacesAbstract::eInterfaceTypes)indexType;
+//    if(indexType == interfacesAbstract::InterfaceTypeSerialPort) {
+//        strList = connectionController->getAvailableInterfacesToSerialPort();
+//    }
+//    if(indexType == interfacesAbstract::InterfaceTypeBle) {}
+//    if(indexType == interfacesAbstract::InterfaceTypeEthrnet) {}
+//    return strList;
 //}
 
-//QStringList ConnectionFactory::getAvailableInterfacesFromType(interfacesAbstract::eInterfaceTypes type) {
-//    QStringList connectionList;
-//    if(type == interfacesAbstract::InterfaceTypeSerialPort) {
-//        InterfaceSerial tSerial;
-//        connectionList = tSerial.getAvailableInterfaceList();
-//    } else if(type == interfacesAbstract::InterfaceTypeEthrnet) {
-//        //        connectionList = interfaceEthernet->getAvailableInterfaceList();
-//    } else if(type == interfacesAbstract::InterfaceTypeBle) {
-//        //        connectionList = interfaceBLE->getAvailableInterfaceList();
-//    } else {
-//        throw QString("getAvailableInterfacesFromType: Unsuported type");
-//    }
-//    return connectionList;
+//bool ConnectionController::addConnectionToSerialPort(QString portName, int baudrate) {
+//    return connectionFactory->addConnection(interfacesAbstract::InterfaceTypeSerialPort, portName, &baudrate);
+//}
+//bool ConnectionController::addConnectionToBLE(QString portName) {
+//    return connectionFactory->addConnection(interfacesAbstract::InterfaceTypeBle, portName, nullptr);
+//}
+//bool ConnectionController::addConnectionToEthernet(QString portName) {
+//    return connectionFactory->addConnection(interfacesAbstract::InterfaceTypeEthrnet, portName, nullptr);
+//}
+
+//bool ConnectionController::removeConnectionToSerialPort(QString portName) {
+//    return connectionFactory->removeConnection(interfacesAbstract::InterfaceTypeSerialPort, portName);
+//}
+//bool ConnectionController::removeConnectionToBLE(QString portName) {
+//    return connectionFactory->removeConnection(interfacesAbstract::InterfaceTypeBle, portName);
+//}
+//bool ConnectionController::removeConnectionToEthernet(QString portName) {
+//    return connectionFactory->removeConnection(interfacesAbstract::InterfaceTypeEthrnet, portName);
+//}
+
+//QStringList ConnectionController::getAvailableInterfacesToSerialPort() {
+//    return connectionFactory->getAvailableInterfacesFromType(interfacesAbstract::InterfaceTypeSerialPort);
+//}
+//QStringList ConnectionController::getAvailableInterfacesToBLE() {
+//    return connectionFactory->getAvailableInterfacesFromType(interfacesAbstract::InterfaceTypeBle);
+//}
+//QStringList ConnectionController::getAvailableInterfacesToEthernet() {
+//    return connectionFactory->getAvailableInterfacesFromType(interfacesAbstract::InterfaceTypeEthrnet);
 //}

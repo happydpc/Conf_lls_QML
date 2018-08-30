@@ -24,9 +24,13 @@ SOURCES += \
     interfaces/interfacesAbstract.cpp \
     interfaces/interfaceSerial.cpp \
     settings/settings.cpp \
-    connection/connectionController.cpp \
-    device/deviceController.cpp \
-    view/viewController.cpp
+    view/viewController.cpp \
+    interfaces/interface.cpp \
+    command/commandController.cpp \
+    device/subDevices/Progress_tmk324.cpp \
+    device/subDevices/Progress_Base.cpp \
+    device/subDevices/Progress_BaseData.cpp \
+    device/subDevices/Progress_tmk324Data.cpp
 
 RESOURCES += \
     qml.qrc
@@ -52,8 +56,12 @@ HEADERS += \
     interfaces/interfacesAbstract.h \
     interfaces/interfaceSerial.h \
     settings/settings.h \
-    connection/connectionController.h \
-    device/deviceController.h \
-    view/viewController.h
+    view/viewController.h \
+    interfaces/interface.h \
+    command/commandController.h \
+    device/subDevices/Progress_tmk324.h \
+    device/subDevices/Progress_Base.h \
+    device/subDevices/Progress_BaseData.h \
+    device/subDevices/Progress_tmk324Data.h
 
 DISTFILES +=

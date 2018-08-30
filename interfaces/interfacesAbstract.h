@@ -8,7 +8,7 @@ class interfacesAbstract : public QObject
 {
     Q_OBJECT
 public:
-    explicit interfacesAbstract(QObject *parent = nullptr);
+    explicit interfacesAbstract();
     ~interfacesAbstract();
 
     typedef enum {
@@ -17,17 +17,26 @@ public:
         InterfaceTypeEthrnet,
     }eInterfaceTypes;
 
-    typedef enum {
-        IntefaceMessage_Opened,
-        IntefaceMessage_Closed,
-        IntefaceMessage_ErrorWithClose
-    }eInterfaceMessageType;
-
-    virtual QStringList getAvailableInterfaceList() = 0;
-    virtual bool openInterface(QString, int *arg) = 0;
-    virtual bool closeInterface() = 0;
-
 public slots:
+
+    virtual void initInterface() = 0;
+    virtual bool openInterface(QString name, QStringList arg) = 0;
+    virtual bool isOpen() = 0;
+    virtual void closeInterface() = 0;
+    virtual bool sendData(QByteArray &pData) = 0;
+    virtual bool readData(QByteArray &pData) = 0;
+    virtual QString getInterfaceName() = 0;
+    virtual QStringList getInfoInterface(QString name) = 0;
+    virtual QStringList getAvailableList() = 0;
+
+private slots:
+    virtual void aboutClose() = 0;
+
+signals:
+    void errorInterface(QString errorMessage);
+    void openIsNormam();
+    void closeIsNormal();
+
 };
 
 #endif // INTERFACES_H
