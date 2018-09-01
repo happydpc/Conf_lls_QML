@@ -13,6 +13,11 @@ public:
 
     Q_INVOKABLE QStringList getAvailableNameToSerialPort();
     Q_INVOKABLE bool addConnectionSerialPort(QString name, QString baudrate);
+
+    Q_INVOKABLE QStringList getAvailableDeviceNameToSerialPort();
+
+    Q_INVOKABLE bool addDeviceToConnection(QString nameInterface, QString devTypeName, QString idNum);
+
 //    Q_INVOKABLE void addConnectionEvent();
 //    Q_INVOKABLE void closeConnectionEvent();
 //    Q_INVOKABLE void closeAppEvent();
@@ -54,11 +59,14 @@ public slots:
 private:
     ConnectionFactory *connFactory;
 
-    int currentInterfaceType;
-    QString currentIntefaceName;
+    QString currentNameInterface;
+    int currentIndexInterface = 0;
 
-    int currentDeviceIndex;
-    QString currentDeviceName;
+//    int currentInterfaceType;
+//    QString currentIntefaceName;
+
+//    int currentDeviceIndex;
+//    QString currentDeviceName;
 
 };
 

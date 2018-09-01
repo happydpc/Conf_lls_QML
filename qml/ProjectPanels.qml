@@ -12,11 +12,11 @@ Item {
     function openStartScreen() {
         projectStack.pop()
     }
-    function addInterface(interfaceName) {
-        projectDeviceScreen.addInterface(interfaceName)
+    function addInterface(name) {
+        projectDeviceScreen.addInterface(name)
     }
-    function addDevice(deviceName) {
-        projectDeviceScreen.addDevice(deviceName)
+    function addDevice(name) {
+        projectDeviceScreen.addDevice(name)
     }
 
     StartScreen {
@@ -24,12 +24,10 @@ Item {
         visible: false
     }
 
+    // device/connection stackList
     DevicePanels {
         id: projectDeviceScreen
         visible: false
-//        onDeviceButtonClicked: {
-//            viewForm.projectStack.push(projectDeviceScreen)
-//        }
     }
 
     Rectangle {
@@ -64,6 +62,7 @@ Item {
             }
         }
 
+        // stack for switch mode - device/SerialPort/startScreen
         StackView {
             id: projectStack
             height: parent.height - statusBarRecangle.height

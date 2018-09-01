@@ -22,6 +22,8 @@ public slots:
 
     QStringList getDeviceInfo(int indexDev);
 
+    QStringList getAvailableDeviceTypes();
+
     bool addCommandDevice(CommandController::sCommandData commandData);
 
     void placeReplyDataFromInterface(QByteArray data);

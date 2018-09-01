@@ -765,6 +765,7 @@ qrc_qml.cpp: qml.qrc \
 		qml/SerialPortForm.ui.qml \
 		qml/DevicePanels.qml \
 		qml/ProjectMenu.qml \
+		qml/AddDeviceDialog.qml \
 		qml/TestFormForm.ui.qml \
 		qml/View.qml \
 		qml/DevPropertyLlsTMK324.qml \

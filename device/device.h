@@ -30,10 +30,19 @@ public:
     bool makeDataToCommand(CommandController::sCommandData &commandData) override;
     bool placeReplyDataOfCommand(QByteArray &array) override;
 
+    QString getCaptionToTypeDevice(DeviceAbstract::E_DeviceType type);
+
+    QStringList getDeviceAvaibleTypes();
+
     DeviceAbstract::E_DeviceType type;
 private:
-    Progress_tmk324 *progressTmk324;
+
+    QString progress_tmk_1 = "Progress TMK24";
+    QString progress_tmk_2 = "Progress TMK3.24";
+    QStringList deviceAvailableTypesList;
+
     ProgressBase *progressBase;
+    Progress_tmk324 *progressTmk24;
 };
 
 #endif // DEVICE_H

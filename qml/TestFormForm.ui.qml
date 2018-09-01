@@ -2,29 +2,28 @@ import QtQuick 2.4
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.1
 
-Rectangle {
-    id: devPropertySerialPort
-    color: "#e7e9eb"
-    property alias addDevButton: addDevButton
+Popup {
+    id: addDeviceDialog
 
-    width: 800
-    height: 500
+    signal deviceSelectedSignal(var devName)
 
-    //    anchors.fill: parent
+    dim: false
+    clip: false
 
-    //    function setInformation(arg) {
+    modal: true
 
-    //    }
+    //    y: width / 2
+    //    x: height / 2
+    width: 400
+    height: 150
+    font.capitalization: Font.AllUppercase
+
     GridLayout {
         id: gridLayout
-        width: 384
+        anchors.bottomMargin: 54
+        anchors.fill: parent
         columnSpacing: 5
         anchors.right: tabBar.left
-        anchors.rightMargin: 10
-        anchors.left: parent.left
-        anchors.leftMargin: 10
-        anchors.top: parent.top
-        anchors.topMargin: 150
         rowSpacing: 5
         rows: 3
         columns: 2
@@ -32,61 +31,71 @@ Rectangle {
         Label {
             id: lTypeDevice
             height: typeDeviceText.height
-            text: qsTr("Порт")
-            horizontalAlignment: Text.AlignLeft
+            text: qsTr("Device type")
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
 
-        TextField {
+        ComboBox {
             id: typeDeviceText
-            text: qsTr("")
             font.underline: false
             anchors.right: parent.right
             anchors.rightMargin: 0
             anchors.left: lTypeDevice.left
             anchors.leftMargin: 150
-            readOnly: true
+            model: ListModel {
+                id: modelTypeDeviceText
+            }
         }
 
         Label {
-            id: lSn
-            height: information.height
-            text: qsTr("Информация")
-            horizontalAlignment: Text.AlignLeft
+            id: lTypeDeviceId
+            height: typeDeviceIdText.height
+            text: qsTr("ID")
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
 
-        TextArea {
-            id: information
-            width: 100
-            height: 100
-            text: qsTr("...")
-            Layout.fillHeight: true
+        SpinBox {
+            id: typeDeviceIdText
             font.underline: false
             anchors.right: parent.right
             anchors.rightMargin: 0
-            anchors.left: lSn.left
+            anchors.left: lTypeDeviceId.left
             anchors.leftMargin: 150
-            readOnly: true
+        }
+
+        Button {
+            id: buttonClose
+            text: qsTr("Close")
+            Layout.fillWidth: true
+        }
+
+        Button {
+            id: addDevButton
+            text: qsTr("Add device")
+            Layout.fillWidth: true
+            //            onClicked: {
+            //                if (typeDeviceText.currentText.length != 0) {
+            //                    deviceSelectedSignal(typeDeviceText.currentText)
+            //                }
+            //            }
         }
     }
 
-    Button {
-        id: addDevButton
-        x: 271
-        width: 230
-        text: qsTr("Добавить устройство")
-        anchors.right: gridLayout.right
-        anchors.rightMargin: 0
-        anchors.top: gridLayout.bottom
-        anchors.topMargin: 20
-        //            onClicked: {
-
-        //            }
-    }
+    //    function setListAvailableDevices(list) {
+    //        console.log("AddDevice: " + list);
+    //        typeDeviceText.model.clear()
+    //        for(var i=0; i<list.length; i++) {
+    //            typeDeviceText.model.append({text: list[i]})
+    //        }
+    //        typeDeviceText.currentIndex = 0
+    //    }
 }
 
 /*##^## Designer {
-    D{i:6;anchors_x:271;anchors_y:213}
+    D{i:10;anchors_height:150;anchors_width:400}
 }
  ##^##*/

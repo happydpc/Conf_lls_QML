@@ -4,12 +4,7 @@ import Qt.labs.platform 1.0
 
 Item {
     id: projectDevicePanel
-
-    signal deviceButtonClicked(var index)
-
     anchors.fill: parent
-    //    width: 800
-    //    height: 800
 
     function addInterface(name) {
         console.log("AddInterface: " + name)

@@ -16,8 +16,8 @@ public:
     }E_State;
 
     typedef enum {
-        Type_Progress_Tmk324,
-        Type_Progress_Base
+        Type_Progress_Tmk24,
+        Type_Progress_Tmk13
     }E_DeviceType;
 
     time_t getLastDataReqDev();

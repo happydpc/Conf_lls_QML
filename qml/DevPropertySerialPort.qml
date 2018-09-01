@@ -5,17 +5,8 @@ import QtQuick.Layouts 1.1
 Rectangle {
     id: devPropertySerialPort
     color: "#e7e9eb"
+    anchors.fill: parent
 
-    property alias addDevButton: addDevButton
-
-//    width: 800
-//    height: 500
-
-        anchors.fill: parent
-
-    //    function setInformation(arg) {
-
-    //    }
     GridLayout {
         id: gridLayout
         width: 384
@@ -81,8 +72,16 @@ Rectangle {
         anchors.rightMargin: 0
         anchors.top: gridLayout.bottom
         anchors.topMargin: 20
-        //            onClicked: {
+        onClicked: {
+            var list = viewController.getAvailableDeviceNameToSerialPort()
+            console.log("addDeviceToSerialPort-" + list)
+            addDeviceDialog.setListAvailableDevices(list)
+            addDeviceDialog.open()
+        }
+    }
 
-        //            }
+    AddDeviceDialog {
+        id:addDeviceDialog
+    visible: false
     }
 }

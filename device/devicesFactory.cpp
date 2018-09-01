@@ -44,6 +44,15 @@ QStringList DevicesFactory::getDeviceInfo(int indexDev) {
     return res;
 }
 
+// TODO: crash if dev name undefined!!!
+QStringList DevicesFactory::getAvailableDeviceTypes() {
+    QStringList strList;
+    Device *device = new Device(DeviceAbstract::Type_Progress_Tmk24, "", 0, strList);
+    strList = device->getDeviceAvaibleTypes();
+    delete  device;
+    return strList;
+}
+
 bool DevicesFactory::addCommandDevice(CommandController::sCommandData commandData) {
     return commandController->addCommandToStack(commandData);
 }

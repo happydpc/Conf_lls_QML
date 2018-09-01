@@ -15,5 +15,6 @@
         <file>qml/StartScreen.qml</file>
         <file>qml/TestFormForm.ui.qml</file>
         <file>qml/View.qml</file>
+        <file>qml/AddDeviceDialog.qml</file>
     </qresource>
 </RCC>

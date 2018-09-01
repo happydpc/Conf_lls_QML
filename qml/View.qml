@@ -31,26 +31,6 @@ Item {
         }
     }
 
-//    ViewMain {
-//        id: viewMain
-////        onReadyCreateNewConnections: {
-////            console.log("onReadyCreateNewConnections -y" + connecionsCountTypes);
-////            for(var i=0; i<connecionsCountTypes; i++) {
-////                console.log("connecionsCountTypes " + i + connection.getAvailableListInterfaceOfType(i))
-////                serialPort.setListInterfaces(connection.getAvailableListInterfaceOfType(i))
-////            }
-////            serialPort.open()
-////        }
-////        // тут есть коннект
-////        onConnectionOpened: {
-////            console.log("onConnectionOpened: " + nameInterface + " " + subName)
-////            serialPort.close()
-////            projectPanels.openDeviceProject()
-////            projectPanels.addInterface(subName)
-
-////            //            projectPanels.addDevice("Test1")
-////        }
-//    }
 
     SerialPort {
         id:serialPort
@@ -60,14 +40,11 @@ Item {
             if(res) {
                 close()
                 projectPanels.openDeviceProject()
-//                viewMain.openProject()
+                projectPanels.addInterface(name)
             }
         }
         onAbortConnectButton: {
             close()
-        }
-        Component.onCompleted: {
-            visible = false
         }
     }
 

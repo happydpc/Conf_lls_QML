@@ -10,7 +10,9 @@ Device::Device(DeviceAbstract::E_DeviceType type,
     this->type = type;
     this->deviceUniqIdentName = deviceUniqIdentName;
     this->deviceUniqIdentId = deviceUniqIdentId;
-    this->progressTmk324 = new Progress_tmk324();
+    this->progressTmk24 = new Progress_tmk324();
+    this->deviceAvailableTypesList.push_back(progress_tmk_1);
+    this->deviceAvailableTypesList.push_back(progress_tmk_2);
 }
 
 Device::Device(const Device& val) {}
@@ -31,32 +33,32 @@ DeviceAbstract::E_DeviceType Device::getType() {
 
 QStringList Device::getSettings() {
     QStringList ret;
-    if(type == Type_Progress_Tmk324) {
-        ret = progressTmk324->getSettings();
+    if(type == Type_Progress_Tmk24) {
+        ret = progressTmk24->getSettings();
     }
     return ret;
 }
 
 bool Device::setSettings(QStringList setts) {
     bool res = false;
-    if(type == Type_Progress_Tmk324) {
-        res = progressTmk324->setSettings(setts);
+    if(type == Type_Progress_Tmk24) {
+        res = progressTmk24->setSettings(setts);
     }
     return res;
 }
 
 QStringList Device::getCurrentData() {
     QStringList ret;
-    if(type == Type_Progress_Tmk324) {
-        ret = progressTmk324->getCurrentData();
+    if(type == Type_Progress_Tmk24) {
+        ret = progressTmk24->getCurrentData();
     }
     return ret;
 }
 
 QList<CommandController::sCommandData> Device::getCommandListToIdlePoll() {
     QList<CommandController::sCommandData> retCommands;
-    if(type == Type_Progress_Tmk324) {
-        retCommands = progressTmk324->getCommandListToIdlePoll(deviceUniqIdentName, deviceUniqIdentId);
+    if(type == Type_Progress_Tmk24) {
+        retCommands = progressTmk24->getCommandListToIdlePoll(deviceUniqIdentName, deviceUniqIdentId);
     }
     return retCommands;
 }
@@ -76,16 +78,24 @@ int Device::getUniqIdentId() {
 //    void Lls::makeRequest(QByteArray *data, uint8_t id, S_command tcommand)
 bool Device::makeDataToCommand(CommandController::sCommandData &commandData) {
     bool res = false;
-    if(type == Type_Progress_Tmk324) {
-        res = progressTmk324->makeDataToComand(commandData);
+    if(type == Type_Progress_Tmk24) {
+        res = progressTmk24->makeDataToComand(commandData);
     }
     return res;
 }
 
 bool Device::placeReplyDataOfCommand(QByteArray &commandArray) {
     bool res = false;
-    if(type == Type_Progress_Tmk324) {
-        res = progressTmk324->placeDataReplyToCommand(commandArray);
+    if(type == Type_Progress_Tmk24) {
+        res = progressTmk24->placeDataReplyToCommand(commandArray);
     }
     return res;
+}
+
+QStringList Device::getDeviceAvaibleTypes() {
+    return this->deviceAvailableTypesList;
+}
+
+QString Device::getCaptionToTypeDevice(DeviceAbstract::E_DeviceType type) {
+
 }
