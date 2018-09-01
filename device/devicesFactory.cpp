@@ -2,23 +2,26 @@
 #include <QDebug>
 
 DevicesFactory::DevicesFactory() {
+    this->commandController = new CommandController();
     this->devShedullerTimer = new QTimer();
-    connect(devShedullerTimer, SIGNAL(timeout()), this, SLOT(devShedullerSlot()));
+    connect(this->devShedullerTimer, SIGNAL(timeout()), this, SLOT(devShedullerSlot()));
     this->devShedullerTimer->start(devShedullerControlInterval);
+    this->deviceMap.clear();
 }
 
-bool DevicesFactory::addNewDevice(DeviceAbstract::E_DeviceType type, QStringList parameters) {
-    device.insert(type, new Device(type, parameters)); // todo: unique memory
-    return (bool)device.size();
+DevicesFactory::~DevicesFactory() {
 }
 
-bool DevicesFactory::removeDevice(DeviceAbstract::E_DeviceType type, QStringList parameters) {
+bool DevicesFactory::addNewDevice(DeviceAbstract::E_DeviceType type, QString uniqDevName, int uniqDevId, QStringList parameters) {
+    this->deviceMap.insert(uniqDevName, new Device(type, uniqDevName, uniqDevId, parameters)); // todo: unique memory
+    return (bool)deviceMap.size();
+}
+
+bool DevicesFactory::removeDevice(DeviceAbstract::E_DeviceType type, QString uniqDevName, QStringList parameters) {
     bool res = false;
-    Device tDev(type, parameters);
-    for(auto it = device.begin(); it != device.end(); it++) {
-        device.find(type, &tDev);
-        if(tDev.getParameters() == parameters) {
-            device.erase(it);
+    for(auto it = deviceMap.begin(); it != deviceMap.end(); it++) {
+        if(((*it)->getUniqIdentName() == uniqDevName) && ((*it)->getType() == type)) {
+            deviceMap.erase(it);
             res = true;
         }
     }
@@ -26,65 +29,82 @@ bool DevicesFactory::removeDevice(DeviceAbstract::E_DeviceType type, QStringList
 }
 
 int DevicesFactory::getDeviceCount() {
-    return device.size();
+    return deviceMap.size();
 }
 
 QStringList DevicesFactory::getDeviceInfo(int indexDev) {
     QStringList res;
     QStringList tParam;
     int curIndex = 0;
-    Device tDev(DeviceAbstract::Type_Progress_Tmk324, tParam);
-    for(auto it = device.begin(); it != device.end(); it++) {
+    for(auto it = deviceMap.begin(); it != deviceMap.end(); it++) {
         if(curIndex == indexDev) {
-            res = tDev.getParameters();
+            res = (*it)->getParameters();
         }
     }
     return res;
 }
 
-bool sendCommandDev(DeviceAbstract::E_DeviceType,
-                    QStringList DevIdentParam,
-                    int typeCommand,
-                    QByteArray arg) {
-    bool res = false;
-    return res;
+bool DevicesFactory::addCommandDevice(CommandController::sCommandData commandData) {
+    return commandController->addCommandToStack(commandData);
 }
 
 void DevicesFactory::devShedullerSlot() {
     bool sendRes = false;
-
-    if(!device.empty()) {
-        if(!commandController->isEmpty()) {
-            if(sendRes) {
-                QTimer::singleShot(delayAfterSendCommandMs, Qt::PreciseTimer, this, [&] {
-                    tve =0;
-                });
+    CommandController::sCommandData tcommandDev;
+    if(!deviceMap.empty()) {
+        //-- if command queue is not empty
+        if(!commandController->commandsIsEmpty()) {
+            //-- give command struct for current device
+            commandController->getCommandFirstCommandFromStack(tcommandDev);
+            // search same dev from deviceMap
+            for(auto dev: deviceMap) {
+                if(dev->getUniqIdentName() == tcommandDev.deviceIdent) {
+                    //-- stop sheduller while not reply or not timeout
+                    devShedullerTimer->stop();
+                    //-- when we send data
+                    sendRes = writeCommandToDev(dev, tcommandDev);
+                    lastRequestedDevice = dev;
+                    if(sendRes) {
+                        QTimer::singleShot(delayAfterSendCommandMs, Qt::PreciseTimer, [&] {
+                            emit readReplyData();
+                        });
+                    }
+                    break;
+                }
             }
         } else {
             Device *oldestDev = getDevOldest();
             if(oldestDev != nullptr) {
-                QVector<int>tvectCommand = oldestDev->getCommandListToIdlePoll();
-                if(!tvectCommand.empty()) {
-                    for(auto commandIt = tvectCommand.begin(); it<tvectCommand.end(); it++) {
-                        sendRes = sendCommandDev(oldestDev, commandIt, QByteArray());
-                        if(sendRes) {
-                            QTimer::singleShot(delayAfterSendCommandMs, Qt::PreciseTimer, this, [] {
-                                QByteArray replyBuffArray;
-                                emit readReplyData(replyBuffArray);
-                                oldestDev->placeReplyDataOfCommand(replyBuffArray, commandIt);
-                            });
-                        }
-                    }
+                int idleCommandSize = oldestDev->getCommandListToIdlePoll().size();
+                for(auto idleCounter=0; idleCounter<idleCommandSize; idleCounter++) {
+                    tcommandDev = oldestDev->getCommandListToIdlePoll().at(idleCounter);
+                    commandController->addCommandToStack(tcommandDev);
                 }
             }
         }
     }
 }
 
+void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
+    bool res = false;
+    for(auto dev: deviceMap) {
+        if(dev->getUniqIdentName() == lastRequestedDevice->getUniqIdentName()) {
+            res = true;
+            qDebug() << "placeReplyDataOfCommand -Ok len=" << data.length();
+            dev->placeReplyDataOfCommand(data);
+        }
+    }
+    if(!res) {
+        qDebug() << "placeReplyDataFromInterface -same Device not found!";
+    }
+    //-- start sheduller after reply
+    devShedullerTimer->start(devShedullerControlInterval);
+}
+
 Device* DevicesFactory::getDevOldest() {
     time_t oldestTime = 0;
     Device *oldestDevPoint = nullptr;
-    for(auto it = device.begin(); it != device.end(); it++) {
+    for(auto it = deviceMap.begin(); it != deviceMap.end(); it++) {
         oldestDevPoint = (*it);
         if(oldestDevPoint->getLastDataReqDev() < oldestTime) {
             oldestTime = oldestDevPoint->getLastDataReqDev();
@@ -93,14 +113,18 @@ Device* DevicesFactory::getDevOldest() {
     return oldestDevPoint;
 }
 
-bool DevicesFactory::sendCommandDev(Device *pDev, int commandType, QByteArray commandArg) {
+bool DevicesFactory::writeCommandToDev(Device *pDev, CommandController::sCommandData commandData) {
     bool res = false;
-    QByteArray sendBuf;
-    res = pDev->makeDataToCommand(sendBuf, commandType, commandArg);
-    if(res) {
-        emit writeData(sendBuf);
+    if(pDev != nullptr) {
+        res = pDev->makeDataToCommand(commandData);
+        if(res) {
+            qDebug() << "DeviceFactory: writeCommandToDev -Ok " << commandData.commandOptionData;
+            emit writeData(commandData.commandOptionData);
+        } else {
+            qDebug() << "DeviceFactory: writeCommandToDev res-FALSE";
+        }
     } else {
-        qDebug() << "DeviceFactory: sendCommandDev res-FALSE";
+        qDebug() << "deviceFactory: writeCommandToDev(dev==nullprt!!)";
     }
     return res;
 }

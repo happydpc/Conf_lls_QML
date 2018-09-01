@@ -15,6 +15,5 @@
         <file>qml/StartScreen.qml</file>
         <file>qml/TestFormForm.ui.qml</file>
         <file>qml/View.qml</file>
-        <file>qml/ViewForm.ui.qml</file>
     </qresource>
 </RCC>

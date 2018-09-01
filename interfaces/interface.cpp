@@ -16,6 +16,10 @@ Interface::Interface(interfacesAbstract::eInterfaceTypes type,
     }
 
     this->deviceFactory = new DevicesFactory();
+
+#ifdef USE_TEST_DEV_REPLY
+    this->testDevReply = new TestDevReply();
+#endif
 }
 
 Interface::Interface(const Interface & it) {
@@ -32,7 +36,7 @@ Interface::Interface(const Interface & it) {
 }
 
 Interface::~Interface() {
-
+    delete deviceFactory;
 }
 
 bool Interface::openInterface(QString name, QStringList arg) {
@@ -42,9 +46,10 @@ bool Interface::openInterface(QString name, QStringList arg) {
         if(res) {
             connect(serialPort, SIGNAL(errorInterface(QString)), SLOT(errorInterface(QString)));
             connect(deviceFactory, SIGNAL(writeData(QByteArray)), this, SLOT(writeData(QByteArray)));
-            connect(deviceFactory, SIGNAL(readReplyData(QByteArray&)), this, SLOT(readData(QByteArray&)));
+            connect(deviceFactory, SIGNAL(readReplyData()), this, SLOT(readData()));
         }
     }
+    return res;
 }
 
 bool Interface::isOpen() {
@@ -58,9 +63,11 @@ void Interface::closeInterface() {
 }
 
 QString Interface::getInterfaceName() {
+    QString name;
     if(interfaceType == interfacesAbstract::InterfaceTypeSerialPort) {
-        //        return serialPort.is
+        name = serialPort->getInterfaceName();
     }
+    return name;
 }
 
 QStringList Interface::getInfoInterface(QString name) {
@@ -68,41 +75,45 @@ QStringList Interface::getInfoInterface(QString name) {
 }
 
 QStringList Interface::getAvailableList() {
+    QStringList list;
     if(interfaceType == interfacesAbstract::InterfaceTypeSerialPort) {
-        return serialPort->getAvailableList();
+        list = serialPort->getAvailableList();
     }
+    return list;
+}
+
+interfacesAbstract::eInterfaceTypes Interface::getInterfaceType() {
+    return interfaceType;
 }
 
 bool Interface::writeData(QByteArray data) {
+    bool res = false;
+#ifdef USE_TEST_DEV_REPLY
+    testDevReply->writeDevRequestData(data);
+#else
     if(interfaceType == interfacesAbstract::InterfaceTypeSerialPort) {
-        return serialPort->sendData(data);
+        res = serialPort->sendData(data);
     }
+#endif
+    return res;
 }
 
-void Interface::readData(QByteArray &data) {
+void Interface::readData() {
+    QByteArray data;
+#ifdef USE_TEST_DEV_REPLY
+    testDevReply->readDevReplyData(data);
+#else
     if(interfaceType == interfacesAbstract::InterfaceTypeSerialPort) {
         serialPort->readData(data);
     }
+#endif
+    deviceFactory->placeReplyDataFromInterface(data);
 }
 
 void Interface::errorInterface(QString errorMessage) {
     emit errorConnection(interfaceType, getInterfaceName());
 }
 
-bool Interface::addNewDevice(DeviceAbstract::E_DeviceType type, QStringList parameters) {
-    bool res = false;
-    res = deviceFactory->addNewDevice(type, parameters);
-    return res;
-}
-
-bool Interface::removeDevice(DeviceAbstract::E_DeviceType type, QStringList parameters) {
-    return deviceFactory->removeDevice(type, parameters);
-}
-
-int Interface::getDeviceCount() {
-    return deviceFactory->getDeviceCount();
-}
-
-QStringList Interface::getDeviceInfo(int indexDev) {
-    return deviceFactory->getDeviceInfo(indexDev);
+DevicesFactory* Interface::getDeviceFactory() {
+    return deviceFactory;
 }

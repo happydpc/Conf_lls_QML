@@ -11,6 +11,18 @@ public:
     ~Progress_tmk324Data();
 
     typedef enum {
+        param_id_address = 1,
+        param_comamnd = 2,
+        param_password_session = 3
+    }E_param_suquence;
+
+    typedef enum {
+        type_lls_tmk24 =  1,
+        type_lls_tmk2u1 = 2,
+        type_lls_tmk4ux = 13,
+    }E_type_lls;
+
+    typedef enum {
         lls_read_lvl_once =         0x06,
         lls_send_data_enable =      0x07,
         lls_set_send_time =         0x13,
@@ -40,12 +52,6 @@ public:
         lls_flash_unprotect		=	0x6F
     }E_type_operation;
 
-    //    typedef enum {
-    //        type_lls_tmk24 =  1,
-    //        type_lls_tmk2u1 = 2,
-    //        type_lls_tmk4ux = 13,
-    //    }E_type_lls;
-
 #pragma pack(1)
     typedef struct {
         uint32_t cntEmpty;
@@ -73,7 +79,101 @@ public:
         uint8_t waterMode;
         uint8_t reserved;
     }T_settings;
+
+    typedef struct {
+        uint8_t NotCalibrated:1;//10%
+        uint8_t MaxFreqOut:1;//10%
+        uint8_t MinFreqOut:1;//10%
+        uint8_t GenFreq0:1;
+        uint8_t Slave1Error:1;
+        uint8_t Slave2Error:1;
+        uint8_t Slave3Error:1;
+        uint8_t Slave4Error:1;
+        uint8_t QeueManagerError:1;
+        uint8_t Rs232Error:1;
+        uint8_t Rs485Error:1;
+        uint8_t ReplayNotComeRs232:1;
+        uint8_t ReplayNotComeRs485:1;
+    }T_errors;
+
+    typedef struct {
+        uint8_t TableSize;
+        uint16_t x[30];
+        uint16_t y[30];
+    }T_calibrationTable;
+
+    typedef struct {
+        uint8_t slave_count;
+        uint16_t summed_volume;
+        uint16_t send_value;
+        uint16_t Level[4];
+        uint16_t Frequency[4];
+        int8_t Temperature[4];
+        uint8_t ActualFlag[4]; //if lost frame then 1!
+    }T_dutValues;
+
 #pragma pack()
+
+    typedef struct {
+        struct {
+            uint32_t cnt;
+            bool isValid;
+        }cnt;
+
+        struct {
+            float level;
+            float levelProcent;
+            bool isValid;
+        }fuelLevel;
+
+        struct {
+            QString value;
+            uint8_t size[12];
+            bool isValid;
+        }sn;
+
+        struct {
+            QString value;
+            bool isValid;
+        }typeLls;
+
+        struct {
+            uint16_t value;
+            bool isValid;
+        }freq;
+
+        struct {
+            int8_t value;
+            bool isValid;
+        }temp;
+
+        struct {
+            QString value[8];
+            bool isValid;
+        }firmwareVersion;
+
+        struct {
+            T_settings valueSettings;
+            bool isValid;
+        }settings;
+
+        T_errors errors;
+
+        struct {
+            T_calibrationTable table;
+            bool isValid;
+        }calibrateTable;
+
+        struct{
+            T_dutValues values;
+            bool isValid;
+        }llssValues;
+
+        struct{
+            QString password;
+            bool isValid;
+        }password;
+    }S_lls_data;
 };
 
 #endif // PROGRESS_TMK324DATA_H

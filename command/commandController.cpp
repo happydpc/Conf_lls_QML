@@ -4,27 +4,20 @@ CommandController::CommandController(QObject *parent) : QObject(parent) {
 
 }
 
-bool CommandController::addCommandToStack(QStringList devParamIdent, int command, QByteArray commandData) {
-    sCommandElement scommand;
-    scommand.commandReqData = commandData;
-    scommand.typeComamnd = command;
-    QPair<QStringList, QPair<QByteArray,int>> tqueue;
-    commandQueue.enqueue(tqueue);
+bool CommandController::addCommandToStack(sCommandData devCommandData) {
+    commandQueue.enqueue(devCommandData);
     return !commandQueue.empty();
 }
 
-bool CommandController::getCommandFirstCommandFromStack(QStringList &devParamItend, int &command, QByteArray &commandData) {
+bool CommandController::getCommandFirstCommandFromStack(sCommandData &devCommandData) {
     bool res = false;
     if(!commandQueue.empty()) {
-        auto qcommand = commandQueue.dequeue();
-        command = qcommand.second.second;
-        devParamItend = qcommand.first;
-        commandData = qcommand.second.first;
+        devCommandData = commandQueue.dequeue();
         res = true;
     }
     return res;
 }
 
-bool CommandController::isEmpty() {
+bool CommandController::commandsIsEmpty() {
     return commandQueue.empty();
 }

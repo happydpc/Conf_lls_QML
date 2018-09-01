@@ -11,9 +11,11 @@ class ViewController : public QObject
 public:
     explicit ViewController(QObject *parent = nullptr);
 
-    Q_INVOKABLE void addConnectionEvent();
-    Q_INVOKABLE void closeConnectionEvent();
-    Q_INVOKABLE void closeAppEvent();
+    Q_INVOKABLE QStringList getAvailableNameToSerialPort();
+    Q_INVOKABLE bool addConnectionSerialPort(QString name, QString baudrate);
+//    Q_INVOKABLE void addConnectionEvent();
+//    Q_INVOKABLE void closeConnectionEvent();
+//    Q_INVOKABLE void closeAppEvent();
 
     // говорим что нужен новый коннект
 //    Q_INVOKABLE void addConnectionRequest();
@@ -22,7 +24,7 @@ public:
 
 signals:
     // otsilaet cakie connecti dostypni
-    void addConnReplyList(QStringList);
+//    void addConnReplyList(QStringList);
 
     // отсылает сколько каких коннектов можно создать
 //    void readyCreateNewConnections(int connecionsCountTypes);
@@ -51,7 +53,6 @@ public slots:
 
 private:
     ConnectionFactory *connFactory;
-
 
     int currentInterfaceType;
     QString currentIntefaceName;

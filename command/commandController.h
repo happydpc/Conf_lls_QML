@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QQueue>
-#include "device/device.h"
+#include <QPair>
 
 class CommandController : public QObject
 {
@@ -12,22 +12,25 @@ public:
     explicit CommandController(QObject *parent = nullptr);
 
     typedef struct {
-        QStringList devParam;
-        QByteArray commandReqData;
-        int typeComamnd;
-    }sCommandElement;
+        // uniqual ident device
+        QString deviceIdent;
+        // id dev (for lls)
+        int deviceIdentId;
+        // dev command
+        int devCommand;
+        // bytearray for command buf
+        QByteArray commandOptionData;
+        // buffer for transmit settings, firmware and other data
+        QList<QPair<QString,QByteArray>>commandOptionArg;
+    }sCommandData;
 
-    bool addCommandToStack(QStringList devParamIdent, int command, QByteArray commandData);
-    bool getCommandFirstCommandFromStack(QStringList &devParamItend, int &command, QByteArray &commandData);
-
-    bool isEmpty();
-
-signals:
-
-public slots:
+    bool addCommandToStack(sCommandData commandData);
+    bool getCommandFirstCommandFromStack(sCommandData &devCommandData);
+    bool commandsIsEmpty();
 
 private:
-    QQueue< QPair<QStringList, QPair<QByteArray,int>>> commandQueue;
+
+    QQueue<sCommandData> commandQueue;
 };
 
 #endif // COMMANDCONTROLLER_H

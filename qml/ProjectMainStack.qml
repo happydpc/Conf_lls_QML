@@ -4,8 +4,8 @@ import QtQuick.Controls 2.4
 Component {
     id:projectMainStack
 
-    function updatePortList() {
-        console.log("Opened")
+//    function updatePortList() {
+//        console.log("Opened")
 //        var interfaceList = connectionFactory.getAvailableInterfacesToSerialPort()
 //        console.log("SerialPorts: " + interfaceList);
 
@@ -27,7 +27,7 @@ Component {
 //        }
 //        baudRateList.currentIndex = 0;
 //        onUpdated(interfaceList)
-    }
+//    }
 
     Rectangle {
         id: projectDevicePanel

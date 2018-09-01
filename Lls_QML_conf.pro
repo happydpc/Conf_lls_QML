@@ -1,6 +1,6 @@
 QT += quick
 QT += serialport
-CONFIG += c++14
+CONFIG += c++17
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -30,7 +30,9 @@ SOURCES += \
     device/subDevices/Progress_tmk324.cpp \
     device/subDevices/Progress_Base.cpp \
     device/subDevices/Progress_BaseData.cpp \
-    device/subDevices/Progress_tmk324Data.cpp
+    device/subDevices/Progress_tmk324Data.cpp \
+    other/crc.cpp \
+    tests/testDevReply.cpp
 
 RESOURCES += \
     qml.qrc
@@ -62,6 +64,8 @@ HEADERS += \
     device/subDevices/Progress_tmk324.h \
     device/subDevices/Progress_Base.h \
     device/subDevices/Progress_BaseData.h \
-    device/subDevices/Progress_tmk324Data.h
+    device/subDevices/Progress_tmk324Data.h \
+    other/crc.h \
+    tests/testDevReply.h
 
 DISTFILES +=

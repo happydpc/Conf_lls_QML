@@ -22,6 +22,8 @@ public slots:
     QString getNameConnection();
     QString getTypeConnection();
 
+    Interface* getInterace(interfacesAbstract::eInterfaceTypes type, QString name);
+
     void errorFromConnection(interfacesAbstract::eInterfaceTypes, QString name);
 
 signals:
@@ -29,7 +31,7 @@ signals:
 
 private:
 
-    QMultiMap<QString, Interface>interface;
+    QMultiMap<QString, Interface*>interface;
 
 };
 

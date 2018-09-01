@@ -3,7 +3,7 @@
 
 ConnectionFactory::ConnectionFactory()
 {
-
+    this->interface.clear();
 }
 ConnectionFactory::~ConnectionFactory() {}
 
@@ -19,13 +19,16 @@ bool ConnectionFactory::addConnection(interfacesAbstract::eInterfaceTypes type, 
     } else {
         conCaption = "UNKNOWN";
     }
-    Interface tInterface(type, name, param);
-    res  = tInterface.openInterface(name, param);
-    if(res) {;
-        connect(&tInterface,
+    Interface *pInterface = new Interface(type, name, param);
+    res  = pInterface->openInterface(name, param);
+    if(res) {
+        connect(pInterface,
                 SIGNAL(errorConnection(interfacesAbstract::eInterfaceTypes, QString)), this,
                 SLOT(errorFromConnection(interfacesAbstract::eInterfaceTypes, QString)));
-        interface.insert(conCaption, std::move(tInterface));
+        interface.insert(conCaption, std::move(pInterface));
+    } else {
+        delete pInterface;
+        qDebug() << "ConnectionFactory: addConnection-ERR " + name;
     }
     return res;
 }
@@ -49,6 +52,19 @@ QString ConnectionFactory::getNameConnection() {
 
 QString ConnectionFactory::getTypeConnection() {
 
+}
+
+Interface* ConnectionFactory::getInterace(interfacesAbstract::eInterfaceTypes type, QString name) {
+    Interface *pInterface = nullptr;
+    for(auto it = interface.begin(); it!=interface.end(); it++) {
+        if((*it)->getInterfaceName() == name) {
+            if((*it)->getInterfaceType() == type) {
+                pInterface = (it).value();
+                break;
+            }
+        }
+    }
+    return pInterface;
 }
 
 ////-----------------------------------------------------/

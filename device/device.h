@@ -10,8 +10,11 @@ class Device : public DeviceAbstract
 {
 public:
     explicit Device(DeviceAbstract::E_DeviceType type,
+                    QString deviceUniqIdentName,
+                    int deviceUniqIdentId,
                     QStringList &parameters);
     ~Device();
+    Device(const Device&);
 
     void setState(DeviceAbstract::E_State state) override;
     DeviceAbstract::E_State getState() override;
@@ -20,16 +23,17 @@ public:
     bool setSettings(QStringList settings) override;
     QStringList getCurrentData() override;
     QStringList getParameters() override;
-    QVector<int> getCommandListToIdlePoll() override;
+    QString getUniqIdentName() override;
+    int getUniqIdentId() override;
+    QList<CommandController::sCommandData> getCommandListToIdlePoll() override;
 
-    bool makeDataToCommand(QByteArray &array, int commandType, QByteArray commandArg) override;
-    bool placeReplyDataOfCommand(QByteArray &array, int commandType) override;
+    bool makeDataToCommand(CommandController::sCommandData &commandData) override;
+    bool placeReplyDataOfCommand(QByteArray &array) override;
 
     DeviceAbstract::E_DeviceType type;
 private:
     Progress_tmk324 *progressTmk324;
     ProgressBase *progressBase;
-    QStringList parameters;
 };
 
 #endif // DEVICE_H

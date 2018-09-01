@@ -1,75 +1,59 @@
 #include "viewController.h"
 #include <QDebug>
 
-ViewController::ViewController(QObject *parent) : QObject(parent)
-{
-    bool res = false;
-    QStringList strLis;
+//    bool res = false;
+//    QStringList strLis;
 
+ViewController::ViewController(QObject *parent) : QObject(parent) {
     this->connFactory = new ConnectionFactory();
 
-    strLis = connFactory->getAvailableName(interfacesAbstract::InterfaceTypeSerialPort);
-
-    qDebug() << strLis;
-
-    if(strLis.size() > 0) {
-        res = connFactory->addConnection(interfacesAbstract::InterfaceTypeSerialPort, strLis.at(0), QStringList("9600"));
-        qDebug() << "IsOpen = "<< res << strLis.at(0);
-    } else {
-        qDebug() << "DeviceList -Empty";
-    }
-
-    if(res) {
-        connect(connFactory,
-                SIGNAL(connectionIsLost(interfacesAbstract::eInterfaceTypes, QString)),
-                SLOT(connectionIsLost(interfacesAbstract::eInterfaceTypes, QString))
-                );
-    }
-}
-
-void ViewController::connectionIsLost(interfacesAbstract::eInterfaceTypes, QString nameInterface) {
-
-}
-
-void ViewController::addConnectionEvent() {
-    //    emit addConnReplyList(connectionController->getListInterfacesConnection());
-}
-
-void ViewController::closeConnectionEvent() {
-
-}
-
-void ViewController::closeAppEvent() {
-
-}
-
-
-//// первый - это имя интерфейса (SerialPort,Ble,Ethernet)
-//QStringList Connection::getAvailableListInterfaceOfType(int indexType) {
-//    QStringList strList;
-//    interfacesAbstract::eInterfaceTypes tIndex = (interfacesAbstract::eInterfaceTypes)indexType;
-//    if(indexType == interfacesAbstract::InterfaceTypeSerialPort) {
-//        strList = connectionController->getAvailableInterfacesToSerialPort();
+//    strLis = connFactory->getAvailableName(interfacesAbstract::InterfaceTypeSerialPort);
+//    qDebug() << strLis;
+//    int contAvailableList = 0;
+//    while(contAvailableList != strLis.size()) {
+//        res = connFactory->addConnection(
+//                    interfacesAbstract::InterfaceTypeSerialPort, strLis.at(contAvailableList),
+//                    QStringList("9600"));
+//        qDebug() << "IsOpen = "<< res << strLis.at(contAvailableList);
+//        contAvailableList++;
 //    }
-//    if(indexType == interfacesAbstract::InterfaceTypeBle) {}
-//    if(indexType == interfacesAbstract::InterfaceTypeEthrnet) {}
-//    return strList;
-//}
+//    int id_dev = 1;
+//    for(int i=0; i<3; i++) {
+////        QString nameInterface = QString("ttyACM%1").arg(i);
+//        QString nameInterface = QString("ttyACM0");
+//        Interface *pInterface = nullptr;
+//        pInterface = connFactory->getInterace(interfacesAbstract::InterfaceTypeSerialPort, nameInterface);
 
-//void Connection::addConnection(QString nameInterface, QString subName, QString param) {
-//    if(nameInterface.contains("SerialPort")) {
-//        if(connectionController->addConnectionToSerialPort(subName, param.toInt())) {
-//            emit connectionOpened(nameInterface, subName);
+//        if(pInterface != nullptr) {
+//            res = pInterface->getDeviceFactory()->addNewDevice(
+//                        DeviceAbstract::Type_Progress_Tmk324,
+//                        QString("/%1/lls_tmk3.24_%2").arg(nameInterface).arg(i),
+//                        id_dev, QStringList(""));
+//            qDebug() << "Interface-" << nameInterface << " -open Ok";
+//        } else {
+//            qDebug() << "Interface-" << nameInterface << " -no open!";
 //        }
 //    }
-//}
+}
+
+QStringList ViewController::getAvailableNameToSerialPort() {
+    QStringList retList;
+    retList = connFactory->getAvailableName(interfacesAbstract::InterfaceTypeSerialPort);
+    return retList;
+}
+
+bool ViewController::addConnectionSerialPort(QString name, QString baudrate) {
+    bool res = false;
+    res = connFactory->addConnection(interfacesAbstract::InterfaceTypeSerialPort, name, QStringList(baudrate));
+    qDebug() << "addConnectionSerialPort -open= "<< res << name;
+    return res;
+}
 
 
 
-//void Connection::currentActiveConnectionIsChanged(interfacesAbstract::eInterfaceTypes interfaceType, QString name, int index) {
-//    int activeDevice = 0;
-
-//    if(interfaceType == interfacesAbstract::InterfaceTypeSerialPort) {
-//        emit activeCurrentInterface(name, index, activeDevice);
-//    }
-//}
+void ViewController::connectionIsLost(interfacesAbstract::eInterfaceTypes, QString nameInterface) {
+    //        connect(connFactory,
+    //                SIGNAL(connectionIsLost(interfacesAbstract::eInterfaceTypes, QString)),
+    //                SLOT(connectionIsLost(interfacesAbstract::eInterfaceTypes, QString))
+    //                );
+}

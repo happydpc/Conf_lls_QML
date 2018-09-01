@@ -1,10 +1,19 @@
 #include "./device/device.h"
+#include <QDebug>
+#include "other/crc.h"
 
 Device::Device(DeviceAbstract::E_DeviceType type,
+               QString deviceUniqIdentName,
+               int deviceUniqIdentId,
                QStringList &parameters) {
     this->parameters = parameters;
     this->type = type;
+    this->deviceUniqIdentName = deviceUniqIdentName;
+    this->deviceUniqIdentId = deviceUniqIdentId;
+    this->progressTmk324 = new Progress_tmk324();
 }
+
+Device::Device(const Device& val) {}
 
 Device::~Device() {}
 
@@ -44,22 +53,39 @@ QStringList Device::getCurrentData() {
     return ret;
 }
 
-QVector<int> Device::getCommandListToIdlePoll() {
-    QVector<int> retVect;
+QList<CommandController::sCommandData> Device::getCommandListToIdlePoll() {
+    QList<CommandController::sCommandData> retCommands;
     if(type == Type_Progress_Tmk324) {
-        retVect = progressTmk324->getCommandListToIdlePoll();
+        retCommands = progressTmk324->getCommandListToIdlePoll(deviceUniqIdentName, deviceUniqIdentId);
     }
-    return retVect;
+    return retCommands;
 }
 
 QStringList Device::getParameters() {
     return parameters;
 }
 
-bool Device::makeDataToCommand(QByteArray &array, int commandType, QByteArray commandArg) {
-
+QString Device::getUniqIdentName() {
+    return deviceUniqIdentName;
 }
 
-bool Device::placeReplyDataOfCommand(QByteArray &array, int commandType) {
+int Device::getUniqIdentId() {
+    return deviceUniqIdentId;
+}
 
+//    void Lls::makeRequest(QByteArray *data, uint8_t id, S_command tcommand)
+bool Device::makeDataToCommand(CommandController::sCommandData &commandData) {
+    bool res = false;
+    if(type == Type_Progress_Tmk324) {
+        res = progressTmk324->makeDataToComand(commandData);
+    }
+    return res;
+}
+
+bool Device::placeReplyDataOfCommand(QByteArray &commandArray) {
+    bool res = false;
+    if(type == Type_Progress_Tmk324) {
+        res = progressTmk324->placeDataReplyToCommand(commandArray);
+    }
+    return res;
 }

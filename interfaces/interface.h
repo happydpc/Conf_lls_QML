@@ -8,6 +8,11 @@
 #include "interfaceEthernet.h"
 #include "device/devicesFactory.h"
 
+#define USE_TEST_DEV_REPLY  1
+#ifdef USE_TEST_DEV_REPLY
+#include "tests/testDevReply.h"
+#endif
+
 class Interface : public QObject
 {
     Q_OBJECT
@@ -29,19 +34,16 @@ public slots:
     QString getInterfaceName();
     QStringList getInfoInterface(QString name);
     QStringList getAvailableList();
+    interfacesAbstract::eInterfaceTypes getInterfaceType();
 
-    bool writeData(QByteArray data);
-    void readData(QByteArray &data);
-
-    // DevideFactory
-    bool addNewDevice(DeviceAbstract::E_DeviceType, QStringList parameters);
-    bool removeDevice(DeviceAbstract::E_DeviceType, QStringList parameters);
-    int getDeviceCount();
-    QStringList getDeviceInfo(int indexDev);
+    DevicesFactory* getDeviceFactory();
 
 signals:
     void errorConnection(interfacesAbstract::eInterfaceTypes type, QString conName);
 private slots:
+    bool writeData(QByteArray data);
+    void readData();
+
    void errorInterface(QString errorMessage);
 
 private:
@@ -50,6 +52,9 @@ private:
     InterfaceBLE *ble;
     InterfaceSerial *serialPort;
     DevicesFactory *deviceFactory;
+#ifdef USE_TEST_DEV_REPLY
+    TestDevReply *testDevReply;
+#endif
 };
 
 #endif // INTERFACE_H

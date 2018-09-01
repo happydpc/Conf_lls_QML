@@ -4,6 +4,9 @@ DeviceAbstract::DeviceAbstract(QObject *parent) : QObject(parent)
 {
     this->state = STATE_DISCONNECTED;
     this->lastDataRequestDev = 0;
+    this->deviceUniqIdentName.clear();
+    this->deviceUniqIdentId = 0;
+    this->parameters.clear();
 }
 
 void DeviceAbstract::setState(E_State state) {

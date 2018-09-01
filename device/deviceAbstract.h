@@ -2,6 +2,7 @@
 #define DEVICEABSTRACT_H
 
 #include <QObject>
+#include "command/commandController.h"
 
 class DeviceAbstract : public QObject
 {
@@ -33,15 +34,19 @@ public:
     virtual bool setSettings(QStringList setts) = 0;
     virtual QStringList getCurrentData() = 0;
     virtual QStringList getParameters() = 0;
+    virtual QString getUniqIdentName() = 0;
+    virtual int getUniqIdentId() = 0;
 
-    virtual bool makeDataToCommand(QByteArray &array, int commandType, QByteArray commandArg) = 0;
-    virtual bool placeReplyDataOfCommand(QByteArray &array, int commandType) = 0;
+    virtual bool makeDataToCommand(CommandController::sCommandData &commandData) = 0;
+    virtual bool placeReplyDataOfCommand(QByteArray &array) = 0;
 
     // возвращает список команд, если нет активности и можно опросить
-    virtual QVector<int> getCommandListToIdlePoll() = 0;
-
+    virtual QList<CommandController::sCommandData> getCommandListToIdlePoll() = 0;
 
     DeviceAbstract::E_State state;
+    QString deviceUniqIdentName;
+    int deviceUniqIdentId;
+    QStringList parameters;
 
 private:
 

@@ -12,29 +12,38 @@ class DevicesFactory : public QObject
     Q_OBJECT
 public:
     explicit DevicesFactory();
+    ~DevicesFactory();
 
 public slots:
-    bool addNewDevice(DeviceAbstract::E_DeviceType, QStringList parameters);
-    bool removeDevice(DeviceAbstract::E_DeviceType, QStringList parameters);
+    bool addNewDevice(DeviceAbstract::E_DeviceType, QString uniqDevName, int uniqDevId, QStringList parameters);
+    bool removeDevice(DeviceAbstract::E_DeviceType, QString uniqDevName, QStringList parameters);
 
     int getDeviceCount();
+
     QStringList getDeviceInfo(int indexDev);
 
-    bool sendCommandDev(Device *pDev, int commandType, QByteArray commandArg);
+    bool addCommandDevice(CommandController::sCommandData commandData);
+
+    void placeReplyDataFromInterface(QByteArray data);
 
 signals:
     void writeData(QByteArray data);
-    void readReplyData(QByteArray &data);
+    void readReplyData();
 
 private slots:
-    void devShedullerSlot();
-
+    //-- gives the oldest devices
     Device* getDevOldest();
+    //-- sheduller slot
+    void devShedullerSlot();
+    //--
+    bool writeCommandToDev(Device *pDev, CommandController::sCommandData commandData);
 
 private:
-    QMultiMap<DeviceAbstract::E_DeviceType, Device*> device;
+    QMap<QString,Device*> deviceMap;
     CommandController *commandController;
-    QTimer *devShedullerTimer;
+
+    QTimer* devShedullerTimer;
+    Device* lastRequestedDevice;
 
     const int delayAfterSendCommandMs = 500;
     const int devShedullerControlInterval = 500;
