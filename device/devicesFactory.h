@@ -2,7 +2,7 @@
 #define DEVICESFACTORY_H
 
 #include <QObject>
-#include <QMultiMap>
+#include <QVector>
 #include <QTimer>
 #include "device.h"
 #include "command/commandController.h"
@@ -19,6 +19,9 @@ public slots:
     bool removeDevice(DeviceAbstract::E_DeviceType, QString uniqDevName, QStringList parameters);
 
     int getDeviceCount();
+    QStringList getDeviceHeaderByIndex(int index);
+    QString getDeviceTypeByIndex(int index);
+    QStringList getDeviceCurrentPropertyByIndex(int index);
 
     QStringList getDeviceInfo(int indexDev);
 
@@ -28,8 +31,11 @@ public slots:
 
     void placeReplyDataFromInterface(QByteArray data);
 
+    QString getCaptionToTypeDevice(DeviceAbstract::E_DeviceType type);
+    DeviceAbstract::E_DeviceType getDeviceTypeFromTypeCaption(QString typeDevText);
+
 signals:
-    void writeData(QByteArray data);
+    void writeData(DeviceAbstract::E_DeviceType type, QByteArray data);
     void readReplyData();
 
 private slots:
@@ -41,7 +47,7 @@ private slots:
     bool writeCommandToDev(Device *pDev, CommandController::sCommandData commandData);
 
 private:
-    QMap<QString,Device*> deviceMap;
+    QVector<QPair<QString,Device*>> deviceMap;
     CommandController *commandController;
 
     QTimer* devShedullerTimer;

@@ -7,6 +7,10 @@ Rectangle {
     color: "#e7e9eb"
     anchors.fill: parent
 
+    function setNamePort(name) {
+        typeDeviceText.text = name
+    }
+
     GridLayout {
         id: gridLayout
         width: 384

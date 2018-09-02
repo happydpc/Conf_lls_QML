@@ -4,31 +4,6 @@ import QtQuick.Controls 2.4
 Component {
     id:projectMainStack
 
-//    function updatePortList() {
-//        console.log("Opened")
-//        var interfaceList = connectionFactory.getAvailableInterfacesToSerialPort()
-//        console.log("SerialPorts: " + interfaceList);
-
-//        portList.model.clear()
-//        baudRateList.model.clear()
-
-//        for(var it = 0; it<interfaceList.length; it++) {
-//            portList.model.append({text: interfaceList[it]})
-//        }
-//        portList.currentIndex = 0
-
-//        if(interfaceList.length > 0) {
-//            baudRateList.model.append({text: "4800"})
-//            baudRateList.model.append({text: "9600"})
-//            baudRateList.model.append({text: "19200"})
-//            baudRateList.model.append({text: "38400"})
-//            baudRateList.model.append({text: "115200"})
-//            baudRateList.model.append({text: "256000"})
-//        }
-//        baudRateList.currentIndex = 0;
-//        onUpdated(interfaceList)
-//    }
-
     Rectangle {
         id: projectDevicePanel
         color: "#ffffff"
@@ -110,57 +85,6 @@ Component {
                         }
                     }
                 }
-                //                model: ListModel {
-                //                    ListElement {
-                //                        name: "COM9"
-                //                        colorCode: "#81DAF5"
-                //                        identId: "0"
-                //                    }
-
-                //                    ListElement {
-                //                        name: "ТМК3.24 (ID-1)"
-                //                        colorCode: "#FAFAFA"
-                //                        identId: "1"
-                //                    }
-
-                //                    ListElement {
-                //                        name: "ТМК3.24 (ID-2)"
-                //                        colorCode: "#FAFAFA"
-                //                        identId: "2"
-                //                    }
-
-                //                    ListElement {
-                //                        name: "COM21"
-                //                        colorCode: "#81DAF5"
-                //                        identId: "3"
-                //                    }
-
-                //                    ListElement {
-                //                        name: "ТМК3.24 (ID-1)"
-                //                        colorCode: "#FAFAFA"
-                //                        identId: "4"
-                //                    }
-                //                    ListElement {
-                //                        name: "COM9"
-                //                        colorCode: "#81DAF5"
-                //                        identId: "5"
-                //                    }
-
-                //                    ListElement {
-                //                        name: "ТМК3.24 (ID-1)"
-                //                        colorCode: "#FAFAFA"
-                //                        identId: "6"
-                //                    }
-
-                //                    ListElement {
-                //                        name: "ТМК3.24 (ID-2)"
-                //                        colorCode: "#FAFAFA"
-                //                        identId: "7"
-                //                    }
-                //                }
-            }
-            function addInterface(arg) {
-
             }
         }
 

@@ -25,7 +25,7 @@ bool ConnectionFactory::addConnection(interfacesAbstract::eInterfaceTypes type, 
         connect(pInterface,
                 SIGNAL(errorConnection(interfacesAbstract::eInterfaceTypes, QString)), this,
                 SLOT(errorFromConnection(interfacesAbstract::eInterfaceTypes, QString)));
-        interface.insert(conCaption, std::move(pInterface));
+        interface.push_back(std::move(pInterface));
     } else {
         delete pInterface;
         qDebug() << "ConnectionFactory: addConnection-ERR " + name;
@@ -42,16 +42,17 @@ void ConnectionFactory::removeConnection(interfacesAbstract::eInterfaceTypes typ
 
 }
 
-int ConnectionFactory::getCountConnection() {
-
-}
-
-QString ConnectionFactory::getNameConnection() {
-
-}
-
-QString ConnectionFactory::getTypeConnection() {
-
+QString ConnectionFactory::getInteraceNameFromIndex(int index) {
+    QString res;
+    int counter = 0;
+    for(auto i=interface.begin(); i!=interface.end(); i++) {
+        if(counter == index) {
+            res = (*i)->getInterfaceName();
+            break;
+        }
+        counter++;
+    }
+    return res;
 }
 
 Interface* ConnectionFactory::getInterace(interfacesAbstract::eInterfaceTypes type, QString name) {
@@ -59,7 +60,7 @@ Interface* ConnectionFactory::getInterace(interfacesAbstract::eInterfaceTypes ty
     for(auto it = interface.begin(); it!=interface.end(); it++) {
         if((*it)->getInterfaceName() == name) {
             if((*it)->getInterfaceType() == type) {
-                pInterface = (it).value();
+                pInterface = (*it);
                 break;
             }
         }

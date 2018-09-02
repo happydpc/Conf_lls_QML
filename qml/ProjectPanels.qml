@@ -7,17 +7,22 @@ Item {
     id: viewForm
 
     function openDeviceProject() {
-        projectStack.push(projectDeviceScreen)
+        projectStack.push(devicePanel)
     }
     function openStartScreen() {
         projectStack.pop()
     }
     function addInterface(name) {
-        projectDeviceScreen.addInterface(name)
+        devicePanel.addInterface(name)
     }
     function addDevice(name) {
-        projectDeviceScreen.addDevice(name)
+        devicePanel.addDevice(name)
     }
+//    function setActiveInteface(index) {
+
+//    }
+//    function setActiveDevice(index) {
+//    }
 
     StartScreen {
         id: projectStartSceen
@@ -26,7 +31,7 @@ Item {
 
     // device/connection stackList
     DevicePanels {
-        id: projectDeviceScreen
+        id: devicePanel
         visible: false
     }
 

@@ -17,7 +17,8 @@ public:
 
     typedef enum {
         Type_Progress_Tmk24,
-        Type_Progress_Tmk13
+        Type_Progress_Tmk13,
+        Type_Progress_default = Type_Progress_Tmk24
     }E_DeviceType;
 
     time_t getLastDataReqDev();
@@ -42,6 +43,10 @@ public:
 
     // возвращает список команд, если нет активности и можно опросить
     virtual QList<CommandController::sCommandData> getCommandListToIdlePoll() = 0;
+
+    QString type_Progress_Tmk24_caption = "Progress TMK24";
+    QString type_Progress_Tmk13_caption = "Progress TMK13";
+    QList <QPair<E_DeviceType,QString>> deviceAvailableTypesList;
 
     DeviceAbstract::E_State state;
     QString deviceUniqIdentName;

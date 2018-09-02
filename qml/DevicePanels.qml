@@ -6,34 +6,42 @@ Item {
     id: projectDevicePanel
     anchors.fill: parent
 
+    //----------     public
     function addInterface(name) {
         console.log("AddInterface: " + name)
-        listInterfaceView.model.append({"name":name,"colorCode":"#81DAF5","identId": "0"})
+        listInterfaceView.model.append({"text":name})
     }
 
     function addDevice(name) {
         console.log("addDevice: " + name)
-        listDeviceView.model.append({"name":name,"colorCode":"#D5F9AE","identId": "0"})
+        listDeviceView.model.append({"text":name})
     }
 
-    function setCurrentActiveInterface(nameInterface, indexInterface, activeDeviceIndex) {
-//        StackView {
-//            id: devicePropertieslistModel1
-//            anchors.left: parent.left
-//            anchors.leftMargin: 0
-//            anchors.bottom: parent.bottom
-//            anchors.bottomMargin: 0
-//            anchors.right: parent.right
-//            anchors.top: parent.top
-//            anchors.topMargin: 1
-//            anchors.rightMargin: 1
-//            initialItem: devPropertySerialPort
+    //----------     private
+    function remakeDeviceList() {
+        listDeviceView.model.clear()
+        var devListSize = viewController.getDeviceCount()
+        console.log("devile list size: " + devListSize)
+        for(var index=0; index<devListSize; index++) {
+            var dev = viewController.getDeviceHeaderByIndex(index);
+            listDeviceView.model.append({"text": dev[0]})
+        }
+    }
+    //    function setCurrentActiveInterface(index) {
 
-//            DevPropertyLlsTMK324 {
-//                id: devPropertyLlsTMK24
-//            }
-//            DevPropertySerialPort {
-//                id: devPropertySerialPort
+    //    }
+    //    function setCurrentActiveDevice(index) {
+
+    //    }
+    function updatePropertySerialPortPanel() {
+        devPropertySerialPort.setNamePort(viewController.getCurrentInterfaceNameToSerial())
+        devicePropertieslistModel1.pop()
+        remakeDeviceList()
+    }
+    function updatePropertyDevicePanel() {
+        var data = viewController.getCurrentDevPropertyByIndex(listDeviceView.model.index)
+        devPropertyLlsTMK24.setCurrentValues(data)
+        devicePropertieslistModel1.push(devPropertyLlsTMK24)
     }
 
     Rectangle {
@@ -59,11 +67,13 @@ Item {
                 width: 20
             }
 
-            spacing: 0
             delegate: Item {
                 id: item
                 height: 50
                 width: interfaceList.width
+
+                property var view: ListView.view
+                property var isCurrent: ListView.isCurrentItem
 
                 MouseArea {
                     id: mouseArea
@@ -80,30 +90,28 @@ Item {
                         gradient: Gradient {
                             GradientStop {
                                 position: 0
-                                color: mouseArea.pressed ? "#666CE1" : colorCode
+                                color: isCurrent ? (mouseArea.pressed ? "#416FE1" : "#416FE1") : (mouseArea.pressed ? "#8FAAFA" : "#84A4F5")
                             }
                             GradientStop {
                                 position: 1
-                                color: mouseArea.pressed ? "#666CE1" : "#FAFAFA"
+                                color: isCurrent ? (mouseArea.pressed ? "#416FE1" : "#416FE1") : (mouseArea.pressed ? "#416FE1" : "#C0D0F7")
                             }
                         }
                         Label {
                             id: buttonText
-                            text: name
+                            text: "%1%2".arg(model.text).arg(isCurrent ? " *" : "")
                             font.bold: false
                             anchors.left: parent.left
                             anchors.leftMargin: 10
                             anchors.verticalCenter: parent.verticalCenter
                         }
-                        Text {
-                            visible: false
-                            text: identId
-                        }
                     }
-                    //                    onClicked: {
-                    //                        console.log("DeviceList clicked " + " " + identId)
-                    //                        deviceButtonClicked(identId)
-                    //                    }
+                    onClicked: {
+                        console.log("DeviceList clicked ")
+                        view.currentIndex = model.index
+                        viewController.setChangedIndexInteface(model.index)
+                        updatePropertySerialPortPanel()
+                    }
                 }
             }
             model: ListModel {
@@ -124,7 +132,6 @@ Item {
         anchors.topMargin: 50
         border.color: "#9899a7"
         anchors.top: parent.top
-
 
         StackView {
             id: portOrDeviceStack
@@ -147,6 +154,7 @@ Item {
                     anchors.top: parent.top
                     anchors.topMargin: 1
                     anchors.rightMargin: 1
+                    clip: true
                     initialItem: devPropertySerialPort
 
                     DevPropertyLlsTMK324 {
@@ -185,11 +193,12 @@ Item {
                 width: 20
             }
 
-            spacing: 0
             delegate: Item {
                 id: item_2
                 height: 50
                 width: deviceList.width
+                property var viewDevice: ListView.view
+                property var isCurrentDevice: ListView.isCurrentItem
 
                 MouseArea {
                     id: mouseArea_2
@@ -206,30 +215,28 @@ Item {
                         gradient: Gradient {
                             GradientStop {
                                 position: 0
-                                color: mouseArea_2.pressed ? "#6CB215" : colorCode
+                                color: isCurrentDevice ? (mouseArea_2.pressed ? "#416FE1" : "#416FE1") : (mouseArea_2.pressed ? "#8FAAFA" : "#84A4F5")
                             }
                             GradientStop {
                                 position: 1
-                                color: mouseArea_2.pressed ? "#6CB215" : "#FAFAFA"
+                                color: isCurrentDevice ? (mouseArea_2.pressed ? "#416FE1" : "#416FE1") : (mouseArea_2.pressed ? "#416FE1" : "#C0D0F7")
                             }
                         }
                         Label {
                             id: buttonText_2
-                            text: name
+                            text: model.text
                             font.bold: false
                             anchors.left: parent.left
                             anchors.leftMargin: 10
                             anchors.verticalCenter: parent.verticalCenter
                         }
-                        Text {
-                            visible: false
-                            text: identId
-                        }
                     }
-                    //                    onClicked: {
-                    //                        console.log("DeviceList clicked " + " " + identId)
-                    //                        deviceButtonClicked(identId)
-                    //                    }
+                    onClicked: {
+                        console.log("DeviceList clicked ")
+                        viewDevice.currentIndex = model.index
+                        viewController.setChangedIndexDevice(model.index)
+                        updatePropertyDevicePanel()
+                    }
                 }
             }
             model: ListModel {

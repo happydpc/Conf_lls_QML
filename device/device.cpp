@@ -10,9 +10,12 @@ Device::Device(DeviceAbstract::E_DeviceType type,
     this->type = type;
     this->deviceUniqIdentName = deviceUniqIdentName;
     this->deviceUniqIdentId = deviceUniqIdentId;
-    this->progressTmk24 = new Progress_tmk324();
-    this->deviceAvailableTypesList.push_back(progress_tmk_1);
-    this->deviceAvailableTypesList.push_back(progress_tmk_2);
+
+    if(type == DeviceAbstract::Type_Progress_Tmk24) {
+        this->progressTmk24 = new Progress_tmk24();
+    } else {
+        this->progressTmk13 = new Progress_tmk13();
+    }
 }
 
 Device::Device(const Device& val) {}
@@ -35,6 +38,10 @@ QStringList Device::getSettings() {
     QStringList ret;
     if(type == Type_Progress_Tmk24) {
         ret = progressTmk24->getSettings();
+    } else if(type == Type_Progress_Tmk13) {
+        ret = progressTmk13->getSettings();
+    } else {
+        qDebug() << "Device type undefined!";
     }
     return ret;
 }
@@ -43,24 +50,36 @@ bool Device::setSettings(QStringList setts) {
     bool res = false;
     if(type == Type_Progress_Tmk24) {
         res = progressTmk24->setSettings(setts);
+    } else if(type == Type_Progress_Tmk13) {
+        res = progressTmk13->setSettings(setts);
+    } else {
+        qDebug() << "Device type undefined!";
     }
     return res;
 }
 
 QStringList Device::getCurrentData() {
-    QStringList ret;
+    QStringList res;
     if(type == Type_Progress_Tmk24) {
-        ret = progressTmk24->getCurrentData();
+        res = progressTmk24->getCurrentData();
+    } else if(type == Type_Progress_Tmk13) {
+        res = progressTmk13->getCurrentData();
+    } else {
+        qDebug() << "Device type undefined!";
     }
-    return ret;
+    return res;
 }
 
 QList<CommandController::sCommandData> Device::getCommandListToIdlePoll() {
-    QList<CommandController::sCommandData> retCommands;
+    QList<CommandController::sCommandData> res;
     if(type == Type_Progress_Tmk24) {
-        retCommands = progressTmk24->getCommandListToIdlePoll(deviceUniqIdentName, deviceUniqIdentId);
+        res = progressTmk24->getCommandListToIdlePoll(deviceUniqIdentName, deviceUniqIdentId);
+    } else if(type == Type_Progress_Tmk13) {
+        res = progressTmk13->getCommandListToIdlePoll(deviceUniqIdentName, deviceUniqIdentId);
+    } else {
+        qDebug() << "Device type undefined!";
     }
-    return retCommands;
+    return res;
 }
 
 QStringList Device::getParameters() {
@@ -75,11 +94,14 @@ int Device::getUniqIdentId() {
     return deviceUniqIdentId;
 }
 
-//    void Lls::makeRequest(QByteArray *data, uint8_t id, S_command tcommand)
 bool Device::makeDataToCommand(CommandController::sCommandData &commandData) {
     bool res = false;
     if(type == Type_Progress_Tmk24) {
         res = progressTmk24->makeDataToComand(commandData);
+    } else if(type == Type_Progress_Tmk13) {
+        res = progressTmk13->makeDataToComand(commandData);
+    } else {
+        qDebug() << "Device type undefined!";
     }
     return res;
 }
@@ -88,14 +110,46 @@ bool Device::placeReplyDataOfCommand(QByteArray &commandArray) {
     bool res = false;
     if(type == Type_Progress_Tmk24) {
         res = progressTmk24->placeDataReplyToCommand(commandArray);
+    } else if(type == Type_Progress_Tmk13) {
+        res = progressTmk13->placeDataReplyToCommand(commandArray);
+    } else {
+        qDebug() << "Device type undefined!";
     }
     return res;
 }
 
 QStringList Device::getDeviceAvaibleTypes() {
-    return this->deviceAvailableTypesList;
+    QStringList res;
+    for(auto it=deviceAvailableTypesList.begin(); it!=deviceAvailableTypesList.end(); it++) {
+        res.push_back((*it).second);
+    }
+    return res;
 }
 
 QString Device::getCaptionToTypeDevice(DeviceAbstract::E_DeviceType type) {
+    QString res;
+    if(!deviceAvailableTypesList.empty()) {
+        auto it = deviceAvailableTypesList.begin();
+        while(it!=deviceAvailableTypesList.end()) {
+            if(type == (*it).first) {
+                return (*it).second;
+            }
+            it++;
+        }
+    }
+    return res;
+}
 
+DeviceAbstract::E_DeviceType Device::getDeviceTypeFromTypeCaption(QString typeDevText) {
+    DeviceAbstract::E_DeviceType retType = Type_Progress_default;
+    if(!deviceAvailableTypesList.empty()) {
+        auto it = deviceAvailableTypesList.begin();
+        while(it!=deviceAvailableTypesList.end()) {
+            if(typeDevText == (*it).second) {
+                return (*it).first;
+            }
+            it++;
+        }
+    }
+    return retType;
 }

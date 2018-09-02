@@ -18,7 +18,6 @@ Popup {
 
     GridLayout {
         id: gridLayout
-        anchors.bottomMargin: 54
         anchors.fill: parent
         columnSpacing: 5
         anchors.right: tabBar.left
@@ -61,8 +60,7 @@ Popup {
             font.underline: false
             anchors.right: parent.right
             anchors.rightMargin: 0
-            anchors.left: lTypeDeviceId.left
-            anchors.leftMargin: 150
+            anchors.left: typeDeviceText.left
         }
 
         Button {
@@ -80,7 +78,7 @@ Popup {
             Layout.fillWidth: true
             onClicked: {
                 if (typeDeviceText.currentText.length != 0) {
-                    deviceSelectedSignal(typeDeviceText.currentText)
+                    viewController.addDeviceToConnection(typeDeviceText.currentText, typeDeviceIdText.value.toString())
                     close()
                 }
             }
@@ -96,8 +94,3 @@ Popup {
         typeDeviceText.currentIndex = 0
     }
 }
-
-/*##^## Designer {
-    D{i:10;anchors_height:150;anchors_width:400}
-}
- ##^##*/

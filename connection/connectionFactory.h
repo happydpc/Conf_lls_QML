@@ -17,10 +17,9 @@ public slots:
     bool addConnection(interfacesAbstract::eInterfaceTypes type, QString name, QStringList param);
     QStringList getAvailableName(interfacesAbstract::eInterfaceTypes type);
     void removeConnection(interfacesAbstract::eInterfaceTypes type, QString name);
-    int getCountConnection();
+//    int getCountConnection();
 
-    QString getNameConnection();
-    QString getTypeConnection();
+    QString getInteraceNameFromIndex(int index);
 
     Interface* getInterace(interfacesAbstract::eInterfaceTypes type, QString name);
 
@@ -31,7 +30,7 @@ signals:
 
 private:
 
-    QMultiMap<QString, Interface*>interface;
+    QVector<Interface*>interface;
 
 };
 

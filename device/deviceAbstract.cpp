@@ -7,6 +7,9 @@ DeviceAbstract::DeviceAbstract(QObject *parent) : QObject(parent)
     this->deviceUniqIdentName.clear();
     this->deviceUniqIdentId = 0;
     this->parameters.clear();
+
+    this->deviceAvailableTypesList.push_back(QPair<E_DeviceType, QString>(Type_Progress_Tmk24, type_Progress_Tmk24_caption));
+    this->deviceAvailableTypesList.push_back(QPair<E_DeviceType, QString>(Type_Progress_Tmk13, type_Progress_Tmk13_caption));
 }
 
 void DeviceAbstract::setState(E_State state) {

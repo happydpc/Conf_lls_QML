@@ -8,6 +8,13 @@ Item {
 
     ViewController {
         id: viewController
+        onAddDeviceSignal: {
+            projectPanels.addDevice(name)
+        }
+        onAddInterfaceSignal: {
+            projectPanels.openDeviceProject()
+            projectPanels.addInterface(name)
+        }
     }
 
     ProjectPanels {
@@ -40,7 +47,6 @@ Item {
             if(res) {
                 close()
                 projectPanels.openDeviceProject()
-                projectPanels.addInterface(name)
             }
         }
         onAbortConnectButton: {

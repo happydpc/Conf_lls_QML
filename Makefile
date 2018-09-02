@@ -63,10 +63,12 @@ SOURCES       = main.cpp \
 		view/viewController.cpp \
 		interfaces/interface.cpp \
 		command/commandController.cpp \
-		device/subDevices/Progress_tmk324.cpp \
 		device/subDevices/Progress_Base.cpp \
 		device/subDevices/Progress_BaseData.cpp \
-		device/subDevices/Progress_tmk324Data.cpp \
+		device/subDevices/Progress_tmk13.cpp \
+		device/subDevices/Progress_tmk13Data.cpp \
+		device/subDevices/Progress_tmk24.cpp \
+		device/subDevices/Progress_tmk24Data.cpp \
 		other/crc.cpp \
 		tests/testDevReply.cpp qrc_qml.cpp \
 		moc_connectionFactory.cpp \
@@ -82,7 +84,8 @@ SOURCES       = main.cpp \
 		moc_commandController.cpp \
 		moc_Progress_Base.cpp \
 		moc_Progress_BaseData.cpp \
-		moc_Progress_tmk324Data.cpp \
+		moc_Progress_tmk13Data.cpp \
+		moc_Progress_tmk24Data.cpp \
 		moc_testDevReply.cpp
 OBJECTS       = main.o \
 		connectionFactory.o \
@@ -97,10 +100,12 @@ OBJECTS       = main.o \
 		viewController.o \
 		interface.o \
 		commandController.o \
-		Progress_tmk324.o \
 		Progress_Base.o \
 		Progress_BaseData.o \
-		Progress_tmk324Data.o \
+		Progress_tmk13.o \
+		Progress_tmk13Data.o \
+		Progress_tmk24.o \
+		Progress_tmk24Data.o \
 		crc.o \
 		testDevReply.o \
 		qrc_qml.o \
@@ -117,7 +122,8 @@ OBJECTS       = main.o \
 		moc_commandController.o \
 		moc_Progress_Base.o \
 		moc_Progress_BaseData.o \
-		moc_Progress_tmk324Data.o \
+		moc_Progress_tmk13Data.o \
+		moc_Progress_tmk24Data.o \
 		moc_testDevReply.o
 DIST          = /opt/qt/5.11.0/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/qt/5.11.0/gcc_64/mkspecs/common/unix.conf \
@@ -308,10 +314,12 @@ DIST          = /opt/qt/5.11.0/gcc_64/mkspecs/features/spec_pre.prf \
 		view/viewController.h \
 		interfaces/interface.h \
 		command/commandController.h \
-		device/subDevices/Progress_tmk324.h \
 		device/subDevices/Progress_Base.h \
 		device/subDevices/Progress_BaseData.h \
-		device/subDevices/Progress_tmk324Data.h \
+		device/subDevices/Progress_tmk13.h \
+		device/subDevices/Progress_tmk13Data.h \
+		device/subDevices/Progress_tmk24.h \
+		device/subDevices/Progress_tmk24Data.h \
 		other/crc.h \
 		tests/testDevReply.h main.cpp \
 		connection/connectionFactory.cpp \
@@ -326,10 +334,12 @@ DIST          = /opt/qt/5.11.0/gcc_64/mkspecs/features/spec_pre.prf \
 		view/viewController.cpp \
 		interfaces/interface.cpp \
 		command/commandController.cpp \
-		device/subDevices/Progress_tmk324.cpp \
 		device/subDevices/Progress_Base.cpp \
 		device/subDevices/Progress_BaseData.cpp \
-		device/subDevices/Progress_tmk324Data.cpp \
+		device/subDevices/Progress_tmk13.cpp \
+		device/subDevices/Progress_tmk13Data.cpp \
+		device/subDevices/Progress_tmk24.cpp \
+		device/subDevices/Progress_tmk24Data.cpp \
 		other/crc.cpp \
 		tests/testDevReply.cpp
 QMAKE_TARGET  = Lls_QML_conf
@@ -730,8 +740,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents qml.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /opt/qt/5.11.0/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents connection/connectionFactory.h device/device.h device/deviceAbstract.h device/devicesFactory.h interfaces/interfaceBLE.h interfaces/interfaceEthernet.h interfaces/interfacesAbstract.h interfaces/interfaceSerial.h settings/settings.h view/viewController.h interfaces/interface.h command/commandController.h device/subDevices/Progress_tmk324.h device/subDevices/Progress_Base.h device/subDevices/Progress_BaseData.h device/subDevices/Progress_tmk324Data.h other/crc.h tests/testDevReply.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp connection/connectionFactory.cpp device/device.cpp device/deviceAbstract.cpp device/devicesFactory.cpp interfaces/interfaceBLE.cpp interfaces/interfaceEthernet.cpp interfaces/interfacesAbstract.cpp interfaces/interfaceSerial.cpp settings/settings.cpp view/viewController.cpp interfaces/interface.cpp command/commandController.cpp device/subDevices/Progress_tmk324.cpp device/subDevices/Progress_Base.cpp device/subDevices/Progress_BaseData.cpp device/subDevices/Progress_tmk324Data.cpp other/crc.cpp tests/testDevReply.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents connection/connectionFactory.h device/device.h device/deviceAbstract.h device/devicesFactory.h interfaces/interfaceBLE.h interfaces/interfaceEthernet.h interfaces/interfacesAbstract.h interfaces/interfaceSerial.h settings/settings.h view/viewController.h interfaces/interface.h command/commandController.h device/subDevices/Progress_Base.h device/subDevices/Progress_BaseData.h device/subDevices/Progress_tmk13.h device/subDevices/Progress_tmk13Data.h device/subDevices/Progress_tmk24.h device/subDevices/Progress_tmk24Data.h other/crc.h tests/testDevReply.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp connection/connectionFactory.cpp device/device.cpp device/deviceAbstract.cpp device/devicesFactory.cpp interfaces/interfaceBLE.cpp interfaces/interfaceEthernet.cpp interfaces/interfacesAbstract.cpp interfaces/interfaceSerial.cpp settings/settings.cpp view/viewController.cpp interfaces/interface.cpp command/commandController.cpp device/subDevices/Progress_Base.cpp device/subDevices/Progress_BaseData.cpp device/subDevices/Progress_tmk13.cpp device/subDevices/Progress_tmk13Data.cpp device/subDevices/Progress_tmk24.cpp device/subDevices/Progress_tmk24Data.cpp other/crc.cpp tests/testDevReply.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -784,9 +794,9 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /opt/qt/5.11.0/gcc_64/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -std=gnu++11 -Wall -W -dM -E -o moc_predefs.h /opt/qt/5.11.0/gcc_64/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_connectionFactory.cpp moc_deviceAbstract.cpp moc_devicesFactory.cpp moc_interfaceBLE.cpp moc_interfaceEthernet.cpp moc_interfacesAbstract.cpp moc_interfaceSerial.cpp moc_settings.cpp moc_viewController.cpp moc_interface.cpp moc_commandController.cpp moc_Progress_Base.cpp moc_Progress_BaseData.cpp moc_Progress_tmk324Data.cpp moc_testDevReply.cpp
+compiler_moc_header_make_all: moc_connectionFactory.cpp moc_deviceAbstract.cpp moc_devicesFactory.cpp moc_interfaceBLE.cpp moc_interfaceEthernet.cpp moc_interfacesAbstract.cpp moc_interfaceSerial.cpp moc_settings.cpp moc_viewController.cpp moc_interface.cpp moc_commandController.cpp moc_Progress_Base.cpp moc_Progress_BaseData.cpp moc_Progress_tmk13Data.cpp moc_Progress_tmk24Data.cpp moc_testDevReply.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_connectionFactory.cpp moc_deviceAbstract.cpp moc_devicesFactory.cpp moc_interfaceBLE.cpp moc_interfaceEthernet.cpp moc_interfacesAbstract.cpp moc_interfaceSerial.cpp moc_settings.cpp moc_viewController.cpp moc_interface.cpp moc_commandController.cpp moc_Progress_Base.cpp moc_Progress_BaseData.cpp moc_Progress_tmk324Data.cpp moc_testDevReply.cpp
+	-$(DEL_FILE) moc_connectionFactory.cpp moc_deviceAbstract.cpp moc_devicesFactory.cpp moc_interfaceBLE.cpp moc_interfaceEthernet.cpp moc_interfacesAbstract.cpp moc_interfaceSerial.cpp moc_settings.cpp moc_viewController.cpp moc_interface.cpp moc_commandController.cpp moc_Progress_Base.cpp moc_Progress_BaseData.cpp moc_Progress_tmk13Data.cpp moc_Progress_tmk24Data.cpp moc_testDevReply.cpp
 moc_connectionFactory.cpp: /opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qobjectdefs.h \
@@ -872,9 +882,6 @@ moc_connectionFactory.cpp: /opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QQueue \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QPair \
-		device/subDevices/Progress_tmk324.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
-		device/subDevices/Progress_tmk324Data.h \
 		device/subDevices/Progress_Base.h \
 		tests/testDevReply.h \
 		connection/connectionFactory.h \
@@ -1013,9 +1020,6 @@ moc_devicesFactory.cpp: /opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QQueue \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QPair \
-		device/subDevices/Progress_tmk324.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
-		device/subDevices/Progress_tmk324Data.h \
 		device/subDevices/Progress_Base.h \
 		device/devicesFactory.h \
 		moc_predefs.h \
@@ -1403,9 +1407,6 @@ moc_viewController.cpp: /opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QQueue \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QPair \
-		device/subDevices/Progress_tmk324.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
-		device/subDevices/Progress_tmk324Data.h \
 		device/subDevices/Progress_Base.h \
 		tests/testDevReply.h \
 		view/viewController.h \
@@ -1497,9 +1498,6 @@ moc_interface.cpp: /opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QQueue \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QPair \
-		device/subDevices/Progress_tmk324.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
-		device/subDevices/Progress_tmk324Data.h \
 		device/subDevices/Progress_Base.h \
 		tests/testDevReply.h \
 		interfaces/interface.h \
@@ -1672,7 +1670,7 @@ moc_Progress_BaseData.cpp: /opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
 		/opt/qt/5.11.0/gcc_64/bin/moc
 	/opt/qt/5.11.0/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/qt/5.11.0/gcc_64/mkspecs/linux-g++ -I/media/khomin/D/PROJECTs/Qt/Lls_Conf_QML -I/opt/qt/5.11.0/gcc_64/include -I/opt/qt/5.11.0/gcc_64/include/QtQuick -I/opt/qt/5.11.0/gcc_64/include/QtGui -I/opt/qt/5.11.0/gcc_64/include/QtQml -I/opt/qt/5.11.0/gcc_64/include/QtNetwork -I/opt/qt/5.11.0/gcc_64/include/QtSerialPort -I/opt/qt/5.11.0/gcc_64/include/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include device/subDevices/Progress_BaseData.h -o moc_Progress_BaseData.cpp
 
-moc_Progress_tmk324Data.cpp: /opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
+moc_Progress_tmk13Data.cpp: /opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qobjectdefs.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qnamespace.h \
@@ -1721,10 +1719,64 @@ moc_Progress_tmk324Data.cpp: /opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qvarlengtharray.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontainerfwd.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject_impl.h \
-		device/subDevices/Progress_tmk324Data.h \
+		device/subDevices/Progress_tmk13Data.h \
 		moc_predefs.h \
 		/opt/qt/5.11.0/gcc_64/bin/moc
-	/opt/qt/5.11.0/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/qt/5.11.0/gcc_64/mkspecs/linux-g++ -I/media/khomin/D/PROJECTs/Qt/Lls_Conf_QML -I/opt/qt/5.11.0/gcc_64/include -I/opt/qt/5.11.0/gcc_64/include/QtQuick -I/opt/qt/5.11.0/gcc_64/include/QtGui -I/opt/qt/5.11.0/gcc_64/include/QtQml -I/opt/qt/5.11.0/gcc_64/include/QtNetwork -I/opt/qt/5.11.0/gcc_64/include/QtSerialPort -I/opt/qt/5.11.0/gcc_64/include/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include device/subDevices/Progress_tmk324Data.h -o moc_Progress_tmk324Data.cpp
+	/opt/qt/5.11.0/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/qt/5.11.0/gcc_64/mkspecs/linux-g++ -I/media/khomin/D/PROJECTs/Qt/Lls_Conf_QML -I/opt/qt/5.11.0/gcc_64/include -I/opt/qt/5.11.0/gcc_64/include/QtQuick -I/opt/qt/5.11.0/gcc_64/include/QtGui -I/opt/qt/5.11.0/gcc_64/include/QtQml -I/opt/qt/5.11.0/gcc_64/include/QtNetwork -I/opt/qt/5.11.0/gcc_64/include/QtSerialPort -I/opt/qt/5.11.0/gcc_64/include/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include device/subDevices/Progress_tmk13Data.h -o moc_Progress_tmk13Data.cpp
+
+moc_Progress_tmk24Data.cpp: /opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qnamespace.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qglobal.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qconfig.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qtcore-config.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qsystemdetection.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qprocessordetection.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qcompilerdetection.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qtypeinfo.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qsysinfo.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qlogging.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qflags.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qatomic.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qbasicatomic.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qgenericatomic.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qglobalstatic.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qmutex.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qnumeric.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qversiontagging.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstring.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qchar.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qbytearray.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qrefcount.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qarraydata.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringliteral.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringalgorithms.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringview.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringbuilder.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qlist.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qalgorithms.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qiterator.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qhashfunctions.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qpair.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qbytearraylist.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringlist.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qregexp.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qcoreevent.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qscopedpointer.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qmetatype.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qvarlengtharray.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontainerfwd.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject_impl.h \
+		device/subDevices/Progress_tmk24Data.h \
+		moc_predefs.h \
+		/opt/qt/5.11.0/gcc_64/bin/moc
+	/opt/qt/5.11.0/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/qt/5.11.0/gcc_64/mkspecs/linux-g++ -I/media/khomin/D/PROJECTs/Qt/Lls_Conf_QML -I/opt/qt/5.11.0/gcc_64/include -I/opt/qt/5.11.0/gcc_64/include/QtQuick -I/opt/qt/5.11.0/gcc_64/include/QtGui -I/opt/qt/5.11.0/gcc_64/include/QtQml -I/opt/qt/5.11.0/gcc_64/include/QtNetwork -I/opt/qt/5.11.0/gcc_64/include/QtSerialPort -I/opt/qt/5.11.0/gcc_64/include/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include device/subDevices/Progress_tmk24Data.h -o moc_Progress_tmk24Data.cpp
 
 moc_testDevReply.cpp: /opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject.h \
@@ -1910,9 +1962,6 @@ main.o: main.cpp /opt/qt/5.11.0/gcc_64/include/QtGui/QGuiApplication \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QQueue \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QPair \
-		device/subDevices/Progress_tmk324.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
-		device/subDevices/Progress_tmk324Data.h \
 		device/subDevices/Progress_Base.h \
 		tests/testDevReply.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
@@ -2003,9 +2052,6 @@ connectionFactory.o: connection/connectionFactory.cpp connection/connectionFacto
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QQueue \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QPair \
-		device/subDevices/Progress_tmk324.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
-		device/subDevices/Progress_tmk324Data.h \
 		device/subDevices/Progress_Base.h \
 		tests/testDevReply.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QDebug
@@ -2066,11 +2112,6 @@ device.o: device/device.cpp device/device.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QQueue \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QPair \
-		device/subDevices/Progress_tmk324.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qvector.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qpoint.h \
-		device/subDevices/Progress_tmk324Data.h \
 		device/subDevices/Progress_Base.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QDebug \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qdebug.h \
@@ -2081,6 +2122,8 @@ device.o: device/device.cpp device/device.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qlocale.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qvariant.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qshareddata.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qvector.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qpoint.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qset.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontiguouscache.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer.h \
@@ -2219,9 +2262,6 @@ devicesFactory.o: device/devicesFactory.cpp device/devicesFactory.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QQueue \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QPair \
-		device/subDevices/Progress_tmk324.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
-		device/subDevices/Progress_tmk324Data.h \
 		device/subDevices/Progress_Base.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QDebug
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o devicesFactory.o device/devicesFactory.cpp
@@ -2635,9 +2675,6 @@ viewController.o: view/viewController.cpp view/viewController.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QQueue \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QPair \
-		device/subDevices/Progress_tmk324.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
-		device/subDevices/Progress_tmk324Data.h \
 		device/subDevices/Progress_Base.h \
 		tests/testDevReply.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QDebug
@@ -2728,9 +2765,6 @@ interface.o: interfaces/interface.cpp interfaces/interface.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QQueue \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QPair \
-		device/subDevices/Progress_tmk324.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
-		device/subDevices/Progress_tmk324Data.h \
 		device/subDevices/Progress_Base.h \
 		tests/testDevReply.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o interface.o interfaces/interface.cpp
@@ -2789,81 +2823,6 @@ commandController.o: command/commandController.cpp command/commandController.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QPair
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o commandController.o command/commandController.cpp
-
-Progress_tmk324.o: device/subDevices/Progress_tmk324.cpp /opt/qt/5.11.0/gcc_64/include/QtCore/QDebug \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qdebug.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qalgorithms.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qglobal.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qconfig-bootstrapped.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qconfig.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qtcore-config.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qsystemdetection.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qprocessordetection.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qcompilerdetection.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qtypeinfo.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qsysinfo.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qlogging.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qflags.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qatomic.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qbasicatomic.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qatomic_bootstrap.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qgenericatomic.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qatomic_cxx11.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qglobalstatic.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qmutex.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qnumeric.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qversiontagging.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qhash.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qchar.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qiterator.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qlist.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qrefcount.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qarraydata.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qhashfunctions.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qstring.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qbytearray.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qnamespace.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringliteral.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringalgorithms.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringview.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringbuilder.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qpair.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qbytearraylist.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringlist.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qregexp.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringmatcher.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qmap.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qtextstream.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qiodevice.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qobjectdefs.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qobjectdefs_impl.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qcoreevent.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qscopedpointer.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qmetatype.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qvarlengtharray.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontainerfwd.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject_impl.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qlocale.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qvariant.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qshareddata.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qvector.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qpoint.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qset.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontiguouscache.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
-		device/subDevices/Progress_tmk324.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
-		device/subDevices/Progress_tmk324Data.h \
-		command/commandController.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QQueue \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QPair \
-		other/crc.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QByteArray
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Progress_tmk324.o device/subDevices/Progress_tmk324.cpp
 
 Progress_Base.o: device/subDevices/Progress_Base.cpp device/subDevices/Progress_Base.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
@@ -2969,11 +2928,9 @@ Progress_BaseData.o: device/subDevices/Progress_BaseData.cpp device/subDevices/P
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject_impl.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Progress_BaseData.o device/subDevices/Progress_BaseData.cpp
 
-Progress_tmk324Data.o: device/subDevices/Progress_tmk324Data.cpp device/subDevices/Progress_tmk324Data.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qobjectdefs.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qnamespace.h \
+Progress_tmk13.o: device/subDevices/Progress_tmk13.cpp /opt/qt/5.11.0/gcc_64/include/QtCore/QDebug \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qdebug.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qalgorithms.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qglobal.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qconfig-bootstrapped.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qconfig.h \
@@ -2994,32 +2951,122 @@ Progress_tmk324Data.o: device/subDevices/Progress_tmk324Data.cpp device/subDevic
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qmutex.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qnumeric.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qversiontagging.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qobjectdefs_impl.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qstring.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qhash.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qchar.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qbytearray.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qiterator.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qlist.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qrefcount.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qarraydata.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qhashfunctions.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstring.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qbytearray.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qnamespace.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringliteral.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringalgorithms.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringview.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringbuilder.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qlist.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qalgorithms.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qiterator.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qhashfunctions.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qpair.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qbytearraylist.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringlist.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qregexp.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qmap.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qtextstream.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qiodevice.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobjectdefs_impl.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qcoreevent.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qscopedpointer.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qmetatype.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qvarlengtharray.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontainerfwd.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject_impl.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Progress_tmk324Data.o device/subDevices/Progress_tmk324Data.cpp
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject_impl.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qlocale.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qvariant.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qshareddata.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qvector.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qpoint.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qset.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontiguouscache.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		other/crc.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QByteArray
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Progress_tmk13.o device/subDevices/Progress_tmk13.cpp
+
+Progress_tmk13Data.o: device/subDevices/Progress_tmk13Data.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Progress_tmk13Data.o device/subDevices/Progress_tmk13Data.cpp
+
+Progress_tmk24.o: device/subDevices/Progress_tmk24.cpp /opt/qt/5.11.0/gcc_64/include/QtCore/QDebug \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qdebug.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qalgorithms.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qglobal.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qconfig.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qtcore-config.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qsystemdetection.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qprocessordetection.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qcompilerdetection.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qtypeinfo.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qsysinfo.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qlogging.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qflags.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qatomic.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qbasicatomic.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qgenericatomic.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qglobalstatic.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qmutex.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qnumeric.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qversiontagging.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qhash.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qchar.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qiterator.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qlist.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qrefcount.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qarraydata.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qhashfunctions.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstring.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qbytearray.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qnamespace.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringliteral.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringalgorithms.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringview.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringbuilder.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qpair.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qbytearraylist.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringlist.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qregexp.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qmap.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qtextstream.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qiodevice.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qcoreevent.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qscopedpointer.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qmetatype.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qvarlengtharray.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontainerfwd.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject_impl.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qlocale.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qvariant.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qshareddata.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qvector.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qpoint.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qset.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontiguouscache.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		other/crc.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QByteArray
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Progress_tmk24.o device/subDevices/Progress_tmk24.cpp
+
+Progress_tmk24Data.o: device/subDevices/Progress_tmk24Data.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Progress_tmk24Data.o device/subDevices/Progress_tmk24Data.cpp
 
 crc.o: other/crc.cpp other/crc.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QByteArray \
@@ -3098,16 +3145,7 @@ testDevReply.o: tests/testDevReply.cpp tests/testDevReply.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qmetatype.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qvarlengtharray.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontainerfwd.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject_impl.h \
-		device/subDevices/Progress_tmk324.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qvector.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qpoint.h \
-		device/subDevices/Progress_tmk324Data.h \
-		command/commandController.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QQueue \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QPair
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject_impl.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o testDevReply.o tests/testDevReply.cpp
 
 qrc_qml.o: qrc_qml.cpp 
@@ -3152,8 +3190,11 @@ moc_Progress_Base.o: moc_Progress_Base.cpp
 moc_Progress_BaseData.o: moc_Progress_BaseData.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Progress_BaseData.o moc_Progress_BaseData.cpp
 
-moc_Progress_tmk324Data.o: moc_Progress_tmk324Data.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Progress_tmk324Data.o moc_Progress_tmk324Data.cpp
+moc_Progress_tmk13Data.o: moc_Progress_tmk13Data.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Progress_tmk13Data.o moc_Progress_tmk13Data.cpp
+
+moc_Progress_tmk24Data.o: moc_Progress_tmk24Data.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Progress_tmk24Data.o moc_Progress_tmk24Data.cpp
 
 moc_testDevReply.o: moc_testDevReply.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_testDevReply.o moc_testDevReply.cpp

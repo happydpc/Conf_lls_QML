@@ -5,11 +5,17 @@ import QtQuick.Layouts 1.1
 Rectangle {
     id: devPropertyLlsTMK24
     color: "#e7e9eb"
-
     //    width: 800
     //    height: 500
-
     anchors.fill: parent
+
+    function setCurrentValues(listProperty) {
+        typeDeviceText.text = listProperty[0]
+        snText.text = listProperty[1]
+        versionFirmwareText.text = listProperty[2]
+        netIdText.text = listProperty[3]
+    }
+
     TabBar {
         id: tabBar
         anchors.right: parent.right

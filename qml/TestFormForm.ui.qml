@@ -5,8 +5,6 @@ import QtQuick.Layouts 1.1
 Popup {
     id: addDeviceDialog
 
-    signal deviceSelectedSignal(var devName)
-
     dim: false
     clip: false
 
@@ -20,7 +18,6 @@ Popup {
 
     GridLayout {
         id: gridLayout
-        anchors.bottomMargin: 54
         anchors.fill: parent
         columnSpacing: 5
         anchors.right: tabBar.left
@@ -63,14 +60,16 @@ Popup {
             font.underline: false
             anchors.right: parent.right
             anchors.rightMargin: 0
-            anchors.left: lTypeDeviceId.left
-            anchors.leftMargin: 150
+            anchors.left: typeDeviceText.left
         }
 
         Button {
             id: buttonClose
             text: qsTr("Close")
             Layout.fillWidth: true
+            //            onClicked: {
+            //                close()
+            //            }
         }
 
         Button {
@@ -79,7 +78,8 @@ Popup {
             Layout.fillWidth: true
             //            onClicked: {
             //                if (typeDeviceText.currentText.length != 0) {
-            //                    deviceSelectedSignal(typeDeviceText.currentText)
+            //                    viewController.addDeviceToConnection(typeDeviceText.currentText, typeDeviceIdText)
+            //                    close()
             //                }
             //            }
         }
@@ -94,8 +94,3 @@ Popup {
     //        typeDeviceText.currentIndex = 0
     //    }
 }
-
-/*##^## Designer {
-    D{i:10;anchors_height:150;anchors_width:400}
-}
- ##^##*/

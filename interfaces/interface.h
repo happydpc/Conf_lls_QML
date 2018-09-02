@@ -41,7 +41,7 @@ public slots:
 signals:
     void errorConnection(interfacesAbstract::eInterfaceTypes type, QString conName);
 private slots:
-    bool writeData(QByteArray data);
+    bool writeData(DeviceAbstract::E_DeviceType type, QByteArray data);
     void readData();
 
    void errorInterface(QString errorMessage);

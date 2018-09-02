@@ -16,20 +16,24 @@ public:
 
     Q_INVOKABLE QStringList getAvailableDeviceNameToSerialPort();
 
-    Q_INVOKABLE bool addDeviceToConnection(QString nameInterface, QString devTypeName, QString idNum);
+    Q_INVOKABLE bool addDeviceToConnection(QString devTypeName, QString idNum);
 
-//    Q_INVOKABLE void addConnectionEvent();
-//    Q_INVOKABLE void closeConnectionEvent();
-//    Q_INVOKABLE void closeAppEvent();
+    Q_INVOKABLE void setChangedIndexDevice(int index);
+    Q_INVOKABLE void setChangedIndexInteface(int index);
 
-    // говорим что нужен новый коннект
-//    Q_INVOKABLE void addConnectionRequest();
-//    Q_INVOKABLE void addConnection(QString nameInterface, QString subName, QString param);
-//    Q_INVOKABLE QStringList getAvailableListInterfaceOfType(int indexType); // первый - это имя интерфейса (SerialPort,Ble,Ethernet)
+    Q_INVOKABLE QString getCurrentInterfaceNameToSerial();
+
+    Q_INVOKABLE int getDeviceCount();
+    Q_INVOKABLE QStringList getDeviceHeaderByIndex(int index);
+
+    Q_INVOKABLE QStringList getCurrentDevPropertyByIndex();
 
 signals:
-    // otsilaet cakie connecti dostypni
-//    void addConnReplyList(QStringList);
+    void addDeviceSignal(QString name, bool is_checked);
+    void addInterfaceSignal(QString name, bool is_checked);
+    void changedDevicePropertyStackViewIndex(QString nameProperty);
+
+//    void updateDeviceListSignal(QStringList);
 
     // отсылает сколько каких коннектов можно создать
 //    void readyCreateNewConnections(int connecionsCountTypes);
@@ -59,15 +63,8 @@ public slots:
 private:
     ConnectionFactory *connFactory;
 
-    QString currentNameInterface;
     int currentIndexInterface = 0;
-
-//    int currentInterfaceType;
-//    QString currentIntefaceName;
-
-//    int currentDeviceIndex;
-//    QString currentDeviceName;
-
+    int currentDeviceIndex = 0;
 };
 
 #endif // VIEWCONTROLLER_H

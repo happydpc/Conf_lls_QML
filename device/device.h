@@ -3,7 +3,8 @@
 
 #include <QObject>
 #include "deviceAbstract.h"
-#include "subDevices/Progress_tmk324.h"
+#include "subDevices/Progress_tmk24.h"
+#include "subDevices/Progress_tmk13.h"
 #include "subDevices/Progress_Base.h"
 
 class Device : public DeviceAbstract
@@ -31,18 +32,16 @@ public:
     bool placeReplyDataOfCommand(QByteArray &array) override;
 
     QString getCaptionToTypeDevice(DeviceAbstract::E_DeviceType type);
+    DeviceAbstract::E_DeviceType getDeviceTypeFromTypeCaption(QString type);
 
     QStringList getDeviceAvaibleTypes();
 
     DeviceAbstract::E_DeviceType type;
 private:
 
-    QString progress_tmk_1 = "Progress TMK24";
-    QString progress_tmk_2 = "Progress TMK3.24";
-    QStringList deviceAvailableTypesList;
-
     ProgressBase *progressBase;
-    Progress_tmk324 *progressTmk24;
+    Progress_tmk24 *progressTmk24;
+    Progress_tmk13 *progressTmk13;
 };
 
 #endif // DEVICE_H

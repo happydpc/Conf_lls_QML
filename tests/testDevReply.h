@@ -2,6 +2,7 @@
 #define TESTDEVREPLY_H
 
 #include <QObject>
+#include "device/deviceAbstract.h"
 
 class TestDevReply : public QObject
 {
@@ -9,7 +10,7 @@ class TestDevReply : public QObject
 public:
     explicit TestDevReply(QObject *parent = nullptr);
 
-    bool writeDevRequestData(QByteArray &data);
+    bool writeDevRequestData(DeviceAbstract::E_DeviceType type, QByteArray &data);
     bool readDevReplyData(QByteArray &data);
 
 private:
