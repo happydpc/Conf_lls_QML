@@ -89,62 +89,16 @@ QStringList Progress_tmk24::getPropertyData() {
     res << lls_data.firmwareVersion.value;
     res << QString::number(settings.netAddress);
     return res;
-    //    (listProperty) {
-    ////            typeDeviceText.text = listProperty[0]
-    //            snText.text = listProperty[1]
-    //            versionFirmwareText.text = listProperty[2]
-    //            netIdText.text = listProperty[3]
-
-    //           uint16_t getFuel();
-    //           uint16_t getFrequency();
-    //           int8_t getTemperature();
-
-    //           uint16_t fuel;
-    //           uint16_t freq;
-    //           int8_t temp;
-
-    //           #define SERIALNUMBER_STRING_SIZE    12
-    //           #define PERSONAL_DATA_SIZE          176
-    //           #define VERSION_STRING_SIZE         8
-    //           #define CPU_ID_SIZE                 12
-    //           #define DUT_TYPE                    13
-    //           Progress_tmk24Data::T_calibrationTable calibrationTable;
-    //           Progress_tmk24Data::T_settings newSettings;
-    //           T_settings settings;
-    //           uint8_t serialNumber[64];
-    //           uint8_t personalData[64];
-    //           uint32_t passwordHash;
-    //           uint8_t newSerialNumber[SERIALNUMBER_STRING_SIZE];
-    //           uint8_t personalDataBuff[PERSONAL_DATA_SIZE];
-    //           QString version;
-    //           QString cpuId;
-    //           uint32_t cnt;
 }
 
 QList<CommandController::sCommandData> Progress_tmk24::
-getCommandListToIdlePoll(QString deviceIdent, int deviceIdentId) {
+getCommandListToIdlePoll(QString deviceIdent) {
     QList<CommandController::sCommandData> retcommand;
     CommandController::sCommandData tcommand;
     tcommand.commandOptionData.clear();
     tcommand.deviceIdent = deviceIdent;
-    tcommand.deviceIdentId = deviceIdentId;
-    //
-    tcommand.devCommand = (int)Progress_tmk24Data::lls_read_lvl_once;;
-    retcommand.push_back(tcommand);
-    tcommand.devCommand = (int)Progress_tmk24Data::lls_read_cnt;
-    retcommand.push_back(tcommand);
     tcommand.devCommand = (int)Progress_tmk24Data::lls_read_lvl_all;
     retcommand.push_back(tcommand);
-    //    tcommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;
-    //    retcommand.push_back(tcommand);
-    //    tcommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
-    //    retcommand.push_back(tcommand);
-    //    tcommand.devCommand = (int)Progress_tmk24Data::lls_read_errors;
-    //    retcommand.push_back(tcommand);
-    //    tcommand.devCommand = (int)Progress_tmk24Data::lls_read_serial_number;
-    //    retcommand.push_back(tcommand);
-    //    tcommand.devCommand = (int)Progress_tmk24Data::lls_read_personal;
-    //    retcommand.push_back(tcommand);
     return retcommand;
 }
 
@@ -153,7 +107,9 @@ bool Progress_tmk24::makeDataToComand(CommandController::sCommandData &commandDa
     if(!commandData.deviceIdent.isEmpty()) {
         try {
             commandData.commandOptionData.push_back(0x31);
-            commandData.commandOptionData.push_back(commandData.deviceIdentId);
+            // id addr
+            commandData.commandOptionData.push_back(commandData.deviceIdent.toInt());
+            // command byte
             commandData.commandOptionData.push_back(commandData.devCommand);
             switch(commandData.devCommand) {
             case Progress_tmk24Data::lls_read_lvl_once: break;

@@ -40,7 +40,7 @@ QString InterfaceEthernet::getInterfaceName()  {
 
 }
 
-QStringList InterfaceEthernet::getInfoInterface(QString name) {
+QStringList InterfaceEthernet::getInterfaceProperty() {
 
 }
 

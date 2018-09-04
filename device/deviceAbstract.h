@@ -18,7 +18,8 @@ public:
     typedef enum {
         Type_Progress_Tmk24,
         Type_Progress_Tmk13,
-        Type_Progress_default = Type_Progress_Tmk24
+        Type_Progress_default = Type_Progress_Tmk24,
+        Type_Undefined
     }E_DeviceType;
 
     time_t getLastDataReqDev();
@@ -35,8 +36,7 @@ public:
     virtual bool setSettings(QStringList setts) = 0;
     virtual QStringList getPropertyData() = 0;
     virtual QStringList getParameters() = 0;
-    virtual QString getUniqIdentName() = 0;
-    virtual int getUniqIdentId() = 0;
+    virtual QString getUniqIdent() = 0;
 
     virtual bool makeDataToCommand(CommandController::sCommandData &commandData) = 0;
     virtual bool placeReplyDataOfCommand(QByteArray &array) = 0;
@@ -50,8 +50,6 @@ public:
 
     DeviceAbstract::E_State state;
     QString deviceUniqIdentName;
-    int deviceUniqIdentId;
-    QStringList parameters;
 
 private:
 

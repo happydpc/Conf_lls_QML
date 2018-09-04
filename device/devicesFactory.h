@@ -15,8 +15,8 @@ public:
     ~DevicesFactory();
 
 public slots:
-    bool addNewDevice(DeviceAbstract::E_DeviceType, QString uniqDevName, int uniqDevId, QStringList parameters);
-    bool removeDevice(DeviceAbstract::E_DeviceType, QString uniqDevName, QStringList parameters);
+    bool addNewDevice(DeviceAbstract::E_DeviceType, QString uniqDevName, QStringList parameters);
+    bool removeDevice(DeviceAbstract::E_DeviceType, QString uniqDevName);
 
     int getDeviceCount();
     QStringList getDeviceHeaderByIndex(int index);
@@ -24,26 +24,33 @@ public slots:
     QList<int> getDeviceChartByIndex(int index);
     QList<QString> getDeviceCurrentDataByIndex(int index);
 
-    QString getDeviceTypeByIndex(int index);
+    QString getDeviceTypeTextByIndex(int index);
     QStringList getDeviceCurrentPropertyByIndex(int index);
 
-    QStringList getDeviceInfo(int indexDev);
+    QString getDeviceIdTextByIndex(int index);
+
+    QStringList getDeviceProperty(int indexDev);
 
     QStringList getAvailableDeviceTypes();
 
     bool addCommandDevice(CommandController::sCommandData commandData);
-    void addCommandDeviceReadAfterInitByIndex(int index);
 
     void placeReplyDataFromInterface(QByteArray data);
 
     QString getCaptionToTypeDevice(DeviceAbstract::E_DeviceType type);
     DeviceAbstract::E_DeviceType getDeviceTypeFromTypeCaption(QString typeDevText);
+    DeviceAbstract::E_DeviceType getDeviceTypebyIndex(int index);
+
+    void setDeviceAsNotReadyByIndex(int index);
 
 signals:
     void writeData(DeviceAbstract::E_DeviceType type, QByteArray data);
     void readReplyData();
 
 private slots:
+    //-- find device by index
+    QPair<QString,Device*> findDeviceByIndex(int index);
+
     //-- gives the oldest devices
     Device* getDevOldest();
     //-- sheduller slot

@@ -36,7 +36,7 @@ public:
 //    uint32_t cnt;
 //    Progress_tmk13Data::T_settings newSettings;
 
-    QList<CommandController::sCommandData> getCommandListToIdlePoll(QString deviceIdent, int deviceIdentId);
+    QList<CommandController::sCommandData> getCommandListToIdlePoll(QString deviceIdent);
 
 private:
     S_lls_data lls_data;

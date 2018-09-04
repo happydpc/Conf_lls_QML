@@ -19,7 +19,7 @@ Item {
             projectPanels.setCurrentDataToDeviceTmk24(data)
         }
         onUpdatePropertySerialPort_Signal: {
-
+            projectPanels.setPropertyToSerialPort(data)
         }
     }
 

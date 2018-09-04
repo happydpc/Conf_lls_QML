@@ -14,8 +14,6 @@ public:
     typedef struct {
         // uniqual ident device
         QString deviceIdent;
-        // id dev (for lls)
-        int deviceIdentId;
         // dev command
         int devCommand;
         // bytearray for command buf

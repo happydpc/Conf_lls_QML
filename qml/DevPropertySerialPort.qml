@@ -7,20 +7,22 @@ Rectangle {
     color: "#e7e9eb"
     anchors.fill: parent
 
-    function setNamePort(name) {
-        typeDeviceText.text = name
+    function setPropertyValues(listData) {
+        typeDeviceText.text = listData[3]
+        information.text = listData[0] + "\r\n" + listData[1]
+                + "\r\n" + listData[2] + "\r\n" + listData[4]
     }
 
     GridLayout {
         id: gridLayout
-        width: 384
+        width: parent.width
         columnSpacing: 5
         anchors.right: tabBar.left
         anchors.rightMargin: 10
         anchors.left: parent.left
         anchors.leftMargin: 10
         anchors.top: parent.top
-        anchors.topMargin: 150
+        anchors.topMargin: 10
         rowSpacing: 5
         rows: 3
         columns: 2
@@ -36,11 +38,6 @@ Rectangle {
         TextField {
             id: typeDeviceText
             text: qsTr("")
-            font.underline: false
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: lTypeDevice.left
-            anchors.leftMargin: 150
             readOnly: true
         }
 
@@ -54,15 +51,9 @@ Rectangle {
 
         TextArea {
             id: information
-            width: 100
+            width: parent.width
             height: 100
             text: qsTr("...")
-            Layout.fillHeight: true
-            font.underline: false
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: lSn.left
-            anchors.leftMargin: 150
             readOnly: true
         }
     }

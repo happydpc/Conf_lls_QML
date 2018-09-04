@@ -5,6 +5,8 @@ Interface::Interface(interfacesAbstract::eInterfaceTypes type,
                      QStringList param) {
     this->interfaceType = type;
 
+    this->deviceFactory = new DevicesFactory();
+
     if(type == interfacesAbstract::InterfaceTypeSerialPort) {
         this->serialPort = new InterfaceSerial();
     } else if(type == interfacesAbstract::InterfaceTypeBle) {
@@ -14,8 +16,6 @@ Interface::Interface(interfacesAbstract::eInterfaceTypes type,
     } else {
         throw QString("Error type connection");
     }
-
-    this->deviceFactory = new DevicesFactory();
 
 #ifdef USE_TEST_DEV_REPLY
     this->testDevReply = new TestDevReply();
@@ -35,9 +35,7 @@ Interface::Interface(const Interface & it) {
     }
 }
 
-Interface::~Interface() {
-    delete deviceFactory;
-}
+Interface::~Interface() {}
 
 bool Interface::openInterface(QString name, QStringList arg) {
     bool res = false;
@@ -71,8 +69,12 @@ QString Interface::getInterfaceName() {
     return name;
 }
 
-QStringList Interface::getInterfaceProperty(QString name) {
-
+QStringList Interface::getInterfaceProperty() {
+    QStringList res;
+    if(interfaceType == interfacesAbstract::InterfaceTypeSerialPort) {
+        res = serialPort->getInterfaceProperty();
+    }
+    return res;
 }
 
 QStringList Interface::getAvailableList() {

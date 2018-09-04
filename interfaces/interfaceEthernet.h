@@ -21,7 +21,7 @@ public slots:
     bool sendData(QByteArray &pData) override;
     bool readData(QByteArray &pData) override;
     QString getInterfaceName() override;
-    QStringList getInfoInterface(QString name) override;
+    QStringList getInterfaceProperty() override;
     QStringList getAvailableList() override;
 
 private slots:

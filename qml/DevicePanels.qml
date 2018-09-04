@@ -10,19 +10,20 @@ Item {
     function addInterface(name) {
         console.log("AddInterface: " + name)
         listInterfaceView.model.append({"text":name})
-        setSerialPortPropertyToPanel()
     }
-
     function addDevice(name) {
         console.log("addDevice: " + name)
         listDeviceView.model.append({"text":name})
     }
-
+    function setPropertyToSerialPort(listData) {
+        devPropertySerialPort.setPropertyValues(listData)
+        devicePropertieslistModel1.pop()
+        remakeDeviceList()
+    }
     function setCurrentDataToDevTmk24(listData) {
         devPropertyLlsTMK24.setUpdateCurrentValues(listData)
     }
     function setCurrentDataToDevTmk13(listData) { // TODO:!!!
-//        devPropertyLlsTMK24.setUpdateCurrentValues(listData)
     }
 
     //----------     private
@@ -36,12 +37,6 @@ Item {
         }
     }
 
-    //--
-    function setSerialPortPropertyToPanel() {
-        devPropertySerialPort.setNamePort(viewController.getCurrentInterfaceNameToSerial())
-        devicePropertieslistModel1.pop()
-        remakeDeviceList()
-    }
     function setDevPropertyToPanel() {
         var data = viewController.getCurrentDevPropertyByIndex(listDeviceView.model.index)
         devPropertyLlsTMK24.setDevProperty(data)
@@ -114,7 +109,6 @@ Item {
                         console.log("DeviceList clicked ")
                         view.currentIndex = model.index
                         viewController.setChangedIndexInteface(model.index)
-                        setSerialPortPropertyToPanel()
                     }
                 }
             }

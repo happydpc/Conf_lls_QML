@@ -54,8 +54,9 @@ signals:
     //                                int activeDeviceIndex);
 
 private slots:
-    void updateCurrentDataSlot();
+    void addCommandDevReadAffterChangeFocusByIndex(int devIndex);
 
+    void updateCurrentDataSlot();
     void connectionIsLost(interfacesAbstract::eInterfaceTypes, QString nameInterface);
 
 private:

@@ -3,14 +3,9 @@
 #include "other/crc.h"
 
 Device::Device(DeviceAbstract::E_DeviceType type,
-               QString deviceUniqIdentName,
-               int deviceUniqIdentId,
-               QStringList &parameters) {
-    this->parameters = parameters;
+               QString deviceUniqIdentName) {
     this->type = type;
     this->deviceUniqIdentName = deviceUniqIdentName;
-    this->deviceUniqIdentId = deviceUniqIdentId;
-
     if(type == DeviceAbstract::Type_Progress_Tmk24) {
         this->progressTmk24 = new Progress_tmk24();
     } else {
@@ -73,9 +68,9 @@ QStringList Device::getPropertyData() {
 QList<CommandController::sCommandData> Device::getCommandListToIdlePoll() {
     QList<CommandController::sCommandData> res;
     if(type == Type_Progress_Tmk24) {
-        res = progressTmk24->getCommandListToIdlePoll(deviceUniqIdentName, deviceUniqIdentId);
+        res = progressTmk24->getCommandListToIdlePoll(deviceUniqIdentName);
     } else if(type == Type_Progress_Tmk13) {
-        res = progressTmk13->getCommandListToIdlePoll(deviceUniqIdentName, deviceUniqIdentId);
+        res = progressTmk13->getCommandListToIdlePoll(deviceUniqIdentName);
     } else {
         qDebug() << "Device type undefined!";
     }
@@ -83,15 +78,18 @@ QList<CommandController::sCommandData> Device::getCommandListToIdlePoll() {
 }
 
 QStringList Device::getParameters() {
-    return parameters;
+    if(type == Type_Progress_Tmk24) {
+        return progressTmk24->getPropertyData();
+    } else if(type == Type_Progress_Tmk13) {
+        return progressTmk13->getPropertyData();
+    } else {
+        qDebug() << "Device type undefined!";
+    }
+    return QStringList();
 }
 
-QString Device::getUniqIdentName() {
+QString Device::getUniqIdent() {
     return deviceUniqIdentName;
-}
-
-int Device::getUniqIdentId() {
-    return deviceUniqIdentId;
 }
 
 bool Device::makeDataToCommand(CommandController::sCommandData &commandData) {
@@ -143,11 +141,19 @@ QList<QString> Device::getDeviceCurrentOtherData() {
     if(type == Type_Progress_Tmk24) {
         res = progressTmk24->getCurrentOtherData();
     } else if(type == Type_Progress_Tmk13) {
-//        res = progressTmk13->getCurrentOtherData();
     } else {
         qDebug() << "Device type undefined!";
     }
     return res;
+}
+
+void Device::addCommandReadSettingsAfterIniit() {
+    if(type == Type_Progress_Tmk24) {
+        progressTmk24->getCurrentOtherData();
+    } else if(type == Type_Progress_Tmk13) {
+    } else {
+        qDebug() << "Device type undefined!";
+    }
 }
 
 QString Device::getCaptionToTypeDevice(DeviceAbstract::E_DeviceType type) {

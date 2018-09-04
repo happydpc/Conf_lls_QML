@@ -53,14 +53,9 @@ bool InterfaceBLE::readData(QByteArray &pData)  {
     return false;
 }
 
-QString InterfaceBLE::getInterfaceName() {
-//    return portHandler->portName();
-}
+QString InterfaceBLE::getInterfaceName() {}
 
-QStringList InterfaceBLE::getInfoInterface(QString name) {
-    QStringList list;
-    return list;
-}
+QStringList InterfaceBLE::getInterfaceProperty() {}
 
 bool InterfaceBLE::isOpen() {
     return portHandler->isOpen();

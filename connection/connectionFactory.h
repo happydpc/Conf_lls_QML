@@ -15,15 +15,17 @@ public:
 public slots:
 
     bool addConnection(interfacesAbstract::eInterfaceTypes type, QString name, QStringList param);
-    QStringList getAvailableName(interfacesAbstract::eInterfaceTypes type);
-    void removeConnection(interfacesAbstract::eInterfaceTypes type, QString name);
+    void removeConnection(QString name);
+    void removeConnection(int index);
+
+    QStringList getAvailableName();
 
     int getCountConnection();
 
     QString getInteraceNameFromIndex(int index);
 
-    Interface* getInterace(interfacesAbstract::eInterfaceTypes type, QString name);
-    Interface* getInterace(interfacesAbstract::eInterfaceTypes type, int index);
+    Interface* getInterace(QString name);
+    Interface* getInterace(int index);
 
     void errorFromConnection(interfacesAbstract::eInterfaceTypes, QString name);
 

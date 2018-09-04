@@ -25,7 +25,7 @@ public:
 
     QList<QString>getCurrentOtherData();
 
-    QList<CommandController::sCommandData> getCommandListToIdlePoll(QString deviceIdent, int deviceIdentId);
+    QList<CommandController::sCommandData> getCommandListToIdlePoll(QString deviceIdent);
 
 #ifdef USE_TEST_DEV_REPLY
     bool makeDataRequestReply(QByteArray request, QByteArray &reply);

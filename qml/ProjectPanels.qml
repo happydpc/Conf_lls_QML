@@ -24,6 +24,9 @@ Item {
     function setCurrentDataToDeviceTmk13(listData) {
         devicePanel.setCurrentDataToDevTmk13(listData)
     }
+    function setPropertyToSerialPort(listData) {
+        devicePanel.setPropertyToSerialPort(listData)
+    }
 
     StartScreen {
         id: projectStartSceen

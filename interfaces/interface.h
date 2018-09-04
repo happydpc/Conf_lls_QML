@@ -30,7 +30,9 @@ public slots:
     bool isOpen();
 
     QString getInterfaceName();
-    QStringList getInterfaceProperty(QString name);
+
+    QStringList getInterfaceProperty();
+
     QStringList getAvailableList();
     interfacesAbstract::eInterfaceTypes getInterfaceType();
     DevicesFactory* getDeviceFactory();

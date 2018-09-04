@@ -91,30 +91,13 @@ QStringList Progress_tmk13::getPropertyData() {
     return res;
 }
 
-QList<CommandController::sCommandData> Progress_tmk13::
-getCommandListToIdlePoll(QString deviceIdent, int deviceIdentId) {
+QList<CommandController::sCommandData> Progress_tmk13::getCommandListToIdlePoll(QString deviceIdent) {
     QList<CommandController::sCommandData> retcommand;
     CommandController::sCommandData tcommand;
     tcommand.commandOptionData.clear();
     tcommand.deviceIdent = deviceIdent;
-    tcommand.deviceIdentId = deviceIdentId;
-    //
-    tcommand.devCommand = (int)Progress_tmk13Data::lls_read_lvl_once;;
-    retcommand.push_back(tcommand);
-    tcommand.devCommand = (int)Progress_tmk13Data::lls_read_cnt;
-    retcommand.push_back(tcommand);
     tcommand.devCommand = (int)Progress_tmk13Data::lls_read_lvl_all;
     retcommand.push_back(tcommand);
-    //    tcommand.devCommand = (int)Progress_tmk13Data::lls_read_settings;
-    //    retcommand.push_back(tcommand);
-    //    tcommand.devCommand = (int)Progress_tmk13Data::lls_read_cal_table;
-    //    retcommand.push_back(tcommand);
-    //    tcommand.devCommand = (int)Progress_tmk13Data::lls_read_errors;
-    //    retcommand.push_back(tcommand);
-    //    tcommand.devCommand = (int)Progress_tmk13Data::lls_read_serial_number;
-    //    retcommand.push_back(tcommand);
-    //    tcommand.devCommand = (int)Progress_tmk13Data::lls_read_personal;
-    //    retcommand.push_back(tcommand);
     return retcommand;
 }
 
@@ -123,7 +106,8 @@ bool Progress_tmk13::makeDataToComand(CommandController::sCommandData &commandDa
     if(!commandData.deviceIdent.isEmpty()) {
         try {
             commandData.commandOptionData.push_back(0x31);
-            commandData.commandOptionData.push_back(commandData.deviceIdentId);
+            // id addr
+            commandData.commandOptionData.push_back(commandData.deviceIdent.toInt());
             commandData.commandOptionData.push_back(commandData.devCommand);
             switch(commandData.devCommand) {
             case Progress_tmk13Data::lls_read_lvl_once: break;

@@ -26,7 +26,7 @@ public slots:
     virtual bool sendData(QByteArray &pData) = 0;
     virtual bool readData(QByteArray &pData) = 0;
     virtual QString getInterfaceName() = 0;
-    virtual QStringList getInfoInterface(QString name) = 0;
+    virtual QStringList getInterfaceProperty() = 0;
     virtual QStringList getAvailableList() = 0;
 
 private slots:

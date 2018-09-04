@@ -56,27 +56,29 @@ QString InterfaceSerial::getInterfaceName() {
     return portHandler->portName();
 }
 
-QStringList InterfaceSerial::getInfoInterface(QString name) {
+QStringList InterfaceSerial::getInterfaceProperty() {
     QString description;
     QString manufacturer;
     QString serialNumber;
     QString baudrate;
     QStringList list;
-    const auto infos = QSerialPortInfo::availablePorts();
-    for(const QSerialPortInfo &info : infos) {
-        if(info.portName().contains(name)) {
-            description = info.description();
-            manufacturer = info.manufacturer();
-            serialNumber = info.serialNumber();
-            if(portHandler->isOpen()) {
-                baudrate = QString::number(portHandler->baudRate());
+    if(portHandler->isOpen()) {
+        const auto infos = QSerialPortInfo::availablePorts();
+        for(const QSerialPortInfo &info : infos) {
+            if(info.portName().contains(portHandler->portName())) {
+                description = info.description();
+                manufacturer = info.manufacturer();
+                serialNumber = info.serialNumber();
+                if(portHandler->isOpen()) {
+                    baudrate = QString::number(portHandler->baudRate());
+                }
+                list << description;
+                list << manufacturer;
+                list << serialNumber;
+                list << info.portName();
+                list << baudrate;
+                break;
             }
-            list << description;
-            list << manufacturer;
-            list << serialNumber;
-            list << info.portName();
-            list << baudrate;
-            break;
         }
     }
     return list;

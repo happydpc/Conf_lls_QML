@@ -11,9 +11,7 @@ class Device : public DeviceAbstract
 {
 public:
     explicit Device(DeviceAbstract::E_DeviceType type,
-                    QString deviceUniqIdentName,
-                    int deviceUniqIdentId,
-                    QStringList &parameters);
+                    QString deviceUniqIdentName);
     ~Device();
     Device(const Device&);
 
@@ -24,18 +22,24 @@ public:
     bool setSettings(QStringList settings) override;
     QStringList getPropertyData() override;
     QStringList getParameters() override;
-    QString getUniqIdentName() override;
-    int getUniqIdentId() override;
+    QString getUniqIdent() override;
+
     QList<CommandController::sCommandData> getCommandListToIdlePoll() override;
 
     bool makeDataToCommand(CommandController::sCommandData &commandData) override;
     bool placeReplyDataOfCommand(QByteArray &array) override;
 
     QString getCaptionToTypeDevice(DeviceAbstract::E_DeviceType type);
+
     DeviceAbstract::E_DeviceType getDeviceTypeFromTypeCaption(QString type);
+
     QStringList getDeviceAvaibleTypes();
+
     QList<int>getDeviceCurrentChart();
+
     QList<QString>getDeviceCurrentOtherData();
+
+    void addCommandReadSettingsAfterIniit();
 
 private:
     DeviceAbstract::E_DeviceType type;
