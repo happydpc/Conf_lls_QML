@@ -20,6 +20,10 @@ public slots:
 
     int getDeviceCount();
     QStringList getDeviceHeaderByIndex(int index);
+
+    QList<int> getDeviceChartByIndex(int index);
+    QList<QString> getDeviceCurrentDataByIndex(int index);
+
     QString getDeviceTypeByIndex(int index);
     QStringList getDeviceCurrentPropertyByIndex(int index);
 
@@ -28,6 +32,7 @@ public slots:
     QStringList getAvailableDeviceTypes();
 
     bool addCommandDevice(CommandController::sCommandData commandData);
+    void addCommandDeviceReadAfterInitByIndex(int index);
 
     void placeReplyDataFromInterface(QByteArray data);
 

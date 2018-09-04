@@ -58,12 +58,12 @@ bool Device::setSettings(QStringList setts) {
     return res;
 }
 
-QStringList Device::getCurrentData() {
+QStringList Device::getPropertyData() {
     QStringList res;
     if(type == Type_Progress_Tmk24) {
-        res = progressTmk24->getCurrentData();
+        res = progressTmk24->getPropertyData();
     } else if(type == Type_Progress_Tmk13) {
-        res = progressTmk13->getCurrentData();
+        res = progressTmk13->getPropertyData();
     } else {
         qDebug() << "Device type undefined!";
     }
@@ -122,6 +122,30 @@ QStringList Device::getDeviceAvaibleTypes() {
     QStringList res;
     for(auto it=deviceAvailableTypesList.begin(); it!=deviceAvailableTypesList.end(); it++) {
         res.push_back((*it).second);
+    }
+    return res;
+}
+
+QList<int> Device::getDeviceCurrentChart() {
+    QList<int>res;
+    if(type == Type_Progress_Tmk24) {
+        res = progressTmk24->getChart();
+    } else if(type == Type_Progress_Tmk13) {
+        res = progressTmk13->getChart();
+    } else {
+        qDebug() << "Device type undefined!";
+    }
+    return res;
+}
+
+QList<QString> Device::getDeviceCurrentOtherData() {
+    QList<QString> res;
+    if(type == Type_Progress_Tmk24) {
+        res = progressTmk24->getCurrentOtherData();
+    } else if(type == Type_Progress_Tmk13) {
+//        res = progressTmk13->getCurrentOtherData();
+    } else {
+        qDebug() << "Device type undefined!";
     }
     return res;
 }

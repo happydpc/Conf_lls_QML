@@ -21,6 +21,9 @@ public:
     Q_INVOKABLE void setChangedIndexDevice(int index);
     Q_INVOKABLE void setChangedIndexInteface(int index);
 
+    Q_INVOKABLE QList<int> getCurrentDevChart();
+    Q_INVOKABLE QList<QString> getCurrentDevOtherData();
+
     Q_INVOKABLE QString getCurrentInterfaceNameToSerial();
 
     Q_INVOKABLE int getDeviceCount();
@@ -31,40 +34,39 @@ public:
 signals:
     void addDeviceSignal(QString name, bool is_checked);
     void addInterfaceSignal(QString name, bool is_checked);
-    void changedDevicePropertyStackViewIndex(QString nameProperty);
 
-//    void updateDeviceListSignal(QStringList);
+    void updateCurrentDataDevTmk24_Signal(QStringList data);
+    void updatePropertySerialPort_Signal(QStringList data);
+
+    //    void updateDeviceListSignal(QStringList);
 
     // отсылает сколько каких коннектов можно создать
-//    void readyCreateNewConnections(int connecionsCountTypes);
-//    // горит что что-то там открылось
-//    void connectionOpened(QString nameInterface, QString subName);
-//    // закрылось штатно
-//    void connectionClosed(QString name);
-//    // закрылось изза ошибки
-//    void connectionClosedWithError(QString name);
+    //    void readyCreateNewConnections(int connecionsCountTypes);
+    //    // горит что что-то там открылось
+    //    void connectionOpened(QString nameInterface, QString subName);
+    //    // закрылось штатно
+    //    void connectionClosed(QString name);
+    //    // закрылось изза ошибки
+    //    void connectionClosedWithError(QString name);
 
-//    // говорит какой из коннектов сейчас активен на форме
-//    void activeCurrentInterface(QString nameInterface, int indexInterface,
-//                                int activeDeviceIndex);
+    //    // говорит какой из коннектов сейчас активен на форме
+    //    void activeCurrentInterface(QString nameInterface, int indexInterface,
+    //                                int activeDeviceIndex);
 
 private slots:
+    void updateCurrentDataSlot();
+
     void connectionIsLost(interfacesAbstract::eInterfaceTypes, QString nameInterface);
-
-//    void currentActiveConnectionIsChanged(interfacesAbstract::eInterfaceTypes, QString name, int index);
-
-
-
-signals:
-
-public slots:
-
 
 private:
     ConnectionFactory *connFactory;
 
-    int currentIndexInterface = 0;
-    int currentDeviceIndex = 0;
+    typedef struct {
+        int interfaceIndex;
+        int deviceIndex;
+    }sCurrentIndex;
+    sCurrentIndex index = {0, 0};
+    QTimer *updateCurrentDataDevTimer;
 };
 
 #endif // VIEWCONTROLLER_H

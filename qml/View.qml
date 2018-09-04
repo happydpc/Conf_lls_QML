@@ -15,6 +15,12 @@ Item {
             projectPanels.openDeviceProject()
             projectPanels.addInterface(name)
         }
+        onUpdateCurrentDataDevTmk24_Signal: {
+            projectPanels.setCurrentDataToDeviceTmk24(data)
+        }
+        onUpdatePropertySerialPort_Signal: {
+
+        }
     }
 
     ProjectPanels {
@@ -53,7 +59,6 @@ Item {
             close()
         }
     }
-
 }
 
 

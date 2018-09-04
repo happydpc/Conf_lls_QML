@@ -10,11 +10,19 @@ Item {
     function addInterface(name) {
         console.log("AddInterface: " + name)
         listInterfaceView.model.append({"text":name})
+        setSerialPortPropertyToPanel()
     }
 
     function addDevice(name) {
         console.log("addDevice: " + name)
         listDeviceView.model.append({"text":name})
+    }
+
+    function setCurrentDataToDevTmk24(listData) {
+        devPropertyLlsTMK24.setUpdateCurrentValues(listData)
+    }
+    function setCurrentDataToDevTmk13(listData) { // TODO:!!!
+//        devPropertyLlsTMK24.setUpdateCurrentValues(listData)
     }
 
     //----------     private
@@ -27,20 +35,16 @@ Item {
             listDeviceView.model.append({"text": dev[0]})
         }
     }
-    //    function setCurrentActiveInterface(index) {
 
-    //    }
-    //    function setCurrentActiveDevice(index) {
-
-    //    }
-    function updatePropertySerialPortPanel() {
+    //--
+    function setSerialPortPropertyToPanel() {
         devPropertySerialPort.setNamePort(viewController.getCurrentInterfaceNameToSerial())
         devicePropertieslistModel1.pop()
         remakeDeviceList()
     }
-    function updatePropertyDevicePanel() {
+    function setDevPropertyToPanel() {
         var data = viewController.getCurrentDevPropertyByIndex(listDeviceView.model.index)
-        devPropertyLlsTMK24.setCurrentValues(data)
+        devPropertyLlsTMK24.setDevProperty(data)
         devicePropertieslistModel1.push(devPropertyLlsTMK24)
     }
 
@@ -110,7 +114,7 @@ Item {
                         console.log("DeviceList clicked ")
                         view.currentIndex = model.index
                         viewController.setChangedIndexInteface(model.index)
-                        updatePropertySerialPortPanel()
+                        setSerialPortPropertyToPanel()
                     }
                 }
             }
@@ -235,7 +239,7 @@ Item {
                         console.log("DeviceList clicked ")
                         viewDevice.currentIndex = model.index
                         viewController.setChangedIndexDevice(model.index)
-                        updatePropertyDevicePanel()
+                        setDevPropertyToPanel()
                     }
                 }
             }

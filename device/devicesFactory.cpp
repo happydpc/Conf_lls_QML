@@ -50,6 +50,31 @@ QStringList DevicesFactory::getDeviceHeaderByIndex(int index) {
     return ret;
 }
 
+QList<int> DevicesFactory::getDeviceChartByIndex(int index) {
+    QList<int> res;
+    int count = 0;
+    for(auto it = deviceMap.begin(); it != deviceMap.end(); it++) {
+        if(index == count) {
+            res = it->second->getDeviceCurrentChart();
+        }
+        count++;
+    }
+    return res;
+}
+
+QList<QString> DevicesFactory::getDeviceCurrentDataByIndex(int index) {
+    QList<QString> res;
+    int count = 0;
+    for(auto it = deviceMap.begin(); it != deviceMap.end(); it++) {
+        if(index == count) {
+            res = it->second->getDeviceCurrentOtherData();
+            break;
+        }
+        count++;
+    }
+    return res;
+}
+
 QString DevicesFactory::getDeviceTypeByIndex(int index) {
     QString ret;
     int count = 0;
@@ -69,7 +94,7 @@ QStringList DevicesFactory::getDeviceCurrentPropertyByIndex(int index) {
     int count = 0;
     for(auto it = deviceMap.begin(); it != deviceMap.end(); it++) {
         if(index == count) {
-            ret << (*it).second->getCurrentData();
+            ret << (*it).second->getPropertyData();
             break;
         }
         count++;
@@ -100,6 +125,10 @@ QStringList DevicesFactory::getAvailableDeviceTypes() {
 
 bool DevicesFactory::addCommandDevice(CommandController::sCommandData commandData) {
     return commandController->addCommandToStack(commandData);
+}
+
+void DevicesFactory::addCommandDeviceReadAfterInitByIndex(int index) {
+
 }
 
 void DevicesFactory::devShedullerSlot() {

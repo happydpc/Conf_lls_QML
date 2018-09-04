@@ -10,6 +10,7 @@ TestDevReply::TestDevReply(QObject *parent) : QObject(parent) {
 
 bool TestDevReply::writeDevRequestData(DeviceAbstract::E_DeviceType type, QByteArray &data) {
     bool res = false;
+#ifdef USE_TEST_DEV_REPLY
     if(type == DeviceAbstract::Type_Progress_Tmk24) {
         Progress_tmk24 *tmk24 = new Progress_tmk24();
         res = tmk24->makeDataRequestReply(data, replyByteArrayBuff);
@@ -21,6 +22,7 @@ bool TestDevReply::writeDevRequestData(DeviceAbstract::E_DeviceType type, QByteA
     } else {
         qDebug() << "undefined deviceTy[e [writeDevRequestData]";
     }
+#endif
     return res;
 }
 

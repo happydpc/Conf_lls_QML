@@ -8,7 +8,7 @@
 #include "interfaceEthernet.h"
 #include "device/devicesFactory.h"
 
-#define USE_TEST_DEV_REPLY  1
+//#define USE_TEST_DEV_REPLY  1
 #ifdef USE_TEST_DEV_REPLY
 #include "tests/testDevReply.h"
 #endif
@@ -26,16 +26,13 @@ public:
 public slots:
 
     bool openInterface(QString name, QStringList arg);
+    void closeInterface();
     bool isOpen();
 
-    void closeInterface();
-
-    // Interface
     QString getInterfaceName();
-    QStringList getInfoInterface(QString name);
+    QStringList getInterfaceProperty(QString name);
     QStringList getAvailableList();
     interfacesAbstract::eInterfaceTypes getInterfaceType();
-
     DevicesFactory* getDeviceFactory();
 
 signals:

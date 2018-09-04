@@ -22,7 +22,7 @@ public:
     DeviceAbstract::E_DeviceType getType() override;
     QStringList getSettings() override;
     bool setSettings(QStringList settings) override;
-    QStringList getCurrentData() override;
+    QStringList getPropertyData() override;
     QStringList getParameters() override;
     QString getUniqIdentName() override;
     int getUniqIdentId() override;
@@ -33,11 +33,12 @@ public:
 
     QString getCaptionToTypeDevice(DeviceAbstract::E_DeviceType type);
     DeviceAbstract::E_DeviceType getDeviceTypeFromTypeCaption(QString type);
-
     QStringList getDeviceAvaibleTypes();
+    QList<int>getDeviceCurrentChart();
+    QList<QString>getDeviceCurrentOtherData();
 
-    DeviceAbstract::E_DeviceType type;
 private:
+    DeviceAbstract::E_DeviceType type;
 
     ProgressBase *progressBase;
     Progress_tmk24 *progressTmk24;

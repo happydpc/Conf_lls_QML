@@ -45,7 +45,8 @@ bool Interface::openInterface(QString name, QStringList arg) {
         res = serialPort->openInterface(name, arg);
         if(res) {
             connect(serialPort, SIGNAL(errorInterface(QString)), SLOT(errorInterface(QString)));
-            connect(deviceFactory, SIGNAL(writeData(QByteArray)), this, SLOT(writeData(QByteArray)));
+            connect(deviceFactory, SIGNAL(writeData(DeviceAbstract::E_DeviceType,QByteArray)),
+                    this, SLOT(writeData(DeviceAbstract::E_DeviceType,QByteArray)));
             connect(deviceFactory, SIGNAL(readReplyData()), this, SLOT(readData()));
         }
     }
@@ -70,7 +71,7 @@ QString Interface::getInterfaceName() {
     return name;
 }
 
-QStringList Interface::getInfoInterface(QString name) {
+QStringList Interface::getInterfaceProperty(QString name) {
 
 }
 

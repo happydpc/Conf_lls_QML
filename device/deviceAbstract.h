@@ -33,7 +33,7 @@ public:
     virtual E_DeviceType getType() = 0;
     virtual QStringList getSettings() = 0;
     virtual bool setSettings(QStringList setts) = 0;
-    virtual QStringList getCurrentData() = 0;
+    virtual QStringList getPropertyData() = 0;
     virtual QStringList getParameters() = 0;
     virtual QString getUniqIdentName() = 0;
     virtual int getUniqIdentId() = 0;

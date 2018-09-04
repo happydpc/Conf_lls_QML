@@ -42,6 +42,10 @@ void ConnectionFactory::removeConnection(interfacesAbstract::eInterfaceTypes typ
 
 }
 
+int ConnectionFactory::getCountConnection() {
+    return interface.size();
+}
+
 QString ConnectionFactory::getInteraceNameFromIndex(int index) {
     QString res;
     int counter = 0;
@@ -68,12 +72,28 @@ Interface* ConnectionFactory::getInterace(interfacesAbstract::eInterfaceTypes ty
     return pInterface;
 }
 
+Interface* ConnectionFactory::getInterace(interfacesAbstract::eInterfaceTypes type, int index) {
+    Interface *pInterface = nullptr;
+    QString name = getInteraceNameFromIndex(index);
+    if(!name.isEmpty()) {
+        for(auto it = interface.begin(); it!=interface.end(); it++) {
+            if((*it)->getInterfaceName() == name) {
+                if((*it)->getInterfaceType() == type) {
+                    pInterface = (*it);
+                    break;
+                }
+            }
+        }
+    }
+    return pInterface;
+}
+
 ////-----------------------------------------------------/
 ////---------------         SLOTS             -----------/
 ////-----------------------------------------------------/
 
 void ConnectionFactory::errorFromConnection(interfacesAbstract::eInterfaceTypes, QString name) {
-        qDebug() << "errorFromConnection -" << name;
+    qDebug() << "errorFromConnection -" << name;
 }
 
 

@@ -18,11 +18,12 @@ Item {
     function addDevice(name) {
         devicePanel.addDevice(name)
     }
-//    function setActiveInteface(index) {
-
-//    }
-//    function setActiveDevice(index) {
-//    }
+    function setCurrentDataToDeviceTmk24(listData) {
+        devicePanel.setCurrentDataToDevTmk24(listData)
+    }
+    function setCurrentDataToDeviceTmk13(listData) {
+        devicePanel.setCurrentDataToDevTmk13(listData)
+    }
 
     StartScreen {
         id: projectStartSceen

@@ -48,6 +48,8 @@ Progress_tmk13::Progress_tmk13() {
     this->cpuId = "0022222223fff43434";
     this->cnt = 123;
 #endif
+
+   this->chartData = new QList<int>();
 }
 
 Progress_tmk13::~Progress_tmk13() {
@@ -62,11 +64,30 @@ bool Progress_tmk13::setSettings(QStringList settigns) {
 
 }
 
-QStringList Progress_tmk13::getCurrentData() {
+QList<int> Progress_tmk13::getChart() {
+    return *chartData;
+}
+
+QStringList Progress_tmk13::getPropertyData() {
     QStringList res;
-    res << QString::fromUtf8((char*)serialNumber, strlen((char*)serialNumber));
-    res << version;
-    res << QString::number(settings.netAddress);
+    //-- sn
+    if(lls_data.sn.isValid) {
+        res << lls_data.sn.value;
+    } else {
+        res << "-";
+    }
+    //-- version
+    if(lls_data.firmwareVersion.isValid) {
+        res << lls_data.firmwareVersion.value;
+    } else {
+        res << "-";
+    }
+    //-- netAddr
+    if(lls_data.settings.isValid) {
+        res << QString::number(lls_data.settings.valueSettings.netAddress);
+    } else {
+        res << "-";
+    }
     return res;
 }
 
@@ -395,7 +416,7 @@ bool Progress_tmk13::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                     lls_data.sn.value.fromUtf8(pbuf, strlen(pbuf));
                     // TODO: is normal convertion?
                     pbuf = (commandArrayReplyData.data() + 4 + sizeof(lls_data.sn));
-                    lls_data.firmwareVersion.value->fromUtf8(pbuf, strlen(pbuf));
+                    lls_data.firmwareVersion.value.fromLocal8Bit(pbuf, strlen(pbuf));
 
                     switch(commandArrayReplyData.at(3)) {
                     case Progress_tmk13Data::type_lls_tmk24:

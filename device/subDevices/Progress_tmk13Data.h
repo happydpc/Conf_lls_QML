@@ -10,6 +10,12 @@ public:
     Progress_tmk13Data();
     ~Progress_tmk13Data();
 
+#define SERIALNUMBER_STRING_SIZE    12
+#define PERSONAL_DATA_SIZE          176
+#define VERSION_STRING_SIZE         8
+#define CPU_ID_SIZE                 12
+#define DUT_TYPE                    13
+
     typedef enum {
         param_id_address = 1,
         param_comamnd = 2,
@@ -114,6 +120,19 @@ public:
 
 #pragma pack()
 
+//    T_settings settings;
+//    uint8_t serialNumber[64];
+//    uint8_t personalData[64];
+//    Progress_tmk13Data::T_calibrationTable calibrationTable;
+//    uint32_t passwordHash;
+//    uint8_t newSerialNumber[SERIALNUMBER_STRING_SIZE];
+//    uint8_t personalDataBuff[PERSONAL_DATA_SIZE];
+//    QString version;
+//    QString cpuId;
+//    uint32_t cnt;
+//    Progress_tmk13Data::T_settings newSettings;
+
+
     typedef struct {
         struct {
             uint32_t cnt;
@@ -148,7 +167,7 @@ public:
         }temp;
 
         struct {
-            QString value[8];
+            QString value;
             bool isValid;
         }firmwareVersion;
 
@@ -157,8 +176,10 @@ public:
             bool isValid;
         }settings;
 
-        T_errors errors;
-
+        struct {
+            T_errors errors;
+            bool isValid;
+        }errors;
         struct {
             T_calibrationTable table;
             bool isValid;

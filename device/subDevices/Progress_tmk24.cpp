@@ -3,7 +3,15 @@
 #include "other/crc.h"
 
 Progress_tmk24::Progress_tmk24() {
-#ifdef USE_TEST_DEV_REPLY
+    this->chartData = new QList<int>();
+    resetValues();
+}
+
+Progress_tmk24::~Progress_tmk24() {
+
+}
+
+void Progress_tmk24::resetValues() {
     this->settings.k1 = 0;
     this->settings.k2 = 0;
     this->settings.netAddress = 1;
@@ -28,30 +36,24 @@ Progress_tmk24::Progress_tmk24() {
     this->settings.q = 0.001;
     this->settings.r = 5000;
 
-    strcpy((char*)this->serialNumber, (char*)"0000000000012");
-    strcpy((char*)this->personalData, (char*)"PERSONAL_DATA");
+    this->lls_data.sn.value = "-";
+    //    strcpy((char*)this->personalData, (char*)"UNDEFINED");
 
     this->calibrationTable.TableSize = 0;
     memset(this->calibrationTable.x,0, sizeof(this->calibrationTable.x));
     memset(this->calibrationTable.y,0, sizeof(this->calibrationTable.y));
 
-    this->passwordHash = 0;// = getPasswordHash();
-    strcpy((char*)this->newSerialNumber, "123456");
-    strcpy((char*)this->personalDataBuff,"123456");
+    //    this->passwordHash = 0;
+    //    strcpy((char*)this->newSerialNumber, "UNDEFINED");
+    //    strcpy((char*)this->personalDataBuff,"UNDEFINED");
     this->newSettings = this->settings;
 
-    this->fuel = 1005;
-    this->freq = 1000;
-    this->temp = 25;
-
-    this->version = "002.001";
-    this->cpuId = "0022222223fff43434";
-    this->cnt = 123;
-#endif
-}
-
-Progress_tmk24::~Progress_tmk24() {
-
+    this->lls_data.fuelLevel.isValid = false;
+    this->lls_data.freq.isValid = false;
+    this->lls_data.temp.isValid = false;
+    this->lls_data.cnt.isValid = false;
+    this->lls_data.firmwareVersion.isValid = false;
+    this->lls_data.cpuId.isValid = false;
 }
 
 QStringList Progress_tmk24::getSettings() {
@@ -62,10 +64,29 @@ bool Progress_tmk24::setSettings(QStringList settigns) {
 
 }
 
-QStringList Progress_tmk24::getCurrentData() {
+QList<int> Progress_tmk24::getChart() {
+    return *chartData;
+}
+
+QList<QString> Progress_tmk24::getCurrentOtherData() {
+    QList<QString> res;
+    res << QString::number(lls_data.fuelLevel.level);
+    res << QString::number(lls_data.fuelLevel.levelProcent);
+    res << QString::number(lls_data.cnt.cnt);
+    res << QString::number(lls_data.freq.value);
+    res << QString::number(lls_data.password.isValid);
+    res << lls_data.password.password;
+    res << QString::number(lls_data.sn.isValid);
+    res << lls_data.sn.value;
+    res << QString::number(lls_data.temp.value);
+    res << lls_data.firmwareVersion.value;
+    return res;
+}
+
+QStringList Progress_tmk24::getPropertyData() {
     QStringList res;
-    res << QString::fromUtf8((char*)serialNumber, strlen((char*)serialNumber));
-    res << version;
+    res << lls_data.sn.value;
+    res << lls_data.firmwareVersion.value;
     res << QString::number(settings.netAddress);
     return res;
     //    (listProperty) {
@@ -361,9 +382,13 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                     lls_data.fuelLevel.levelProcent = 0;
                 }
                 lls_data.fuelLevel.isValid = true;
-
                 lls_data.freq.value = frequency;
                 lls_data.freq.isValid = true;
+
+                chartData->push_back(lls_data.fuelLevel.level + (random()%10));
+                while(chartData->size() > 100) {
+                    chartData->pop_front();
+                }
                 res = true;
             }
                 break;
@@ -425,7 +450,7 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                     lls_data.sn.value.fromUtf8(pbuf, strlen(pbuf));
                     // TODO: is normal convertion?
                     pbuf = (commandArrayReplyData.data() + 4 + sizeof(lls_data.sn));
-                    lls_data.firmwareVersion.value->fromUtf8(pbuf, strlen(pbuf));
+                    lls_data.firmwareVersion.value.fromUtf8(pbuf, strlen(pbuf));
 
                     switch(commandArrayReplyData.at(3)) {
                     case Progress_tmk24Data::type_lls_tmk24:
@@ -504,7 +529,7 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
 
             case lls_read_errors:
             {
-                if(commandArrayReplyData.size() > 5) { // 10?
+                if(commandArrayReplyData.size() > 5) { // TODO: 10?
                     T_errors t_erros;
                     memcpy(&t_erros, (commandArrayReplyData.data() + 3), sizeof(t_erros));
                     memcpy(&lls_data.errors, &t_erros, sizeof(lls_data.errors));

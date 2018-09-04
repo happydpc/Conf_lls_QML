@@ -10,6 +10,12 @@ public:
     Progress_tmk24Data();
     ~Progress_tmk24Data();
 
+#define SERIALNUMBER_STRING_SIZE    12
+#define PERSONAL_DATA_SIZE          176
+#define VERSION_STRING_SIZE         8
+#define CPU_ID_SIZE                 12
+#define DUT_TYPE                    13
+
     typedef enum {
         param_id_address = 1,
         param_comamnd = 2,
@@ -114,6 +120,15 @@ public:
 
 #pragma pack()
 
+    //    uint8_t serialNumber[64];
+    //    uint8_t personalData[64];
+    //    uint32_t passwordHash;
+    //    uint8_t newSerialNumber[SERIALNUMBER_STRING_SIZE];
+    //    uint8_t personalDataBuff[PERSONAL_DATA_SIZE];
+    //    QString version;
+    //    QString cpuId;
+    //    uint32_t cnt;
+
     typedef struct {
         struct {
             uint32_t cnt;
@@ -128,9 +143,14 @@ public:
 
         struct {
             QString value;
-            uint8_t size[12];
+            uint8_t size[SERIALNUMBER_STRING_SIZE];
             bool isValid;
         }sn;
+
+        struct {
+            QString value;
+            bool isValid;
+        }cpuId;
 
         struct {
             QString value;
@@ -148,7 +168,7 @@ public:
         }temp;
 
         struct {
-            QString value[8];
+            QString value;
             bool isValid;
         }firmwareVersion;
 
@@ -157,7 +177,10 @@ public:
             bool isValid;
         }settings;
 
-        T_errors errors;
+        struct {
+            T_errors errors;
+            bool isValid;
+        }errors;
 
         struct {
             T_calibrationTable table;

@@ -15,7 +15,7 @@ void InterfaceSerial::initInterface()  {}
 bool InterfaceSerial::openInterface(QString name, QStringList arg) {
     if(arg.size() > 0) {
         portHandler->setPortName(name);
-        portHandler->setBaudRate(QString(arg.at(0)).toInt());
+        portHandler->setBaudRate(arg.at(0).toInt());
         portHandler->setDataBits(QSerialPort::Data8);
         portHandler->setParity(QSerialPort::NoParity);
         portHandler->setStopBits(QSerialPort::OneStop);
