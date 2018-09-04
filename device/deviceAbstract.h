@@ -51,6 +51,7 @@ public:
     DeviceAbstract::E_State state;
     QString deviceUniqIdentName;
 
+    readValue();
 private:
 
 

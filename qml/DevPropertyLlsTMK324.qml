@@ -10,8 +10,8 @@ import QtGraphicalEffects 1.0
 Rectangle {
     color: "#e7e9eb"
 
-//    width: 1000
-//    height: 600
+    //    width: 1000
+    //    height: 600
     anchors.fill: parent
 
     function setDevProperty(listProperty) {
@@ -37,12 +37,14 @@ Rectangle {
         }
         //-- progress
         var values = viewController.getCurrentDevOtherData()
-        levelValue.text = values[0]
-        levelProgress.value = values[1]
-        cntValue.text = values[2]
-        freqValue.text = values[3]
-        tempValue.text= values[8]
-        devPropertyLlsTMK24.isEnabled = true
+        if(values.length >0) {
+            levelValue.text = values[0]
+            levelProgress.value = values[1]
+            cntValue.text = values[2]
+            freqValue.text = values[3]
+            tempValue.text= values[8]
+            devPropertyLlsTMK24.isEnabled = true
+        }
     }
     Rectangle {
         id: devPropertyLlsTMK24

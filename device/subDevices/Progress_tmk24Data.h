@@ -128,6 +128,7 @@ public:
     //    QString version;
     //    QString cpuId;
     //    uint32_t cnt;
+    ValidParam<uint32_t> cnt
 
     typedef struct {
         struct {

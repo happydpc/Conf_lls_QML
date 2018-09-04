@@ -13,31 +13,6 @@ ViewController::ViewController(QObject *parent) : QObject(parent) {
         qDebug() << strLis;
         bool res = false;
         addConnectionSerialPort(strLis.first(), QString("19200"));
-        //    int contAvailableList = 0;
-        //    while(contAvailableList != strLis.size()) {
-        //        res = connFactory->addConnection(
-        //                    interfacesAbstract::InterfaceTypeSerialPort, strLis.at(contAvailableList),
-        //                    QStringList("9600"));
-        //        qDebug() << "IsOpen = "<< res << strLis.at(contAvailableList);
-        //        contAvailableList++;
-        //    }
-        //    int id_dev = 1;
-        //    for(int i=0; i<3; i++) {
-        //        //        QString nameInterface = QString("ttyACM%1").arg(i);
-        //        QString nameInterface = QString("ttyACM0");
-        //        Interface *pInterface = nullptr;
-        //        pInterface = connFactory->getInterace(interfacesAbstract::InterfaceTypeSerialPort, nameInterface);
-
-        //        if(pInterface != nullptr) {
-        //            res = pInterface->getDeviceFactory()->addNewDevice(
-        //                        DeviceAbstract::Type_Progress_Tmk24,
-        //                        QString("/%1/lls_tmk3.24_%2").arg(nameInterface).arg(i),
-        //                        id_dev, QStringList(""));
-        //            qDebug() << "Interface-" << nameInterface << " -open Ok";
-        //        } else {
-        //            qDebug() << "Interface-" << nameInterface << " -no open!";
-        //        }
-        //    }
     });
 
     this->updateCurrentDataDevTimer = new QTimer();
@@ -159,7 +134,9 @@ void ViewController::updateCurrentDataSlot() {
         QString name = connFactory->getInteraceNameFromIndex(index.interfaceIndex);
         if(!name.isEmpty()) {
             ret = connFactory->getInterace(name)->getDeviceFactory()->getDeviceCurrentPropertyByIndex(index.deviceIndex);
-            emit updateCurrentDataDevTmk24_Signal(ret);
+            if(!ret.isEmpty()) {
+                emit updateCurrentDataDevTmk24_Signal(ret);
+            }
         }
     }
 }

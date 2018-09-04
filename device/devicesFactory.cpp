@@ -13,7 +13,7 @@ DevicesFactory::~DevicesFactory() {
 }
 
 bool DevicesFactory::addNewDevice(DeviceAbstract::E_DeviceType type, QString uniqDevName, QStringList parameters) {
-    this->deviceMap.push_back(QPair<QString, Device*>(uniqDevName, new Device(type, uniqDevName)));
+    this->deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk13(type, uniqDevName)));
     return (bool)deviceMap.size();
 }
 
