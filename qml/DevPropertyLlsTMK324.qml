@@ -12,7 +12,12 @@ Rectangle {
 
     //    width: 1000
     //    height: 600
+
     anchors.fill: parent
+
+    function setNoActive() {
+        devPropertyLlsTMK24.isEnabled = false
+    }
 
     function setDevProperty(listProperty) {
         typeDeviceText.text = listProperty[0]
@@ -21,7 +26,18 @@ Rectangle {
         netIdText.text = listProperty[3]
     }
 
-    function setUpdateCurrentValues() {
+    function setUpdateCurrentValues(data) {
+        devPropertyLlsTMK24.isEnabled = true
+        if(data.length >0) { //-- progress bar
+            var values = viewController.getCurrentDevOtherData()
+            if(values.length >0) {
+                levelValue.text = values[0]
+                levelProgress.value = values[1]
+                cntValue.text = values[2]
+                freqValue.text = values[3]
+                tempValue.text= values[8]
+            }
+        }
         //-- chart
         var list = viewController.getCurrentDevChart()
         series1.clear();
@@ -34,16 +50,6 @@ Rectangle {
         }
         for(i=0; i<list.length; i++) {
             series1.append(i, parseInt(list[i]));
-        }
-        //-- progress
-        var values = viewController.getCurrentDevOtherData()
-        if(values.length >0) {
-            levelValue.text = values[0]
-            levelProgress.value = values[1]
-            cntValue.text = values[2]
-            freqValue.text = values[3]
-            tempValue.text= values[8]
-            devPropertyLlsTMK24.isEnabled = true
         }
     }
     Rectangle {

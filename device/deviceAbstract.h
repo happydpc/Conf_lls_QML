@@ -10,19 +10,24 @@ class DeviceAbstract : public QObject
 public:
     explicit DeviceAbstract(QObject *parent = nullptr);
 
-    virtual QString getName() = 0;
+    typedef enum {
+        STATE_DISCONNECTED,
+        STATE_NORMAL_READY
+    }E_State;
 
-//    typedef enum {
-//        STATE_DISCONNECTED,
-//        STATE_NORMAL_READY
-//    }E_State;
+    virtual QString getDevTypeName() = 0;
+    virtual QStringList getPropertyData() = 0;
+    virtual QStringList getCurrentData() = 0;
+    virtual QString getUniqIdent() = 0;
+    virtual E_State getState() = 0;
+    virtual bool makeDataToCommand(CommandController::sCommandData &commandData) = 0;
+    virtual bool placeDataReplyToCommand(QByteArray &commandArrayReplyData) = 0;
+    virtual QList<CommandController::sCommandData> getCommandListToIdlePoll() = 0;
+    virtual QList<CommandController::sCommandData> getCommandListToInit() = 0;
+    virtual QList<int> getChart() = 0;
 
-//    time_t getLastDataReqDev();
-//    void setLastDataReqDev(time_t curData);
-
-    // есть базовые команды, для определения что dev еще жив
-    // это последнее время такой команды для этого устройства
-//    time_t lastDataRequestDev;
+    time_t getLastDataReqDev();
+    void setLastDataReqDev(time_t date);
 
 //    virtual void setState(E_State state) = 0;
 //    virtual DeviceAbstract::E_State getState() = 0;
@@ -31,25 +36,19 @@ public:
 
 //    virtual QStringList getSettings() = 0;
 //    virtual bool setSettings(QStringList setts) = 0;
-    virtual QStringList getPropertyData() = 0;
-//    virtual QStringList getParameters() = 0;
-//    virtual QString getUniqIdent() = 0;
 
-//    virtual bool makeDataToCommand(CommandController::sCommandData &commandData) = 0;
-//    virtual bool placeReplyDataOfCommand(QByteArray &array) = 0;
+//    virtual QStringList getParameters() = 0;
 
 //    // возвращает список команд, если нет активности и можно опросить
-//    virtual QList<CommandController::sCommandData> getCommandListToIdlePoll() = 0;
 
 //    DeviceAbstract::E_State state;
 //    QString deviceUniqIdentName;
 
+    DeviceAbstract::E_State state;
 private:
-
-//    QList <QPair<E_DeviceType,QString>> deviceAvailableTypesList;
-//    QString type_Progress_Tmk24_caption = "Progress TMK24";
-//    QString type_Progress_Tmk13_caption = "Progress TMK13";
-
+    // есть базовые команды, для определения что dev еще жив
+    // это последнее время такой команды для этого устройства
+    time_t devLastDataRequest;
 };
 
 #endif // DEVICEABSTRACT_H

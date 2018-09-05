@@ -14,7 +14,7 @@ ViewController::ViewController(QObject *parent) : QObject(parent) {
 
     this->updateCurrentDataDevTimer = new QTimer();
     connect(this->updateCurrentDataDevTimer, SIGNAL(timeout()), this, SLOT(updateCurrentDataSlot()));
-    this->updateCurrentDataDevTimer->start(100);
+    this->updateCurrentDataDevTimer->start(500);
 }
 
 QStringList ViewController::getAvailableNameToSerialPort() {
@@ -57,7 +57,7 @@ bool ViewController::addDeviceToConnection(QString devTypeName, QString idNum) {
             // update new device event
             emit addDeviceSignal(getDeviceHeaderByIndex(index.deviceIndex).at(0), true);
             // add device command to read current property device
-            addCommandDevReadAffterChangeFocusByIndex(index.deviceIndex);
+            setChangedIndexDevice(index.deviceIndex);
         }
     } else {
         qDebug() << "addDevice-" << index.interfaceIndex << devTypeName <<" -ERR";
@@ -66,8 +66,12 @@ bool ViewController::addDeviceToConnection(QString devTypeName, QString idNum) {
 }
 
 void ViewController::setChangedIndexDevice(int devIndex) {
-    index.deviceIndex = devIndex;
-    addCommandDevReadAffterChangeFocusByIndex(index.deviceIndex);
+    Interface *pInterface = nullptr;
+    pInterface = connFactory->getInterace(connFactory->getInteraceNameFromIndex(index.interfaceIndex));
+    if(pInterface != nullptr) {     // TODO: its throw exeption!!!
+        index.deviceIndex = devIndex;
+        pInterface->getDeviceFactory()->setDeviceInitCommandByIndex(index.deviceIndex);
+    }
 }
 
 void ViewController::setChangedIndexInteface(int interfaceIndex) {
@@ -78,7 +82,7 @@ void ViewController::setChangedIndexInteface(int interfaceIndex) {
     // get interface property
     property = connFactory->getInterace(index.interfaceIndex)->getInterfaceProperty();
     if(!property.empty()) {
-        emit updatePropertySerialPort_Signal(property);
+        emit updatePropertiesSerialPort_Signal(property);
     }
 }
 
@@ -116,54 +120,58 @@ QStringList ViewController::getDeviceHeaderByIndex(int devIndex) {
     return ret;
 }
 
-// TODO:
 QStringList ViewController::getCurrentDevPropertyByIndex() {
     QStringList ret = connFactory->getInterace(
                 connFactory->getInteraceNameFromIndex(index.interfaceIndex))->getDeviceFactory()
-            ->getDeviceCurrentPropertyByIndex(index.deviceIndex);
+            ->getDevicePropertyByIndex(index.deviceIndex);
     ret.push_front(connFactory->getInterace(connFactory->getInteraceNameFromIndex(index.interfaceIndex))->
                    getDeviceFactory()->getDeviceName(index.deviceIndex));
     return ret;
 }
 
 void ViewController::updateCurrentDataSlot() {
-    //    QStringList ret;
-    //    if(connFactory->getCountConnection() >0) {
-    //        QString name = connFactory->getInteraceNameFromIndex(index.interfaceIndex);
-    //        if(!name.isEmpty()) {
-    //            ret = connFactory->getInterace(name)->getDeviceFactory()->getDeviceCurrentPropertyByIndex(index.deviceIndex);
-    //            if(!ret.isEmpty()) {
-    //                emit updateCurrentDataDevTmk24_Signal(ret);
-    //            }
-    //        }
-    //    }
-}
-
-void ViewController::addCommandDevReadAffterChangeFocusByIndex(int devIndex) {
-    //    Interface *pInterface = nullptr;
-    //    // get current interface
-    //    pInterface = connFactory->getInterace(connFactory->getInteraceNameFromIndex(index.interfaceIndex));
-    //    if(pInterface != nullptr) {
-    //        // add device command to read current property device
-    //        CommandController::sCommandData commandDev;
-    //        // get device type
-    //        DeviceAbstract::E_DeviceType devType = pInterface->getDeviceFactory()->getDeviceTypebyIndex(index.deviceIndex);
-    //        if(devType == DeviceAbstract::Type_Progress_Tmk24) {
-    //            // add command - read settings
-    //            commandDev.devCommand = Progress_tmk24::Progress_tmk24Data::lls_read_settings;
-    //            commandDev.deviceIdent = pInterface->getDeviceFactory()->getDeviceIdTextByIndex(index.deviceIndex);
-    //            pInterface->getDeviceFactory()->addCommandDevice(commandDev);
-    //            // add command - read password
-    //            commandDev.devCommand = Progress_tmk24::Progress_tmk24Data::lls_check_address_and_pass;
-    //            commandDev.deviceIdent = pInterface->getDeviceFactory()->getDeviceIdTextByIndex(index.deviceIndex);
-    //            pInterface->getDeviceFactory()->addCommandDevice(commandDev);
-    //            // TOOD: make it check password !!!
-    //        } else if(devType == DeviceAbstract::Type_Progress_Tmk13) {
-
-    //        } else {
-    //            qDebug() << "addDevice -unknown type device!";
-    //        }
-    //    }
+    QStringList ret;
+    DevicesFactory::E_DeviceType type = DevicesFactory::Type_Undefined;
+    if(connFactory->getCountConnection() >0) {
+        if(connFactory->getInterace(connFactory->getInteraceNameFromIndex(index.interfaceIndex))->getDeviceFactory()->getDeviceCount() >0) {
+            QString name = connFactory->getInteraceNameFromIndex(index.interfaceIndex);
+            if(!name.isEmpty()) {
+                type = connFactory->getInterace(name)->
+                        getDeviceFactory()->getDeviceType(index.deviceIndex);
+                if(connFactory->getInterace(name)->getDeviceFactory()->
+                        getDevStateByIndex(index.deviceIndex) == DeviceAbstract::STATE_NORMAL_READY) {
+                    ret = connFactory->getInterace(name)->getDeviceFactory()->getDeviceCurrentDataByIndex(index.deviceIndex);
+                    if(!ret.isEmpty()) {
+                        switch(type) {
+                        case DevicesFactory::Type_Progress_Tmk13:
+                            emit updateDataDevTmk13_Signal(ret);
+                            break;
+                        case DevicesFactory::Type_Progress_Tmk24:
+                            emit updateDataDevTmk24_Signal(ret);
+                            break;
+                        case DevicesFactory::Type_Undefined:
+                            qDebug() << "Update current data - Type_Undefined";
+                            break;
+                        }
+                    } else {
+                        qDebug() << "Update current data - result=" << ret;
+                    }
+                } else {
+                    switch(type) {
+                    case DevicesFactory::Type_Progress_Tmk13:
+//                        emit updateDevTmk13_NoReady_Signal();
+                        break;
+                    case DevicesFactory::Type_Progress_Tmk24:
+//                        emit updateDevTmk24_NoReady_Signal();
+                        break;
+                    case DevicesFactory::Type_Undefined:
+                        qDebug() << "Update current data - Type_Undefined";
+                        break;
+                    }
+                }
+            }
+        }
+    }
 }
 
 void ViewController::connectionIsLost(interfacesAbstract::eInterfaceTypes, QString nameInterface) {

@@ -6,6 +6,8 @@ Item {
     height: 800
     id: viewForm
 
+    property alias devicePanel: devicePanel
+
     function openDeviceProject() {
         projectStack.push(devicePanel)
     }
@@ -18,15 +20,15 @@ Item {
     function addDevice(name) {
         devicePanel.addDevice(name)
     }
-    function setCurrentDataToDeviceTmk24(listData) {
-        devicePanel.setCurrentDataToDevTmk24(listData)
-    }
-    function setCurrentDataToDeviceTmk13(listData) {
-        devicePanel.setCurrentDataToDevTmk13(listData)
-    }
-    function setPropertyToSerialPort(listData) {
-        devicePanel.setPropertyToSerialPort(listData)
-    }
+//    function setCurrentDataToDeviceTmk24(listData) {
+//        devicePanel.setCurrentDataToDevTmk24(listData)
+//    }
+//    function setCurrentDataToDeviceTmk13(listData) {
+//        devicePanel.setCurrentDataToDevTmk13(listData)
+//    }
+//    function setPropertyToSerialPort(listData) {
+//        devicePanel.setPropertyToSerialPort(listData)
+//    }
 
     StartScreen {
         id: projectStartSceen

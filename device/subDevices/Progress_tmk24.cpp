@@ -2,8 +2,9 @@
 #include "Progress_tmk24.h"
 #include "other/crc.h"
 
-Progress_tmk24::Progress_tmk24(QString uniqDevName) {
+Progress_tmk24::Progress_tmk24(QString uniqIdentId) {
     this->chartData = new QList<int>();
+    this->uniqIdentId = uniqIdentId;
     resetValues();
 }
 
@@ -11,8 +12,30 @@ Progress_tmk24::~Progress_tmk24() {
 
 }
 
-QString Progress_tmk24::getName() {
+QString Progress_tmk24::getDevTypeName() {
     return QString::fromUtf8(Progress_tmk24::name, strlen(Progress_tmk24::name));
+}
+
+QStringList Progress_tmk24::getPropertyData() {
+    QStringList res;
+    res << lls_data.sn.value;
+    res << lls_data.firmwareVersion.value;
+    res << QString::number(settings.netAddress);
+    return res;
+}
+
+QStringList Progress_tmk24::getCurrentData() {
+    QStringList res;
+    res << "Test";
+    return res;
+}
+
+DeviceAbstract::E_State Progress_tmk24::getState() {
+    return state;
+}
+
+QString Progress_tmk24::getUniqIdent() {
+    return uniqIdentId;
 }
 
 void Progress_tmk24::resetValues() {
@@ -71,7 +94,6 @@ bool Progress_tmk24::setSettings(QStringList settigns) {
 QList<int> Progress_tmk24::getChart() {
     return *chartData;
 }
-
 QList<QString> Progress_tmk24::getCurrentOtherData() {
     QList<QString> res;
     res << QString::number(lls_data.fuelLevel.level);
@@ -87,26 +109,33 @@ QList<QString> Progress_tmk24::getCurrentOtherData() {
     return res;
 }
 
-QStringList Progress_tmk24::getPropertyData() {
-    QStringList res;
-    res << lls_data.sn.value;
-    res << lls_data.firmwareVersion.value;
-    res << QString::number(settings.netAddress);
-    return res;
+QList<CommandController::sCommandData> Progress_tmk24::getCommandListToIdlePoll() {
+    QList<CommandController::sCommandData> listCommand;
+    CommandController::sCommandData command;
+    command.commandOptionData.clear();
+    command.deviceIdent = getUniqIdent().toInt();
+    command.devCommand = (int)Progress_tmk13Data::lls_read_lvl_all;
+    listCommand.push_back(command);
+    command.devCommand = (int)Progress_tmk13Data::lls_read_errors;
+    listCommand.push_back(command);
+    return listCommand;
 }
 
-QList<CommandController::sCommandData> Progress_tmk24::
-getCommandListToIdlePoll(QString deviceIdent) {
-    QList<CommandController::sCommandData> retcommand;
-    CommandController::sCommandData tcommand;
-    tcommand.commandOptionData.clear();
-    tcommand.deviceIdent = deviceIdent;
-    tcommand.devCommand = (int)Progress_tmk24Data::lls_read_lvl_all;
-    retcommand.push_back(tcommand);
-    return retcommand;
+QList<CommandController::sCommandData> Progress_tmk24::getCommandListToInit() {
+    QList<CommandController::sCommandData> listCommand;
+    CommandController::sCommandData command;
+    command.commandOptionData.clear();
+    command.deviceIdent = getUniqIdent().toInt();
+    command.devCommand = (int)Progress_tmk13Data::lls_read_settings;
+    listCommand.push_back(command);
+    command.devCommand = (int)Progress_tmk13Data::lls_read_errors;
+    listCommand.push_back(command);
+    command.devCommand = (int)Progress_tmk13Data::lls_read_lvl_all;
+    listCommand.push_back(command);
+    return listCommand;
 }
 
-bool Progress_tmk24::makeDataToComand(CommandController::sCommandData &commandData) {
+bool Progress_tmk24::makeDataToCommand(CommandController::sCommandData &commandData) {
     bool res = false;
     if(!commandData.deviceIdent.isEmpty()) {
         try {
@@ -308,233 +337,233 @@ bool Progress_tmk24::makeDataToComand(CommandController::sCommandData &commandDa
 }
 
 bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) {
-//    bool res = false;
-//    uint8_t crcCalcResult = 0;
-//    uint16_t frequency = 0;
-//    uint16_t value = 0;
-//    Crc *crc = new Crc();
+    bool res = false;
+    uint8_t crcCalcResult = 0;
+    uint16_t frequency = 0;
+    uint16_t value = 0;
+    Crc *crc = new Crc();
 
-//    if(!commandArrayReplyData.isEmpty()) {
-//        //-- caculate crc
-//        crcCalcResult = crc->crc8_dallas(commandArrayReplyData.data(),
-//                                         commandArrayReplyData.length()-1);
-//        //-- if result crc is valid
-//        if(crcCalcResult == (0xff & commandArrayReplyData.at(
-//                                 commandArrayReplyData.length()-1))) {
-//            //-- byte is command
-//            switch(commandArrayReplyData.at(2)) {
-//            case lls_read_lvl_once: {
-//                lls_data.temp.value = (int8_t)(0xFF & commandArrayReplyData.at(3));
-//                lls_data.temp.isValid = true;
+    if(!commandArrayReplyData.isEmpty()) {
+        //-- caculate crc
+        crcCalcResult = crc->crc8_dallas(commandArrayReplyData.data(),
+                                         commandArrayReplyData.length()-1);
+        //-- if result crc is valid
+        if(crcCalcResult == (0xff & commandArrayReplyData.at(
+                                 commandArrayReplyData.length()-1))) {
+            //-- byte is command
+            switch(commandArrayReplyData.at(2)) {
+            case Progress_tmk24Data::lls_read_lvl_once: {
+                lls_data.temp.value = (int8_t)(0xFF & commandArrayReplyData.at(3));
+                lls_data.temp.isValid = true;
 
-//                value = 0xFF & commandArrayReplyData.at(5);
-//                value = value << 8;
-//                value |= 0xFF & commandArrayReplyData.at(4);
-//                frequency = 0xFF & commandArrayReplyData.at(7);
-//                frequency = frequency << 8;
-//                frequency |= 0xFF & commandArrayReplyData.at(6);
+                value = 0xFF & commandArrayReplyData.at(5);
+                value = value << 8;
+                value |= 0xFF & commandArrayReplyData.at(4);
+                frequency = 0xFF & commandArrayReplyData.at(7);
+                frequency = frequency << 8;
+                frequency |= 0xFF & commandArrayReplyData.at(6);
 
-//                lls_data.fuelLevel.level = value;
-//                if(lls_data.settings.isValid) {
-//                    lls_data.fuelLevel.levelProcent =
-//                            ((float)((float)value/lls_data.settings.valueSettings.maxLevel)*100);
-//                } else {
-//                    lls_data.fuelLevel.levelProcent = 0;
-//                }
-//                lls_data.fuelLevel.isValid = true;
-//                lls_data.freq.value = frequency;
-//                lls_data.freq.isValid = true;
+                lls_data.fuelLevel.level = value;
+                if(lls_data.settings.isValid) {
+                    lls_data.fuelLevel.levelProcent =
+                            ((float)((float)value/lls_data.settings.valueSettings.maxLevel)*100);
+                } else {
+                    lls_data.fuelLevel.levelProcent = 0;
+                }
+                lls_data.fuelLevel.isValid = true;
+                lls_data.freq.value = frequency;
+                lls_data.freq.isValid = true;
 
-//                chartData->push_back(lls_data.fuelLevel.level + (random()%10));
-//                while(chartData->size() > 100) {
-//                    chartData->pop_front();
-//                }
-//                res = true;
-//            }
-//                break;
-//            case lls_send_data_enable: break;
-//            case lls_set_send_time: break;
-//            case lls_send_data_default: break;
-//            case lls_read_cnt: {
-//                uint32_t cnt = 0;
-//                if(commandArrayReplyData.size() >= 8) {
-//                    cnt = 0xFF & commandArrayReplyData.at(7);
-//                    cnt = cnt << 8;
-//                    cnt |= 0xFF & commandArrayReplyData.at(6);
-//                    cnt = cnt << 8;
-//                    cnt |= 0xFF & commandArrayReplyData.at(5);
-//                    cnt = cnt << 8;
-//                    cnt |= 0xFF & commandArrayReplyData.at(4);
-//                    lls_data.cnt.cnt = cnt;
-//                    lls_data.cnt.isValid = true;
-//                    res = true;
-//                }
-//            }
-//                break;
-//            case lls_read_lvl_all: {
-//                lls_data.llssValues.values.slave_count = (0xFF & commandArrayReplyData.at(3));
-//                lls_data.llssValues.values.summed_volume = (0xFF & commandArrayReplyData.at(5));
-//                lls_data.llssValues.values.summed_volume = lls_data.llssValues.values.summed_volume << 8;
-//                lls_data.llssValues.values.summed_volume |= (0xFF & commandArrayReplyData.at(4));
-//                //
-//                lls_data.llssValues.values.send_value = 0xFF & commandArrayReplyData.at(8);
-//                lls_data.llssValues.values.send_value = lls_data.llssValues.values.send_value << 8;
-//                lls_data.llssValues.values.send_value |= (0xFF & commandArrayReplyData.at(7));
-//                //
-//                int offset_counter = 11;
-//                for(uint8_t i=0; i<4; i++) {
-//                    lls_data.llssValues.values.Temperature[i] = (int8_t)(0xFF & commandArrayReplyData.at(offset_counter));
-//                    offset_counter++;
-//                    //--
-//                    lls_data.llssValues.values.Level[i] = 0xFF & commandArrayReplyData.at(offset_counter);
-//                    offset_counter++;
-//                    //--
-//                    lls_data.llssValues.values.Level[i] |= (0xFF & commandArrayReplyData.at(offset_counter)) << 8;
-//                    offset_counter++;
-//                    //--
-//                    lls_data.llssValues.values.Frequency[i] = 0xFF & commandArrayReplyData.at(offset_counter);
-//                    lls_data.llssValues.values.Frequency[i] = lls_data.llssValues.values.Frequency[i] << 8;
-//                    offset_counter++;
-//                    lls_data.llssValues.values.Frequency[i] |= (0xFF & commandArrayReplyData.at(offset_counter));
-//                    lls_data.llssValues.values.Frequency[i] = lls_data.llssValues.values.Frequency[i] << 8;
-//                    offset_counter++;
-//                }
-//                res = true;
-//            }
-//                break;
+                chartData->push_back(lls_data.fuelLevel.level + (random()%10));
+                while(chartData->size() > 100) {
+                    chartData->pop_front();
+                }
+                res = true;
+            }
+                break;
+            case Progress_tmk24Data::lls_send_data_enable: break;
+            case Progress_tmk24Data::lls_set_send_time: break;
+            case Progress_tmk24Data::lls_send_data_default: break;
+            case Progress_tmk24Data::lls_read_cnt: {
+                uint32_t cnt = 0;
+                if(commandArrayReplyData.size() >= 8) {
+                    cnt = 0xFF & commandArrayReplyData.at(7);
+                    cnt = cnt << 8;
+                    cnt |= 0xFF & commandArrayReplyData.at(6);
+                    cnt = cnt << 8;
+                    cnt |= 0xFF & commandArrayReplyData.at(5);
+                    cnt = cnt << 8;
+                    cnt |= 0xFF & commandArrayReplyData.at(4);
+                    lls_data.cnt.cnt = cnt;
+                    lls_data.cnt.isValid = true;
+                    res = true;
+                }
+            }
+                break;
+            case Progress_tmk24Data::lls_read_lvl_all: {
+                lls_data.llssValues.values.slave_count = (0xFF & commandArrayReplyData.at(3));
+                lls_data.llssValues.values.summed_volume = (0xFF & commandArrayReplyData.at(5));
+                lls_data.llssValues.values.summed_volume = lls_data.llssValues.values.summed_volume << 8;
+                lls_data.llssValues.values.summed_volume |= (0xFF & commandArrayReplyData.at(4));
+                //
+                lls_data.llssValues.values.send_value = 0xFF & commandArrayReplyData.at(8);
+                lls_data.llssValues.values.send_value = lls_data.llssValues.values.send_value << 8;
+                lls_data.llssValues.values.send_value |= (0xFF & commandArrayReplyData.at(7));
+                //
+                int offset_counter = 11;
+                for(uint8_t i=0; i<4; i++) {
+                    lls_data.llssValues.values.Temperature[i] = (int8_t)(0xFF & commandArrayReplyData.at(offset_counter));
+                    offset_counter++;
+                    //--
+                    lls_data.llssValues.values.Level[i] = 0xFF & commandArrayReplyData.at(offset_counter);
+                    offset_counter++;
+                    //--
+                    lls_data.llssValues.values.Level[i] |= (0xFF & commandArrayReplyData.at(offset_counter)) << 8;
+                    offset_counter++;
+                    //--
+                    lls_data.llssValues.values.Frequency[i] = 0xFF & commandArrayReplyData.at(offset_counter);
+                    lls_data.llssValues.values.Frequency[i] = lls_data.llssValues.values.Frequency[i] << 8;
+                    offset_counter++;
+                    lls_data.llssValues.values.Frequency[i] |= (0xFF & commandArrayReplyData.at(offset_counter));
+                    lls_data.llssValues.values.Frequency[i] = lls_data.llssValues.values.Frequency[i] << 8;
+                    offset_counter++;
+                }
+                res = true;
+            }
+                break;
 
-//            case lls_read_settings: {
-//                if(commandArrayReplyData.size() > 22) {
-//                    char *pbuf = (commandArrayReplyData.data() + 4);
-//                    // TODO: is normal convertion?
-//                    lls_data.sn.value.fromUtf8(pbuf, strlen(pbuf));
-//                    // TODO: is normal convertion?
-//                    pbuf = (commandArrayReplyData.data() + 4 + sizeof(lls_data.sn));
-//                    lls_data.firmwareVersion.value.fromUtf8(pbuf, strlen(pbuf));
+            case Progress_tmk24Data::lls_read_settings: {
+                if(commandArrayReplyData.size() > 22) {
+                    char *pbuf = (commandArrayReplyData.data() + 4);
+                    // TODO: is normal convertion?
+                    lls_data.sn.value.fromUtf8(pbuf, strlen(pbuf));
+                    // TODO: is normal convertion?
+                    pbuf = (commandArrayReplyData.data() + 4 + sizeof(lls_data.sn));
+                    lls_data.firmwareVersion.value.fromUtf8(pbuf, strlen(pbuf));
 
-//                    switch(commandArrayReplyData.at(3)) {
-//                    case Progress_tmk24Data::type_lls_tmk24:
-//                        lls_data.typeLls.value = "ТМК.24";
-//                        break;
-//                    case Progress_tmk24Data::type_lls_tmk4ux:
-//                        lls_data.typeLls.value = "ТМК.4UX";
-//                        break;
-//                    case Progress_tmk24Data::type_lls_tmk2u1:
-//                        lls_data.typeLls.value = "ТМК.2И1";
-//                    default:
-//                        lls_data.typeLls.value = "Unknown";
-//                        break;
-//                    }
-//                    // TODO: is valid conversion?
-//                    T_settings *pSettings = (T_settings*)(commandArrayReplyData.data() + 34);
-//                    if(pSettings->netAddress == commandArrayReplyData.at(param_id_address)) {
-//                        lls_data.settings.valueSettings = *pSettings;
-//                        lls_data.settings.isValid = true;
-//                    }
-//                    res = true;
-//                }
-//            }
-//                break;
+                    switch(commandArrayReplyData.at(3)) {
+                    case Progress_tmk24Data::type_lls_tmk24:
+                        lls_data.typeLls.value = "ТМК.24";
+                        break;
+                    case Progress_tmk24Data::type_lls_tmk4ux:
+                        lls_data.typeLls.value = "ТМК.4UX";
+                        break;
+                    case Progress_tmk24Data::type_lls_tmk2u1:
+                        lls_data.typeLls.value = "ТМК.2И1";
+                    default:
+                        lls_data.typeLls.value = "Unknown";
+                        break;
+                    }
+                    // TODO: is valid conversion?
+                    Progress_tmk24Data::T_settings *pSettings = (Progress_tmk24Data::T_settings*)(commandArrayReplyData.data() + 34);
+                    if(pSettings->netAddress == commandArrayReplyData.at(Progress_tmk24Data::param_id_address)) {
+                        lls_data.settings.valueSettings = *pSettings;
+                        lls_data.settings.isValid = true;
+                    }
+                    res = true;
+                }
+            }
+                break;
 
-//            case lls_write_settings:
-//                if(commandArrayReplyData.size() > 4) {
-//                    if(commandArrayReplyData.at(3) == 0) {
-//                        res = true;
-//                    }
-//                }
-//                break;
+            case Progress_tmk24Data::lls_write_settings:
+                if(commandArrayReplyData.size() > 4) {
+                    if(commandArrayReplyData.at(3) == 0) {
+                        res = true;
+                    }
+                }
+                break;
 
-//            case lls_read_cal_table: {
-//                if(commandArrayReplyData.size() > 45) {
-//                    memset(&lls_data.calibrateTable.table, 0, sizeof(T_calibrationTable));
-//                    lls_data.calibrateTable.table.TableSize = commandArrayReplyData.at(3);
-//                    int index = 0;
-//                    for(int i=0; i<lls_data.calibrateTable.table.TableSize; i++) {
-//                        lls_data.calibrateTable.table.x[i] = (0xFF & commandArrayReplyData.at(index+4));
-//                        index++;
-//                        lls_data.calibrateTable.table.x[i] |= ((0xFF & commandArrayReplyData.at(index+4)) << 8);
-//                        index++;
-//                        lls_data.calibrateTable.table.y[i] = (0xFF & commandArrayReplyData.at(index+4));
-//                        index++;
-//                        lls_data.calibrateTable.table.y[i] |= ((0xFF & commandArrayReplyData.at(index+4)) << 8);
-//                        index++;
-//                    }
-//                    res = true;
-//                }
-//            }
-//                break;
+            case Progress_tmk24Data::lls_read_cal_table: {
+                if(commandArrayReplyData.size() > 45) {
+                    memset(&lls_data.calibrateTable.table, 0, sizeof(Progress_tmk24Data::T_calibrationTable));
+                    lls_data.calibrateTable.table.TableSize = commandArrayReplyData.at(3);
+                    int index = 0;
+                    for(int i=0; i<lls_data.calibrateTable.table.TableSize; i++) {
+                        lls_data.calibrateTable.table.x[i] = (0xFF & commandArrayReplyData.at(index+4));
+                        index++;
+                        lls_data.calibrateTable.table.x[i] |= ((0xFF & commandArrayReplyData.at(index+4)) << 8);
+                        index++;
+                        lls_data.calibrateTable.table.y[i] = (0xFF & commandArrayReplyData.at(index+4));
+                        index++;
+                        lls_data.calibrateTable.table.y[i] |= ((0xFF & commandArrayReplyData.at(index+4)) << 8);
+                        index++;
+                    }
+                    res = true;
+                }
+            }
+                break;
 
-//            case lls_write_cal_table:
-//                if(commandArrayReplyData.size() > 4) {
-//                    if(commandArrayReplyData.at(3) == 0) {
-//                        res = true;
-//                    }
-//                }
-//                break;
-//            case lls_calibrate_min:
-//                if(commandArrayReplyData.size() > 3) {
-//                    if(commandArrayReplyData.at(3) == 0) {
-//                        res = true;
-//                    }
-//                }
-//                break;
+            case Progress_tmk24Data::lls_write_cal_table:
+                if(commandArrayReplyData.size() > 4) {
+                    if(commandArrayReplyData.at(3) == 0) {
+                        res = true;
+                    }
+                }
+                break;
+            case Progress_tmk24Data::lls_calibrate_min:
+                if(commandArrayReplyData.size() > 3) {
+                    if(commandArrayReplyData.at(3) == 0) {
+                        res = true;
+                    }
+                }
+                break;
 
-//            case lls_calibrate_max:
-//                if(commandArrayReplyData.size() > 3) {
-//                    if(commandArrayReplyData.at(3) == 0) {
-//                        res = true;
-//                    }
-//                }
-//                break;
+            case Progress_tmk24Data::lls_calibrate_max:
+                if(commandArrayReplyData.size() > 3) {
+                    if(commandArrayReplyData.at(3) == 0) {
+                        res = true;
+                    }
+                }
+                break;
 
-//            case lls_read_errors:
-//            {
-//                if(commandArrayReplyData.size() > 5) { // TODO: 10?
-//                    T_errors t_erros;
-//                    memcpy(&t_erros, (commandArrayReplyData.data() + 3), sizeof(t_erros));
-//                    memcpy(&lls_data.errors, &t_erros, sizeof(lls_data.errors));
-//                    res = true;
-//                }
-//            }
-//                break;
-//            case lls_set_serial_number: break;
-//            case lls_read_serial_number: {
-//                // TODO: is normal convertion?
-//                if(commandArrayReplyData.size() > 22) {
-//                    lls_data.sn.value.fromUtf8((commandArrayReplyData.data() + 3), sizeof(lls_data.sn.size));
-//                    lls_data.sn.isValid = true;
-//                }
-//                res = true;
-//            }
-//                break;
+            case Progress_tmk24Data::lls_read_errors:
+            {
+                if(commandArrayReplyData.size() > 5) { // TODO: 10?
+                    Progress_tmk24Data::T_errors t_erros;
+                    memcpy(&t_erros, (commandArrayReplyData.data() + 3), sizeof(t_erros));
+                    memcpy(&lls_data.errors, &t_erros, sizeof(lls_data.errors));
+                    res = true;
+                }
+            }
+                break;
+            case Progress_tmk24Data::lls_set_serial_number: break;
+            case Progress_tmk24Data::lls_read_serial_number: {
+                // TODO: is normal convertion?
+                if(commandArrayReplyData.size() > 22) {
+                    lls_data.sn.value.fromUtf8((commandArrayReplyData.data() + 3), sizeof(lls_data.sn.size));
+                    lls_data.sn.isValid = true;
+                }
+                res = true;
+            }
+                break;
 
-//            case lls_set_personal: break;
-//            case lls_read_personal: break;
-//            case lls_set_new_password:
-//                if(commandArrayReplyData.size() >= 4) {
-//                    if(commandArrayReplyData.at(3) == 0) {
-//                        res = true;
-//                    }
-//                }
-//                break;
+            case Progress_tmk24Data::lls_set_personal: break;
+            case Progress_tmk24Data::lls_read_personal: break;
+            case Progress_tmk24Data::lls_set_new_password:
+                if(commandArrayReplyData.size() >= 4) {
+                    if(commandArrayReplyData.at(3) == 0) {
+                        res = true;
+                    }
+                }
+                break;
 
-//            case lls_check_address_and_pass:
-//            {
-//                if(commandArrayReplyData.size()>4) {
-//                    lls_data.password.isValid = (bool)commandArrayReplyData.at(3);
-//                    res = true;
-//                }
-//            }
-//                break;
+            case Progress_tmk24Data::lls_check_address_and_pass:
+            {
+                if(commandArrayReplyData.size()>4) {
+                    lls_data.password.isValid = (bool)commandArrayReplyData.at(3);
+                    res = true;
+                }
+            }
+                break;
 
-//            case lls_run_bootloader: break;
-//            default : break;
-//            }
-//        } else {
-//            qDebug() << "parce -ERROR crc\n";
-//        }
-//    }
-//    return res;
+            case Progress_tmk24Data::lls_run_bootloader: break;
+            default : break;
+            }
+        } else {
+            qDebug() << "parce -ERROR crc\n";
+        }
+    }
+    return res;
 }
 
 #ifdef USE_TEST_DEV_REPLY

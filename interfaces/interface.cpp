@@ -43,8 +43,8 @@ bool Interface::openInterface(QString name, QStringList arg) {
         res = serialPort->openInterface(name, arg);
         if(res) {
             connect(serialPort, SIGNAL(errorInterface(QString)), SLOT(errorInterface(QString)));
-            connect(deviceFactory, SIGNAL(writeData(DeviceAbstract::E_DeviceType,QByteArray)),
-                    this, SLOT(writeData(DeviceAbstract::E_DeviceType,QByteArray)));
+            connect(deviceFactory, SIGNAL(writeData(QByteArray)),
+                    this, SLOT(writeData(QByteArray)));
             connect(deviceFactory, SIGNAL(readReplyData()), this, SLOT(readData()));
         }
     }
@@ -89,17 +89,17 @@ interfacesAbstract::eInterfaceTypes Interface::getInterfaceType() {
     return interfaceType;
 }
 
-//bool Interface::writeData(DeviceAbstract::E_DeviceType type, QByteArray data) {
-//    bool res = false;
-//#ifdef USE_TEST_DEV_REPLY
-//    testDevReply->writeDevRequestData(type, data);
-//#else
-//    if(interfaceType == interfacesAbstract::InterfaceTypeSerialPort) {
-//        res = serialPort->sendData(data);
-//    }
-//#endif
-//    return res;
-//}
+bool Interface::writeData(QByteArray data) {
+    bool res = false;
+#ifdef USE_TEST_DEV_REPLY
+    testDevReply->writeDevRequestData(type, data);
+#else
+    if(interfaceType == interfacesAbstract::InterfaceTypeSerialPort) {
+        res = serialPort->sendData(data);
+    }
+#endif
+    return res;
+}
 
 void Interface::readData() {
     QByteArray data;

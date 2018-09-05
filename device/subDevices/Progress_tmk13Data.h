@@ -13,6 +13,7 @@ class Progress_tmk13Data : public QObject
 {
     Q_OBJECT
 public:
+
     Progress_tmk13Data();
     ~Progress_tmk13Data();
 
@@ -117,59 +118,33 @@ public:
         int8_t Temperature[4];
         uint8_t ActualFlag[4]; //if lost frame then 1!
     }T_dutValues;
-
 #pragma pack()
 
-//    T_settings settings;
-//    uint8_t serialNumber[64];
-//    uint8_t personalData[64];
-//    Progress_tmk13Data::T_calibrationTable calibrationTable;
-//    uint32_t passwordHash;
-//    uint8_t newSerialNumber[SERIALNUMBER_STRING_SIZE];
-//    uint8_t personalDataBuff[PERSONAL_DATA_SIZE];
-//    QString version;
-//    QString cpuId;
-//    uint32_t cnt;
-//    Progress_tmk13Data::T_settings newSettings;
-
+    typedef struct {
+        bool isValid;
+        union {
+            float value_f;
+            double value_d;
+            int value_i;
+            uint32_t value_u32;
+            uint16_t value_u16;
+        }value;
+    }sValue;
 
     typedef struct {
-        struct {
-            uint32_t cnt;
-            bool isValid;
-        }cnt;
+        bool isValid;
+        QString value;
+    }sValueText;
 
-        struct {
-            float level;
-            float levelProcent;
-            bool isValid;
-        }fuelLevel;
-
-        struct {
-            QString value;
-            uint8_t size[12];
-            bool isValid;
-        }sn;
-
-        struct {
-            QString value;
-            bool isValid;
-        }typeLls;
-
-        struct {
-            uint16_t value;
-            bool isValid;
-        }freq;
-
-        struct {
-            int8_t value;
-            bool isValid;
-        }temp;
-
-        struct {
-            QString value;
-            bool isValid;
-        }firmwareVersion;
+    typedef struct {
+        sValue cnt;
+        sValue fuelLevel;
+        sValue fuelProcent;
+        sValue freq;
+        sValue temp;
+        sValueText serialNum;
+        sValueText firmware;
+        sValueText password;
 
         struct {
             T_settings valueSettings;
@@ -180,6 +155,7 @@ public:
             T_errors errors;
             bool isValid;
         }errors;
+
         struct {
             T_calibrationTable table;
             bool isValid;
@@ -190,10 +166,11 @@ public:
             bool isValid;
         }llssValues;
 
-        struct{
-            QString password;
+        struct {
+            QString name;
             bool isValid;
-        }password;
+        }typeLls;
+
     }S_lls_data;
 };
 

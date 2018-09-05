@@ -35,27 +35,17 @@ signals:
     void addDeviceSignal(QString name, bool is_checked);
     void addInterfaceSignal(QString name, bool is_checked);
 
-    void updateCurrentDataDevTmk24_Signal(QStringList data);
-    void updatePropertySerialPort_Signal(QStringList data);
+    void updatePropertiesSerialPort_Signal(QStringList data);
+    void updatePropertiesDevTmk24_Signal(QStringList data);
+    void updatePropertiesDevTmk13_Signal(QStringList data);
 
-    //    void updateDeviceListSignal(QStringList);
+    void updateDataDevTmk24_Signal(QStringList data);
+    void updateDataDevTmk13_Signal(QStringList data);
 
-    // отсылает сколько каких коннектов можно создать
-    //    void readyCreateNewConnections(int connecionsCountTypes);
-    //    // горит что что-то там открылось
-    //    void connectionOpened(QString nameInterface, QString subName);
-    //    // закрылось штатно
-    //    void connectionClosed(QString name);
-    //    // закрылось изза ошибки
-    //    void connectionClosedWithError(QString name);
-
-    //    // говорит какой из коннектов сейчас активен на форме
-    //    void activeCurrentInterface(QString nameInterface, int indexInterface,
-    //                                int activeDeviceIndex);
+    void updateDevTmk24_NoReady_Signal();
+    void updateDevTmk13_NoReady_Signal();
 
 private slots:
-    void addCommandDevReadAffterChangeFocusByIndex(int devIndex);
-
     void updateCurrentDataSlot();
     void connectionIsLost(interfacesAbstract::eInterfaceTypes, QString nameInterface);
 

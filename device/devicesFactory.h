@@ -29,36 +29,35 @@ public slots:
 
     QString getDeviceName(int index);
     E_DeviceType getDeviceType(QString typeText);
+    E_DeviceType getDeviceType(int index);
     QString getDeviceNameByType(DevicesFactory::E_DeviceType type);
 
+    void setDeviceInitCommandByIndex(int index);
+
     int getDeviceCount();
+    QStringList getAvailableDeviceTypes();
     QStringList getDeviceHeaderByIndex(int index);
+    QString getDeviceIdTextByIndex(int index);
 
     QList<int> getDeviceChartByIndex(int index);
     QList<QString> getDeviceCurrentDataByIndex(int index);
-
-
-    QStringList getDeviceCurrentPropertyByIndex(int index);
-
-    QString getDeviceIdTextByIndex(int index);
-
+    QStringList getDevicePropertyByIndex(int index);
     QStringList getDeviceProperty(int indexDev);
 
-    QStringList getAvailableDeviceTypes();
+    DeviceAbstract::E_State getDevStateByIndex(int index);
 
     bool addCommandDevice(CommandController::sCommandData commandData);
 
     void placeReplyDataFromInterface(QByteArray data);
 
-//    QString getCaptionToTypeDevice(DeviceAbstract::E_DeviceType type);
-//    DeviceAbstract::E_DeviceType getDeviceTypeFromTypeCaption(QString typeDevText);
-//    DeviceAbstract::E_DeviceType getDeviceTypebyIndex(int index);
-
     void setDeviceAsNotReadyByIndex(int index);
 
 signals:
-//    void writeData(DeviceAbstract::E_DeviceType type, QByteArray data);
+    void writeData(QByteArray data);
     void readReplyData();
+
+    void deviceReadyPropertiesSignal(QString uniqNameId);
+    void deviceReadyInitSignal(QString uniqNameId);
 
 private slots:
     //-- find device by index
@@ -66,18 +65,15 @@ private slots:
     QPair<QString,DeviceAbstract*>* findDeviceByUnicIdent(QString name);
 
     //-- gives the oldest devices
-//    Device* getDevOldest();
-    //-- sheduller slot
+    DeviceAbstract* getDevOldest();
     void devShedullerSlot();
-    //--
-//    bool writeCommandToDev(Device *pDev, CommandController::sCommandData commandData);
 
 private:
     QVector<QPair<QString,DeviceAbstract*>> deviceMap;
     CommandController *commandController;
 
     QTimer* devShedullerTimer;
-//    Device* lastRequestedDevice;
+    DeviceAbstract * devLastRequested;
 
     const int delayAfterSendCommandMs = 500;
     const int devShedullerControlInterval = 500;

@@ -6,7 +6,8 @@ Item {
     id: projectDevicePanel
     anchors.fill: parent
 
-    //----------     public
+    property alias devPropertyLlsTMK24: devPropertyLlsTMK24
+
     function addInterface(name) {
         console.log("AddInterface: " + name)
         listInterfaceView.model.append({"text":name})
@@ -15,18 +16,18 @@ Item {
         console.log("addDevice: " + name)
         listDeviceView.model.append({"text":name})
     }
-    function setPropertyToSerialPort(listData) {
-        devPropertySerialPort.setPropertyValues(listData)
-        devicePropertieslistModel1.pop()
-        remakeDeviceList()
-    }
-    function setCurrentDataToDevTmk24(listData) {
-        devPropertyLlsTMK24.setUpdateCurrentValues(listData)
-    }
-    function setCurrentDataToDevTmk13(listData) { // TODO:!!!
-    }
+//    function setPropertyToSerialPort(listData) {
+//        devPropertySerialPort.setPropertyValues(listData)
+//    }
+//    function setPropertyToDevPanel() {
+//        devPropertyLlsTMK24.setDevProperty(data)
+//    }
+//    function setDevToPanelAsNoActive() {
+//        var data = viewController.getCurrentDevPropertyByIndex(listDeviceView.model.index)
+//        devPropertyLlsTMK24.setDevProperty(data)
+//        devicePropertieslistModel1.push(devPropertyLlsTMK24)
+//    }
 
-    //----------     private
     function remakeDeviceList() {
         listDeviceView.model.clear()
         var devListSize = viewController.getDeviceCount()
@@ -35,12 +36,6 @@ Item {
             var dev = viewController.getDeviceHeaderByIndex(index);
             listDeviceView.model.append({"text": dev[0]})
         }
-    }
-
-    function setDevPropertyToPanel() {
-        var data = viewController.getCurrentDevPropertyByIndex(listDeviceView.model.index)
-        devPropertyLlsTMK24.setDevProperty(data)
-        devicePropertieslistModel1.push(devPropertyLlsTMK24)
     }
 
     Rectangle {
@@ -108,6 +103,8 @@ Item {
                     onClicked: {
                         console.log("DeviceList clicked ")
                         view.currentIndex = model.index
+                        devicePropertieslistModel1.pop()
+                        remakeDeviceList()
                         viewController.setChangedIndexInteface(model.index)
                     }
                 }
@@ -232,8 +229,8 @@ Item {
                     onClicked: {
                         console.log("DeviceList clicked ")
                         viewDevice.currentIndex = model.index
+                        devicePropertieslistModel1.push(devPropertyLlsTMK24)
                         viewController.setChangedIndexDevice(model.index)
-                        setDevPropertyToPanel()
                     }
                 }
             }
