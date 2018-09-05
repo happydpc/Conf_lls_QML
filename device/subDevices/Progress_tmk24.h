@@ -3,16 +3,22 @@
 
 #include <QObject>
 #include <QVector>
-#include "Progress_tmk24Data.h"
+#include "device/deviceAbstract.h"
 #include "command/commandController.h"
+#include "Progress_tmk24Data.h"
+#include "device/devicesFactory.h"
 
 //#define USE_TEST_DEV_REPLY  1
 
-class Progress_tmk24 : public Progress_tmk24Data
+class Progress_tmk24 : public DeviceAbstract
 {
 public:
-    Progress_tmk24();
+    Progress_tmk24(QString uniqDevName);
     ~Progress_tmk24();
+
+    static constexpr char* name = "Progress tmk24";
+
+    QString getName() override;
 
     QStringList getSettings();
     bool setSettings(QStringList settigns);
@@ -34,10 +40,11 @@ private slots:
     void resetValues();
 
 private:
+    Progress_tmk24Data tmk24Data;
     Progress_tmk24Data::T_calibrationTable calibrationTable;
     Progress_tmk24Data::T_settings newSettings;
-    T_settings settings;
-    S_lls_data lls_data;
+    Progress_tmk24Data::T_settings settings;
+    Progress_tmk24Data::S_lls_data lls_data;
     QList<int> *chartData;
 };
 

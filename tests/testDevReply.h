@@ -10,8 +10,8 @@ class TestDevReply : public QObject
 public:
     explicit TestDevReply(QObject *parent = nullptr);
 
-    bool writeDevRequestData(DeviceAbstract::E_DeviceType type, QByteArray &data);
-    bool readDevReplyData(QByteArray &data);
+//    bool writeDevRequestData(DeviceAbstract::E_DeviceType type, QByteArray &data);
+//    bool readDevReplyData(QByteArray &data);
 
 private:
     QByteArray replyByteArrayBuff;

@@ -89,17 +89,17 @@ interfacesAbstract::eInterfaceTypes Interface::getInterfaceType() {
     return interfaceType;
 }
 
-bool Interface::writeData(DeviceAbstract::E_DeviceType type, QByteArray data) {
-    bool res = false;
-#ifdef USE_TEST_DEV_REPLY
-    testDevReply->writeDevRequestData(type, data);
-#else
-    if(interfaceType == interfacesAbstract::InterfaceTypeSerialPort) {
-        res = serialPort->sendData(data);
-    }
-#endif
-    return res;
-}
+//bool Interface::writeData(DeviceAbstract::E_DeviceType type, QByteArray data) {
+//    bool res = false;
+//#ifdef USE_TEST_DEV_REPLY
+//    testDevReply->writeDevRequestData(type, data);
+//#else
+//    if(interfaceType == interfacesAbstract::InterfaceTypeSerialPort) {
+//        res = serialPort->sendData(data);
+//    }
+//#endif
+//    return res;
+//}
 
 void Interface::readData() {
     QByteArray data;

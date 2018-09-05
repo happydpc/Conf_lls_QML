@@ -3,43 +3,48 @@
 
 #include <QObject>
 #include <QVector>
-#include "Progress_tmk13Data.h"
+#include "device/deviceAbstract.h"
 #include "command/commandController.h"
+#include "Progress_tmk13Data.h"
+#include "device/devicesFactory.h"
 
-//#define USE_TEST_DEV_REPLY  1
-
-class Progress_tmk13 : public Progress_tmk13Data
+class Progress_tmk13 : public DeviceAbstract
 {
 public:
-    Progress_tmk13();
+    Progress_tmk13(QString uniqDevName);
     ~Progress_tmk13();
+
+    static constexpr char *name = "Progress tmk13";
+
+    QString getName() override;
+    QStringList getPropertyData() override;
+
+
 
     QStringList getSettings();
     bool setSettings(QStringList settigns);
-    QStringList getPropertyData();
 
     bool makeDataToComand(CommandController::sCommandData &commandData);
     bool placeDataReplyToCommand(QByteArray &commandArrayReplyData);
 
-    QList<int> getChart();
+    QList<int>getChart();
 
-#ifdef USE_TEST_DEV_REPLY
-    bool makeDataRequestReply(QByteArray request, QByteArray &reply);
-    #endif
-
-//    Progress_tmk13Data::T_calibrationTable calibrationTable;
-//    uint32_t passwordHash;
-//    uint8_t newSerialNumber[SERIALNUMBER_STRING_SIZE];
-//    uint8_t personalDataBuff[PERSONAL_DATA_SIZE];
-//    QString version;
-//    QString cpuId;
-//    uint32_t cnt;
-//    Progress_tmk13Data::T_settings newSettings;
+    QList<QString>getCurrentOtherData();
 
     QList<CommandController::sCommandData> getCommandListToIdlePoll(QString deviceIdent);
 
+#ifdef USE_TEST_DEV_REPLY
+    bool makeDataRequestReply(QByteArray request, QByteArray &reply);
+#endif
+private slots:
+    void resetValues();
+
 private:
-    S_lls_data lls_data;
+    Progress_tmk13Data tmkData;
+    Progress_tmk13Data::T_calibrationTable calibrationTable;
+    Progress_tmk13Data::T_settings newSettings;
+    Progress_tmk13Data::T_settings settings;
+    Progress_tmk13Data::S_lls_data lls_data;
     QList<int> *chartData;
 };
 

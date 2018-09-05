@@ -1,9 +1,6 @@
 #include "viewController.h"
 #include <QDebug>
 
-//    bool res = false;
-//    QStringList strLis;
-
 ViewController::ViewController(QObject *parent) : QObject(parent) {
     this->connFactory = new ConnectionFactory();
 
@@ -49,9 +46,8 @@ bool ViewController::addDeviceToConnection(QString devTypeName, QString idNum) {
     Interface *pInterface = nullptr;
     // get current interface
     pInterface = connFactory->getInterace(connFactory->getInteraceNameFromIndex(index.interfaceIndex));
-    if(pInterface != nullptr) {
-        res = pInterface->getDeviceFactory()
-                ->addNewDevice(pInterface->getDeviceFactory()->getDeviceTypeFromTypeCaption(devTypeName), idNum, QStringList(""));
+    if(pInterface != nullptr) {     // TODO: throw!!!
+        res = pInterface->getDeviceFactory()->addNewDevice(pInterface->getDeviceFactory()->getDeviceType(devTypeName), idNum, QStringList(""));
         if(res) {
             // change current device index
             index.deviceIndex = (getDeviceCount()-1);
@@ -120,52 +116,54 @@ QStringList ViewController::getDeviceHeaderByIndex(int devIndex) {
     return ret;
 }
 
+// TODO:
 QStringList ViewController::getCurrentDevPropertyByIndex() {
-    QStringList ret = connFactory->getInterace(connFactory->getInteraceNameFromIndex(index.interfaceIndex))
-            ->getDeviceFactory()->getDeviceCurrentPropertyByIndex(index.deviceIndex);
-    ret.push_front(connFactory->getInterace(connFactory->getInteraceNameFromIndex(index.interfaceIndex))
-                   ->getDeviceFactory()->getDeviceTypeTextByIndex(index.deviceIndex));
+    QStringList ret = connFactory->getInterace(
+                connFactory->getInteraceNameFromIndex(index.interfaceIndex))->getDeviceFactory()
+            ->getDeviceCurrentPropertyByIndex(index.deviceIndex);
+    ret.push_front(connFactory->getInterace(connFactory->getInteraceNameFromIndex(index.interfaceIndex))->
+                   getDeviceFactory()->getDeviceName(index.deviceIndex));
     return ret;
 }
 
 void ViewController::updateCurrentDataSlot() {
-    QStringList ret;
-    if(connFactory->getCountConnection() >0) {
-        QString name = connFactory->getInteraceNameFromIndex(index.interfaceIndex);
-        if(!name.isEmpty()) {
-            ret = connFactory->getInterace(name)->getDeviceFactory()->getDeviceCurrentPropertyByIndex(index.deviceIndex);
-            if(!ret.isEmpty()) {
-                emit updateCurrentDataDevTmk24_Signal(ret);
-            }
-        }
-    }
+    //    QStringList ret;
+    //    if(connFactory->getCountConnection() >0) {
+    //        QString name = connFactory->getInteraceNameFromIndex(index.interfaceIndex);
+    //        if(!name.isEmpty()) {
+    //            ret = connFactory->getInterace(name)->getDeviceFactory()->getDeviceCurrentPropertyByIndex(index.deviceIndex);
+    //            if(!ret.isEmpty()) {
+    //                emit updateCurrentDataDevTmk24_Signal(ret);
+    //            }
+    //        }
+    //    }
 }
 
 void ViewController::addCommandDevReadAffterChangeFocusByIndex(int devIndex) {
-    Interface *pInterface = nullptr;
-    // get current interface
-    pInterface = connFactory->getInterace(connFactory->getInteraceNameFromIndex(index.interfaceIndex));
-    if(pInterface != nullptr) {
-        // add device command to read current property device
-        CommandController::sCommandData commandDev;
-        // get device type
-        DeviceAbstract::E_DeviceType devType = pInterface->getDeviceFactory()->getDeviceTypebyIndex(index.deviceIndex);
-        if(devType == DeviceAbstract::Type_Progress_Tmk24) {
-            // add command - read settings
-            commandDev.devCommand = Progress_tmk24::Progress_tmk24Data::lls_read_settings;
-            commandDev.deviceIdent = pInterface->getDeviceFactory()->getDeviceIdTextByIndex(index.deviceIndex);
-            pInterface->getDeviceFactory()->addCommandDevice(commandDev);
-            // add command - read password
-            commandDev.devCommand = Progress_tmk24::Progress_tmk24Data::lls_check_address_and_pass;
-            commandDev.deviceIdent = pInterface->getDeviceFactory()->getDeviceIdTextByIndex(index.deviceIndex);
-            pInterface->getDeviceFactory()->addCommandDevice(commandDev);
-            // TOOD: make it check password !!!
-        } else if(devType == DeviceAbstract::Type_Progress_Tmk13) {
+    //    Interface *pInterface = nullptr;
+    //    // get current interface
+    //    pInterface = connFactory->getInterace(connFactory->getInteraceNameFromIndex(index.interfaceIndex));
+    //    if(pInterface != nullptr) {
+    //        // add device command to read current property device
+    //        CommandController::sCommandData commandDev;
+    //        // get device type
+    //        DeviceAbstract::E_DeviceType devType = pInterface->getDeviceFactory()->getDeviceTypebyIndex(index.deviceIndex);
+    //        if(devType == DeviceAbstract::Type_Progress_Tmk24) {
+    //            // add command - read settings
+    //            commandDev.devCommand = Progress_tmk24::Progress_tmk24Data::lls_read_settings;
+    //            commandDev.deviceIdent = pInterface->getDeviceFactory()->getDeviceIdTextByIndex(index.deviceIndex);
+    //            pInterface->getDeviceFactory()->addCommandDevice(commandDev);
+    //            // add command - read password
+    //            commandDev.devCommand = Progress_tmk24::Progress_tmk24Data::lls_check_address_and_pass;
+    //            commandDev.deviceIdent = pInterface->getDeviceFactory()->getDeviceIdTextByIndex(index.deviceIndex);
+    //            pInterface->getDeviceFactory()->addCommandDevice(commandDev);
+    //            // TOOD: make it check password !!!
+    //        } else if(devType == DeviceAbstract::Type_Progress_Tmk13) {
 
-        } else {
-            qDebug() << "addDevice -unknown type device!";
-        }
-    }
+    //        } else {
+    //            qDebug() << "addDevice -unknown type device!";
+    //        }
+    //    }
 }
 
 void ViewController::connectionIsLost(interfacesAbstract::eInterfaceTypes, QString nameInterface) {

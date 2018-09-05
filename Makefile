@@ -14,7 +14,7 @@ CC            = gcc
 CXX           = g++
 DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_QUICK_LIB -DQT_CHARTS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_QML_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-CXXFLAGS      = -pipe -g -std=gnu++11 -Wall -W -D_REENTRANT -fPIC $(DEFINES)
+CXXFLAGS      = -pipe -g -std=gnu++1y -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 INCPATH       = -I. -I../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include -I../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick -I../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCharts -I../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtWidgets -I../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui -I../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml -I../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtNetwork -I../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSerialPort -I../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore -I. -isystem /usr/include/libdrm -I../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/linux-g++
 QMAKE         = /media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/qmake
 DEL_FILE      = rm -f
@@ -52,7 +52,6 @@ OBJECTS_DIR   = ./
 
 SOURCES       = main.cpp \
 		connection/connectionFactory.cpp \
-		device/device.cpp \
 		device/deviceAbstract.cpp \
 		device/devicesFactory.cpp \
 		interfaces/interfaceBLE.cpp \
@@ -89,7 +88,6 @@ SOURCES       = main.cpp \
 		moc_testDevReply.cpp
 OBJECTS       = main.o \
 		connectionFactory.o \
-		device.o \
 		deviceAbstract.o \
 		devicesFactory.o \
 		interfaceBLE.o \
@@ -303,7 +301,6 @@ DIST          = ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/features/
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/features/yacc.prf \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/features/lex.prf \
 		Lls_QML_conf.pro connection/connectionFactory.h \
-		device/device.h \
 		device/deviceAbstract.h \
 		device/devicesFactory.h \
 		interfaces/interfaceBLE.h \
@@ -323,7 +320,6 @@ DIST          = ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/features/
 		other/crc.h \
 		tests/testDevReply.h main.cpp \
 		connection/connectionFactory.cpp \
-		device/device.cpp \
 		device/deviceAbstract.cpp \
 		device/devicesFactory.cpp \
 		interfaces/interfaceBLE.cpp \
@@ -744,8 +740,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents qml.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents connection/connectionFactory.h device/device.h device/deviceAbstract.h device/devicesFactory.h interfaces/interfaceBLE.h interfaces/interfaceEthernet.h interfaces/interfacesAbstract.h interfaces/interfaceSerial.h settings/settings.h view/viewController.h interfaces/interface.h command/commandController.h device/subDevices/Progress_Base.h device/subDevices/Progress_BaseData.h device/subDevices/Progress_tmk13.h device/subDevices/Progress_tmk13Data.h device/subDevices/Progress_tmk24.h device/subDevices/Progress_tmk24Data.h other/crc.h tests/testDevReply.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp connection/connectionFactory.cpp device/device.cpp device/deviceAbstract.cpp device/devicesFactory.cpp interfaces/interfaceBLE.cpp interfaces/interfaceEthernet.cpp interfaces/interfacesAbstract.cpp interfaces/interfaceSerial.cpp settings/settings.cpp view/viewController.cpp interfaces/interface.cpp command/commandController.cpp device/subDevices/Progress_Base.cpp device/subDevices/Progress_BaseData.cpp device/subDevices/Progress_tmk13.cpp device/subDevices/Progress_tmk13Data.cpp device/subDevices/Progress_tmk24.cpp device/subDevices/Progress_tmk24Data.cpp other/crc.cpp tests/testDevReply.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents connection/connectionFactory.h device/deviceAbstract.h device/devicesFactory.h interfaces/interfaceBLE.h interfaces/interfaceEthernet.h interfaces/interfacesAbstract.h interfaces/interfaceSerial.h settings/settings.h view/viewController.h interfaces/interface.h command/commandController.h device/subDevices/Progress_Base.h device/subDevices/Progress_BaseData.h device/subDevices/Progress_tmk13.h device/subDevices/Progress_tmk13Data.h device/subDevices/Progress_tmk24.h device/subDevices/Progress_tmk24Data.h other/crc.h tests/testDevReply.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp connection/connectionFactory.cpp device/deviceAbstract.cpp device/devicesFactory.cpp interfaces/interfaceBLE.cpp interfaces/interfaceEthernet.cpp interfaces/interfacesAbstract.cpp interfaces/interfaceSerial.cpp settings/settings.cpp view/viewController.cpp interfaces/interface.cpp command/commandController.cpp device/subDevices/Progress_Base.cpp device/subDevices/Progress_BaseData.cpp device/subDevices/Progress_tmk13.cpp device/subDevices/Progress_tmk13Data.cpp device/subDevices/Progress_tmk24.cpp device/subDevices/Progress_tmk24Data.cpp other/crc.cpp tests/testDevReply.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -796,7 +792,7 @@ compiler_moc_predefs_make_all: moc_predefs.h
 compiler_moc_predefs_clean:
 	-$(DEL_FILE) moc_predefs.h
 moc_predefs.h: ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp
-	g++ -pipe -g -std=gnu++11 -Wall -W -dM -E -o moc_predefs.h ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp
+	g++ -pipe -g -std=gnu++1y -Wall -W -dM -E -o moc_predefs.h ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp
 
 compiler_moc_header_make_all: moc_connectionFactory.cpp moc_deviceAbstract.cpp moc_devicesFactory.cpp moc_interfaceBLE.cpp moc_interfaceEthernet.cpp moc_interfacesAbstract.cpp moc_interfaceSerial.cpp moc_settings.cpp moc_viewController.cpp moc_interface.cpp moc_commandController.cpp moc_Progress_Base.cpp moc_Progress_BaseData.cpp moc_Progress_tmk13Data.cpp moc_Progress_tmk24Data.cpp moc_testDevReply.cpp
 compiler_moc_header_clean:
@@ -882,17 +878,15 @@ moc_connectionFactory.cpp: ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/includ
 		interfaces/interfaceEthernet.h \
 		device/devicesFactory.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QVector \
-		device/device.h \
-		device/deviceAbstract.h \
 		command/commandController.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QQueue \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qqueue.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QPair \
-		device/subDevices/Progress_tmk24.h \
-		device/subDevices/Progress_tmk24Data.h \
+		device/deviceAbstract.h \
 		device/subDevices/Progress_tmk13.h \
 		device/subDevices/Progress_tmk13Data.h \
-		device/subDevices/Progress_Base.h \
+		device/subDevices/Progress_tmk24.h \
+		device/subDevices/Progress_tmk24Data.h \
 		tests/testDevReply.h \
 		connection/connectionFactory.h \
 		moc_predefs.h \
@@ -1014,17 +1008,16 @@ moc_devicesFactory.cpp: ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/Q
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QTimer \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtimer.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbasictimer.h \
-		device/device.h \
-		device/deviceAbstract.h \
 		command/commandController.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QQueue \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qqueue.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QPair \
-		device/subDevices/Progress_tmk24.h \
-		device/subDevices/Progress_tmk24Data.h \
+		device/deviceAbstract.h \
 		device/subDevices/Progress_tmk13.h \
 		device/subDevices/Progress_tmk13Data.h \
-		device/subDevices/Progress_Base.h \
+		device/devicesFactory.h \
+		device/subDevices/Progress_tmk24.h \
+		device/subDevices/Progress_tmk24Data.h \
 		device/devicesFactory.h \
 		moc_predefs.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/moc
@@ -1412,17 +1405,15 @@ moc_viewController.cpp: ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/Q
 		interfaces/interfaceEthernet.h \
 		device/devicesFactory.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QVector \
-		device/device.h \
-		device/deviceAbstract.h \
 		command/commandController.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QQueue \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qqueue.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QPair \
-		device/subDevices/Progress_tmk24.h \
-		device/subDevices/Progress_tmk24Data.h \
+		device/deviceAbstract.h \
 		device/subDevices/Progress_tmk13.h \
 		device/subDevices/Progress_tmk13Data.h \
-		device/subDevices/Progress_Base.h \
+		device/subDevices/Progress_tmk24.h \
+		device/subDevices/Progress_tmk24Data.h \
 		tests/testDevReply.h \
 		view/viewController.h \
 		moc_predefs.h \
@@ -1509,17 +1500,15 @@ moc_interface.cpp: ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore
 		interfaces/interfaceEthernet.h \
 		device/devicesFactory.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QVector \
-		device/device.h \
-		device/deviceAbstract.h \
 		command/commandController.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QQueue \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qqueue.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QPair \
-		device/subDevices/Progress_tmk24.h \
-		device/subDevices/Progress_tmk24Data.h \
+		device/deviceAbstract.h \
 		device/subDevices/Progress_tmk13.h \
 		device/subDevices/Progress_tmk13Data.h \
-		device/subDevices/Progress_Base.h \
+		device/subDevices/Progress_tmk24.h \
+		device/subDevices/Progress_tmk24Data.h \
 		tests/testDevReply.h \
 		interfaces/interface.h \
 		moc_predefs.h \
@@ -1963,17 +1952,15 @@ main.o: main.cpp view/viewController.h \
 		interfaces/interfaceEthernet.h \
 		device/devicesFactory.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QVector \
-		device/device.h \
-		device/deviceAbstract.h \
 		command/commandController.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QQueue \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qqueue.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QPair \
-		device/subDevices/Progress_tmk24.h \
-		device/subDevices/Progress_tmk24Data.h \
+		device/deviceAbstract.h \
 		device/subDevices/Progress_tmk13.h \
 		device/subDevices/Progress_tmk13Data.h \
-		device/subDevices/Progress_Base.h \
+		device/subDevices/Progress_tmk24.h \
+		device/subDevices/Progress_tmk24Data.h \
 		tests/testDevReply.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtWidgets/QApplication \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtWidgets/qapplication.h \
@@ -2150,101 +2137,18 @@ connectionFactory.o: connection/connectionFactory.cpp connection/connectionFacto
 		interfaces/interfaceEthernet.h \
 		device/devicesFactory.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QVector \
-		device/device.h \
-		device/deviceAbstract.h \
 		command/commandController.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QQueue \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qqueue.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QPair \
-		device/subDevices/Progress_tmk24.h \
-		device/subDevices/Progress_tmk24Data.h \
+		device/deviceAbstract.h \
 		device/subDevices/Progress_tmk13.h \
 		device/subDevices/Progress_tmk13Data.h \
-		device/subDevices/Progress_Base.h \
+		device/subDevices/Progress_tmk24.h \
+		device/subDevices/Progress_tmk24Data.h \
 		tests/testDevReply.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QDebug
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o connectionFactory.o connection/connectionFactory.cpp
-
-device.o: device/device.cpp device/device.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnamespace.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobal.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtcore-config.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsystemdetection.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qprocessordetection.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcompilerdetection.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtypeinfo.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsysinfo.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlogging.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qflags.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbasicatomic.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_bootstrap.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qgenericatomic.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_cxx11.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_msvc.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobalstatic.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmutex.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnumeric.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qversiontagging.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstring.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qchar.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearray.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qrefcount.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qarraydata.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringliteral.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringalgorithms.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringview.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringbuilder.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlist.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qalgorithms.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qiterator.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qhashfunctions.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qpair.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearraylist.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringlist.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qregexp.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringmatcher.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcoreevent.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qscopedpointer.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmetatype.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvarlengtharray.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcontainerfwd.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject_impl.h \
-		device/deviceAbstract.h \
-		command/commandController.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QQueue \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qqueue.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QPair \
-		device/subDevices/Progress_tmk24.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QVector \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvector.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qpoint.h \
-		device/subDevices/Progress_tmk24Data.h \
-		device/subDevices/Progress_tmk13.h \
-		device/subDevices/Progress_tmk13Data.h \
-		device/subDevices/Progress_Base.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QDebug \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qdebug.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qhash.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmap.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtextstream.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qiodevice.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlocale.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvariant.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qshareddata.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qset.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcontiguouscache.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsharedpointer.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
-		other/crc.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QByteArray
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o device.o device/device.cpp
 
 deviceAbstract.o: device/deviceAbstract.cpp device/deviceAbstract.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
@@ -2360,17 +2264,15 @@ devicesFactory.o: device/devicesFactory.cpp device/devicesFactory.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QTimer \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtimer.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbasictimer.h \
-		device/device.h \
-		device/deviceAbstract.h \
 		command/commandController.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QQueue \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qqueue.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QPair \
-		device/subDevices/Progress_tmk24.h \
-		device/subDevices/Progress_tmk24Data.h \
+		device/deviceAbstract.h \
 		device/subDevices/Progress_tmk13.h \
 		device/subDevices/Progress_tmk13Data.h \
-		device/subDevices/Progress_Base.h \
+		device/subDevices/Progress_tmk24.h \
+		device/subDevices/Progress_tmk24Data.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QDebug \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qdebug.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qhash.h \
@@ -2796,17 +2698,15 @@ viewController.o: view/viewController.cpp view/viewController.h \
 		interfaces/interfaceEthernet.h \
 		device/devicesFactory.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QVector \
-		device/device.h \
-		device/deviceAbstract.h \
 		command/commandController.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QQueue \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qqueue.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QPair \
-		device/subDevices/Progress_tmk24.h \
-		device/subDevices/Progress_tmk24Data.h \
+		device/deviceAbstract.h \
 		device/subDevices/Progress_tmk13.h \
 		device/subDevices/Progress_tmk13Data.h \
-		device/subDevices/Progress_Base.h \
+		device/subDevices/Progress_tmk24.h \
+		device/subDevices/Progress_tmk24Data.h \
 		tests/testDevReply.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QDebug
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o viewController.o view/viewController.cpp
@@ -2892,17 +2792,15 @@ interface.o: interfaces/interface.cpp interfaces/interface.h \
 		interfaces/interfaceEthernet.h \
 		device/devicesFactory.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QVector \
-		device/device.h \
-		device/deviceAbstract.h \
 		command/commandController.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QQueue \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qqueue.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QPair \
-		device/subDevices/Progress_tmk24.h \
-		device/subDevices/Progress_tmk24Data.h \
+		device/deviceAbstract.h \
 		device/subDevices/Progress_tmk13.h \
 		device/subDevices/Progress_tmk13Data.h \
-		device/subDevices/Progress_Base.h \
+		device/subDevices/Progress_tmk24.h \
+		device/subDevices/Progress_tmk24Data.h \
 		tests/testDevReply.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o interface.o interfaces/interface.cpp
 
@@ -3135,11 +3033,18 @@ Progress_tmk13.o: device/subDevices/Progress_tmk13.cpp ../../../../DATA/Linux_PR
 		device/subDevices/Progress_tmk13.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QVector \
-		device/subDevices/Progress_tmk13Data.h \
+		device/deviceAbstract.h \
 		command/commandController.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QQueue \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qqueue.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QPair \
+		device/subDevices/Progress_tmk13Data.h \
+		device/devicesFactory.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QTimer \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtimer.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbasictimer.h \
+		device/subDevices/Progress_tmk24.h \
+		device/subDevices/Progress_tmk24Data.h \
 		other/crc.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QByteArray
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Progress_tmk13.o device/subDevices/Progress_tmk13.cpp
@@ -3264,11 +3169,18 @@ Progress_tmk24.o: device/subDevices/Progress_tmk24.cpp ../../../../DATA/Linux_PR
 		device/subDevices/Progress_tmk24.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QVector \
-		device/subDevices/Progress_tmk24Data.h \
+		device/deviceAbstract.h \
 		command/commandController.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QQueue \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qqueue.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QPair \
+		device/subDevices/Progress_tmk24Data.h \
+		device/devicesFactory.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QTimer \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtimer.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbasictimer.h \
+		device/subDevices/Progress_tmk13.h \
+		device/subDevices/Progress_tmk13Data.h \
 		other/crc.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QByteArray
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Progress_tmk24.o device/subDevices/Progress_tmk24.cpp
@@ -3429,6 +3341,10 @@ testDevReply.o: tests/testDevReply.cpp ../../../../DATA/Linux_PROGRAMMs/5.11.1/g
 		device/subDevices/Progress_tmk24.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QVector \
 		device/subDevices/Progress_tmk24Data.h \
+		device/devicesFactory.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QTimer \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtimer.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbasictimer.h \
 		device/subDevices/Progress_tmk13.h \
 		device/subDevices/Progress_tmk13Data.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o testDevReply.o tests/testDevReply.cpp

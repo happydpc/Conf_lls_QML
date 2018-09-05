@@ -3,18 +3,18 @@
 
 #include <QObject>
 
+#define SERIALNUMBER_STRING_SIZE    12
+#define PERSONAL_DATA_SIZE          176
+#define VERSION_STRING_SIZE         8
+#define CPU_ID_SIZE                 12
+#define DUT_TYPE                    13
+
 class Progress_tmk24Data : public QObject
 {
     Q_OBJECT
 public:
     Progress_tmk24Data();
     ~Progress_tmk24Data();
-
-#define SERIALNUMBER_STRING_SIZE    12
-#define PERSONAL_DATA_SIZE          176
-#define VERSION_STRING_SIZE         8
-#define CPU_ID_SIZE                 12
-#define DUT_TYPE                    13
 
     typedef enum {
         param_id_address = 1,
@@ -128,8 +128,6 @@ public:
     //    QString version;
     //    QString cpuId;
     //    uint32_t cnt;
-    ValidParam<uint32_t> cnt
-
     typedef struct {
         struct {
             uint32_t cnt;
