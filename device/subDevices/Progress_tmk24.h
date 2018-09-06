@@ -20,10 +20,12 @@ public:
     QStringList getPropertyData() override;
     QStringList getCurrentData() override;
     DeviceAbstract::E_State getState() override;
+    void setState(DeviceAbstract::E_State) override;
     QString getUniqIdent() override;
     bool makeDataToCommand(CommandController::sCommandData &commandData) override;
     bool placeDataReplyToCommand(QByteArray &commandArrayReplyData) override;
-    QList<CommandController::sCommandData> getCommandListToIdlePoll() override;
+    CommandController::sCommandData getCommandToCheckConnected() override;
+    QList<CommandController::sCommandData> getCommandListToCurrentData() override;
     QList<CommandController::sCommandData> getCommandListToInit() override;
     QList<int> getChart() override;
 
@@ -36,7 +38,7 @@ public:
     bool makeDataRequestReply(QByteArray request, QByteArray &reply);
 #endif  
 private slots:
-    void resetValues();
+    void setDefaultValues();
 
 private:
     Progress_tmk24Data tmk24Data;

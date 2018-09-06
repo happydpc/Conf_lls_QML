@@ -2,7 +2,6 @@
 #include <QDebug>
 
 DevicesFactory::DevicesFactory() {
-    this->commandController = new CommandController();
     this->devShedullerTimer = new QTimer();
     this->devShedullerTimer->start(devShedullerControlInterval);
 
@@ -13,12 +12,17 @@ DevicesFactory::~DevicesFactory() {}
 
 bool DevicesFactory::addNewDevice(E_DeviceType type, QString uniqDevName, QStringList parameters) {
     if(type == Type_Progress_Tmk24) {
-        this->deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk24(uniqDevName)));
+        deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk24(uniqDevName)));
     } else if(type == Type_Progress_Tmk13) {
-        this->deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk13(uniqDevName)));
+        deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk13(uniqDevName)));
     } else {
         throw QString("undefined class");
     }
+
+    // TODO: может быть лучше как-то подругому перехватывать указатаель?
+    connect(findDeviceByUnicIdent(uniqDevName)->second, SIGNAL(eventDevice(DeviceAbstract::E_DeviceEvent,QString,QString)),
+            this, SLOT(deviceEventSlot(DeviceAbstract::E_DeviceEvent,QString,QString)));
+
     return (bool)deviceMap.size();
 }
 
@@ -66,7 +70,7 @@ DevicesFactory::E_DeviceType DevicesFactory::getDeviceType(int index) {
 void DevicesFactory::setDeviceInitCommandByIndex(int index) {
     QList<CommandController::sCommandData>commandList = findDeviceByIndex(index)->second->getCommandListToInit();
     for(auto command :commandList) {
-        commandController->addCommandToStack(command);
+        commandList.push_back(command);
     }
 }
 
@@ -87,11 +91,6 @@ QList<QString> DevicesFactory::getDeviceCurrentDataByIndex(int index) {
     return findDeviceByIndex(index)->second->getCurrentData();
 }
 
-//QString DevicesFactory::getDeviceTypeTextByIndex(int index) {
-//    if(deviceMap.empty()) {return QString();}
-//    return getCaptionToTypeDevice((findDeviceByIndex(index).second->getType()));
-//}
-
 QStringList DevicesFactory::getDevicePropertyByIndex(int index) {
     if(deviceMap.empty()) {return QStringList("");}
     return findDeviceByIndex(index)->second->getPropertyData();
@@ -103,8 +102,8 @@ QString DevicesFactory::getDeviceIdTextByIndex(int index) {
 }
 
 QStringList DevicesFactory::getDeviceProperty(int indexDev) {
-    //    if(deviceMap.empty()) {return QStringList("");}
-    //    return findDeviceByIndex(indexDev).second->getParameters();
+    if(deviceMap.empty()) {return QStringList("");}
+    return findDeviceByIndex(indexDev)->second->getPropertyData();
 }
 
 DeviceAbstract::E_State DevicesFactory::getDevStateByIndex(int index) {
@@ -118,48 +117,109 @@ QStringList DevicesFactory::getAvailableDeviceTypes() {
     return types;
 }
 
-bool DevicesFactory::addCommandDevice(CommandController::sCommandData commandData) {
-    return commandController->addCommandToStack(commandData);
-}
-
 void DevicesFactory::devShedullerSlot() {
-    CommandController::sCommandData command;
+    int sizeCommand = 0;
     if(!deviceMap.empty()) {
-        //-- if command queue is not empty
-        if(commandController->getCommandFirstCommandFromStack(command)) {
-            //-- give command struct for current device
-            // search same dev from deviceMap
-            for(auto dev: deviceMap) {
-                if(dev.second->getUniqIdent() == command.deviceIdent) {
-                    //-- make packet request
-                    if(dev.second->makeDataToCommand(command)) {
-                        qDebug() << "DeviceFactory: writeCommandToDev -Ok " << command.commandOptionData;
-                        emit writeData(command.commandOptionData);
-
-                        devLastRequested = dev.second;
-                        //-- stop sheduller while not reply or not timeout
-                        devShedullerTimer->stop();
-                        QTimer::singleShot(delayAfterSendCommandMs, Qt::PreciseTimer, [&] {
-                            emit readReplyData();
-                        });
+        if(!commandList.isEmpty()) {
+            devShedullerTimer->stop();
+            emit writeData(commandList.first().commandOptionData);
+            QTimer::singleShot(delayAfterSendCommandMs, Qt::PreciseTimer, [&] {
+                emit readReplyData();
+            });
+        } else {
+            if(indexProcessedDev > deviceMap.size()) {
+                indexProcessedDev = 0;
+            }
+            CommandController::sCommandData command;
+            auto dev = deviceMap.at(indexProcessedDev);
+            switch(dev.second->getState()) {
+            case DeviceAbstract::STATE_DISCONNECTED:
+                if(dev.second->getPriority() == 0) {
+                    command = dev.second->getCommandToCheckConnected();
+                    dev.second->makeDataToCommand(command);
+                    commandList.push_back(command);
+                }
+                break;
+            case DeviceAbstract::STATE_NEED_INIT:
+                if(dev.second->getPriority() == 0) { // TOOD: loop
+                    for(sizeCommand=0; sizeCommand!= dev.second->getCommandListToInit().size(); sizeCommand++) {
+                        command = dev.second->getCommandListToInit().at(sizeCommand);
+                        dev.second->makeDataToCommand(command);
+                        commandList.push_back(command);
                     }
                 }
-            }
-        } else { //-- command list is empty - add idle command list
-            DeviceAbstract *oldestDev = getDevOldest();
-            if(oldestDev != nullptr) {
-                auto size = oldestDev->getCommandListToIdlePoll().size();
-                for(auto i=0; i<size; i++) {
-                    command = oldestDev->getCommandListToIdlePoll().at(i);
-                    commandController->addCommandToStack(command);
+                break;
+            case DeviceAbstract::STATE_NORMAL_READY:
+                if(dev.second->getPriority() == 0) { // TOOD: loop
+                    for(sizeCommand=0; sizeCommand != dev.second->getCommandListToCurrentData().size(); sizeCommand++) {
+                        command = dev.second->getCommandListToCurrentData().at(sizeCommand);
+                        dev.second->makeDataToCommand(command);
+                        commandList.push_back(command);
+                    }
                 }
+                break;
             }
         }
     }
 }
 
-//
-// TODO: BAD LOOP !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
+    for(auto dev: deviceMap) {
+        if(dev.second->getUniqIdent() == commandList.first().deviceIdent) {
+            qDebug() << "placeDataReplyToCommand -len=" << data.length();
+            dev.second->placeDataReplyToCommand(data);
+            break;
+        }
+    }
+    commandList.pop_front();
+    //-- start sheduller after reply
+    devShedullerTimer->start(devShedullerControlInterval);
+}
+
+// сюда приходят все сигналы от девайсов
+void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QString devUniqueId, QString message) {
+    qDebug() << "deviceEventSlot -" << message << "uniqId=" << devUniqueId;
+    switch (eventType) {
+    case DeviceAbstract::Type_DeviceEvent_Connected:
+        //
+        // TODO: пересылаем на верх
+        // здесь ловим изменение с неинтита на инит и готовность отдать properties
+        //
+        emit deviceConnectedSignal(getDeviceType(findDeviceByUnicIdent(devUniqueId)->second->getDevTypeName()), devUniqueId);
+        break;
+    case DeviceAbstract::Type_DeviceEvent_Disconnected:
+        //
+        // TODO: пересылаем на верх
+        // здесь ловим изменение с неинтита на инит и готовность отдать properties
+        //
+        emit deviceDisconnectedSignal(getDeviceType(findDeviceByUnicIdent(devUniqueId)->second->getDevTypeName()), devUniqueId);
+        break;
+    case DeviceAbstract::Type_DeviceEvent_Inited:
+        //
+        // TODO: пересылаем на верх
+        // здесь ловим изменение с неинтита на инит и готовность отдать properties
+        //
+        emit deviceReadyInitSignal(getDeviceType(findDeviceByUnicIdent(devUniqueId)->second->getDevTypeName()), devUniqueId);
+        break;
+    case DeviceAbstract::Type_DeviceEvent_ReadyReadProperties:
+        //
+        // TODO: пересылаем на верх
+        // здесь ловим изменение с неинтита на инит и готовность отдать properties
+        //
+        emit deviceReadyPropertiesSignal(getDeviceType(findDeviceByUnicIdent(devUniqueId)->second->getDevTypeName()), devUniqueId);
+        break;
+    case DeviceAbstract::Type_DeviceEvent_CurrentDataUpdated:
+        //
+        // TODO: пересылаем на верх
+        // здесь ловим изменение с неинтита на инит и готовность отдать properties
+        //
+        emit deviceReadyCurrentDataSignal(getDeviceType(findDeviceByUnicIdent(devUniqueId)->second->getDevTypeName()), devUniqueId);
+        break;
+    default: qDebug() << "deviceEventSlot -type undefined!";
+        break;
+    }
+}
+
 QPair<QString,DeviceAbstract*>* DevicesFactory::findDeviceByIndex(int index) {
     int counter=0;
     for(auto it = deviceMap.begin(); it != deviceMap.end(); it++) {
@@ -180,83 +240,6 @@ QPair<QString,DeviceAbstract*>* DevicesFactory::findDeviceByUnicIdent(QString na
     return nullptr;
 }
 
-void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
-    for(auto dev: deviceMap) {
-        if(dev.second->getUniqIdent() == devLastRequested->getUniqIdent()) {
-            qDebug() << "placeDataReplyToCommand -len=" << data.length();
-            dev.second->placeDataReplyToCommand(data);
-        }
-    }
-    //-- start sheduller after reply
-    devShedullerTimer->start(devShedullerControlInterval);
+void DevicesFactory::setDeviceReInitByIndex(int index) {
+    findDeviceByIndex(index)->second->setState(DeviceAbstract::STATE_DISCONNECTED);
 }
-
-DeviceAbstract* DevicesFactory::getDevOldest() {
-    time_t oldestTime = 0;
-    DeviceAbstract *oldestDevPoint = nullptr;
-    for(auto it = deviceMap.begin(); it != deviceMap.end(); it++) {
-        oldestDevPoint = (*it).second;
-        if(oldestDevPoint->getLastDataReqDev() < oldestTime) {
-            oldestTime = oldestDevPoint->getLastDataReqDev();
-        }
-    }
-    return oldestDevPoint;
-}
-
-//QString DevicesFactory::getCaptionToTypeDevice(DevicesFactory::E_DeviceType type) {
-//    switch(type) {
-//    case Type_Progress_Tmk13: break;
-//    case Type_Progress_Tmk24: break;
-//    case Type_Undefined: break;
-//    }
-//    QString res = tDevice->getCaptionToTypeDevice(type);
-//    delete tDevice;
-//    return res;
-//}
-
-//DevicesFactory::E_DeviceType DevicesFactory::getDeviceTypeFromTypeCaption(QString typeDevText) {
-//    DeviceAbstract::E_DeviceType res;
-//    Device *tDevice = new Device(res, "");
-//    res = tDevice->getDeviceTypeFromTypeCaption(typeDevText);
-//    delete tDevice;
-//    return  res;
-//}
-
-//QString Device::getCaptionToTypeDevice(DeviceAbstract::E_DeviceType type) {
-//    QString res;
-//    if(!deviceAvailableTypesList.empty()) {
-//        auto it = deviceAvailableTypesList.begin();
-//        while(it!=deviceAvailableTypesList.end()) {
-//            if(type == (*it).first) {
-//                return (*it).second;
-//            }
-//            it++;
-//        }
-//    }
-//    return res;
-//}
-
-//DeviceAbstract::E_DeviceType Device::getDeviceTypeFromTypeCaption(QString typeDevText) {
-//    DeviceAbstract::E_DeviceType retType = Type_Progress_default;
-//    if(!deviceAvailableTypesList.empty()) {
-//        auto it = deviceAvailableTypesList.begin();
-//        while(it!=deviceAvailableTypesList.end()) {
-//            if(typeDevText == (*it).second) {
-//                return (*it).first;
-//            }
-//            it++;
-//        }
-//    }
-//    return retType;
-//}
-
-
-
-void DevicesFactory::setDeviceAsNotReadyByIndex(int index) {
-
-}
-
-//DeviceAbstract::E_DeviceType DevicesFactory::getDeviceTypebyIndex(int indexDev) {
-//    if(deviceMap.empty()) {return DeviceAbstract::Type_Undefined;}
-//    return findDeviceByIndex(indexDev).second->getType();
-//}

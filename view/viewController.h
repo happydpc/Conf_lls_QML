@@ -32,22 +32,39 @@ public:
     Q_INVOKABLE QStringList getCurrentDevPropertyByIndex();
 
 signals:
-    void addDeviceSignal(QString name, bool is_checked);
-    void addInterfaceSignal(QString name, bool is_checked);
+    void addDeviceSignal(QString name);
+    void addInterfaceSignal(QString name);
 
-    void updatePropertiesSerialPort_Signal(QStringList data);
-    void updatePropertiesDevTmk24_Signal(QStringList data);
-    void updatePropertiesDevTmk13_Signal(QStringList data);
+    void updatePropertiesSerialPort(QStringList properties);
 
-    void updateDataDevTmk24_Signal(QStringList data);
-    void updateDataDevTmk13_Signal(QStringList data);
+    void devConnectedTmk24();
+    void devConnectedTmk13();
+    void devDisconnectedTmk24();
+    void devDisconnectedTmk13();
 
-    void updateDevTmk24_NoReady_Signal();
-    void updateDevTmk13_NoReady_Signal();
+    void devReadyPropertiesTmk24(QStringList data);
+    void devReadyPropertiesTmk13(QStringList data);
+
+    void devReadyOtherDataTmk24(QStringList data);
+    void devReadyOtherDataTmk13(QStringList data);
+
+    void devFullReadyTmk24(QStringList data);
+    void devFullReadyTmk13(QStringList data);
 
 private slots:
-    void updateCurrentDataSlot();
     void connectionIsLost(interfacesAbstract::eInterfaceTypes, QString nameInterface);
+
+    void deviceConnected(DevicesFactory::E_DeviceType, QString uniqNameId);
+    void deviceDisconnected(DevicesFactory::E_DeviceType, QString uniqNameId);
+    void deviceReadyCurrentData(DevicesFactory::E_DeviceType, QString uniqNameId);
+    void deviceReadyProperties(DevicesFactory::E_DeviceType, QString uniqNameId);
+    void deviceReadyInit(DevicesFactory::E_DeviceType, QString uniqNameId);
+
+    bool isCurrentDevice(QString uniqNameId);
+
+    void reconnectToDevSignals();
+
+    DevicesFactory* getDeviceFactoryByIndex(int index);
 
 private:
     ConnectionFactory *connFactory;
@@ -57,7 +74,6 @@ private:
         int deviceIndex;
     }sCurrentIndex;
     sCurrentIndex index = {0, 0};
-    QTimer *updateCurrentDataDevTimer;
 };
 
 #endif // VIEWCONTROLLER_H

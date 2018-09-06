@@ -16,9 +16,9 @@ Item {
         console.log("addDevice: " + name)
         listDeviceView.model.append({"text":name})
     }
-//    function setPropertyToSerialPort(listData) {
-//        devPropertySerialPort.setPropertyValues(listData)
-//    }
+    function setPropertyToSerialPort(listData) {
+        devPropertySerialPort.setPropertyValues(listData)
+    }
 //    function setPropertyToDevPanel() {
 //        devPropertyLlsTMK24.setDevProperty(data)
 //    }

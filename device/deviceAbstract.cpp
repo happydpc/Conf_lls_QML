@@ -3,13 +3,12 @@
 DeviceAbstract::DeviceAbstract(QObject *parent) : QObject(parent)
 {
     this->state = STATE_DISCONNECTED;
-    this->devLastDataRequest = 0;
 }
 
-time_t DeviceAbstract::getLastDataReqDev() {
-    return devLastDataRequest;
+int DeviceAbstract::getPriority() {
+    return priority;
 }
 
-void DeviceAbstract::setLastDataReqDev(time_t date) {
-    devLastDataRequest = date;
+void DeviceAbstract::setPriority(int value) {
+    priority = value;
 }

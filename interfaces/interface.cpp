@@ -35,7 +35,8 @@ Interface::Interface(const Interface & it) {
     }
 }
 
-Interface::~Interface() {}
+Interface::~Interface() {
+}
 
 bool Interface::openInterface(QString name, QStringList arg) {
     bool res = false;

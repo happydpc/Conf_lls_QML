@@ -12,43 +12,42 @@ public:
 
     typedef enum {
         STATE_DISCONNECTED,
+        STATE_NEED_INIT,
         STATE_NORMAL_READY
     }E_State;
+
+    typedef enum {
+        Type_DeviceEvent_Connected,
+        Type_DeviceEvent_Disconnected,
+        Type_DeviceEvent_ReadyReadProperties,
+        Type_DeviceEvent_Inited,
+        Type_DeviceEvent_CurrentDataUpdated
+    }E_DeviceEvent;
 
     virtual QString getDevTypeName() = 0;
     virtual QStringList getPropertyData() = 0;
     virtual QStringList getCurrentData() = 0;
     virtual QString getUniqIdent() = 0;
     virtual E_State getState() = 0;
+    virtual void setState(DeviceAbstract::E_State) = 0;
     virtual bool makeDataToCommand(CommandController::sCommandData &commandData) = 0;
     virtual bool placeDataReplyToCommand(QByteArray &commandArrayReplyData) = 0;
-    virtual QList<CommandController::sCommandData> getCommandListToIdlePoll() = 0;
+    virtual CommandController::sCommandData getCommandToCheckConnected() = 0;
+    virtual QList<CommandController::sCommandData> getCommandListToCurrentData() = 0;
     virtual QList<CommandController::sCommandData> getCommandListToInit() = 0;
     virtual QList<int> getChart() = 0;
 
-    time_t getLastDataReqDev();
-    void setLastDataReqDev(time_t date);
-
-//    virtual void setState(E_State state) = 0;
-//    virtual DeviceAbstract::E_State getState() = 0;
-
-//    virtual QString getType() = 0;
-
-//    virtual QStringList getSettings() = 0;
-//    virtual bool setSettings(QStringList setts) = 0;
-
-//    virtual QStringList getParameters() = 0;
-
-//    // возвращает список команд, если нет активности и можно опросить
-
-//    DeviceAbstract::E_State state;
-//    QString deviceUniqIdentName;
+    int getPriority();
+    void setPriority(int value);
 
     DeviceAbstract::E_State state;
+
+signals:
+
+    void eventDevice(DeviceAbstract::E_DeviceEvent typeEvent, QString deviceUniqueId, QString message);
+
 private:
-    // есть базовые команды, для определения что dev еще жив
-    // это последнее время такой команды для этого устройства
-    time_t devLastDataRequest;
+    int priority = 0;
 };
 
 #endif // DEVICEABSTRACT_H

@@ -5,7 +5,7 @@
 Progress_tmk24::Progress_tmk24(QString uniqIdentId) {
     this->chartData = new QList<int>();
     this->uniqIdentId = uniqIdentId;
-    resetValues();
+    setDefaultValues();
 }
 
 Progress_tmk24::~Progress_tmk24() {
@@ -13,32 +13,10 @@ Progress_tmk24::~Progress_tmk24() {
 }
 
 QString Progress_tmk24::getDevTypeName() {
-    return QString::fromUtf8(Progress_tmk24::name, strlen(Progress_tmk24::name));
+    return QString::fromLocal8Bit(Progress_tmk24::name, strlen(Progress_tmk24::name));
 }
 
-QStringList Progress_tmk24::getPropertyData() {
-    QStringList res;
-    res << lls_data.sn.value;
-    res << lls_data.firmwareVersion.value;
-    res << QString::number(settings.netAddress);
-    return res;
-}
-
-QStringList Progress_tmk24::getCurrentData() {
-    QStringList res;
-    res << "Test";
-    return res;
-}
-
-DeviceAbstract::E_State Progress_tmk24::getState() {
-    return state;
-}
-
-QString Progress_tmk24::getUniqIdent() {
-    return uniqIdentId;
-}
-
-void Progress_tmk24::resetValues() {
+void Progress_tmk24::setDefaultValues() {
     this->settings.k1 = 0;
     this->settings.k2 = 0;
     this->settings.netAddress = 1;
@@ -62,77 +40,56 @@ void Progress_tmk24::resetValues() {
     this->settings.medianLength = 7;
     this->settings.q = 0.001;
     this->settings.r = 5000;
-
-    this->lls_data.sn.value = "-";
-    //    strcpy((char*)this->personalData, (char*)"UNDEFINED");
-
+    this->lls_data.serialNum.isValid = false;
     this->calibrationTable.TableSize = 0;
     memset(this->calibrationTable.x,0, sizeof(this->calibrationTable.x));
     memset(this->calibrationTable.y,0, sizeof(this->calibrationTable.y));
-
-    //    this->passwordHash = 0;
-    //    strcpy((char*)this->newSerialNumber, "UNDEFINED");
-    //    strcpy((char*)this->personalDataBuff,"UNDEFINED");
     this->newSettings = this->settings;
-
     this->lls_data.fuelLevel.isValid = false;
     this->lls_data.freq.isValid = false;
     this->lls_data.temp.isValid = false;
     this->lls_data.cnt.isValid = false;
-    this->lls_data.firmwareVersion.isValid = false;
-    this->lls_data.cpuId.isValid = false;
-}
-
-QStringList Progress_tmk24::getSettings() {
-
-}
-
-bool Progress_tmk24::setSettings(QStringList settigns) {
-
+    this->lls_data.firmware.isValid = false;
 }
 
 QList<int> Progress_tmk24::getChart() {
     return *chartData;
 }
-QList<QString> Progress_tmk24::getCurrentOtherData() {
-    QList<QString> res;
-    res << QString::number(lls_data.fuelLevel.level);
-    res << QString::number(lls_data.fuelLevel.levelProcent);
-    res << QString::number(lls_data.cnt.cnt);
-    res << QString::number(lls_data.freq.value);
-    res << QString::number(lls_data.password.isValid);
-    res << lls_data.password.password;
-    res << QString::number(lls_data.sn.isValid);
-    res << lls_data.sn.value;
-    res << QString::number(lls_data.temp.value);
-    res << lls_data.firmwareVersion.value;
+
+QStringList Progress_tmk24::getPropertyData() {
+    QStringList res;
+    res << lls_data.serialNum.value;
+    res << lls_data.firmware.value;
+    res << QString::number(settings.netAddress);
+    res << lls_data.firmware.value;
     return res;
 }
 
-QList<CommandController::sCommandData> Progress_tmk24::getCommandListToIdlePoll() {
-    QList<CommandController::sCommandData> listCommand;
-    CommandController::sCommandData command;
-    command.commandOptionData.clear();
-    command.deviceIdent = getUniqIdent().toInt();
-    command.devCommand = (int)Progress_tmk13Data::lls_read_lvl_all;
-    listCommand.push_back(command);
-    command.devCommand = (int)Progress_tmk13Data::lls_read_errors;
-    listCommand.push_back(command);
-    return listCommand;
+QStringList Progress_tmk24::getCurrentData() {
+    QList<QString> res;
+    res << QString::number(lls_data.fuelLevel.value.value_u32);
+    res << QString::number(lls_data.fuelProcent.value.value_u16);
+    res << QString::number(lls_data.cnt.value.value_u32);
+    res << QString::number(lls_data.freq.value.value_u16);
+    res << QString::number(lls_data.temp.value.value_i);
+    res << lls_data.password.value;
+    res << lls_data.serialNum.value;
+    return res;
 }
 
-QList<CommandController::sCommandData> Progress_tmk24::getCommandListToInit() {
-    QList<CommandController::sCommandData> listCommand;
-    CommandController::sCommandData command;
-    command.commandOptionData.clear();
-    command.deviceIdent = getUniqIdent().toInt();
-    command.devCommand = (int)Progress_tmk13Data::lls_read_settings;
-    listCommand.push_back(command);
-    command.devCommand = (int)Progress_tmk13Data::lls_read_errors;
-    listCommand.push_back(command);
-    command.devCommand = (int)Progress_tmk13Data::lls_read_lvl_all;
-    listCommand.push_back(command);
-    return listCommand;
+DeviceAbstract::E_State Progress_tmk24::getState() {
+    return state;
+}
+
+void Progress_tmk24::setState(DeviceAbstract::E_State value) {
+    state = value;
+    if((state == DeviceAbstract::STATE_DISCONNECTED) || (state == DeviceAbstract::STATE_NEED_INIT)) {
+        setDefaultValues();
+    }
+}
+
+QString Progress_tmk24::getUniqIdent() {
+    return uniqIdentId;
 }
 
 bool Progress_tmk24::makeDataToCommand(CommandController::sCommandData &commandData) {
@@ -336,6 +293,49 @@ bool Progress_tmk24::makeDataToCommand(CommandController::sCommandData &commandD
     return res;
 }
 
+QList<CommandController::sCommandData> Progress_tmk24::getCommandListToCurrentData() {
+    QList<CommandController::sCommandData> listCommand;
+    CommandController::sCommandData command;
+    command.commandOptionData.clear();
+    command.deviceIdent = getUniqIdent();
+    command.devCommand = (int)Progress_tmk24Data::lls_read_lvl_all;
+    listCommand.push_back(command);
+    command.devCommand = (int)Progress_tmk24Data::lls_read_errors;
+    listCommand.push_back(command);
+    return listCommand;
+}
+
+QList<CommandController::sCommandData> Progress_tmk24::getCommandListToInit() {
+    QList<CommandController::sCommandData> listCommand;
+    CommandController::sCommandData command;
+    // 1) read settings
+    // 2) read errors
+    // 3) read password
+    // 4) read cal table
+    // 5) read full current
+    command.commandOptionData.clear();
+    command.deviceIdent = getUniqIdent();
+    command.devCommand = (int)Progress_tmk24Data::lls_read_settings;
+    listCommand.push_back(command);
+    command.devCommand = (int)Progress_tmk24Data::lls_read_errors;
+    listCommand.push_back(command);
+    command.devCommand = (int)Progress_tmk24Data::lls_check_address_and_pass;
+    listCommand.push_back(command);
+    command.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
+    listCommand.push_back(command);
+    command.devCommand = (int)Progress_tmk24Data::lls_read_lvl_all;
+    listCommand.push_back(command);
+    return listCommand;
+}
+
+CommandController::sCommandData Progress_tmk24::getCommandToCheckConnected() {
+    CommandController::sCommandData command;
+    command.commandOptionData.clear();
+    command.deviceIdent = getUniqIdent();
+    command.devCommand = (int)Progress_tmk24Data::lls_check_address_and_pass;
+    return command;
+}
+
 bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) {
     bool res = false;
     uint8_t crcCalcResult = 0;
@@ -344,6 +344,9 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
     Crc *crc = new Crc();
 
     if(!commandArrayReplyData.isEmpty()) {
+        if(getState() == STATE_DISCONNECTED) {
+            setState(DeviceAbstract::STATE_NEED_INIT);
+        }
         //-- caculate crc
         crcCalcResult = crc->crc8_dallas(commandArrayReplyData.data(),
                                          commandArrayReplyData.length()-1);
@@ -353,7 +356,7 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
             //-- byte is command
             switch(commandArrayReplyData.at(2)) {
             case Progress_tmk24Data::lls_read_lvl_once: {
-                lls_data.temp.value = (int8_t)(0xFF & commandArrayReplyData.at(3));
+                lls_data.temp.value.value_i = (int8_t)(0xFF & commandArrayReplyData.at(3));
                 lls_data.temp.isValid = true;
 
                 value = 0xFF & commandArrayReplyData.at(5);
@@ -363,18 +366,17 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                 frequency = frequency << 8;
                 frequency |= 0xFF & commandArrayReplyData.at(6);
 
-                lls_data.fuelLevel.level = value;
+                lls_data.fuelLevel.value.value_u32 = value;
                 if(lls_data.settings.isValid) {
-                    lls_data.fuelLevel.levelProcent =
-                            ((float)((float)value/lls_data.settings.valueSettings.maxLevel)*100);
+                    lls_data.fuelProcent.value.value_u32 = ((float)((float)value/lls_data.settings.valueSettings.maxLevel)*100);
                 } else {
-                    lls_data.fuelLevel.levelProcent = 0;
+                    lls_data.fuelProcent.value.value_u32 = 0;
                 }
                 lls_data.fuelLevel.isValid = true;
-                lls_data.freq.value = frequency;
+                lls_data.freq.value.value_u32  = frequency;
                 lls_data.freq.isValid = true;
 
-                chartData->push_back(lls_data.fuelLevel.level + (random()%10));
+                chartData->push_back(lls_data.fuelLevel.value.value_u32 + (rand()%10));
                 while(chartData->size() > 100) {
                     chartData->pop_front();
                 }
@@ -394,7 +396,7 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                     cnt |= 0xFF & commandArrayReplyData.at(5);
                     cnt = cnt << 8;
                     cnt |= 0xFF & commandArrayReplyData.at(4);
-                    lls_data.cnt.cnt = cnt;
+                    lls_data.cnt.value.value_u32 = cnt;
                     lls_data.cnt.isValid = true;
                     res = true;
                 }
@@ -428,6 +430,7 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                     lls_data.llssValues.values.Frequency[i] = lls_data.llssValues.values.Frequency[i] << 8;
                     offset_counter++;
                 }
+                lls_data.llssValues.isValid = true;
                 res = true;
             }
                 break;
@@ -436,22 +439,22 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                 if(commandArrayReplyData.size() > 22) {
                     char *pbuf = (commandArrayReplyData.data() + 4);
                     // TODO: is normal convertion?
-                    lls_data.sn.value.fromUtf8(pbuf, strlen(pbuf));
+                    lls_data.serialNum.value.fromUtf8(pbuf, strlen(pbuf));
                     // TODO: is normal convertion?
-                    pbuf = (commandArrayReplyData.data() + 4 + sizeof(lls_data.sn));
-                    lls_data.firmwareVersion.value.fromUtf8(pbuf, strlen(pbuf));
+                    pbuf = (commandArrayReplyData.data() + 4 + SERIALNUMBER_STRING_SIZE);
+                    lls_data.firmware.value.fromUtf8(pbuf,  strlen(pbuf));
 
                     switch(commandArrayReplyData.at(3)) {
                     case Progress_tmk24Data::type_lls_tmk24:
-                        lls_data.typeLls.value = "ТМК.24";
+                        lls_data.typeLls.name = "ТМК.24";
                         break;
                     case Progress_tmk24Data::type_lls_tmk4ux:
-                        lls_data.typeLls.value = "ТМК.4UX";
+                        lls_data.typeLls.name = "ТМК.4UX";
                         break;
                     case Progress_tmk24Data::type_lls_tmk2u1:
-                        lls_data.typeLls.value = "ТМК.2И1";
+                        lls_data.typeLls.name = "ТМК.2И1";
                     default:
-                        lls_data.typeLls.value = "Unknown";
+                        lls_data.typeLls.name = "Unknown";
                         break;
                     }
                     // TODO: is valid conversion?
@@ -488,6 +491,7 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                         lls_data.calibrateTable.table.y[i] |= ((0xFF & commandArrayReplyData.at(index+4)) << 8);
                         index++;
                     }
+                    lls_data.calibrateTable.isValid = true;
                     res = true;
                 }
             }
@@ -522,6 +526,7 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                     Progress_tmk24Data::T_errors t_erros;
                     memcpy(&t_erros, (commandArrayReplyData.data() + 3), sizeof(t_erros));
                     memcpy(&lls_data.errors, &t_erros, sizeof(lls_data.errors));
+                    lls_data.errors.isValid = true;
                     res = true;
                 }
             }
@@ -530,8 +535,9 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
             case Progress_tmk24Data::lls_read_serial_number: {
                 // TODO: is normal convertion?
                 if(commandArrayReplyData.size() > 22) {
-                    lls_data.sn.value.fromUtf8((commandArrayReplyData.data() + 3), sizeof(lls_data.sn.size));
-                    lls_data.sn.isValid = true;
+                    lls_data.serialNum.value.fromUtf8(
+                                (commandArrayReplyData.data() + 3), SERIALNUMBER_STRING_SIZE);
+                    lls_data.serialNum.isValid = true;
                 }
                 res = true;
             }
@@ -548,20 +554,31 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                 break;
 
             case Progress_tmk24Data::lls_check_address_and_pass:
-            {
-                if(commandArrayReplyData.size()>4) {
+                if(commandArrayReplyData.size() > 4) {
                     lls_data.password.isValid = (bool)commandArrayReplyData.at(3);
                     res = true;
                 }
-            }
                 break;
 
             case Progress_tmk24Data::lls_run_bootloader: break;
             default : break;
             }
+
+            // 1) read settings
+            // 2) read errors
+            // 3) read password
+            // 4) read cal table
+            // 5) read full current
+            if(getState() == STATE_NEED_INIT) {
+                if((lls_data.settings.isValid) && (lls_data.errors.isValid) && (lls_data.password.isValid) && (lls_data.calibrateTable.isValid) && (lls_data.llssValues.isValid)) {
+                    setState(DeviceAbstract::STATE_NORMAL_READY);
+                }
+            }
         } else {
             qDebug() << "parce -ERROR crc\n";
         }
+    } else {
+        state = STATE_DISCONNECTED;
     }
     return res;
 }

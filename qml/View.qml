@@ -15,25 +15,25 @@ Item {
             projectPanels.openDeviceProject()
             projectPanels.addInterface(name)
         }
-        onUpdatePropertiesSerialPort_Signal: {
-            projectPanels.devicePanel.setPropertyToSerialPort(data)
+        onUpdatePropertiesSerialPort: {
+            projectPanels.devicePanel.setPropertyToSerialPort(properties)
         }
-        onUpdatePropertiesDevTmk24_Signal: {
-//            projectPanels.devicePanel.devPropertyLlsTMK24.setDevProperty(data)
-        }
-        onUpdatePropertiesDevTmk13_Signal: {
+        onDevReadyPropertiesTmk13: {
             projectPanels.devicePanel.devPropertyLlsTMK24.setDevProperty(data)
         }
-        onUpdateDataDevTmk13_Signal: {
+        onDevReadyPropertiesTmk24: {
+            projectPanels.devicePanel.devPropertyLlsTMK24.setDevProperty(data)
+        }
+        onDevReadyOtherDataTmk13: {
             projectPanels.devicePanel.devPropertyLlsTMK24.setUpdateCurrentValues(data)
         }
-        onUpdateDataDevTmk24_Signal: {
-//            projectPanels.devicePanel.devPropertyLlsTMK24.setUpdateCurrentValues(data)
+        onDevReadyOtherDataTmk24: {
+            projectPanels.devicePanel.devPropertyLlsTMK24.setUpdateCurrentValues(data)
         }
-        onUpdateDevTmk13_NoReady_Signal: {
+        onDevFullReadyTmk13: {
 //            projectPanels.devicePanel.devPropertyLlsTMK24.setNoActive()
         }
-        onUpdateDevTmk24_NoReady_Signal: {
+        onDevFullReadyTmk24: {
 //            projectPanels.devicePanel.devPropertyLlsTMK24.setNoActive()
         }
     }

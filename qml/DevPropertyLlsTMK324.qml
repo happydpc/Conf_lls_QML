@@ -18,12 +18,17 @@ Rectangle {
     function setNoActive() {
         devPropertyLlsTMK24.isEnabled = false
     }
+// name type
+//    res << lls_data.serialNum.value;
+//    res << QString::number(settings.netAddress);
+//    res << lls_data.typeLls.name;
+//    res << lls_data.firmware.value;
 
     function setDevProperty(listProperty) {
         typeDeviceText.text = listProperty[0]
         snText.text = listProperty[1]
-        versionFirmwareText.text = listProperty[2]
         netIdText.text = listProperty[3]
+        versionFirmwareText.text = listProperty[2]
     }
 
     function setUpdateCurrentValues(data) {

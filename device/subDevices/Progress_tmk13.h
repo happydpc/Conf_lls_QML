@@ -20,18 +20,14 @@ public:
     QStringList getPropertyData() override;
     QStringList getCurrentData() override;
     DeviceAbstract::E_State getState() override;
+    void setState(DeviceAbstract::E_State) override;
     QString getUniqIdent() override;
     bool makeDataToCommand(CommandController::sCommandData &commandData) override;
     bool placeDataReplyToCommand(QByteArray &commandArrayReplyData) override;
-    QList<CommandController::sCommandData> getCommandListToIdlePoll() override;
+    CommandController::sCommandData getCommandToCheckConnected() override;
+    QList<CommandController::sCommandData> getCommandListToCurrentData() override;
     QList<CommandController::sCommandData> getCommandListToInit() override;
     QList<int> getChart() override;
-
-//    time_t getLastDataReqDev();
-//    void setLastDataReqDev(time_t curData);
-
-//    QStringList getSettings();
-//    bool setSettings(QStringList settigns);
 
 #ifdef USE_TEST_DEV_REPLY
     bool makeDataRequestReply(QByteArray request, QByteArray &reply);

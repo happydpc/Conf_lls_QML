@@ -3,16 +3,17 @@
 
 #include <QObject>
 
-#define SERIALNUMBER_STRING_SIZE    12
-#define PERSONAL_DATA_SIZE          176
-#define VERSION_STRING_SIZE         8
-#define CPU_ID_SIZE                 12
-#define DUT_TYPE                    13
+#define SERIALNUMBER_STRING_SIZE            12
+#define PERSONAL_DATA_SIZE                  176
+#define FIRMWARE_VERSION_STRING_SIZE         8
+#define CPU_ID_SIZE                         12
+#define DUT_TYPE                            13
 
 class Progress_tmk24Data : public QObject
 {
     Q_OBJECT
 public:
+
     Progress_tmk24Data();
     ~Progress_tmk24Data();
 
@@ -117,59 +118,33 @@ public:
         int8_t Temperature[4];
         uint8_t ActualFlag[4]; //if lost frame then 1!
     }T_dutValues;
-
 #pragma pack()
 
-    //    uint8_t serialNumber[64];
-    //    uint8_t personalData[64];
-    //    uint32_t passwordHash;
-    //    uint8_t newSerialNumber[SERIALNUMBER_STRING_SIZE];
-    //    uint8_t personalDataBuff[PERSONAL_DATA_SIZE];
-    //    QString version;
-    //    QString cpuId;
-    //    uint32_t cnt;
     typedef struct {
-        struct {
-            uint32_t cnt;
-            bool isValid;
-        }cnt;
+        bool isValid;
+        union {
+            float value_f;
+            double value_d;
+            int value_i;
+            uint32_t value_u32;
+            uint16_t value_u16;
+        }value;
+    }sValue;
 
-        struct {
-            float level;
-            float levelProcent;
-            bool isValid;
-        }fuelLevel;
+    typedef struct {
+        bool isValid;
+        QString value;
+    }sValueText;
 
-        struct {
-            QString value;
-            uint8_t size[SERIALNUMBER_STRING_SIZE];
-            bool isValid;
-        }sn;
-
-        struct {
-            QString value;
-            bool isValid;
-        }cpuId;
-
-        struct {
-            QString value;
-            bool isValid;
-        }typeLls;
-
-        struct {
-            uint16_t value;
-            bool isValid;
-        }freq;
-
-        struct {
-            int8_t value;
-            bool isValid;
-        }temp;
-
-        struct {
-            QString value;
-            bool isValid;
-        }firmwareVersion;
+    typedef struct {
+        sValue cnt;
+        sValue fuelLevel;
+        sValue fuelProcent;
+        sValue freq;
+        sValue temp;
+        sValueText serialNum;
+        sValueText firmware;
+        sValueText password;
 
         struct {
             T_settings valueSettings;
@@ -191,10 +166,11 @@ public:
             bool isValid;
         }llssValues;
 
-        struct{
-            QString password;
+        struct {
+            QString name;
             bool isValid;
-        }password;
+        }typeLls;
+
     }S_lls_data;
 };
 

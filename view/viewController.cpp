@@ -8,13 +8,8 @@ ViewController::ViewController(QObject *parent) : QObject(parent) {
         QStringList strLis;
         strLis = connFactory->getAvailableName();
         qDebug() << strLis;
-        bool res = false;
         addConnectionSerialPort(strLis.first(), QString("19200"));
     });
-
-    this->updateCurrentDataDevTimer = new QTimer();
-    connect(this->updateCurrentDataDevTimer, SIGNAL(timeout()), this, SLOT(updateCurrentDataSlot()));
-    this->updateCurrentDataDevTimer->start(500);
 }
 
 QStringList ViewController::getAvailableNameToSerialPort() {
@@ -25,11 +20,13 @@ QStringList ViewController::getAvailableNameToSerialPort() {
 
 bool ViewController::addConnectionSerialPort(QString name, QString baudrate) {
     bool res = false;
-    res = connFactory->addConnection(interfacesAbstract::InterfaceTypeSerialPort, name, QStringList(baudrate));
-    qDebug() << "addConnectionSerialPort -open= "<< res << name;
-    if(res) {
-        emit addInterfaceSignal(name, true);
-        setChangedIndexInteface(index.interfaceIndex);
+    if((!name.isEmpty()) && (!baudrate.isEmpty())) {
+        res = connFactory->addConnection(interfacesAbstract::InterfaceTypeSerialPort, name, QStringList(baudrate));
+        qDebug() << "addConnectionSerialPort -open= "<< res << name;
+        if(res) {
+            emit addInterfaceSignal(name);
+            setChangedIndexInteface(index.interfaceIndex);
+        }
     }
     return res;
 }
@@ -53,9 +50,9 @@ bool ViewController::addDeviceToConnection(QString devTypeName, QString idNum) {
             index.deviceIndex = (getDeviceCount()-1);
             // make it device - "not ready"
             // while not read settings
-            pInterface->getDeviceFactory()->setDeviceAsNotReadyByIndex(index.deviceIndex);
+            pInterface->getDeviceFactory()->setDeviceReInitByIndex(index.deviceIndex);
             // update new device event
-            emit addDeviceSignal(getDeviceHeaderByIndex(index.deviceIndex).at(0), true);
+            emit addDeviceSignal(getDeviceHeaderByIndex(index.deviceIndex).at(0));
             // add device command to read current property device
             setChangedIndexDevice(index.deviceIndex);
         }
@@ -67,6 +64,9 @@ bool ViewController::addDeviceToConnection(QString devTypeName, QString idNum) {
 
 void ViewController::setChangedIndexDevice(int devIndex) {
     Interface *pInterface = nullptr;
+    // reconnect slots
+    reconnectToDevSignals();
+    // get interface property
     pInterface = connFactory->getInterace(connFactory->getInteraceNameFromIndex(index.interfaceIndex));
     if(pInterface != nullptr) {     // TODO: its throw exeption!!!
         index.deviceIndex = devIndex;
@@ -75,15 +75,13 @@ void ViewController::setChangedIndexDevice(int devIndex) {
 }
 
 void ViewController::setChangedIndexInteface(int interfaceIndex) {
-    QStringList property;
     index.interfaceIndex = interfaceIndex;
     // add interace command to read current property interface
     //...
+    // reconnect slots
+    reconnectToDevSignals();
     // get interface property
-    property = connFactory->getInterace(index.interfaceIndex)->getInterfaceProperty();
-    if(!property.empty()) {
-        emit updatePropertiesSerialPort_Signal(property);
-    }
+    emit updatePropertiesSerialPort(connFactory->getInterace(index.interfaceIndex)->getInterfaceProperty());
 }
 
 QString ViewController::getCurrentInterfaceNameToSerial() {
@@ -109,9 +107,8 @@ QList<QString> ViewController::getCurrentDevOtherData() {
 }
 
 int ViewController::getDeviceCount() {
-    int ret = connFactory->getInterace(connFactory->getInteraceNameFromIndex(index.interfaceIndex))
+    return connFactory->getInterace(connFactory->getInteraceNameFromIndex(index.interfaceIndex))
             ->getDeviceFactory()->getDeviceCount();
-    return ret;
 }
 
 QStringList ViewController::getDeviceHeaderByIndex(int devIndex) {
@@ -129,49 +126,99 @@ QStringList ViewController::getCurrentDevPropertyByIndex() {
     return ret;
 }
 
-void ViewController::updateCurrentDataSlot() {
-    QStringList ret;
-    DevicesFactory::E_DeviceType type = DevicesFactory::Type_Undefined;
-    if(connFactory->getCountConnection() >0) {
-        if(connFactory->getInterace(connFactory->getInteraceNameFromIndex(index.interfaceIndex))->getDeviceFactory()->getDeviceCount() >0) {
-            QString name = connFactory->getInteraceNameFromIndex(index.interfaceIndex);
-            if(!name.isEmpty()) {
-                type = connFactory->getInterace(name)->
-                        getDeviceFactory()->getDeviceType(index.deviceIndex);
-                if(connFactory->getInterace(name)->getDeviceFactory()->
-                        getDevStateByIndex(index.deviceIndex) == DeviceAbstract::STATE_NORMAL_READY) {
-                    ret = connFactory->getInterace(name)->getDeviceFactory()->getDeviceCurrentDataByIndex(index.deviceIndex);
-                    if(!ret.isEmpty()) {
-                        switch(type) {
-                        case DevicesFactory::Type_Progress_Tmk13:
-                            emit updateDataDevTmk13_Signal(ret);
-                            break;
-                        case DevicesFactory::Type_Progress_Tmk24:
-                            emit updateDataDevTmk24_Signal(ret);
-                            break;
-                        case DevicesFactory::Type_Undefined:
-                            qDebug() << "Update current data - Type_Undefined";
-                            break;
-                        }
-                    } else {
-                        qDebug() << "Update current data - result=" << ret;
-                    }
-                } else {
-                    switch(type) {
-                    case DevicesFactory::Type_Progress_Tmk13:
-//                        emit updateDevTmk13_NoReady_Signal();
-                        break;
-                    case DevicesFactory::Type_Progress_Tmk24:
-//                        emit updateDevTmk24_NoReady_Signal();
-                        break;
-                    case DevicesFactory::Type_Undefined:
-                        qDebug() << "Update current data - Type_Undefined";
-                        break;
-                    }
-                }
-            }
+DevicesFactory* ViewController::getDeviceFactoryByIndex(int indexIterface) {
+    QString interfaceName = connFactory->getInteraceNameFromIndex(indexIterface);
+    return connFactory->getInterace(connFactory->getInteraceNameFromIndex(indexIterface))->getDeviceFactory();
+}
+
+bool ViewController::isCurrentDevice(QString uniqNameId) {
+    int devCount = getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceCount();
+    for(int i=0; i<devCount; i++) {
+        if(getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceIdTextByIndex(i) == uniqNameId) {
+            return true;
         }
     }
+    return false;
+}
+
+void ViewController::deviceConnected(DevicesFactory::E_DeviceType type, QString uniqNameId) {
+    if(isCurrentDevice(uniqNameId)) {
+        switch(type) {
+        case DevicesFactory::Type_Progress_Tmk13:
+            emit devConnectedTmk13();
+            break;
+        case DevicesFactory::Type_Progress_Tmk24:
+            emit devConnectedTmk24();
+            break;
+        case DevicesFactory::Type_Undefined: break;
+        }
+    }
+}
+void ViewController::deviceDisconnected(DevicesFactory::E_DeviceType type, QString uniqNameId) {
+    if(isCurrentDevice(uniqNameId)) {
+        switch(type) {
+        case DevicesFactory::Type_Progress_Tmk13:
+            emit devDisconnectedTmk13();
+            break;
+        case DevicesFactory::Type_Progress_Tmk24:
+            emit devDisconnectedTmk24();
+            break;
+        case DevicesFactory::Type_Undefined: break;
+        }
+    }
+}
+void ViewController::deviceReadyCurrentData(DevicesFactory::E_DeviceType type, QString uniqNameId) {
+    if(isCurrentDevice(uniqNameId)) {
+        switch(type) {
+        case DevicesFactory::Type_Progress_Tmk13:
+            emit devReadyOtherDataTmk13(getCurrentDevOtherData());
+            break;
+        case DevicesFactory::Type_Progress_Tmk24:
+            emit devReadyOtherDataTmk24(getCurrentDevOtherData());
+            break;
+        case DevicesFactory::Type_Undefined: break;
+        }
+    }
+}
+void ViewController::deviceReadyProperties(DevicesFactory::E_DeviceType type, QString uniqNameId) {
+    if(isCurrentDevice(uniqNameId)) {
+        switch(type) {
+        case DevicesFactory::Type_Progress_Tmk13:
+            emit devReadyPropertiesTmk13(getCurrentDevPropertyByIndex());
+            break;
+        case DevicesFactory::Type_Progress_Tmk24:
+            emit devReadyPropertiesTmk24(getCurrentDevPropertyByIndex());
+            break;
+        case DevicesFactory::Type_Undefined: break;
+        }
+    }
+}
+void ViewController::deviceReadyInit(DevicesFactory::E_DeviceType type, QString uniqNameId) {
+    if(isCurrentDevice(uniqNameId)) {
+        switch(type) {
+        case DevicesFactory::Type_Progress_Tmk13:
+            emit devFullReadyTmk13(getCurrentDevPropertyByIndex());
+            break;
+        case DevicesFactory::Type_Progress_Tmk24:
+            emit devFullReadyTmk24(getCurrentDevPropertyByIndex());
+            break;
+        case DevicesFactory::Type_Undefined: break;
+        }
+    }
+}
+
+void ViewController::reconnectToDevSignals() {
+    disconnect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceConnectedSignal(DevicesFactory::E_DeviceType,QString)));
+    disconnect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceDisconnectedSignal(DevicesFactory::E_DeviceType,QString)));
+    disconnect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyCurrentDataSignal(DevicesFactory::E_DeviceType,QString)));
+    disconnect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyInitSignal(DevicesFactory::E_DeviceType,QString)));
+    disconnect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyPropertiesSignal(DevicesFactory::E_DeviceType,QString)));
+
+    connect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceConnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceConnected(DevicesFactory::E_DeviceType,QString)));
+    connect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceDisconnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceDisconnected(DevicesFactory::E_DeviceType,QString)));
+    connect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyCurrentDataSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyCurrentData(DevicesFactory::E_DeviceType,QString)));
+    connect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyInitSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyInit(DevicesFactory::E_DeviceType,QString)));
+    connect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyPropertiesSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyProperties(DevicesFactory::E_DeviceType,QString)));
 }
 
 void ViewController::connectionIsLost(interfacesAbstract::eInterfaceTypes, QString nameInterface) {

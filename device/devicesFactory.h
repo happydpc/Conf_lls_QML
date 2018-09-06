@@ -28,9 +28,10 @@ public slots:
     bool removeDevice(QString uniqDevName);
 
     QString getDeviceName(int index);
+    QString getDeviceNameByType(DevicesFactory::E_DeviceType type);
+
     E_DeviceType getDeviceType(QString typeText);
     E_DeviceType getDeviceType(int index);
-    QString getDeviceNameByType(DevicesFactory::E_DeviceType type);
 
     void setDeviceInitCommandByIndex(int index);
 
@@ -46,37 +47,40 @@ public slots:
 
     DeviceAbstract::E_State getDevStateByIndex(int index);
 
-    bool addCommandDevice(CommandController::sCommandData commandData);
-
     void placeReplyDataFromInterface(QByteArray data);
 
-    void setDeviceAsNotReadyByIndex(int index);
+    void setDeviceReInitByIndex(int index);
 
 signals:
     void writeData(QByteArray data);
     void readReplyData();
 
-    void deviceReadyPropertiesSignal(QString uniqNameId);
-    void deviceReadyInitSignal(QString uniqNameId);
+    void deviceConnectedSignal(DevicesFactory::E_DeviceType, QString uniqNameId);
+    void deviceDisconnectedSignal(DevicesFactory::E_DeviceType, QString uniqNameId);
+    void deviceReadyCurrentDataSignal(DevicesFactory::E_DeviceType, QString uniqNameId);
+    void deviceReadyPropertiesSignal(DevicesFactory::E_DeviceType, QString uniqNameId);
+    void deviceReadyInitSignal(DevicesFactory::E_DeviceType, QString uniqNameId);
 
 private slots:
     //-- find device by index
     QPair<QString,DeviceAbstract*>* findDeviceByIndex(int index);
     QPair<QString,DeviceAbstract*>* findDeviceByUnicIdent(QString name);
 
-    //-- gives the oldest devices
-    DeviceAbstract* getDevOldest();
     void devShedullerSlot();
+
+    void deviceEventSlot(DeviceAbstract::E_DeviceEvent type, QString devUniqueId, QString message);
 
 private:
     QVector<QPair<QString,DeviceAbstract*>> deviceMap;
-    CommandController *commandController;
+
+    QVector<CommandController::sCommandData> commandList;
 
     QTimer* devShedullerTimer;
-    DeviceAbstract * devLastRequested;
 
-    const int delayAfterSendCommandMs = 500;
-    const int devShedullerControlInterval = 500;
+    int indexProcessedDev = 0;
+
+    const int delayAfterSendCommandMs = 100;
+    const int devShedullerControlInterval = 100;
 };
 
 #endif // DEVICESFACTORY_H
