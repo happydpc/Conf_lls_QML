@@ -18,88 +18,18 @@ Rectangle {
         anchors.fill: parent
         enabled: devPropertyLlsTMK24.isEnabled
 
-        TabBar {
-            id: propertiesTab
-            width: 50
-            anchors.top: parent.top
-            anchors.topMargin: 0
-            anchors.left: parent.left
-            anchors.right: parent.right
-            TabButton {
-                id: basePropertiesTab
-                text: qsTr("Общие параметры")
-                focusPolicy: Qt.TabFocus
-                background: Rectangle {
-                    gradient: Gradient {
-                        GradientStop {
-                            position: 1
-                            color: "#4D75E0"
-                        }
-                        GradientStop {
-                            position: 0
-                            color: "#EEF0F6"
-                        }
-                    }
-                }
-            }
-
-            TabButton {
-                id: tempCompensationTab
-                text: qsTr("Температурная компенсация")
-                background: Rectangle {
-                    gradient: Gradient {
-                        GradientStop {
-                            position: 1
-                            color: "#4D75E0"
-                        }
-                        GradientStop {
-                            position: 0
-                            color: "#EEF0F6"
-                        }
-                    }
-                }
-            }
-
-            TabButton {
-                id: filtrationTab
-                text: qsTr("Фильтрация")
-                background: Rectangle {
-                    gradient: Gradient {
-                        GradientStop {
-                            position: 1
-                            color: "#4D75E0"
-                        }
-                        GradientStop {
-                            position: 0
-                            color: "#EEF0F6"
-                        }
-                    }
-                }
-            }
-        }
-
-        Item {
-            id: filtration
-        }
-
         SwipeView {
             id: propertiesView
             x: 0
-            y: 50
-            anchors.top: propertiesTab.bottom
+            anchors.top: tabBar2.bottom
             anchors.right: parent.right
-            anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.topMargin: 0
 
-            currentIndex: 3
+            currentIndex: 0
 
             Item {
-                id: baseProperties
-            }
-
-            Item {
-                id: tempCompensation
+                id: basePropertiesItem
                 anchors.fill: parent
                 Column {
                     spacing: 10
@@ -108,62 +38,13 @@ Rectangle {
                     anchors.rightMargin: 20
                     anchors.leftMargin: 20
                     anchors.fill: parent
-
                     Label {
-                        text: qsTr("Температурная компенсация линейного расширения топлива")
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
-                    }
-                    Label {
-                        text: qsTr("Режим:")
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
-                    }
-                    ComboBox {
-                        id: typeTempCompensation
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
-                        model: ListModel {
-                            ListElement {
-                                text: "Выключен"
-                            }
-                            ListElement {
-                                text: "АИ-95"
-                            }
-                        }
-                    }
-                    Label {
-                        text: qsTr("K1:")
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
-                    }
-                    TextField {
-                        id: k1
-                        text: "0.0"
-                    }
-                    Label {
-                        text: qsTr("K2:")
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
-                    }
-                    TextField {
-                        id: k2
-                        text: "0.0"
+                        text: "11111"
                     }
                 }
             }
             Item {
-                id: calibration
+                id: basePropertiesItem2
                 anchors.fill: parent
                 Column {
                     spacing: 10
@@ -172,254 +53,325 @@ Rectangle {
                     anchors.rightMargin: 20
                     anchors.leftMargin: 20
                     anchors.fill: parent
-
                     Label {
-                        text: qsTr("Задание границ измерения:")
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
-                    }
-                    Button {
-                        id: buttonEmpty
-                        text: "Пустой"
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
-                    }
-                    Button {
-                        id: buttonFull
-                        text: "Полный"
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
-                    }
-                    Button {
-                        id: buttonEdit
-                        text: "Редактировать"
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
-                    }
-                    Label {
-                        text: "Тип жидкости"
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
-                    }
-                    ComboBox {
-                        id: typeFuel
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
-                        model: ListModel {
-                            ListElement {
-                                text: "Топливо"
-                            }
-                            ListElement {
-                                text: "Вода"
-                            }
-                        }
-                    }
-                }
-            }
-            Item {
-                anchors.fill: parent
-                Column {
-                    spacing: 10
-                    anchors.topMargin: 20
-                    anchors.bottomMargin: 20
-                    anchors.rightMargin: 20
-                    anchors.leftMargin: 20
-                    anchors.fill: parent
-
-                    Label {
-                        text: qsTr("Фильтрация:")
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
-                    }
-                    Button {
-                        id: buttonEmpty
-                        text: "Пустой"
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
-                    }
-                    Button {
-                        id: buttonFull
-                        text: "Полный"
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
-                    }
-                    Button {
-                        id: buttonEdit
-                        text: "Редактировать"
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
-                    }
-                    Label {
-                        text: "Тип жидкости"
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
-                    }
-                    ComboBox {
-                        id: typeFuel
-                        anchors.left: parent.left
-                        anchors.leftMargin: 0
-                        anchors.right: parent.right
-                        anchors.rightMargin: 0
-                        model: ListModel {
-                            ListElement {
-                                text: "Топливо"
-                            }
-                            ListElement {
-                                text: "Вода"
-                            }
-                        }
+                        text: "2222"
                     }
                 }
             }
         }
     }
+}
 
-    PageIndicator {
-        id: propertiesIndicator
-        x: 476
-        y: 580
+            //        TabBar {
+            //            id: propertiesTab
+            //            width: 50
+            //            anchors.top: parent.top
+            //            anchors.topMargin: 0
+            //            anchors.left: parent.left
+            //            anchors.right: parent.right
+            //            TabButton {
+            //                id: basePropertiesTab
+            //                text: qsTr("Общие параметры")
+            //                focusPolicy: Qt.TabFocus
+            //                background: Rectangle {
+            //                    gradient: Gradient {
+            //                        GradientStop {
+            //                            position: 1
+            //                            color: "#4D75E0"
+            //                        }
+            //                        GradientStop {
+            //                            position: 0
+            //                            color: "#EEF0F6"
+            //                        }
+            //                    }
+            //                }
+            //            }
 
-        count: propertiesView.count
-        currentIndex: propertiesView.currentIndex
+            //            TabButton {
+            //                id: tempCompensationTab
+            //                text: qsTr("Температурная компенсация")
+            //                background: Rectangle {
+            //                    gradient: Gradient {
+            //                        GradientStop {
+            //                            position: 1
+            //                            color: "#4D75E0"
+            //                        }
+            //                        GradientStop {
+            //                            position: 0
+            //                            color: "#EEF0F6"
+            //                        }
+            //                    }
+            //                }
+            //            }
 
-        anchors.bottom: propertiesView.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-    }
-} //    SwipeView {//        id: currnetDataRect//        x: 0//        y: 28//        width: tabBar.width//        height: tabBar.height - currentData.height//        currentIndex: 0//        anchors.topMargin: currentData.height
-//        anchors.top: parent.top
-//        anchors.left: parent.left
+            //            TabButton {
+            //                id: filtrationTab
+            //                text: qsTr("Фильтрация")
+            //                background: Rectangle {
+            //                    gradient: Gradient {
+            //                        GradientStop {
+            //                            position: 1
+            //                            color: "#4D75E0"
+            //                        }
+            //                        GradientStop {
+            //                            position: 0
+            //                            color: "#EEF0F6"
+            //                        }
+            //                    }
+            //                }
+            //            }
+            //        }
 
-//        Rectangle {
-//            id: rectangle
-//            x: 0
-//            y: 0
-//            width: 707
-//            height: 453
-//            color: "#ffffff"
+            //        Item {
+            //            id: filtration
+            //        }
 
-//            Column {
-//                id: column
-//                x: 0
-//                y: 0
-//                width: 847
-//                height: 406
-//                spacing: 10
+            //        SwipeView {
+            //            id: propertiesView
+            //            x: 0
+            //            y: 50
+            //            anchors.top: propertiesTab.bottom
+            //            anchors.right: parent.right
+            //            anchors.bottom: parent.bottom
+            //            anchors.left: parent.left
+            //            anchors.topMargin: 0
 
-//                Label {
-//                    id: levelValue
-//                    text: qsTr("Level/value:")
-//                    anchors.left: parent.left
-//                    anchors.leftMargin: 0
-//                    anchors.right: parent.right
-//                    anchors.rightMargin: 0
-//                }
+            //            currentIndex: 0
 
-//                ProgressBar {
-//                    id: levelProgress
-//                    anchors.left: parent.left
-//                    anchors.leftMargin: 0
-//                    anchors.right: parent.right
-//                    anchors.rightMargin: 0
-//                    to: 100
-//                    value: 30
+            //            Item {
+            //                id: basePropertiesItem
+            //                anchors.fill: parent
+            //                Column {
+            //                    spacing: 10
+            //                    anchors.topMargin: 20
+            //                    anchors.bottomMargin: 20
+            //                    anchors.rightMargin: 20
+            //                    anchors.leftMargin: 20
+            //                    anchors.fill: parent
+            //                    Label {
+            //                        text: "Сетевой адрес (1-254)"
+            //                    }
+            //                    Button {
+            //                        id: changeIdAddr
+            //                    }
+            //                    Label {
+            //                        text: "Самостоятельная выдача данных:"
+            //                    }
+            //                    ComboBox {
+            //                        id: typeIndependentOutMessage
+            //                        model: ListModel {
+            //                            ListElement {
+            //                                text: "Выключена"
+            //                            }
+            //                            ListElement {
+            //                                text: "Бинарная"
+            //                            }
+            //                            ListElement {
+            //                                text: "Символьная"
+            //                            }
+            //                        }
+            //                    }
+            //                    Label {
+            //                        text: "Период выдачи данных (0-255), с:"
+            //                    }
+            //                    SpinBox {
+            //                    }
+            //                    Label {
+            //                        text: "Мин. значение уровня (0-1023):"
+            //                    }
+            //                    SpinBox {
+            //                    }
+            //                    Label {
+            //                        text: "Макс.значение уровня (0-4095):"
+            //                    }
+            //                    SpinBox {
+            //                    }
+            //                    Label {
+            //                        text: "Параметр в выходном сообщении датчика:"
+            //                    }
+            //                    ComboBox {
+            //                        id: typeOutMessage
+            //                        model: ListModel {
+            //                            ListElement {
+            //                                text: "Относительный уровень"
+            //                            }
+            //                            ListElement {
+            //                                text: "Объем (по таблице таррировки)"
+            //                            }
+            //                        }
+            //                    }
+            //                }
+            //            }
 
-//                    contentItem: Item {
-//                        implicitWidth: levelProgress.width
-//                        implicitHeight: 4
+            //            Item {
+            //                id: tempCompensationItem
+            //                anchors.fill: parent
+            //                Column {
+            //                    spacing: 10
+            //                    anchors.topMargin: 20
+            //                    anchors.bottomMargin: 20
+            //                    anchors.rightMargin: 20
+            //                    anchors.leftMargin: 20
+            //                    anchors.fill: parent
 
-//                        Rectangle {
-//                            id: bar
-//                            width: levelProgress.visualPosition * levelProgress.width
-//                            height: levelProgress.height
-//                            radius: 5
-//                            color: "#416FE1"
-//                        }
-//                    }
-//                }
+            //                    Label {
+            //                        text: qsTr("Температурная компенсация линейного расширения топлива")
+            //                        anchors.left: parent.left
+            //                        anchors.leftMargin: 0
+            //                        anchors.right: parent.right
+            //                        anchors.rightMargin: 0
+            //                    }
+            //                    Label {
+            //                        text: qsTr("Режим:")
+            //                        anchors.left: parent.left
+            //                        anchors.leftMargin: 0
+            //                        anchors.right: parent.right
+            //                        anchors.rightMargin: 0
+            //                    }
+            //                    ComboBox {
+            //                        id: typeTempCompensation
+            //                        model: ListModel {
+            //                            ListElement {
+            //                                text: "Выключен"
+            //                            }
+            //                            ListElement {
+            //                                text: "АИ-95"
+            //                            }
+            //                        }
+            //                    }
+            //                    Label {
+            //                        text: qsTr("K1:")
+            //                        anchors.left: parent.left
+            //                        anchors.leftMargin: 0
+            //                        anchors.right: parent.right
+            //                        anchors.rightMargin: 0
+            //                    }
+            //                    TextField {
+            //                        id: k1
+            //                        text: "0.0"
+            //                    }
+            //                    Label {
+            //                        text: qsTr("K2:")
+            //                        anchors.left: parent.left
+            //                        anchors.leftMargin: 0
+            //                        anchors.right: parent.right
+            //                        anchors.rightMargin: 0
+            //                    }
+            //                    TextField {
+            //                        id: k2
+            //                        text: "0.0"
+            //                    }
+            //                }
+            //            }
+            //            Item {
+            //                id: calibrationItem
+            //                anchors.fill: parent
+            //                Column {
+            //                    spacing: 10
+            //                    anchors.topMargin: 20
+            //                    anchors.bottomMargin: 20
+            //                    anchors.rightMargin: 20
+            //                    anchors.leftMargin: 20
+            //                    anchors.fill: parent
 
-//                Label {
-//                    id: label
-//                    text: qsTr("CNT:")
-//                    anchors.right: parent.right
-//                    anchors.rightMargin: 0
-//                    anchors.left: parent.left
-//                    anchors.leftMargin: 0
-//                }
+            //                    Label {
+            //                        text: qsTr("Задание границ измерения:")
+            //                    }
+            //                    Button {
+            //                        id: buttonEmpty
+            //                        text: "Пустой"
+            //                    }
+            //                    Button {
+            //                        id: buttonFull
+            //                        text: "Полный"
+            //                    }
+            //                    Button {
+            //                        id: buttonEdit
+            //                        text: "Редактировать"
+            //                    }
+            //                    Label {
+            //                        text: "Тип жидкости"
+            //                    }
+            //                    ComboBox {
+            //                        id: typeFuel
+            //                        model: ListModel {
+            //                            ListElement {
+            //                                text: "Топливо"
+            //                            }
+            //                            ListElement {
+            //                                text: "Вода"
+            //                            }
+            //                        }
+            //                    }
+            //                }
+            //            }
+            //            Item {
+            //                id: filtrationItem
+            //                anchors.fill: parent
+            //                Column {
+            //                    spacing: 10
+            //                    anchors.topMargin: 20
+            //                    anchors.bottomMargin: 20
+            //                    anchors.rightMargin: 20
+            //                    anchors.leftMargin: 20
+            //                    anchors.fill: parent
 
-//                TextField {
-//                    id: cntValue
-//                    height: 30
-//                    text: qsTr("0")
-//                    readOnly: true
-//                    anchors.left: parent.left
-//                    anchors.leftMargin: 0
-//                    anchors.right: parent.right
-//                    anchors.rightMargin: 0
-//                }
+            //                    Label {
+            //                        text: qsTr("Фильтрация:")
+            //                        anchors.left: parent.left
+            //                        anchors.leftMargin: 0
+            //                        anchors.right: parent.right
+            //                        anchors.rightMargin: 0
+            //                    }
+            //                    Label {
+            //                        text: "Тип фильтрации:"
+            //                    }
+            //                    ComboBox {
+            //                        id: typeFiltration
+            //                        model: ListModel {
+            //                            ListElement {
+            //                                text: "Выключена"
+            //                            }
+            //                        }
+            //                    }
+            //                    Label {
+            //                        text: "Время усреднения (0-21), с:"
+            //                    }
+            //                    SpinBox {
+            //                        id: filterVvarageValueSec
+            //                    }
+            //                    Label {
+            //                        text: "Длина медианы (0-7):"
+            //                    }
+            //                    SpinBox {
+            //                        //                        id: filterVvarageValueSec
+            //                    }
+            //                    Label {
+            //                        text: "Ковариация шума процесса (Q):"
+            //                    }
+            //                    SpinBox {
+            //                        //                        id: filterVvarageValueSec
+            //                    }
+            //                    Label {
+            //                        text: "Ковариация шума измерения (R):"
+            //                    }
+            //                    SpinBox {
+            //                        //                        id: filterVvarageValueSec
+            //                    }
+            //                }
+            //            }
+            //        }
+            //    }
 
-//                Label {
-//                    id: label1
-//                    text: qsTr("Temperature:")
-//                    anchors.left: parent.left
-//                    anchors.leftMargin: 0
-//                    anchors.right: parent.right
-//                    anchors.rightMargin: 0
-//                }
+            //    PageIndicator {
+            //        id: propertiesIndicator
+            //        x: 476
+            //        y: 580
 
-//                TextField {
-//                    id: tempValue
-//                    height: 30
-//                    text: qsTr("0")
-//                    anchors.left: parent.left
-//                    anchors.leftMargin: 0
-//                    anchors.right: parent.right
-//                    anchors.rightMargin: 0
-//                }
+            //        count: propertiesView.count
+            //        currentIndex: propertiesView.currentIndex
 
-//                Label {
-//                    id: label2
-//                    text: qsTr("Frequency:")
-//                }
-
-//                TextField {
-//                    id: freqValue
-//                    height: 30
-//                    text: qsTr("0")
-//                    anchors.left: parent.left
-//                    anchors.leftMargin: 0
-//                    anchors.right: parent.right
-//                    anchors.rightMargin: 0
-//                }
-//            }
-//        }
-
-//        Button {
-//            id: button
-//            x: 0
-//            y: 0
-//            text: qsTr("Button")
-//        }
-//    }
+            //        anchors.bottom: propertiesView.bottom
+            //        anchors.horizontalCenter: parent.horizontalCenter
+            //    }
 

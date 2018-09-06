@@ -395,7 +395,7 @@ bool Progress_tmk13::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                 lls_data.freq.isValid = true;
                 // TODO: random ok?
                 chartData->push_back(lls_data.fuelLevel.value.value_u32 + (rand()%10));
-                while(chartData->size() > 100) {
+                while(chartData->size() > 50) {
                     chartData->pop_front();
                 }
                 emit eventDevice(DeviceAbstract::Type_DeviceEvent_CurrentDataUpdated, getUniqIdent(), QString("Ready current data"));

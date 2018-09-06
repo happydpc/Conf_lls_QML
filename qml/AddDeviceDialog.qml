@@ -28,7 +28,7 @@ Popup {
         Label {
             id: lTypeDevice
             height: typeDeviceText.height
-            text: qsTr("Device type")
+            text: qsTr("Тип устройства")
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
@@ -65,7 +65,7 @@ Popup {
 
         Button {
             id: buttonClose
-            text: qsTr("Close")
+            text: qsTr("Закрыть")
             Layout.fillWidth: true
             onClicked: {
                 close()
@@ -74,8 +74,7 @@ Popup {
 
         Button {
             id: addDevButton
-            text: qsTr("Add device")
-            Layout.fillWidth: true
+            text: qsTr("Добавить")
             onClicked: {
                 if (typeDeviceText.currentText.length != 0) {
                     viewController.addDeviceToConnection(typeDeviceText.currentText, typeDeviceIdText.value.toString())

@@ -25,14 +25,6 @@ Rectangle {
         versionFirmwareText.text = listProperty[4]
     }
 
-//    res << QString::number(lls_data.fuelLevel.value.value_u32);
-//    res << QString::number(lls_data.fuelProcent.value.value_u16);
-//    res << QString::number(lls_data.cnt.value.value_u32);
-//    res << QString::number(lls_data.freq.value.value_u16);
-//    res << QString::number(lls_data.temp.value.value_i);
-//    res << lls_data.password.value;
-//    res << lls_data.serialNum.value;
-
     function setUpdateCurrentValues(data) {
         devPropertyLlsTMK24.isEnabled = true
         var values = viewController.getCurrentDevOtherData()
@@ -65,11 +57,321 @@ Rectangle {
         color: "#e7e9eb"
 
         TabBar {
+            id: propertiesTabBar
+            anchors.leftMargin: 10
+            anchors.rightMargin: 10
+            anchors.top: row5.bottom
+            anchors.right: tabBar.left
+            anchors.left: parent.left
+            anchors.topMargin: 20
+            currentIndex: propertiesView.currentIndex
+
+            TabButton {
+                id: basePropertiesTab
+                text: qsTr("Общие параметры")
+                focusPolicy: Qt.TabFocus
+                background: Rectangle {
+                    gradient: Gradient {
+                        GradientStop {
+                            position: 1
+                            color: "#4D75E0"
+                        }
+                        GradientStop {
+                            position: 0
+                            color: "#EEF0F6"
+                        }
+                    }
+                }
+            }
+
+            TabButton {
+                id: tempCompensationTab
+                text: qsTr("Температурная компенсация")
+                background: Rectangle {
+                    gradient: Gradient {
+                        GradientStop {
+                            position: 1
+                            color: "#4D75E0"
+                        }
+                        GradientStop {
+                            position: 0
+                            color: "#EEF0F6"
+                        }
+                    }
+                }
+            }
+
+            TabButton {
+                id: calibrationTab
+                text: qsTr("Калибрация MinMax")
+                background: Rectangle {
+                    gradient: Gradient {
+                        GradientStop {
+                            position: 1
+                            color: "#4D75E0"
+                        }
+                        GradientStop {
+                            position: 0
+                            color: "#EEF0F6"
+                        }
+                    }
+                }
+            }
+            TabButton {
+                id: filtrationTab
+                text: qsTr("Фильтрация")
+                background: Rectangle {
+                    gradient: Gradient {
+                        GradientStop {
+                            position: 1
+                            color: "#4D75E0"
+                        }
+                        GradientStop {
+                            position: 0
+                            color: "#EEF0F6"
+                        }
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            anchors.top: propertiesTabBar.bottom
+            anchors.right: parent.right
+            anchors.left: parent.left
+            anchors.topMargin: 0
+            SwipeView {
+                id: propertiesView
+                anchors.fill: parent
+                currentIndex: propertiesTabBar.currentIndex
+
+                Item {
+                    id: basePropertiesItem
+                    Column {
+                        spacing: 10
+                        anchors.topMargin: 20
+                        anchors.bottomMargin: 20
+                        anchors.rightMargin: 20
+                        anchors.leftMargin: 20
+                        anchors.fill: parent
+                        Button {
+                            text: "Сменить сетевой адрес"
+                            id: changeIdAddr
+                        }
+                        Label {
+                            text: "Самостоятельная выдача данных:"
+                        }
+                        ComboBox {
+                            id: typeIndependentOutMessage
+                            model: ListModel {
+                                ListElement {
+                                    text: "Выключена"
+                                }
+                                ListElement {
+                                    text: "Бинарная"
+                                }
+                                ListElement {
+                                    text: "Символьная"
+                                }
+                            }
+                        }
+                        Label {
+                            text: "Период выдачи данных (0-255), с:"
+                        }
+                        SpinBox {
+                        }
+                        Label {
+                            text: "Мин. значение уровня (0-1023):"
+                        }
+                        SpinBox {
+                        }
+                        Label {
+                            text: "Макс.значение уровня (0-4095):"
+                        }
+                        SpinBox {
+                        }
+                        Label {
+                            text: "Параметр в выходном сообщении датчика:"
+                        }
+                        ComboBox {
+                            id: typeOutMessage
+                            model: ListModel {
+                                ListElement {
+                                    text: "Относительный уровень"
+                                }
+                                ListElement {
+                                    text: "Объем (по таблице таррировки)"
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Item {
+                    id: tempCompensationItem
+                    Column {
+                        spacing: 10
+                        anchors.topMargin: 20
+                        anchors.bottomMargin: 20
+                        anchors.rightMargin: 20
+                        anchors.leftMargin: 20
+                        anchors.fill: parent
+
+                        Label {
+                            text: qsTr("Температурная компенсация линейного расширения топлива")
+                            anchors.left: parent.left
+                            anchors.leftMargin: 0
+                            anchors.right: parent.right
+                            anchors.rightMargin: 0
+                        }
+                        Label {
+                            text: qsTr("Режим:")
+                            anchors.left: parent.left
+                            anchors.leftMargin: 0
+                            anchors.right: parent.right
+                            anchors.rightMargin: 0
+                        }
+                        ComboBox {
+                            id: typeTempCompensation
+                            model: ListModel {
+                                ListElement {
+                                    text: "Выключен"
+                                }
+                                ListElement {
+                                    text: "АИ-95"
+                                }
+                            }
+                        }
+                        Label {
+                            text: qsTr("K1:")
+                            anchors.left: parent.left
+                            anchors.leftMargin: 0
+                            anchors.right: parent.right
+                            anchors.rightMargin: 0
+                        }
+                        TextField {
+                            id: k1
+                            text: "0.0"
+                        }
+                        Label {
+                            text: qsTr("K2:")
+                            anchors.left: parent.left
+                            anchors.leftMargin: 0
+                            anchors.right: parent.right
+                            anchors.rightMargin: 0
+                        }
+                        TextField {
+                            id: k2
+                            text: "0.0"
+                        }
+                    }
+                }
+                Item {
+                    id: calibrationItem
+                    Column {
+                        spacing: 10
+                        anchors.topMargin: 20
+                        anchors.bottomMargin: 20
+                        anchors.rightMargin: 20
+                        anchors.leftMargin: 20
+                        anchors.fill: parent
+
+                        Label {
+                            text: qsTr("Задание границ измерения:")
+                        }
+                        Button {
+                            id: buttonEmpty
+                            text: "Пустой"
+                        }
+                        Button {
+                            id: buttonFull
+                            text: "Полный"
+                        }
+                        Button {
+                            id: buttonEdit
+                            text: "Редактировать"
+                        }
+                        Label {
+                            text: "Тип жидкости"
+                        }
+                        ComboBox {
+                            id: typeFuel
+                            model: ListModel {
+                                ListElement {
+                                    text: "Топливо"
+                                }
+                                ListElement {
+                                    text: "Вода"
+                                }
+                            }
+                        }
+                    }
+                }
+                Item {
+                    id: filtrationItem
+                    Column {
+                        spacing: 10
+                        anchors.topMargin: 20
+                        anchors.bottomMargin: 20
+                        anchors.rightMargin: 20
+                        anchors.leftMargin: 20
+                        anchors.fill: parent
+
+                        Label {
+                            text: qsTr("Фильтрация:")
+                            anchors.left: parent.left
+                            anchors.leftMargin: 0
+                            anchors.right: parent.right
+                            anchors.rightMargin: 0
+                        }
+                        Label {
+                            text: "Тип фильтрации:"
+                        }
+                        ComboBox {
+                            id: typeFiltration
+                            model: ListModel {
+                                ListElement {
+                                    text: "Выключена"
+                                }
+                            }
+                        }
+                        Label {
+                            text: "Время усреднения (0-21), с:"
+                        }
+                        SpinBox {
+                            id: filterVvarageValueSec
+                        }
+                        Label {
+                            text: "Длина медианы (0-7):"
+                        }
+                        SpinBox {
+                            //                        id: filterVvarageValueSec
+                        }
+                        Label {
+                            text: "Ковариация шума процесса (Q):"
+                        }
+                        SpinBox {
+                            //                        id: filterVvarageValueSec
+                        }
+                        Label {
+                            text: "Ковариация шума измерения (R):"
+                        }
+                        SpinBox {
+                            //                        id: filterVvarageValueSec
+                        }
+                    }
+                }
+            }
+        }
+
+
+        TabBar {
             id: tabBar
             width: 300
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.top: parent.top
+
             TabButton {
                 id: currentData
                 text: qsTr("Текущие данные")
@@ -95,6 +397,7 @@ Rectangle {
                     anchors.topMargin: currentData.height
                     anchors.top: parent.top
                     anchors.left: parent.left
+                    clip: true
 
                     Column {
                         id: column
@@ -249,69 +552,6 @@ Rectangle {
 
             TabButton {
                 id: log
-                text: qsTr("Журнал")
-                background: Rectangle {
-                    gradient: Gradient {
-                        GradientStop {
-                            position: 1
-                            color: "#4D75E0"
-                        }
-                        GradientStop {
-                            position: 0
-                            color: "#EEF0F6"
-                        }
-                    }
-                }
-            }
-        }
-
-        TabBar {
-            id: tabBar2
-            anchors.bottomMargin: 10
-            anchors.leftMargin: 10
-            anchors.rightMargin: 10
-            anchors.top: row5.bottom
-            anchors.right: tabBar.left
-            anchors.bottom: parent.bottom
-            anchors.left: parent.left
-            anchors.topMargin: 20
-
-            TabButton {
-                id: currentData2
-                text: qsTr("Текущие данные")
-                background: Rectangle {
-                    gradient: Gradient {
-                        GradientStop {
-                            position: 1
-                            color: "#4D75E0"
-                        }
-                        GradientStop {
-                            position: 0
-                            color: "#EEF0F6"
-                        }
-                    }
-                }
-            }
-
-            TabButton {
-                id: slaves2
-                text: qsTr("Ведомые")
-                background: Rectangle {
-                    gradient: Gradient {
-                        GradientStop {
-                            position: 1
-                            color: "#4D75E0"
-                        }
-                        GradientStop {
-                            position: 0
-                            color: "#EEF0F6"
-                        }
-                    }
-                }
-            }
-
-            TabButton {
-                id: log2
                 text: qsTr("Журнал")
                 background: Rectangle {
                     gradient: Gradient {

@@ -12,22 +12,22 @@ Item {
         anchors.leftMargin: 10
 
         Menu {
-            title: qsTr("Connection")
+            title: qsTr("Соединение")
             MenuItem {
                 id: menuOpenProject
-                text: qsTr("Add")
+                text: qsTr("Добавить")
                 onTriggered: {
                     addNewConnection()
                 }
             }
             MenuItem {
-                text: qsTr("Close projects")
+                text: qsTr("Закрыть соединение")
                 onTriggered: {
                     closeProject()
                 }
             }
             MenuItem {
-                text: qsTr("Exit")
+                text: qsTr("Закрыть")
                 onTriggered: exitFull()
             }
         }

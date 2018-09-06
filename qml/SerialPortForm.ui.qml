@@ -22,7 +22,7 @@ Popup {
         y: 8
         width: 382
         height: 171
-        title: qsTr("SerialPort")
+        title: qsTr("Последовательный порт:")
 
         Row {
             id: row_1
@@ -46,17 +46,17 @@ Popup {
 
             Button {
                 id: buttonAccept
-                width: 120
+                width: 110
                 height: 40
-                text: qsTr("Connect")
+                text: qsTr("Подсоединить")
                 anchors.right: parent.right
                 anchors.rightMargin: 0
             }
             Button {
                 id: buttonUpdate
-                width: 70
+                width: 80
                 height: 40
-                text: qsTr("Update")
+                text: qsTr("Обновить")
                 enabled: false
                 anchors.top: parent.top
                 anchors.topMargin: 0
@@ -87,7 +87,7 @@ Popup {
 
             Label {
                 id: baudLabel
-                text: qsTr("Baudrate")
+                text: qsTr("Скорость обмена данными")
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: baudRateList.right
                 anchors.leftMargin: 10
@@ -103,7 +103,7 @@ Popup {
         y: 195
         width: 140
         height: 50
-        text: qsTr("Close")
+        text: qsTr("Закрыть")
         anchors.right: parent.right
         anchors.rightMargin: 266
     }

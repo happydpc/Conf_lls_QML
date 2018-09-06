@@ -30,7 +30,7 @@ Rectangle {
         Label {
             id: lTypeDevice
             height: typeDeviceText.height
-            text: qsTr("Порт")
+            text: qsTr("Последовательный порт")
             horizontalAlignment: Text.AlignLeft
             verticalAlignment: Text.AlignVCenter
         }
@@ -56,27 +56,20 @@ Rectangle {
             text: qsTr("...")
             readOnly: true
         }
-    }
-
-    Button {
-        id: addDevButton
-        x: 271
-        width: 230
-        text: qsTr("Добавить устройство")
-        anchors.right: gridLayout.right
-        anchors.rightMargin: 0
-        anchors.top: gridLayout.bottom
-        anchors.topMargin: 20
-        onClicked: {
-            var list = viewController.getAvailableDeviceNameToSerialPort()
-            console.log("addDeviceToSerialPort-" + list)
-            addDeviceDialog.setListAvailableDevices(list)
-            addDeviceDialog.open()
+        Button {
+            id: addDevButton
+            text: qsTr("Добавить устройство")
+            onClicked: {
+                var list = viewController.getAvailableDeviceNameToSerialPort()
+                console.log("addDeviceToSerialPort-" + list)
+                addDeviceDialog.setListAvailableDevices(list)
+                addDeviceDialog.open()
+            }
         }
     }
 
     AddDeviceDialog {
         id:addDeviceDialog
-    visible: false
+        visible: false
     }
 }

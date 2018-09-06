@@ -377,7 +377,7 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                 lls_data.freq.isValid = true;
 
                 chartData->push_back(lls_data.fuelLevel.value.value_u32 + (rand()%10));
-                while(chartData->size() > 100) {
+                while(chartData->size() > 50) {
                     chartData->pop_front();
                 }
                 res = true;
