@@ -3,11 +3,11 @@
 
 #include <QObject>
 
-#define SERIALNUMBER_STRING_SIZE    12
-#define PERSONAL_DATA_SIZE          176
-#define VERSION_STRING_SIZE         8
-#define CPU_ID_SIZE                 12
-#define DUT_TYPE                    13
+#define SERIALNUMBER_STRING_SIZE            12
+#define PERSONAL_DATA_SIZE                  176
+#define FIRMWARE_VERSION_STRING_SIZE         8
+#define CPU_ID_SIZE                         12
+#define DUT_TYPE                            13
 
 class Progress_tmk13Data : public QObject
 {

@@ -18,30 +18,30 @@ Rectangle {
     function setNoActive() {
         devPropertyLlsTMK24.isEnabled = false
     }
-// name type
-//    res << lls_data.serialNum.value;
-//    res << QString::number(settings.netAddress);
-//    res << lls_data.typeLls.name;
-//    res << lls_data.firmware.value;
-
     function setDevProperty(listProperty) {
         typeDeviceText.text = listProperty[0]
         snText.text = listProperty[1]
-        netIdText.text = listProperty[3]
-        versionFirmwareText.text = listProperty[2]
+        netIdText.text = listProperty[2]
+        versionFirmwareText.text = listProperty[4]
     }
+
+//    res << QString::number(lls_data.fuelLevel.value.value_u32);
+//    res << QString::number(lls_data.fuelProcent.value.value_u16);
+//    res << QString::number(lls_data.cnt.value.value_u32);
+//    res << QString::number(lls_data.freq.value.value_u16);
+//    res << QString::number(lls_data.temp.value.value_i);
+//    res << lls_data.password.value;
+//    res << lls_data.serialNum.value;
 
     function setUpdateCurrentValues(data) {
         devPropertyLlsTMK24.isEnabled = true
-        if(data.length >0) { //-- progress bar
-            var values = viewController.getCurrentDevOtherData()
-            if(values.length >0) {
-                levelValue.text = values[0]
-                levelProgress.value = values[1]
-                cntValue.text = values[2]
-                freqValue.text = values[3]
-                tempValue.text= values[8]
-            }
+        var values = viewController.getCurrentDevOtherData()
+        if(values.length >0) {
+            levelValue.text = values[0]
+            levelProgress.value = values[1]
+            cntValue.text = values[2]
+            freqValue.text = values[3]
+            tempValue.text = values[4]
         }
         //-- chart
         var list = viewController.getCurrentDevChart()

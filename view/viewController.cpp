@@ -91,7 +91,7 @@ QString ViewController::getCurrentInterfaceNameToSerial() {
 
 QList<int> ViewController::getCurrentDevChart() {
     QList<int> res;
-    QString name = connFactory->getInteraceNameFromIndex(index.deviceIndex);
+    QString name = connFactory->getInteraceNameFromIndex(index.interfaceIndex);
     res = connFactory->getInterace(name)->getDeviceFactory()->getDeviceChartByIndex(index.deviceIndex);
     return res;
 }
@@ -132,10 +132,11 @@ DevicesFactory* ViewController::getDeviceFactoryByIndex(int indexIterface) {
 }
 
 bool ViewController::isCurrentDevice(QString uniqNameId) {
-    int devCount = getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceCount();
-    for(int i=0; i<devCount; i++) {
-        if(getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceIdTextByIndex(i) == uniqNameId) {
-            return true;
+    if(index.interfaceIndex < connFactory->getCountConnection()) {
+        if(index.deviceIndex < getDeviceCount()) {
+            if(getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceIdTextByIndex(index.deviceIndex) == uniqNameId) {
+                return true;
+            }
         }
     }
     return false;

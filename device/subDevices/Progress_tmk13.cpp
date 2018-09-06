@@ -20,7 +20,7 @@ QString Progress_tmk13::getDevTypeName() {
 void Progress_tmk13::setDefaultValues() {
     this->settings.k1 = 0;
     this->settings.k2 = 0;
-    this->settings.netAddress = 1;
+    this->settings.netAddress = uniqIdentId.toInt();
     this->settings.thermoCompensationType = 0;
     this->settings.periodicSendType = 0;
     this->settings.periodicSendTime = 0;
@@ -300,7 +300,7 @@ QList<CommandController::sCommandData> Progress_tmk13::getCommandListToCurrentDa
     CommandController::sCommandData command;
     command.commandOptionData.clear();
     command.deviceIdent = getUniqIdent();
-    command.devCommand = (int)Progress_tmk13Data::lls_read_lvl_all;
+    command.devCommand = (int)Progress_tmk13Data::lls_read_lvl_once;
     listCommand.push_back(command);
     command.devCommand = (int)Progress_tmk13Data::lls_read_errors;
     listCommand.push_back(command);
@@ -398,6 +398,7 @@ bool Progress_tmk13::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                 while(chartData->size() > 100) {
                     chartData->pop_front();
                 }
+                emit eventDevice(DeviceAbstract::Type_DeviceEvent_CurrentDataUpdated, getUniqIdent(), QString("Ready current data"));
                 res = true;
             }
                 break;
@@ -449,47 +450,17 @@ bool Progress_tmk13::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                     offset_counter++;
                 }
                 lls_data.llssValues.isValid = true;
-                emit eventDevice(DeviceAbstract::Type_DeviceEvent_CurrentDataUpdated, getUniqIdent(), QString("Ready current data"));
                 res = true;
             }
                 break;
 
             case Progress_tmk13Data::lls_read_settings: {
-//                if(data->size() > 22) {
-//                    char *pbuf = (data->data() + 4);
-//                    memcpy((char*)lls_data.sn, pbuf, sizeof(lls_data.sn));
-
-//                    pbuf = (data->data() + 4 + sizeof(lls_data.sn));
-//                    memcpy((char*)lls_data.firmware_version, pbuf, sizeof(lls_data.firmware_version));
-
-//                    switch(data->at(3)) {
-//                    case type_lls_tmk24:
-//                        strcpy((char*)lls_data.type_lls, "ТМК.24");
-//                    break;
-//                    case type_lls_tmk4ux:
-//                        strcpy((char*)lls_data.type_lls, "ТМК.4UX");
-//                        break;
-//                    case type_lls_tmk2u1:
-//                        strcpy((char*)lls_data.type_lls, "ТМК.2И1");
-//                    default:
-//                        strcpy((char*)lls_data.type_lls, "Не определен");
-//                        break;
-//                    }
-//                    uint8_t traw_u8[256] = {0};
-//                    for(uint8_t i=0; i<data->size(); i++) {
-//                        traw_u8[i] = data->at(i);
-//                    }
-//                    T_settings *psettings = (T_settings*)&traw_u8[34];
-//                    lls_data.settings = *psettings;
-//                    res = true;
-//                }
-
                 if(commandArrayReplyData.size() > 22) {
                     char *pbuf = (commandArrayReplyData.data() + 4);
-                    lls_data.serialNum.value.fromUtf8(pbuf, SERIALNUMBER_STRING_SIZE);
+                    lls_data.serialNum.value = QString::fromUtf8(pbuf, SERIALNUMBER_STRING_SIZE);
 
                     pbuf = (commandArrayReplyData.data() + 4 + SERIALNUMBER_STRING_SIZE);
-                    lls_data.firmware.value.fromUtf8(pbuf,  FIRMWARE_VERSION_STRING_SIZE);
+                    lls_data.firmware.value = QString::fromUtf8(pbuf,  FIRMWARE_VERSION_STRING_SIZE);
 
                     switch(commandArrayReplyData.at(3)) {
                     case Progress_tmk13Data::type_lls_tmk24:
@@ -583,8 +554,8 @@ bool Progress_tmk13::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
             case Progress_tmk13Data::lls_read_serial_number: {
                 // TODO: is normal convertion?
                 if(commandArrayReplyData.size() > 22) {
-                    lls_data.serialNum.value.fromUtf8(
-                                (commandArrayReplyData.data() + 3), SERIALNUMBER_STRING_SIZE);
+                    lls_data.serialNum.value = QString::fromUtf8((commandArrayReplyData.data() + 3),
+                                                                 SERIALNUMBER_STRING_SIZE);
                     lls_data.serialNum.isValid = true;
                 }
                 res = true;
@@ -628,6 +599,7 @@ bool Progress_tmk13::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
         }
     } else {
         state = STATE_DISCONNECTED;
+        emit eventDevice(DeviceAbstract::Type_DeviceEvent_Disconnected, getUniqIdent(), QString("Status disconnected"));
     }
 #endif
     return res;

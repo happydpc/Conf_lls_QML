@@ -68,9 +68,10 @@ DevicesFactory::E_DeviceType DevicesFactory::getDeviceType(int index) {
 }
 
 void DevicesFactory::setDeviceInitCommandByIndex(int index) {
-    QList<CommandController::sCommandData>commandList = findDeviceByIndex(index)->second->getCommandListToInit();
-    for(auto command :commandList) {
-        commandList.push_back(command);
+    QList<CommandController::sCommandData>commands = findDeviceByIndex(index)->second->getCommandListToInit();
+    for(auto i:commands) {
+        findDeviceByIndex(index)->second->makeDataToCommand(i);
+        commandList.push_back(i);
     }
 }
 
@@ -127,9 +128,6 @@ void DevicesFactory::devShedullerSlot() {
                 emit readReplyData();
             });
         } else {
-            if(indexProcessedDev > deviceMap.size()) {
-                indexProcessedDev = 0;
-            }
             CommandController::sCommandData command;
             auto dev = deviceMap.at(indexProcessedDev);
             switch(dev.second->getState()) {
@@ -158,6 +156,13 @@ void DevicesFactory::devShedullerSlot() {
                     }
                 }
                 break;
+            }
+            if(!deviceMap.empty()) {
+                if(indexProcessedDev < deviceMap.size()-1) {
+                    indexProcessedDev++;
+                } else {
+                    indexProcessedDev = 0;
+                }
             }
         }
     }

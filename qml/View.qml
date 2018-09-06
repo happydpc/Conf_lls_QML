@@ -20,7 +20,7 @@ Item {
         }
         onDevReadyPropertiesTmk13: {
             projectPanels.devicePanel.devPropertyLlsTMK24.setDevProperty(data)
-        }
+        } 
         onDevReadyPropertiesTmk24: {
             projectPanels.devicePanel.devPropertyLlsTMK24.setDevProperty(data)
         }
@@ -35,6 +35,12 @@ Item {
         }
         onDevFullReadyTmk24: {
 //            projectPanels.devicePanel.devPropertyLlsTMK24.setNoActive()
+        }
+        onDevDisconnectedTmk13: {
+            projectPanels.devicePanel.devPropertyLlsTMK24.setNoActive()
+        }
+        onDevDisconnectedTmk24: {
+
         }
     }
 
