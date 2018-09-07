@@ -31,6 +31,8 @@ public:
     virtual E_State getState() = 0;
     virtual void setState(DeviceAbstract::E_State) = 0;
     virtual bool makeDataToCommand(CommandController::sCommandData &commandData) = 0;
+    virtual void makeCustromCommand(QString operation, QStringList data, CommandController::sCommandData &commandData) = 0;
+
     virtual bool placeDataReplyToCommand(QByteArray &commandArrayReplyData) = 0;
     virtual CommandController::sCommandData getCommandToCheckConnected() = 0;
     virtual QList<CommandController::sCommandData> getCommandListToCurrentData() = 0;

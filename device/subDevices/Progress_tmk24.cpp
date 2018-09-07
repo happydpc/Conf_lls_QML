@@ -88,6 +88,15 @@ void Progress_tmk24::setState(DeviceAbstract::E_State value) {
     }
 }
 
+void Progress_tmk24::makeCustromCommand(QString operation, QStringList data, CommandController::sCommandData &command) {
+    if(operation == "set current level value as min") {
+
+    }
+    if(operation == "set current level value as max") {
+
+    }
+}
+
 QString Progress_tmk24::getUniqIdent() {
     return uniqIdentId;
 }

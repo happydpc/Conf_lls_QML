@@ -59,6 +59,8 @@ public slots:
 
     void setDeviceReInitByIndex(int index);
 
+    void sendCustomCommadToDev(int indexDev, QString operation, QStringList arguments);
+
 signals:
     void writeData(QByteArray data);
     void readReplyData();

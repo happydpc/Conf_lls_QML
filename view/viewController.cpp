@@ -170,6 +170,13 @@ bool ViewController::isCurrentDevice(QString uniqNameId) {
     return false;
 }
 
+void ViewController::setCurrentDevLevelAsEmpty() {
+    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "set current level value as min", QStringList(""));
+}
+void ViewController::setCurrentDevLevelAsFull() {
+    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "set current level value as max", QStringList(""));
+}
+
 void ViewController::deviceConnected(DevicesFactory::E_DeviceType type, QString uniqNameId) {
     if(isCurrentDevice(uniqNameId)) {
         switch(type) {

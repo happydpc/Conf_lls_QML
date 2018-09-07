@@ -94,6 +94,15 @@ QString Progress_tmk13::getUniqIdent() {
     return uniqIdentId;
 }
 
+void Progress_tmk13::makeCustromCommand(QString operation, QStringList data, CommandController::sCommandData &command) {
+    if(operation == "set current level value as min") {
+
+    }
+    if(operation == "set current level value as max") {
+
+    }
+}
+
 bool Progress_tmk13::makeDataToCommand(CommandController::sCommandData &commandData) {
     bool res = false;
     if(!commandData.deviceIdent.isEmpty()) {
@@ -150,36 +159,35 @@ bool Progress_tmk13::makeDataToCommand(CommandController::sCommandData &commandD
                 break;
 
             case Progress_tmk13Data::lls_calibrate_min:
-            case Progress_tmk13Data::lls_calibrate_max:
-            {
+            case Progress_tmk13Data::lls_calibrate_max: {
+                // сперва заносим текущий пароль для разрешения доступа
+                //                for(uint8_t i=0; i<size    if(!commandArg.isEmpty()) {
+                //                    array.push_back(0x31);
+                //                    array.push_back(commandArg.at(Progress_tmk13::E_param_suquence::param_id_address));
+                //                    array.push_back(commandArg.at(Progress_tmk13::E_param_suquence::param_comamnd));
+
+                //                    switch(commandType) {
+                //                case Progress_tmk13Data::lls_read_lvl_once: break;
+                //                case Progress_tmk13Data::lls_send_data_enable: break;
+                //                case Progress_tmk13Data::lls_set_send_time: break;
+                //                case Progress_tmk13Data::lls_send_data_default: break;
+                //                case Progress_tmk13Data::lls_read_cnt: break;
+                //                case Progress_tmk13Data::lls_read_lvl_all: break;
+                //                case Progress_tmk13Data::lls_read_settings: break;
+
+                //                case Progress_tmk13Data::lls_write_settings: {
                 //                    // сперва заносим текущий пароль для разрешения доступа
-                //                    for(uint8_t i=0; i<size    if(!commandArg.isEmpty()) {
-                //                        array.push_back(0x31);
-                //                        array.push_back(commandArg.at(Progress_tmk13::E_param_suquence::param_id_address));
-                //                        array.push_back(commandArg.at(Progress_tmk13::E_param_suquence::param_comamnd));
-
-                //                        switch(commandType) {
-                //                    case Progress_tmk13Data::lls_read_lvl_once: break;
-                //                    case Progress_tmk13Data::lls_send_data_enable: break;
-                //                    case Progress_tmk13Data::lls_set_send_time: break;
-                //                    case Progress_tmk13Data::lls_send_data_default: break;
-                //                    case Progress_tmk13Data::lls_read_cnt: break;
-                //                    case Progress_tmk13Data::lls_read_lvl_all: break;
-                //                    case Progress_tmk13Data::lls_read_settings: break;
-
-                //                    case Progress_tmk13Data::lls_write_settings: {
-                //                        // сперва заносим текущий пароль для разрешения доступа
-                //                        for(uint8_t i=0; i<sizeof(password_session); i++) {
-                //                        array.push_back(password_session[i]);
-                //                    }
-                //                        array.push_back(0xFF);
-                //                        array.push_back(0xFF);
-                //                        array.insert(13, (char*)&tcommand.data.settings_new, sizeof(T_settings));
-                //                        while(array.size() != 62) {
-                //                        array.push_back(0xFF);
-                //                    }
-                //                    }
-                //                        break;
+                //                    for(uint8_t i=0; i<sizeof(password_session); i++) {
+                //                    array.push_back(password_session[i]);
+                //                }
+                //                    array.push_back(0xFF);
+                //                    array.push_back(0xFF);
+                //                    array.insert(13, (char*)&tcommand.data.settings_new, sizeof(T_settings));
+                //                    while(array.size() != 62) {
+                //                    array.push_back(0xFF);
+                //                }
+            }
+                break;
 
                 //                    case Progress_tmk13Data::lls_read_cal_table:
                 //                        break;
@@ -248,8 +256,8 @@ bool Progress_tmk13::makeDataToCommand(CommandController::sCommandData &commandD
                 //                    }of(password_session); i++) {
                 //                        array.push_back(password_session[i]);
                 //                    }
-            }
-                break;
+                //            }
+                //                break;
 
             case Progress_tmk13Data::lls_read_errors: break;
             case Progress_tmk13Data::lls_set_serial_number: break;

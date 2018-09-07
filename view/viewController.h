@@ -32,6 +32,9 @@ public:
 
     Q_INVOKABLE QStringList getCurrentDevPropertyByIndex();
 
+    Q_INVOKABLE void setCurrentDevLevelAsEmpty();
+    Q_INVOKABLE void setCurrentDevLevelAsFull();
+
 signals:
     void remakeInterfaceTree(QStringList list, QList<int>status);
     void changeInterfaceTreeStatus(int index, int status);

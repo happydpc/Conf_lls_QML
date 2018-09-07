@@ -23,6 +23,7 @@ public:
     void setState(DeviceAbstract::E_State) override;
     QString getUniqIdent() override;
     bool makeDataToCommand(CommandController::sCommandData &commandData) override;
+    void makeCustromCommand(QString operation, QStringList data, CommandController::sCommandData &commandData) override;
     bool placeDataReplyToCommand(QByteArray &commandArrayReplyData) override;
     CommandController::sCommandData getCommandToCheckConnected() override;
     QList<CommandController::sCommandData> getCommandListToCurrentData() override;

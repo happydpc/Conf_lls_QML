@@ -255,6 +255,12 @@ void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QS
     }
 }
 
+void DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation, QStringList arguments) {
+    CommandController::sCommandData command;
+    findDeviceByIndex(indexDev)->second->makeCustromCommand(operation, arguments, command);
+    commandList.push_back(command);
+}
+
 QPair<QString,DeviceAbstract*>* DevicesFactory::findDeviceByIndex(int index) {
     int counter=0;
     for(auto it = deviceMap.begin(); it != deviceMap.end(); it++) {

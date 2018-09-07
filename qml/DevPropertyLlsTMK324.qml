@@ -769,6 +769,7 @@ Rectangle {
             }
         }
         onApply: {
+            viewController.setCurrentDevLevelAsEmpty()
             close()
         }
     }
@@ -788,7 +789,8 @@ Rectangle {
             }
         }
         onApply: {
-//            viewController.se close()
+            viewController.setCurrentDevLevelAsFull()
+            close()
         }
     }
 }
