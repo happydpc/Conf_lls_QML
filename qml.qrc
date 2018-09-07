@@ -17,4 +17,8 @@
         <file>qml/View.qml</file>
         <file>qml/AddDeviceDialog.qml</file>
     </qresource>
+    <qresource prefix="/new/icons">
+        <file>images/icon/normal.png</file>
+        <file>images/icon/no_normal.png</file>
+    </qresource>
 </RCC>

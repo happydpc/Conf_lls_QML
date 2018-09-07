@@ -13,8 +13,10 @@ DevicesFactory::~DevicesFactory() {}
 bool DevicesFactory::addNewDevice(E_DeviceType type, QString uniqDevName, QStringList parameters) {
     if(type == Type_Progress_Tmk24) {
         deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk24(uniqDevName)));
+        emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
     } else if(type == Type_Progress_Tmk13) {
         deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk13(uniqDevName)));
+        emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
     } else {
         throw QString("undefined class");
     }
@@ -29,7 +31,8 @@ bool DevicesFactory::addNewDevice(E_DeviceType type, QString uniqDevName, QStrin
 bool DevicesFactory::removeDevice(QString uniqDevName) {
     QPair<QString,DeviceAbstract*>* pDev = findDeviceByUnicIdent(uniqDevName);
     if(pDev != nullptr) {
-        deviceMap.erase(pDev);
+        deviceMap.erase(pDev); // TOOD: 0
+        emit deviceUpdateTree(DevicesFactory::Type_Update_Removed, 0);
         return true;
     }
     return false;
@@ -100,6 +103,18 @@ QStringList DevicesFactory::getDevicePropertyByIndex(int index) {
 QString DevicesFactory::getDeviceIdTextByIndex(int index) {
     if(deviceMap.empty()) {return QString();}
     return findDeviceByIndex(index)->first;
+}
+
+int DevicesFactory::getDeviceStatusByIndex(int index) {
+    if(deviceMap.empty()) {return false; }
+    DeviceAbstract::E_State state = findDeviceByIndex(index)->second->getState();
+    int ret = 0;
+    switch(state) {
+        case DeviceAbstract::STATE_DISCONNECTED: ret = 0; break;
+        case DeviceAbstract::STATE_NORMAL_READY: ret = 1;  break;
+        case DeviceAbstract::STATE_NEED_INIT: ret = 2; break;
+    }
+    return ret;
 }
 
 QStringList DevicesFactory::getDeviceProperty(int indexDev) {
@@ -191,6 +206,9 @@ void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QS
         // здесь ловим изменение с неинтита на инит и готовность отдать properties
         //
         emit deviceConnectedSignal(getDeviceType(findDeviceByUnicIdent(devUniqueId)->second->getDevTypeName()), devUniqueId);
+        // TODO: отловить реальное изменение статус
+        // чтобы не высылать после каждого пакета
+        emit deviceUpdateTree(DevicesFactory::Type_Update_ChangeStatus, findDeviceIndex(devUniqueId));
         break;
     case DeviceAbstract::Type_DeviceEvent_Disconnected:
         //
@@ -198,6 +216,9 @@ void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QS
         // здесь ловим изменение с неинтита на инит и готовность отдать properties
         //
         emit deviceDisconnectedSignal(getDeviceType(findDeviceByUnicIdent(devUniqueId)->second->getDevTypeName()), devUniqueId);
+        // TODO: отловить реальное изменение статус
+        // чтобы не высылать после каждого пакета
+        emit deviceUpdateTree(DevicesFactory::Type_Update_ChangeStatus, findDeviceIndex(devUniqueId));
         break;
     case DeviceAbstract::Type_DeviceEvent_Inited:
         //
@@ -205,6 +226,9 @@ void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QS
         // здесь ловим изменение с неинтита на инит и готовность отдать properties
         //
         emit deviceReadyInitSignal(getDeviceType(findDeviceByUnicIdent(devUniqueId)->second->getDevTypeName()), devUniqueId);
+        // TODO: отловить реальное изменение статус
+        // чтобы не высылать после каждого пакета
+        emit deviceUpdateTree(DevicesFactory::Type_Update_ChangeStatus, findDeviceIndex(devUniqueId));
         break;
     case DeviceAbstract::Type_DeviceEvent_ReadyReadProperties:
         //
@@ -212,6 +236,9 @@ void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QS
         // здесь ловим изменение с неинтита на инит и готовность отдать properties
         //
         emit deviceReadyPropertiesSignal(getDeviceType(findDeviceByUnicIdent(devUniqueId)->second->getDevTypeName()), devUniqueId);
+        // TODO: отловить реальное изменение статус
+        // чтобы не высылать после каждого пакета
+        emit deviceUpdateTree(DevicesFactory::Type_Update_ChangeStatus, findDeviceIndex(devUniqueId));
         break;
     case DeviceAbstract::Type_DeviceEvent_CurrentDataUpdated:
         //
@@ -219,6 +246,9 @@ void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QS
         // здесь ловим изменение с неинтита на инит и готовность отдать properties
         //
         emit deviceReadyCurrentDataSignal(getDeviceType(findDeviceByUnicIdent(devUniqueId)->second->getDevTypeName()), devUniqueId);
+        // TODO: отловить реальное изменение статус
+        // чтобы не высылать после каждого пакета
+        emit deviceUpdateTree(DevicesFactory::Type_Update_ChangeStatus, findDeviceIndex(devUniqueId));
         break;
     default: qDebug() << "deviceEventSlot -type undefined!";
         break;
@@ -243,6 +273,17 @@ QPair<QString,DeviceAbstract*>* DevicesFactory::findDeviceByUnicIdent(QString na
         }
     }
     return nullptr;
+}
+
+int DevicesFactory::findDeviceIndex(QString uniqNameId) {
+    int index = 0;
+    for(auto it = deviceMap.begin(); it != deviceMap.end(); it++) {
+        if(it->first == uniqNameId) {
+            return index;
+        }
+        index++;
+    }
+    return 0;
 }
 
 void DevicesFactory::setDeviceReInitByIndex(int index) {

@@ -12,6 +12,11 @@ public:
     explicit ConnectionFactory();
     ~ConnectionFactory();
 
+    typedef enum {
+        Type_Update_Removed,
+        Type_Update_Add,
+    }E_ConnectionUpdateType;
+
 public slots:
 
     bool addConnection(interfacesAbstract::eInterfaceTypes type, QString name, QStringList param);
@@ -30,7 +35,7 @@ public slots:
     void errorFromConnection(interfacesAbstract::eInterfaceTypes, QString name);
 
 signals:
-    void connectionIsLost(interfacesAbstract::eInterfaceTypes, QString);
+    void updateTree(ConnectionFactory::E_ConnectionUpdateType type);
 
 private:
 

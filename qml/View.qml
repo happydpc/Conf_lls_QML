@@ -8,13 +8,18 @@ Item {
 
     ViewController {
         id: viewController
-        onAddDeviceSignal: {
-            projectPanels.addDevice(name)
-        }
-        onAddInterfaceSignal: {
+
+        onRemakeInterfaceTree: {
+            projectPanels.devicePanel.remakeInterfaceList(list, status)
             projectPanels.openDeviceProject()
-            projectPanels.addInterface(name)
         }
+        onRemakeDeviceTree: {
+            projectPanels.devicePanel.remakeDeviceList(list, status)
+        }
+        onChangeDeviceTreeStatus: {
+            projectPanels.devicePanel.updateDeviceListStatus(index, status)
+        }
+
         onUpdatePropertiesSerialPort: {
             projectPanels.devicePanel.setPropertyToSerialPort(properties)
         }

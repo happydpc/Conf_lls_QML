@@ -4,11 +4,18 @@
 ViewController::ViewController(QObject *parent) : QObject(parent) {
     this->connFactory = new ConnectionFactory();
 
+    connect(connFactory, SIGNAL(updateTree(ConnectionFactory::E_ConnectionUpdateType)),
+            this, SLOT(interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateType)));
+
     QTimer::singleShot(500, Qt::CoarseTimer, [&] {
         QStringList strLis;
         strLis = connFactory->getAvailableName();
         qDebug() << strLis;
         addConnectionSerialPort(strLis.first(), QString("19200"));
+
+        for(int i=0; i<2; i++) { // 15
+            addDeviceToConnection("Progress tmk13", QString::number(i+1));
+        }
     });
 }
 
@@ -22,13 +29,25 @@ bool ViewController::addConnectionSerialPort(QString name, QString baudrate) {
     bool res = false;
     if((!name.isEmpty()) && (!baudrate.isEmpty())) {
         res = connFactory->addConnection(interfacesAbstract::InterfaceTypeSerialPort, name, QStringList(baudrate));
-        qDebug() << "addConnectionSerialPort -open= "<< res << name;
         if(res) {
-            emit addInterfaceSignal(name);
+            connect(getDeviceFactoryByIndex(index.interfaceIndex),
+                    SIGNAL(deviceUpdateTree(DevicesFactory::E_DeviceUpdateType,int)),
+                    this, SLOT(deviceTreeChanged(DevicesFactory::E_DeviceUpdateType,int)));
             setChangedIndexInteface(index.interfaceIndex);
+            qDebug() << "addConnectionSerialPort -open= "<< res << name;
         }
     }
     return res;
+}
+
+// TODO: check it!
+bool ViewController::removeConnectionSerialPort(QString name) {
+    if(connFactory->getCountConnection() != 0) {
+        disconnect(getDeviceFactoryByIndex(index.interfaceIndex),
+                   SIGNAL(deviceUpdateTree(DevicesFactory::E_DeviceUpdateType)));
+        connFactory->removeConnection(name);
+    }
+    return true;
 }
 
 QStringList ViewController::getAvailableDeviceNameToSerialPort() {
@@ -51,8 +70,6 @@ bool ViewController::addDeviceToConnection(QString devTypeName, QString idNum) {
             // make it device - "not ready"
             // while not read settings
             pInterface->getDeviceFactory()->setDeviceReInitByIndex(index.deviceIndex);
-            // update new device event
-            emit addDeviceSignal(getDeviceHeaderByIndex(index.deviceIndex).at(0));
             // add device command to read current property device
             setChangedIndexDevice(index.deviceIndex);
         }
@@ -65,23 +82,34 @@ bool ViewController::addDeviceToConnection(QString devTypeName, QString idNum) {
 void ViewController::setChangedIndexDevice(int devIndex) {
     Interface *pInterface = nullptr;
     // reconnect slots
-    reconnectToDevSignals();
+    disconnectToDevSignals();
+    index.deviceIndex = devIndex;
+    connectToDevSignals();
     // get interface property
     pInterface = connFactory->getInterace(connFactory->getInteraceNameFromIndex(index.interfaceIndex));
     if(pInterface != nullptr) {     // TODO: its throw exeption!!!
-        index.deviceIndex = devIndex;
         pInterface->getDeviceFactory()->setDeviceInitCommandByIndex(index.deviceIndex);
     }
 }
 
 void ViewController::setChangedIndexInteface(int interfaceIndex) {
-    index.interfaceIndex = interfaceIndex;
+    QStringList list;
+    QList<int> status;
     // add interace command to read current property interface
     //...
     // reconnect slots
-    reconnectToDevSignals();
+    disconnectToDevSignals();
+    index.interfaceIndex = interfaceIndex;
+    connectToDevSignals();
     // get interface property
     emit updatePropertiesSerialPort(connFactory->getInterace(index.interfaceIndex)->getInterfaceProperty());
+    //
+    int count = getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceCount();
+    for(int i=0; i<count; i++) {
+        list << getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceHeaderByIndex(i);
+        status.push_back(getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceStatusByIndex(i));
+    }
+    emit remakeDeviceTree(list, status);
 }
 
 QString ViewController::getCurrentInterfaceNameToSerial() {
@@ -208,23 +236,61 @@ void ViewController::deviceReadyInit(DevicesFactory::E_DeviceType type, QString 
     }
 }
 
-void ViewController::reconnectToDevSignals() {
-    disconnect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceConnectedSignal(DevicesFactory::E_DeviceType,QString)));
-    disconnect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceDisconnectedSignal(DevicesFactory::E_DeviceType,QString)));
-    disconnect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyCurrentDataSignal(DevicesFactory::E_DeviceType,QString)));
-    disconnect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyInitSignal(DevicesFactory::E_DeviceType,QString)));
-    disconnect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyPropertiesSignal(DevicesFactory::E_DeviceType,QString)));
+void ViewController::interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateType type) {
+    switch(type) {
+    case ConnectionFactory::Type_Update_Add:
+    case ConnectionFactory::Type_Update_Removed: {
+        int count = connFactory->getCountConnection();
+        QStringList list;
+        QList<int> status;
+        for(int i=0; i<count; i++) {
+            list << connFactory->getInterace(i)->getInterfaceName();
+            // TODO: status interface
+            status.push_back(1);
+        }
+        emit remakeInterfaceTree(list, status);
+    }
+        break;
+    }
+}
 
+void ViewController::deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, int indexDev) {
+    switch(type) {
+    case DevicesFactory::Type_Update_ChangeStatus:
+        emit changeDeviceTreeStatus(indexDev, getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceStatusByIndex(indexDev));
+    break;
+    case DevicesFactory::Type_Update_Removed:
+    case DevicesFactory::Type_Update_Added:
+        int count = getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceCount();
+        QStringList list;
+        QList<int> status;
+        for(int i=0; i<count; i++) {
+            list << getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceHeaderByIndex(i);
+            status.push_back(getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceStatusByIndex(i));
+        }
+        emit remakeDeviceTree(list, status);
+        break;
+    }
+}
+
+void ViewController::disconnectToDevSignals() {
+    disconnect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceConnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceConnected(DevicesFactory::E_DeviceType,QString)));
+    disconnect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceDisconnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceDisconnected(DevicesFactory::E_DeviceType,QString)));
+    disconnect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyCurrentDataSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyCurrentData(DevicesFactory::E_DeviceType,QString)));
+    disconnect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyInitSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyInit(DevicesFactory::E_DeviceType,QString)));
+    disconnect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyPropertiesSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyProperties(DevicesFactory::E_DeviceType,QString)));
+    disconnect(getDeviceFactoryByIndex(index.interfaceIndex),
+            SIGNAL(deviceUpdateTree(DevicesFactory::E_DeviceUpdateType,int)),
+            this, SLOT(deviceTreeChanged(DevicesFactory::E_DeviceUpdateType,int)));
+}
+
+void ViewController::connectToDevSignals() {
     connect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceConnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceConnected(DevicesFactory::E_DeviceType,QString)));
     connect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceDisconnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceDisconnected(DevicesFactory::E_DeviceType,QString)));
     connect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyCurrentDataSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyCurrentData(DevicesFactory::E_DeviceType,QString)));
     connect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyInitSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyInit(DevicesFactory::E_DeviceType,QString)));
     connect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyPropertiesSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyProperties(DevicesFactory::E_DeviceType,QString)));
-}
-
-void ViewController::connectionIsLost(interfacesAbstract::eInterfaceTypes, QString nameInterface) {
-    //        connect(connFactory,
-    //                SIGNAL(connectionIsLost(interfacesAbstract::eInterfaceTypes, QString)),
-    //                SLOT(connectionIsLost(interfacesAbstract::eInterfaceTypes, QString))
-    //                );
+    connect(getDeviceFactoryByIndex(index.interfaceIndex),
+            SIGNAL(deviceUpdateTree(DevicesFactory::E_DeviceUpdateType,int)),
+            this, SLOT(deviceTreeChanged(DevicesFactory::E_DeviceUpdateType,int)));
 }

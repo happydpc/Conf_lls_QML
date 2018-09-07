@@ -13,6 +13,7 @@ public:
 
     Q_INVOKABLE QStringList getAvailableNameToSerialPort();
     Q_INVOKABLE bool addConnectionSerialPort(QString name, QString baudrate);
+    Q_INVOKABLE bool removeConnectionSerialPort(QString name);
 
     Q_INVOKABLE QStringList getAvailableDeviceNameToSerialPort();
 
@@ -32,8 +33,11 @@ public:
     Q_INVOKABLE QStringList getCurrentDevPropertyByIndex();
 
 signals:
-    void addDeviceSignal(QString name);
-    void addInterfaceSignal(QString name);
+    void remakeInterfaceTree(QStringList list, QList<int>status);
+    void changeInterfaceTreeStatus(int index, int status);
+
+    void remakeDeviceTree(QStringList list, QList<int>status);
+    void changeDeviceTreeStatus(int index, int status);
 
     void updatePropertiesSerialPort(QStringList properties);
 
@@ -51,18 +55,22 @@ signals:
     void devFullReadyTmk24(QStringList data);
     void devFullReadyTmk13(QStringList data);
 
-private slots:
-    void connectionIsLost(interfacesAbstract::eInterfaceTypes, QString nameInterface);
+    void devUpdateTree(QStringList devNames, QList<int>status);
 
+private slots:
     void deviceConnected(DevicesFactory::E_DeviceType, QString uniqNameId);
     void deviceDisconnected(DevicesFactory::E_DeviceType, QString uniqNameId);
     void deviceReadyCurrentData(DevicesFactory::E_DeviceType, QString uniqNameId);
     void deviceReadyProperties(DevicesFactory::E_DeviceType, QString uniqNameId);
     void deviceReadyInit(DevicesFactory::E_DeviceType, QString uniqNameId);
 
+    void interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateType type);
+    void deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, int index);
+
     bool isCurrentDevice(QString uniqNameId);
 
-    void reconnectToDevSignals();
+    void connectToDevSignals();
+    void disconnectToDevSignals();
 
     DevicesFactory* getDeviceFactoryByIndex(int index);
 

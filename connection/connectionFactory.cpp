@@ -16,6 +16,8 @@ bool ConnectionFactory::addConnection(interfacesAbstract::eInterfaceTypes type, 
                 SIGNAL(errorConnection(interfacesAbstract::eInterfaceTypes, QString)), this,
                 SLOT(errorFromConnection(interfacesAbstract::eInterfaceTypes, QString)));
         interface.push_back(std::move(pInterface));
+
+        emit updateTree(ConnectionFactory::Type_Update_Add);
     } else {
         delete pInterface;
         qDebug() << "ConnectionFactory: addConnection -ERR " + name;
@@ -30,10 +32,11 @@ QStringList ConnectionFactory::getAvailableName() {
 
 // TODO: ~
 void ConnectionFactory::removeConnection(QString name) {
-
+    emit updateTree(ConnectionFactory::Type_Update_Removed);
 }
 // TODO: ~
 void ConnectionFactory::removeConnection(int index) {
+    emit updateTree(ConnectionFactory::Type_Update_Removed);
 }
 
 int ConnectionFactory::getCountConnection() {

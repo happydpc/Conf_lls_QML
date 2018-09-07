@@ -22,6 +22,12 @@ public:
         Type_Undefined
     }E_DeviceType;
 
+    typedef enum {
+        Type_Update_ChangeStatus,
+        Type_Update_Removed,
+        Type_Update_Added
+    }E_DeviceUpdateType;
+
 public slots:
 
     bool addNewDevice(E_DeviceType type, QString uniqDevName, QStringList parameters);
@@ -39,6 +45,8 @@ public slots:
     QStringList getAvailableDeviceTypes();
     QStringList getDeviceHeaderByIndex(int index);
     QString getDeviceIdTextByIndex(int index);
+
+    int getDeviceStatusByIndex(int index);
 
     QList<int> getDeviceChartByIndex(int index);
     QList<QString> getDeviceCurrentDataByIndex(int index);
@@ -61,11 +69,13 @@ signals:
     void deviceReadyPropertiesSignal(DevicesFactory::E_DeviceType, QString uniqNameId);
     void deviceReadyInitSignal(DevicesFactory::E_DeviceType, QString uniqNameId);
 
+    void deviceUpdateTree(DevicesFactory::E_DeviceUpdateType status, int index);
+
 private slots:
     //-- find device by index
     QPair<QString,DeviceAbstract*>* findDeviceByIndex(int index);
     QPair<QString,DeviceAbstract*>* findDeviceByUnicIdent(QString name);
-
+    int findDeviceIndex(QString uniqNameId);
     void devShedullerSlot();
 
     void deviceEventSlot(DeviceAbstract::E_DeviceEvent type, QString devUniqueId, QString message);

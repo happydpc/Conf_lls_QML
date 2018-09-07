@@ -8,34 +8,25 @@ Item {
 
     property alias devPropertyLlsTMK24: devPropertyLlsTMK24
 
-    function addInterface(name) {
-        console.log("AddInterface: " + name)
-        listInterfaceView.model.append({"text":name})
-    }
-    function addDevice(name) {
-        console.log("addDevice: " + name)
-        listDeviceView.model.append({"text":name})
-    }
     function setPropertyToSerialPort(listData) {
         devPropertySerialPort.setPropertyValues(listData)
     }
-//    function setPropertyToDevPanel() {
-//        devPropertyLlsTMK24.setDevProperty(data)
-//    }
-//    function setDevToPanelAsNoActive() {
-//        var data = viewController.getCurrentDevPropertyByIndex(listDeviceView.model.index)
-//        devPropertyLlsTMK24.setDevProperty(data)
-//        devicePropertieslistModel1.push(devPropertyLlsTMK24)
-//    }
-
-    function remakeDeviceList() {
-        listDeviceView.model.clear()
-        var devListSize = viewController.getDeviceCount()
-        console.log("devile list size: " + devListSize)
-        for(var index=0; index<devListSize; index++) {
-            var dev = viewController.getDeviceHeaderByIndex(index);
-            listDeviceView.model.append({"text": dev[0]})
+    function remakeInterfaceList(list, status) {
+        listInterfaceView.model.clear()
+        var size = list.length
+        for(var i=0; i<size; i++) {
+            listInterfaceView.model.append({"text": list[i], "status": status[i]})
         }
+    }
+    function remakeDeviceList(list, status) {
+        listDeviceView.model.clear()
+        var size = list.length
+        for(var i=0; i<size; i++) {
+            listDeviceView.model.append({"text": list[i], "status": status[i]})
+        }
+    }
+    function updateDeviceListStatus(index, status) {
+        listDeviceView.model.set(index, {"status": status})
     }
 
     Rectangle {
@@ -93,7 +84,7 @@ Item {
                         }
                         Label {
                             id: buttonText
-                            text: "%1%2".arg(model.text).arg(isCurrent ? " *" : "")
+                            text: model.text
                             font.bold: false
                             anchors.left: parent.left
                             anchors.leftMargin: 10
@@ -104,7 +95,6 @@ Item {
                         console.log("DeviceList clicked ")
                         view.currentIndex = model.index
                         devicePropertieslistModel1.pop()
-                        remakeDeviceList()
                         viewController.setChangedIndexInteface(model.index)
                     }
                 }
@@ -181,11 +171,13 @@ Item {
             anchors.fill: parent
             clip: true
             maximumFlickVelocity: 0
-            highlightFollowsCurrentItem: true
+            highlightFollowsCurrentItem: false
 
             ScrollBar.vertical: ScrollBar {
-                id: scrollDeviceList_2
-                width: 20
+                hoverEnabled: true
+                active: hovered || pressed
+                orientation: Qt.Vertical
+                width: 10
             }
 
             delegate: Item {
@@ -222,8 +214,16 @@ Item {
                             text: model.text
                             font.bold: false
                             anchors.left: parent.left
-                            anchors.leftMargin: 10
+                            anchors.leftMargin: 15
                             anchors.verticalCenter: parent.verticalCenter
+                        }
+                        Image {
+                            id: icon
+                            height: 32
+                            width: 32
+                            anchors.right: parent.right
+                            anchors.rightMargin: 15
+                            source: model.status === 1 ? "/new/icons/images/icon/normal.png" : "/new/icons/images/icon/no_normal.png"
                         }
                     }
                     onClicked: {

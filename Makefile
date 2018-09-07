@@ -785,7 +785,9 @@ qrc_qml.cpp: qml.qrc \
 		qml/SerialPort.qml \
 		qml/ProjectMainStack.qml \
 		qml/ProjectStartScreen.qml \
-		images/logo/logo_progress.png
+		images/logo/logo_progress.png \
+		images/icon/normal.png \
+		images/icon/no_normal.png
 	/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/rcc -name qml qml.qrc -o qrc_qml.cpp
 
 compiler_moc_predefs_make_all: moc_predefs.h

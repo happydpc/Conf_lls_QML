@@ -4,8 +4,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Window 2.10
 import Qt.labs.platform 1.0
 import QtCharts 2.2
-
-import QtGraphicalEffects 1.0
+import QtQuick.Dialogs 1.2
 
 Rectangle {
     color: "#e7e9eb"
@@ -67,43 +66,8 @@ Rectangle {
             currentIndex: propertiesView.currentIndex
 
             TabButton {
-                id: basePropertiesTab
-                text: qsTr("Общие параметры")
-                focusPolicy: Qt.TabFocus
-                background: Rectangle {
-                    gradient: Gradient {
-                        GradientStop {
-                            position: 1
-                            color: "#4D75E0"
-                        }
-                        GradientStop {
-                            position: 0
-                            color: "#EEF0F6"
-                        }
-                    }
-                }
-            }
-
-            TabButton {
-                id: tempCompensationTab
-                text: qsTr("Температурная компенсация")
-                background: Rectangle {
-                    gradient: Gradient {
-                        GradientStop {
-                            position: 1
-                            color: "#4D75E0"
-                        }
-                        GradientStop {
-                            position: 0
-                            color: "#EEF0F6"
-                        }
-                    }
-                }
-            }
-
-            TabButton {
                 id: calibrationTab
-                text: qsTr("Калибрация MinMax")
+                text: qsTr("Калибровка MinMax")
                 background: Rectangle {
                     gradient: Gradient {
                         GradientStop {
@@ -133,6 +97,39 @@ Rectangle {
                     }
                 }
             }
+            TabButton {
+                id: tempCompensationTab
+                text: qsTr("Температурная \nкомпенсация")
+                background: Rectangle {
+                    gradient: Gradient {
+                        GradientStop {
+                            position: 1
+                            color: "#4D75E0"
+                        }
+                        GradientStop {
+                            position: 0
+                            color: "#EEF0F6"
+                        }
+                    }
+                }
+            }
+            TabButton {
+                id: basePropertiesTab
+                text: qsTr("Общие параметры")
+                focusPolicy: Qt.TabFocus
+                background: Rectangle {
+                    gradient: Gradient {
+                        GradientStop {
+                            position: 1
+                            color: "#4D75E0"
+                        }
+                        GradientStop {
+                            position: 0
+                            color: "#EEF0F6"
+                        }
+                    }
+                }
+            }
         }
 
         Rectangle {
@@ -145,6 +142,187 @@ Rectangle {
                 anchors.fill: parent
                 currentIndex: propertiesTabBar.currentIndex
 
+                // 1- calibration
+                Item {
+                    id: calibrationItem
+                    Column {
+                        spacing: 10
+                        anchors.topMargin: 20
+                        anchors.bottomMargin: 20
+                        anchors.rightMargin: 20
+                        anchors.leftMargin: 20
+                        anchors.fill: parent
+
+                        Label {
+                            text: qsTr("Задание границ измерения:")
+                        }
+                        Button {
+                            id: buttonEmpty
+                            text: "Пустой"
+                            onClicked: {
+                                dialogLevelSetEmpty.open()
+                            }
+                        }
+                        Button {
+                            id: buttonFull
+                            text: "Полный"
+                        }
+                        Button {
+                            id: buttonEdit
+                            text: "Редактировать"
+                        }
+                        Label {
+                            text: "Тип жидкости"
+                        }
+                        ComboBox {
+                            id: typeFuel
+                            model: ListModel {
+                                ListElement {
+                                    text: "Топливо"
+                                }
+                                ListElement {
+                                    text: "Вода"
+                                }
+                            }
+                        }
+                    }
+                }
+                // 2- filtration
+                Item {
+                    id: filtrationItem
+                    Column {
+                        spacing: 10
+                        anchors.topMargin: 20
+                        anchors.bottomMargin: 20
+                        anchors.rightMargin: 20
+                        anchors.leftMargin: 20
+                        anchors.fill: parent
+
+                        Label {
+                            text: "Тип фильтрации:"
+                        }
+                        ComboBox {
+                            id: typeFiltration
+                            model: ListModel {
+                                ListElement {
+                                    text: "Выключена"
+                                }
+                                ListElement {
+                                    text: "Усреднение"
+                                }
+                                ListElement {
+                                    text: "Медиана"
+                                }
+                                ListElement {
+                                    text: "Адаптивный"
+                                }
+                            }
+                        }
+                        Label {
+                            text: "Время усреднения (0-21), с:"
+                        }
+                        SpinBox {
+                            id: filterVvarageValueSec
+                        }
+                        Label {
+                            text: "Длина медианы (0-7):"
+                        }
+                        SpinBox {
+                            //                        id: filterVvarageValueSec
+                        }
+                        Label {
+                            text: "Ковариация шума процесса (Q):"
+                        }
+                        SpinBox {
+                            //                        id: filterVvarageValueSec
+                        }
+                        Label {
+                            text: "Ковариация шума измерения (R):"
+                        }
+                        SpinBox {
+                            //                        id: filterVvarageValueSec
+                        }
+                    }
+                }
+                // 3- temperature
+                Item {
+                    id: tempCompensationItem
+                    Column {
+                        spacing: 10
+                        anchors.topMargin: 20
+                        anchors.bottomMargin: 20
+                        anchors.rightMargin: 20
+                        anchors.leftMargin: 20
+                        anchors.fill: parent
+
+                        Label {
+                            text: qsTr("Температурная компенсация линейного расширения топлива")
+                            anchors.left: parent.left
+                            anchors.leftMargin: 0
+                            anchors.right: parent.right
+                            anchors.rightMargin: 0
+                        }
+                        Label {
+                            text: qsTr("Режим:")
+                            anchors.left: parent.left
+                            anchors.leftMargin: 0
+                            anchors.right: parent.right
+                            anchors.rightMargin: 0
+                        }
+                        ComboBox {
+                            id: typeTempCompensation
+                            model: ListModel {
+                                ListElement {
+                                    text: "Выключен"
+                                }
+                                ListElement {
+                                    text: "АИ-95"
+                                }
+                                ListElement {
+                                    text: "АИ-92"
+                                }
+                                ListElement {
+                                    text: "АИ-80 (лето)"
+                                }
+                                ListElement {
+                                    text: "АИ-80 (зима)"
+                                }
+                                ListElement {
+                                    text: "ДТ (лето)"
+                                }
+                                ListElement {
+                                    text: "ДТ (зима)"
+                                }
+                                ListElement {
+                                    text: "Пользовательский"
+                                }
+                            }
+                        }
+                        Label {
+                            text: qsTr("K1:")
+                            anchors.left: parent.left
+                            anchors.leftMargin: 0
+                            anchors.right: parent.right
+                            anchors.rightMargin: 0
+                        }
+                        TextField {
+                            id: k1
+                            text: "0.0"
+                        }
+                        Label {
+                            text: qsTr("K2:")
+                            anchors.left: parent.left
+                            anchors.leftMargin: 0
+                            anchors.right: parent.right
+                            anchors.rightMargin: 0
+                        }
+                        TextField {
+                            id: k2
+                            text: "0.0"
+                        }
+                    }
+                }
+                // base parameters
                 Item {
                     id: basePropertiesItem
                     Column {
@@ -195,6 +373,7 @@ Rectangle {
                         }
                         ComboBox {
                             id: typeOutMessage
+                            width: 250
                             model: ListModel {
                                 ListElement {
                                     text: "Относительный уровень"
@@ -204,160 +383,22 @@ Rectangle {
                                 }
                             }
                         }
-                    }
-                }
-
-                Item {
-                    id: tempCompensationItem
-                    Column {
-                        spacing: 10
-                        anchors.topMargin: 20
-                        anchors.bottomMargin: 20
-                        anchors.rightMargin: 20
-                        anchors.leftMargin: 20
-                        anchors.fill: parent
-
                         Label {
-                            text: qsTr("Температурная компенсация линейного расширения топлива")
-                            anchors.left: parent.left
-                            anchors.leftMargin: 0
-                            anchors.right: parent.right
-                            anchors.rightMargin: 0
-                        }
-                        Label {
-                            text: qsTr("Режим:")
-                            anchors.left: parent.left
-                            anchors.leftMargin: 0
-                            anchors.right: parent.right
-                            anchors.rightMargin: 0
+                            text: "Тип интерполяции:"
                         }
                         ComboBox {
-                            id: typeTempCompensation
+                            id: typeInterpolation
                             model: ListModel {
                                 ListElement {
-                                    text: "Выключен"
+                                    text: "Линейная"
                                 }
                                 ListElement {
-                                    text: "АИ-95"
+                                    text: "Квадратичная"
+                                }
+                                ListElement {
+                                    text: "Сплайновая"
                                 }
                             }
-                        }
-                        Label {
-                            text: qsTr("K1:")
-                            anchors.left: parent.left
-                            anchors.leftMargin: 0
-                            anchors.right: parent.right
-                            anchors.rightMargin: 0
-                        }
-                        TextField {
-                            id: k1
-                            text: "0.0"
-                        }
-                        Label {
-                            text: qsTr("K2:")
-                            anchors.left: parent.left
-                            anchors.leftMargin: 0
-                            anchors.right: parent.right
-                            anchors.rightMargin: 0
-                        }
-                        TextField {
-                            id: k2
-                            text: "0.0"
-                        }
-                    }
-                }
-                Item {
-                    id: calibrationItem
-                    Column {
-                        spacing: 10
-                        anchors.topMargin: 20
-                        anchors.bottomMargin: 20
-                        anchors.rightMargin: 20
-                        anchors.leftMargin: 20
-                        anchors.fill: parent
-
-                        Label {
-                            text: qsTr("Задание границ измерения:")
-                        }
-                        Button {
-                            id: buttonEmpty
-                            text: "Пустой"
-                        }
-                        Button {
-                            id: buttonFull
-                            text: "Полный"
-                        }
-                        Button {
-                            id: buttonEdit
-                            text: "Редактировать"
-                        }
-                        Label {
-                            text: "Тип жидкости"
-                        }
-                        ComboBox {
-                            id: typeFuel
-                            model: ListModel {
-                                ListElement {
-                                    text: "Топливо"
-                                }
-                                ListElement {
-                                    text: "Вода"
-                                }
-                            }
-                        }
-                    }
-                }
-                Item {
-                    id: filtrationItem
-                    Column {
-                        spacing: 10
-                        anchors.topMargin: 20
-                        anchors.bottomMargin: 20
-                        anchors.rightMargin: 20
-                        anchors.leftMargin: 20
-                        anchors.fill: parent
-
-                        Label {
-                            text: qsTr("Фильтрация:")
-                            anchors.left: parent.left
-                            anchors.leftMargin: 0
-                            anchors.right: parent.right
-                            anchors.rightMargin: 0
-                        }
-                        Label {
-                            text: "Тип фильтрации:"
-                        }
-                        ComboBox {
-                            id: typeFiltration
-                            model: ListModel {
-                                ListElement {
-                                    text: "Выключена"
-                                }
-                            }
-                        }
-                        Label {
-                            text: "Время усреднения (0-21), с:"
-                        }
-                        SpinBox {
-                            id: filterVvarageValueSec
-                        }
-                        Label {
-                            text: "Длина медианы (0-7):"
-                        }
-                        SpinBox {
-                            //                        id: filterVvarageValueSec
-                        }
-                        Label {
-                            text: "Ковариация шума процесса (Q):"
-                        }
-                        SpinBox {
-                            //                        id: filterVvarageValueSec
-                        }
-                        Label {
-                            text: "Ковариация шума измерения (R):"
-                        }
-                        SpinBox {
-                            //                        id: filterVvarageValueSec
                         }
                     }
                 }
@@ -570,7 +611,7 @@ Rectangle {
 
         Row {
             id: row2
-            height: 40
+            height: 25
             spacing: 5
             clip: true
             anchors.right: tabBar.left
@@ -579,18 +620,15 @@ Rectangle {
             anchors.leftMargin: 10
             anchors.top: parent.top
             anchors.topMargin: 10
-            z: 2
-
             Row {
                 id: row1
-                height: 40
                 clip: true
                 anchors.right: row.left
                 anchors.rightMargin: 0
                 anchors.left: parent.left
                 anchors.leftMargin: 0
                 width: row2.width / 2
-
+                height: parent.height
                 Label {
                     id: lSn
                     text: qsTr("Зав/ном:")
@@ -605,19 +643,20 @@ Rectangle {
                     anchors.rightMargin: 0
                     anchors.left: lSn.right
                     anchors.leftMargin: 10
+                    height: parent.height
+                    readOnly: true
                 }
             }
 
             Row {
                 id: row
-                height: 40
                 clip: true
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 width: row2.width / 2
+                height: parent.height
                 Label {
                     id: lTypeDevice
-                    height: typeDeviceText.height
                     text: qsTr("Тип датчика")
                     anchors.left: parent.left
                     anchors.leftMargin: 10
@@ -632,13 +671,14 @@ Rectangle {
                     anchors.leftMargin: 10
                     font.underline: false
                     readOnly: true
+                    height: parent.height
                 }
             }
         }
 
         Row {
             id: row5
-            height: 40
+            height: 25
             spacing: 5
             clip: true
             anchors.right: tabBar.left
@@ -651,7 +691,7 @@ Rectangle {
 
             Row {
                 id: row4
-                height: 40
+                height: parent.height
                 clip: true
                 anchors.right: row.left
                 anchors.rightMargin: 0
@@ -673,19 +713,20 @@ Rectangle {
                     anchors.rightMargin: 0
                     anchors.left: lNetId.right
                     anchors.leftMargin: 10
+                    height: parent.height
+                    readOnly: true
                 }
             }
 
             Row {
                 id: row6
-                height: 40
                 clip: true
                 anchors.right: parent.right
                 anchors.rightMargin: 0
                 width: row2.width / 2
+                height: parent.height
                 Label {
                     id: lversionFirmwareText
-                    height: typeDeviceText.height
                     text: qsTr("Версия ПО")
                     anchors.left: parent.left
                     anchors.leftMargin: 10
@@ -699,6 +740,7 @@ Rectangle {
                     anchors.left: lversionFirmwareText.right
                     anchors.leftMargin: 10
                     font.underline: false
+                    height: parent.height
                     readOnly: true
                 }
             }
@@ -709,5 +751,44 @@ Rectangle {
         visible: devPropertyLlsTMK24.isEnabled ? false : true
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+    }
+
+    Dialog {
+        id: dialogLevelSetEmpty
+        visible: false
+        title: "Смена уровня Min-Max"
+        standardButtons: StandardButton.Close | StandardButton.Apply
+        Rectangle {
+            color: "transparent"
+            implicitWidth: 250
+            implicitHeight: 100
+            Text {
+                text: "Присвоить уровень \"Минимум\""
+                color: "navy"
+                anchors.centerIn: parent
+            }
+        }
+        onApply: {
+            close()
+        }
+    }
+    Dialog {
+        id: dialogLevelSetFull
+        visible: false
+        title: "Смена уровня Min-Max"
+        standardButtons: StandardButton.Close | StandardButton.Apply
+        Rectangle {
+            color: "transparent"
+            implicitWidth: 250
+            implicitHeight: 100
+            Text {
+                text: "Присвоить уровень \"Максимум\""
+                color: "navy"
+                anchors.centerIn: parent
+            }
+        }
+        onApply: {
+//            viewController.se close()
+        }
     }
 }
