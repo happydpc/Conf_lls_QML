@@ -47,6 +47,9 @@ Item {
         onDevDisconnectedTmk24: {
 
         }
+        onDevUpdatePasswordIncorrect: {
+            projectPanels.devicePanel.devShowPasswordIncorrect(devNameId)
+        }
     }
 
     ProjectPanels {

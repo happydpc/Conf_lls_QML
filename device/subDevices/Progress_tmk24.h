@@ -11,7 +11,7 @@
 class Progress_tmk24 : public DeviceAbstract
 {
 public:
-    Progress_tmk24(QString uniqIdentId);
+    Progress_tmk24(QString uniqIdentId, QString passwordSession);
     ~Progress_tmk24();
 
     static constexpr char* name = "Progress tmk24";
@@ -23,11 +23,15 @@ public:
     void setState(DeviceAbstract::E_State) override;
     QString getUniqIdent() override;
     bool makeDataToCommand(CommandController::sCommandData &commandData) override;
-    void makeCustromCommand(QString operation, QStringList data, CommandController::sCommandData &commandData) override;
     bool placeDataReplyToCommand(QByteArray &commandArrayReplyData) override;
+
     CommandController::sCommandData getCommandToCheckConnected() override;
-    QList<CommandController::sCommandData> getCommandListToCurrentData() override;
+    CommandController::sCommandData getCommandToGetType() override;
+    CommandController::sCommandData getCommandtoCheckPassword() override;
     QList<CommandController::sCommandData> getCommandListToInit() override;
+    QList<CommandController::sCommandData> getCommandListToCurrentData() override;
+    CommandController::sCommandData getCommandCustom(QString operation, QStringList data) override;
+
     QList<int> getChart() override;
 
     QStringList getSettings();

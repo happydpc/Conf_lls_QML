@@ -17,7 +17,8 @@ public:
 
     Q_INVOKABLE QStringList getAvailableDeviceNameToSerialPort();
 
-    Q_INVOKABLE bool addDeviceToConnection(QString devTypeName, QString idNum);
+    Q_INVOKABLE bool addDeviceToConnection(QString devTypeName, QString idNum, QString password);
+    Q_INVOKABLE void removeActiveDevice();
 
     Q_INVOKABLE void setChangedIndexDevice(int index);
     Q_INVOKABLE void setChangedIndexInteface(int index);
@@ -57,6 +58,8 @@ signals:
 
     void devFullReadyTmk24(QStringList data);
     void devFullReadyTmk13(QStringList data);
+
+    void devUpdatePasswordIncorrect(QString devNameId);
 
     void devUpdateTree(QStringList devNames, QList<int>status);
 

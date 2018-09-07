@@ -13,7 +13,7 @@ Popup {
     y: width / 2
     x: height / 2
     width: 400
-    height: 150
+    height: 250
     font.capitalization: Font.AllUppercase
 
     GridLayout {
@@ -22,25 +22,19 @@ Popup {
         columnSpacing: 5
         anchors.right: tabBar.left
         rowSpacing: 5
-        rows: 3
+        rows: 4
         columns: 2
 
         Label {
             id: lTypeDevice
-            height: typeDeviceText.height
             text: qsTr("Тип устройства")
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
-
         ComboBox {
             id: typeDeviceText
-            font.underline: false
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: lTypeDevice.left
-            anchors.leftMargin: 150
+            Layout.fillWidth: true
             model: ListModel {
                 id: modelTypeDeviceText
             }
@@ -48,19 +42,32 @@ Popup {
 
         Label {
             id: lTypeDeviceId
-            height: typeDeviceIdText.height
             text: qsTr("ID")
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
-
         SpinBox {
             id: typeDeviceIdText
-            font.underline: false
+            Layout.fillWidth: true
+        }
+
+        Label {
+            id: lPassword
+            height: typeDeviceIdText.height
+            text: qsTr("Пароль")
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+
+        TextField {
+            id: passwordText
             anchors.right: parent.right
             anchors.rightMargin: 0
             anchors.left: typeDeviceText.left
+            maximumLength: 8
+            echoMode: TextInput.Password
         }
 
         Button {
@@ -75,9 +82,10 @@ Popup {
         Button {
             id: addDevButton
             text: qsTr("Добавить")
+            Layout.fillWidth: true
             onClicked: {
                 if (typeDeviceText.currentText.length != 0) {
-                    viewController.addDeviceToConnection(typeDeviceText.currentText, typeDeviceIdText.value.toString())
+                    viewController.addDeviceToConnection(typeDeviceText.currentText, typeDeviceIdText.value.toString(), passwordText.text)
                     close()
                 }
             }

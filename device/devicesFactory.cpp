@@ -12,10 +12,10 @@ DevicesFactory::~DevicesFactory() {}
 
 bool DevicesFactory::addNewDevice(E_DeviceType type, QString uniqDevName, QStringList parameters) {
     if(type == Type_Progress_Tmk24) {
-        deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk24(uniqDevName)));
+        deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk24(uniqDevName, parameters.at(0))));
         emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
     } else if(type == Type_Progress_Tmk13) {
-        deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk13(uniqDevName)));
+        deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk13(uniqDevName, parameters.at(0))));
         emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
     } else {
         throw QString("undefined class");
@@ -30,6 +30,16 @@ bool DevicesFactory::addNewDevice(E_DeviceType type, QString uniqDevName, QStrin
 
 bool DevicesFactory::removeDevice(QString uniqDevName) {
     QPair<QString,DeviceAbstract*>* pDev = findDeviceByUnicIdent(uniqDevName);
+    if(pDev != nullptr) {
+        deviceMap.erase(pDev); // TOOD: 0
+        emit deviceUpdateTree(DevicesFactory::Type_Update_Removed, 0);
+        return true;
+    }
+    return false;
+}
+
+bool DevicesFactory::removeDeviceByIndex(int index) {
+    QPair<QString,DeviceAbstract*>* pDev = findDeviceByIndex(index);
     if(pDev != nullptr) {
         deviceMap.erase(pDev); // TOOD: 0
         emit deviceUpdateTree(DevicesFactory::Type_Update_Removed, 0);
@@ -110,9 +120,11 @@ int DevicesFactory::getDeviceStatusByIndex(int index) {
     DeviceAbstract::E_State state = findDeviceByIndex(index)->second->getState();
     int ret = 0;
     switch(state) {
-        case DeviceAbstract::STATE_DISCONNECTED: ret = 0; break;
-        case DeviceAbstract::STATE_NORMAL_READY: ret = 1;  break;
-        case DeviceAbstract::STATE_NEED_INIT: ret = 2; break;
+    case DeviceAbstract::STATE_DISCONNECTED : ret = 0; break;
+    case DeviceAbstract::STATE_GET_TYPE : ret = 0; break;
+    case DeviceAbstract::STATE_CHECK_PASSWORD : ret = 0; break;
+    case DeviceAbstract::STATE_START_INIT : ret = 1; break;
+    case DeviceAbstract::STATE_NORMAL_READY : ret = 1; break;
     }
     return ret;
 }
@@ -145,16 +157,33 @@ void DevicesFactory::devShedullerSlot() {
         } else {
             CommandController::sCommandData command;
             auto dev = deviceMap.at(indexProcessedDev);
+
             switch(dev.second->getState()) {
             case DeviceAbstract::STATE_DISCONNECTED:
-                if(dev.second->getPriority() == 0) {
+                if(dev.second->getPriority() == 0) { // TODO: loop need priority
                     command = dev.second->getCommandToCheckConnected();
                     dev.second->makeDataToCommand(command);
                     commandList.push_back(command);
                 }
                 break;
-            case DeviceAbstract::STATE_NEED_INIT:
-                if(dev.second->getPriority() == 0) { // TOOD: loop
+            case DeviceAbstract::STATE_CHECK_PASSWORD:
+                if(dev.second->getPriority() == 0) { // TODO: loop need priority
+                    command = dev.second->getCommandtoCheckPassword();
+                    dev.second->makeDataToCommand(command);
+                    commandList.push_back(command);
+                }
+                break;
+            case DeviceAbstract::STATE_GET_TYPE:
+                if(dev.second->getPriority() == 0) { // TODO: loop need priority
+                    for(sizeCommand=0; sizeCommand!= dev.second->getCommandListToInit().size(); sizeCommand++) {
+                        command = dev.second->getCommandListToInit().at(sizeCommand);
+                        dev.second->makeDataToCommand(command);
+                        commandList.push_back(command);
+                    }
+                }
+                break;
+            case DeviceAbstract::STATE_START_INIT:
+                if(dev.second->getPriority() == 0) { // TODO: loop need priority
                     for(sizeCommand=0; sizeCommand!= dev.second->getCommandListToInit().size(); sizeCommand++) {
                         command = dev.second->getCommandListToInit().at(sizeCommand);
                         dev.second->makeDataToCommand(command);
@@ -163,7 +192,7 @@ void DevicesFactory::devShedullerSlot() {
                 }
                 break;
             case DeviceAbstract::STATE_NORMAL_READY:
-                if(dev.second->getPriority() == 0) { // TOOD: loop
+                if(dev.second->getPriority() == 0) { // TODO: loop need priority
                     for(sizeCommand=0; sizeCommand != dev.second->getCommandListToCurrentData().size(); sizeCommand++) {
                         command = dev.second->getCommandListToCurrentData().at(sizeCommand);
                         dev.second->makeDataToCommand(command);
@@ -250,6 +279,10 @@ void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QS
         // чтобы не высылать после каждого пакета
         emit deviceUpdateTree(DevicesFactory::Type_Update_ChangeStatus, findDeviceIndex(devUniqueId));
         break;
+    case DeviceAbstract::Type_DeviceEvent_PasswordError:
+        // пароль не совпадает
+        emit deviceUpdateTree(DevicesFactory::Type_Update_PasswordIncorrect, findDeviceIndex(devUniqueId));
+        break;
     default: qDebug() << "deviceEventSlot -type undefined!";
         break;
     }
@@ -257,7 +290,8 @@ void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QS
 
 void DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation, QStringList arguments) {
     CommandController::sCommandData command;
-    findDeviceByIndex(indexDev)->second->makeCustromCommand(operation, arguments, command);
+    command = findDeviceByIndex(indexDev)->second->getCommandCustom(operation, arguments);
+    findDeviceByIndex(indexDev)->second->makeDataToCommand(command);
     commandList.push_back(command);
 }
 

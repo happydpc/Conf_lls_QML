@@ -1,6 +1,7 @@
 import QtQuick 2.4
 import QtQuick.Controls 2.3
 import Qt.labs.platform 1.0
+import QtQuick.Dialogs 1.2
 
 Item {
     id: projectDevicePanel
@@ -27,6 +28,10 @@ Item {
     }
     function updateDeviceListStatus(index, status) {
         listDeviceView.model.set(index, {"status": status})
+    }
+    function devShowPasswordIncorrect(devNameId) {
+        dialogPasswordError.messageArg = devNameId
+        dialogPasswordError.open()
     }
 
     Rectangle {
@@ -64,6 +69,7 @@ Item {
                     id: mouseArea
                     width: item.width
                     height: item.height
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                     Rectangle {
                         id: rect
@@ -92,10 +98,12 @@ Item {
                         }
                     }
                     onClicked: {
-                        console.log("DeviceList clicked ")
-                        view.currentIndex = model.index
-                        devicePropertieslistModel1.pop()
-                        viewController.setChangedIndexInteface(model.index)
+                        console.log("Interface List clicked ")
+                        if (mouse.button === Qt.LeftButton) {
+                            view.currentIndex = model.index
+                            devicePropertieslistModel1.pop()
+                            viewController.setChangedIndexInteface(model.index)
+                        }
                     }
                 }
             }
@@ -191,6 +199,7 @@ Item {
                     id: mouseArea_2
                     width: item_2.width
                     height: item_2.height
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
 
                     Rectangle {
                         id: rect_2
@@ -228,9 +237,13 @@ Item {
                     }
                     onClicked: {
                         console.log("DeviceList clicked ")
-                        viewDevice.currentIndex = model.index
-                        devicePropertieslistModel1.push(devPropertyLlsTMK24)
-                        viewController.setChangedIndexDevice(model.index)
+                        if (mouse.button === Qt.LeftButton) {
+                            viewDevice.currentIndex = model.index
+                            devicePropertieslistModel1.push(devPropertyLlsTMK24)
+                            viewController.setChangedIndexDevice(model.index)
+                        } else {
+                            dialogRemoveDevice.open()
+                        }
                     }
                 }
             }
@@ -239,6 +252,49 @@ Item {
             }
         }
         anchors.leftMargin: 10
+    }
+
+    Dialog {
+        id: dialogRemoveDevice
+        visible: false
+        title: "Удаление устройства"
+        standardButtons: StandardButton.Close | StandardButton.Apply
+        Rectangle {
+            color: "transparent"
+            implicitWidth: 250
+            implicitHeight: 100
+            Text {
+                text: "Удалить устройство?"
+                color: "navy"
+                anchors.centerIn: parent
+            }
+        }
+        onApply: {
+            viewController.removeActiveDevice()
+            close()
+        }
+    }
+
+    Dialog {
+        id: dialogPasswordError
+        visible: false
+        title: "Ошибка пароля"
+        standardButtons: StandardButton.Apply
+        property string messageArg: ""
+        width: 500
+        height: 150
+        Rectangle {
+            color: "transparent"
+            anchors.fill: parent
+            Text {
+                text: qsTr("Настроечный пароль устройства %1 не совпадает\nс установленным в устройстве\nЭто устройство удалено из списка!").arg(dialogPasswordError.messageArg)
+                color: "navy"
+                anchors.centerIn: parent
+            }
+        }
+        onApply: {
+            close()
+        }
     }
 }
 

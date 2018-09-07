@@ -12,7 +12,9 @@ public:
 
     typedef enum {
         STATE_DISCONNECTED,
-        STATE_NEED_INIT,
+        STATE_CHECK_PASSWORD,
+        STATE_START_INIT,
+        STATE_GET_TYPE,
         STATE_NORMAL_READY
     }E_State;
 
@@ -21,7 +23,8 @@ public:
         Type_DeviceEvent_Disconnected,
         Type_DeviceEvent_ReadyReadProperties,
         Type_DeviceEvent_Inited,
-        Type_DeviceEvent_CurrentDataUpdated
+        Type_DeviceEvent_CurrentDataUpdated,
+        Type_DeviceEvent_PasswordError
     }E_DeviceEvent;
 
     virtual QString getDevTypeName() = 0;
@@ -31,12 +34,14 @@ public:
     virtual E_State getState() = 0;
     virtual void setState(DeviceAbstract::E_State) = 0;
     virtual bool makeDataToCommand(CommandController::sCommandData &commandData) = 0;
-    virtual void makeCustromCommand(QString operation, QStringList data, CommandController::sCommandData &commandData) = 0;
 
     virtual bool placeDataReplyToCommand(QByteArray &commandArrayReplyData) = 0;
     virtual CommandController::sCommandData getCommandToCheckConnected() = 0;
-    virtual QList<CommandController::sCommandData> getCommandListToCurrentData() = 0;
+    virtual CommandController::sCommandData getCommandToGetType() = 0;
+    virtual CommandController::sCommandData getCommandtoCheckPassword() = 0;
     virtual QList<CommandController::sCommandData> getCommandListToInit() = 0;
+    virtual QList<CommandController::sCommandData> getCommandListToCurrentData() = 0;
+    virtual CommandController::sCommandData getCommandCustom(QString operation, QStringList data) = 0;
     virtual QList<int> getChart() = 0;
 
     int getPriority();

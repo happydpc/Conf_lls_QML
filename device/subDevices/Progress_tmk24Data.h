@@ -8,6 +8,7 @@
 #define FIRMWARE_VERSION_STRING_SIZE         8
 #define CPU_ID_SIZE                         12
 #define DUT_TYPE                            13
+#define PASSWORD_SIZE                       8
 
 class Progress_tmk24Data : public QObject
 {
@@ -52,7 +53,7 @@ public:
         lls_run_bootloader =        0x67,
         lls_download_application = 	0x68,
         lls_upload_application	=	0x69,
-        lls_run_application		=	0x6A,
+        lls_run_applicapassword_sessiontion		=	0x6A,
         lls_download_settings	=	0x6B,
         lls_upload_settings		=	0x6C,
         lls_clear_settings		=	0x6D,
@@ -144,11 +145,22 @@ public:
         sValue temp;
         sValueText serialNum;
         sValueText firmware;
-        sValueText password;
 
         struct {
-            T_settings valueSettings;
-            bool isValid;
+            sValueText get;
+            sValueText set;
+            sValueText session;
+        }password;
+
+        struct {
+            struct {
+                T_settings value;
+                bool isValid;
+            }get;
+            struct {
+                T_settings value;
+                bool isValid;
+            }set;
         }settings;
 
         struct {
@@ -157,8 +169,14 @@ public:
         }errors;
 
         struct {
-            T_calibrationTable table;
-            bool isValid;
+            struct {
+                T_calibrationTable table;
+                bool isValid;
+            }get;
+            struct {
+                T_calibrationTable table;
+                bool isValid;
+            }set;
         }calibrateTable;
 
         struct{

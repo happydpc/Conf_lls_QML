@@ -25,13 +25,15 @@ public:
     typedef enum {
         Type_Update_ChangeStatus,
         Type_Update_Removed,
-        Type_Update_Added
+        Type_Update_Added,
+        Type_Update_PasswordIncorrect
     }E_DeviceUpdateType;
 
 public slots:
 
     bool addNewDevice(E_DeviceType type, QString uniqDevName, QStringList parameters);
     bool removeDevice(QString uniqDevName);
+    bool removeDeviceByIndex(int index);
 
     QString getDeviceName(int index);
     QString getDeviceNameByType(DevicesFactory::E_DeviceType type);

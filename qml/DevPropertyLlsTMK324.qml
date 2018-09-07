@@ -166,6 +166,9 @@ Rectangle {
                         Button {
                             id: buttonFull
                             text: "Полный"
+                            onClicked: {
+                                dialogLevelSetFull.open()
+                            }
                         }
                         Button {
                             id: buttonEdit
@@ -773,6 +776,7 @@ Rectangle {
             close()
         }
     }
+
     Dialog {
         id: dialogLevelSetFull
         visible: false
