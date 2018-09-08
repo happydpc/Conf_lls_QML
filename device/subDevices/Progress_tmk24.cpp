@@ -465,19 +465,10 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                     pbuf = (commandArrayReplyData.data() + 4 + SERIALNUMBER_STRING_SIZE);
                     lls_data.firmware.value.fromUtf8(pbuf,  strlen(pbuf));
 
-                    switch(commandArrayReplyData.at(3)) {
-                    case Progress_tmk24Data::type_lls_tmk24:
-                        lls_data.typeLls.name = "ТМК.24";
-                        break;
-                    case Progress_tmk24Data::type_lls_tmk4ux:
-                        lls_data.typeLls.name = "ТМК.4UX";
-                        break;
-                    case Progress_tmk24Data::type_lls_tmk2u1:
-                        lls_data.typeLls.name = "ТМК.2И1";
-                    default:
-                        lls_data.typeLls.name = "Unknown";
-                        break;
+                    if(commandArrayReplyData.at(3) != Progress_tmk13Data::type_lls_tmk24) {
+                        emit eventDevice(DeviceAbstract::Type_DeviceEvent_TypeError, getUniqIdent(), QString("Type Error!"));
                     }
+
                     // TODO: is valid conversion?
                     Progress_tmk24Data::T_settings *pSettings = (Progress_tmk24Data::T_settings*)(commandArrayReplyData.data() + 34);
                     if(pSettings->netAddress == commandArrayReplyData.at(Progress_tmk24Data::param_id_address)) {

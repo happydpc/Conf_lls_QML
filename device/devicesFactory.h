@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QVector>
 #include <QTimer>
+#include <QMutex>
 #include "command/commandController.h"
 #include "device/deviceAbstract.h"
 #include "device/subDevices/Progress_tmk13.h"
@@ -26,7 +27,8 @@ public:
         Type_Update_ChangeStatus,
         Type_Update_Removed,
         Type_Update_Added,
-        Type_Update_PasswordIncorrect
+        Type_Update_PasswordIncorrect,
+        Type_Update_TypeIncorrect
     }E_DeviceUpdateType;
 
 public slots:
@@ -34,6 +36,7 @@ public slots:
     bool addNewDevice(E_DeviceType type, QString uniqDevName, QStringList parameters);
     bool removeDevice(QString uniqDevName);
     bool removeDeviceByIndex(int index);
+    bool removeDeviceAll();
 
     QString getDeviceName(int index);
     QString getDeviceNameByType(DevicesFactory::E_DeviceType type);
@@ -90,6 +93,8 @@ private:
     QVector<CommandController::sCommandData> commandList;
 
     QTimer* devShedullerTimer;
+
+    QMutex* devMutex;
 
     int indexProcessedDev = 0;
 

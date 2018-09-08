@@ -64,7 +64,7 @@ QStringList Progress_tmk13::getPropertyData() {
     QStringList res;
     res << lls_data.serialNum.value;
     res << QString::number(settings.netAddress);
-    res << lls_data.typeLls.name;
+    res << getDevTypeName();
     res << lls_data.firmware.value;
     res << QString::number(lls_data.password.get.isValid);
     return res;
@@ -302,19 +302,10 @@ bool Progress_tmk13::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                     pbuf = (commandArrayReplyData.data() + 4 + SERIALNUMBER_STRING_SIZE);
                     lls_data.firmware.value = QString::fromUtf8(pbuf,  FIRMWARE_VERSION_STRING_SIZE);
 
-                    switch(commandArrayReplyData.at(3)) {
-                    case Progress_tmk13Data::type_lls_tmk24:
-                        lls_data.typeLls.name = "Progress ТМК.24";
-                        break;
-                    case Progress_tmk13Data::type_lls_tmk4ux:
-                        lls_data.typeLls.name = "Progress ТМК.4UX";
-                        break;
-                    case Progress_tmk13Data::type_lls_tmk2u1:
-                        lls_data.typeLls.name = "Progress ТМК.2И1";
-                    default:
-                        lls_data.typeLls.name = "Unknown";
-                        break;
+                    if(commandArrayReplyData.at(3) != Progress_tmk13Data::type_lls_tmk4ux) {
+                        emit eventDevice(DeviceAbstract::Type_DeviceEvent_TypeError, getUniqIdent(), QString("Type Error!"));
                     }
+
                     // TODO: is valid conversion?
                     Progress_tmk13Data::T_settings *pSettings = (Progress_tmk13Data::T_settings*)(commandArrayReplyData.data() + 34);
                     if(pSettings->netAddress == commandArrayReplyData.at(Progress_tmk13Data::param_id_address)) {

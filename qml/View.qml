@@ -11,7 +11,6 @@ Item {
 
         onRemakeInterfaceTree: {
             projectPanels.devicePanel.remakeInterfaceList(list, status)
-            projectPanels.openDeviceProject()
         }
         onRemakeDeviceTree: {
             projectPanels.devicePanel.remakeDeviceList(list, status)
@@ -35,12 +34,8 @@ Item {
         onDevReadyOtherDataTmk24: {
             projectPanels.devicePanel.devPropertyLlsTMK24.setUpdateCurrentValues(data)
         }
-        onDevFullReadyTmk13: {
-//            projectPanels.devicePanel.devPropertyLlsTMK24.setNoActive()
-        }
-        onDevFullReadyTmk24: {
-//            projectPanels.devicePanel.devPropertyLlsTMK24.setNoActive()
-        }
+        onDevFullReadyTmk13: {}
+        onDevFullReadyTmk24: {}
         onDevDisconnectedTmk13: {
             projectPanels.devicePanel.devPropertyLlsTMK24.setNoActive()
         }
@@ -49,6 +44,15 @@ Item {
         }
         onDevUpdatePasswordIncorrect: {
             projectPanels.devicePanel.devShowPasswordIncorrect(devNameId)
+        }
+        onDevUpdateTypeDevIncorrect: {
+            projectPanels.devicePanel.devShowTypeIncorrect(devNameId)
+        }
+        onAddConnectionFail: {
+            projectPanels.devicePanel.dialogAddInterfaceFail.open()
+        }
+        onAddDeviceFail: {
+            projectPanels.devicePanel.dialogAddDeviceFail.open()
         }
     }
 

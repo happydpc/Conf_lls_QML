@@ -13,9 +13,9 @@ ViewController::ViewController(QObject *parent) : QObject(parent) {
         qDebug() << strLis;
         addConnectionSerialPort(strLis.first(), QString("19200"));
 
-        //        for(int i=0; i<2; i++) { // 15
-        //            addDeviceToConnection("Progress tmk13", QString::number(i+1), "1234");
-        //        }
+        for(int i=0; i<5; i++) { // 15
+            addDeviceToConnection("Progress tmk4UX", QString::number(i+1), "1234"); // tmk4UX tmk24
+        }
     });
 }
 
@@ -30,22 +30,29 @@ bool ViewController::addConnectionSerialPort(QString name, QString baudrate) {
     if((!name.isEmpty()) && (!baudrate.isEmpty())) {
         res = connFactory->addConnection(interfacesAbstract::InterfaceTypeSerialPort, name, QStringList(baudrate));
         if(res) {
+            if(getDeviceCount() >0) {
+                index.interfaceIndex = (getDeviceCount()-1);
+            }
             connect(getDeviceFactoryByIndex(index.interfaceIndex),
                     SIGNAL(deviceUpdateTree(DevicesFactory::E_DeviceUpdateType,int)),
                     this, SLOT(deviceTreeChanged(DevicesFactory::E_DeviceUpdateType,int)));
             setChangedIndexInteface(index.interfaceIndex);
             qDebug() << "addConnectionSerialPort -open= "<< res << name;
+        } else {
+            emit addConnectionFail(name);
         }
     }
     return res;
 }
 
 // TODO: check it!
-bool ViewController::removeConnectionSerialPort(QString name) {
-    if(connFactory->getCountConnection() != 0) {
+bool ViewController::removeActiveConnectionSerialPort() {
+    if(getInterfaceCount() > 0) {
         disconnect(getDeviceFactoryByIndex(index.interfaceIndex),
                    SIGNAL(deviceUpdateTree(DevicesFactory::E_DeviceUpdateType)));
-        connFactory->removeConnection(name);
+        getDeviceFactoryByIndex(index.interfaceIndex)->removeDeviceAll();
+        connFactory->removeConnection(index.interfaceIndex);
+        setChangedIndexInteface(index.interfaceIndex);
     }
     return true;
 }
@@ -72,6 +79,8 @@ bool ViewController::addDeviceToConnection(QString devTypeName, QString idNum, Q
             pInterface->getDeviceFactory()->setDeviceReInitByIndex(index.deviceIndex);
             // add device command to read current property device
             setChangedIndexDevice(index.deviceIndex);
+        } else {
+            emit addDeviceFail(devTypeName);
         }
     } else {
         qDebug() << "addDevice-" << index.interfaceIndex << devTypeName <<" -ERR";
@@ -81,6 +90,18 @@ bool ViewController::addDeviceToConnection(QString devTypeName, QString idNum, Q
 
 void ViewController::removeActiveDevice() {
     getDeviceFactoryByIndex(index.interfaceIndex)->removeDeviceByIndex(index.deviceIndex);
+    if(getDeviceCount() > 0) {
+        if((index.deviceIndex > 0) && (index.deviceIndex <= getDeviceCount())) {
+            index.deviceIndex--;
+        } else {
+            index.deviceIndex = 0;
+            setChangedIndexInteface(index.interfaceIndex);
+        }
+    } else {
+        index.deviceIndex = 0;
+        setChangedIndexInteface(index.interfaceIndex);
+    }
+    setChangedIndexDevice(index.deviceIndex);
 }
 
 void ViewController::setChangedIndexDevice(int devIndex) {
@@ -104,16 +125,18 @@ void ViewController::setChangedIndexInteface(int interfaceIndex) {
     // add interace command to read current property interface
     //...
     // reconnect slots
-    disconnectToDevSignals();
-    index.interfaceIndex = interfaceIndex;
-    connectToDevSignals();
-    // get interface property
-    emit updatePropertiesSerialPort(connFactory->getInterace(index.interfaceIndex)->getInterfaceProperty());
-    //
-    int count = getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceCount();
-    for(int i=0; i<count; i++) {
-        list << getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceHeaderByIndex(i);
-        status.push_back(getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceStatusByIndex(i));
+    if(getInterfaceCount() > 0) {
+        disconnectToDevSignals();
+        index.interfaceIndex = interfaceIndex;
+        connectToDevSignals();
+        // get interface property
+        emit updatePropertiesSerialPort(connFactory->getInterace(index.interfaceIndex)->getInterfaceProperty());
+        //
+        int count = getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceCount();
+        for(int i=0; i<count; i++) {
+            list << getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceHeaderByIndex(i);
+            status.push_back(getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceStatusByIndex(i));
+        }
     }
     emit remakeDeviceTree(list, status);
 }
@@ -122,6 +145,11 @@ QString ViewController::getCurrentInterfaceNameToSerial() {
     QString name = connFactory->getInteraceNameFromIndex(index.interfaceIndex);
     return name;
 }
+
+int ViewController::getInterfaceCount() {
+    return connFactory->getCountConnection();
+}
+
 
 QList<int> ViewController::getCurrentDevChart() {
     QList<int> res;
@@ -286,6 +314,11 @@ void ViewController::deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, 
         break;
     case DevicesFactory::Type_Update_PasswordIncorrect: {
         emit devUpdatePasswordIncorrect(getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceHeaderByIndex(indexDev).first());
+        // удаляем устройство
+        removeActiveDevice();
+    }
+    case DevicesFactory::Type_Update_TypeIncorrect: {
+        emit devUpdateTypeDevIncorrect(getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceHeaderByIndex(indexDev).first());
         // удаляем устройство
         removeActiveDevice();
     }

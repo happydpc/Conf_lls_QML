@@ -59,7 +59,9 @@ bool Interface::isOpen() {
 }
 
 void Interface::closeInterface() {
-
+    if(this->interfaceType == interfacesAbstract::InterfaceTypeSerialPort) {
+        serialPort->closeInterface();
+    }
 }
 
 QString Interface::getInterfaceName() {

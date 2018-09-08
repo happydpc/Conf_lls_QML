@@ -8,6 +8,8 @@ Item {
     anchors.fill: parent
 
     property alias devPropertyLlsTMK24: devPropertyLlsTMK24
+    property alias dialogAddDeviceFail : dialogAddDeviceFail
+    property alias dialogAddInterfaceFail: dialogAddInterfaceFail
 
     function setPropertyToSerialPort(listData) {
         devPropertySerialPort.setPropertyValues(listData)
@@ -15,15 +17,24 @@ Item {
     function remakeInterfaceList(list, status) {
         listInterfaceView.model.clear()
         var size = list.length
-        for(var i=0; i<size; i++) {
-            listInterfaceView.model.append({"text": list[i], "status": status[i]})
+        if(size > 0) {
+            projectPanels.openDeviceProject()
+            for(var i=0; i<size; i++) {
+                listInterfaceView.model.append({"text": list[i], "status": status[i]})
+            }
+        } else {
+            projectStack.pop()
         }
     }
     function remakeDeviceList(list, status) {
         listDeviceView.model.clear()
         var size = list.length
-        for(var i=0; i<size; i++) {
-            listDeviceView.model.append({"text": list[i], "status": status[i]})
+        if(size > 0) {
+            for(var i=0; i<size; i++) {
+                listDeviceView.model.append({"text": list[i], "status": status[i]})
+            }
+        } else {
+            devicePropertieslistModel1.pop()
         }
     }
     function updateDeviceListStatus(index, status) {
@@ -32,6 +43,10 @@ Item {
     function devShowPasswordIncorrect(devNameId) {
         dialogPasswordError.messageArg = devNameId
         dialogPasswordError.open()
+    }
+    function devShowTypeIncorrect(devNameId) {
+        dialogTypeError.messageArg = devNameId
+        dialogTypeError.open()
     }
 
     Rectangle {
@@ -103,6 +118,8 @@ Item {
                             view.currentIndex = model.index
                             devicePropertieslistModel1.pop()
                             viewController.setChangedIndexInteface(model.index)
+                        } else {
+                            dialogRemoveSerialPort.open()
                         }
                     }
                 }
@@ -276,6 +293,61 @@ Item {
     }
 
     Dialog {
+        id: dialogRemoveSerialPort
+        visible: false
+        title: "Удаление последовательного порта"
+        standardButtons: StandardButton.Close | StandardButton.Apply
+        Rectangle {
+            color: "transparent"
+            implicitWidth: 250
+            implicitHeight: 100
+            Text {
+                text: "Удалить последовательный порт?"
+                color: "navy"
+                anchors.centerIn: parent
+            }
+        }
+        onApply: {
+            viewController.removeActiveConnectionSerialPort()
+            close()
+        }
+    }
+
+    Dialog {
+        id: dialogAddDeviceFail
+        visible: false
+        title: "Добавление устройства"
+        standardButtons: StandardButton.Close
+        Rectangle {
+            color: "transparent"
+            implicitWidth: 250
+            implicitHeight: 100
+            Text {
+                text: "Не получилось добавить устройство\nТакой адрес уже используется"
+                color: "navy"
+                anchors.centerIn: parent
+            }
+        }
+    }
+
+    Dialog {
+        id: dialogAddInterfaceFail
+        visible: false
+        title: "Добавление интерфейса"
+        standardButtons: StandardButton.Close
+        Rectangle {
+            color: "transparent"
+            implicitWidth: 350
+            implicitHeight: 100
+            Text {
+                text: "Не получилось добавить интерфейс\nВозможно такой интерфейс уже используется\nили ресурс не доступен"
+                color: "navy"
+                anchors.centerIn: parent
+            }
+        }
+    }
+
+    Dialog {
         id: dialogPasswordError
         visible: false
         title: "Ошибка пароля"
@@ -296,10 +368,26 @@ Item {
             close()
         }
     }
-}
 
-/*##^## Designer {
-    D{i:14;anchors_height:242;anchors_width:200}D{i:13;anchors_height:262;anchors_width:200}
-D{i:32;anchors_height:345;anchors_width:200}D{i:31;anchors_height:257;anchors_width:365}
+    Dialog {
+        id: dialogTypeError
+        visible: false
+        title: "Ошибка типа устройства"
+        standardButtons: StandardButton.Apply
+        property string messageArg: ""
+        width: 500
+        height: 150
+        Rectangle {
+            color: "transparent"
+            anchors.fill: parent
+            Text {
+                text: qsTr("Тип устройства не совпадает с заявленным при создании [%1]\nЭто устройство удалено из списка!").arg(dialogTypeError.messageArg)
+                color: "navy"
+                anchors.centerIn: parent
+            }
+        }
+        onApply: {
+            close()
+        }
+    }
 }
- ##^##*/

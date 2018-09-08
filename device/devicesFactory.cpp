@@ -1,9 +1,10 @@
 #include "devicesFactory.h"
-#include <QDebug>
+#include <QtDebug>
 
 DevicesFactory::DevicesFactory() {
     this->devShedullerTimer = new QTimer();
     this->devShedullerTimer->start(devShedullerControlInterval);
+    this->devMutex = new QMutex();
 
     connect(this->devShedullerTimer, SIGNAL(timeout()), this, SLOT(devShedullerSlot()));
 }
@@ -11,12 +12,23 @@ DevicesFactory::DevicesFactory() {
 DevicesFactory::~DevicesFactory() {}
 
 bool DevicesFactory::addNewDevice(E_DeviceType type, QString uniqDevName, QStringList parameters) {
+    bool res = false;
     if(type == Type_Progress_Tmk24) {
-        deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk24(uniqDevName, parameters.at(0))));
-        emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
+        if(findDeviceByUnicIdent(uniqDevName) == nullptr) {
+            devMutex->lock();
+            deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk24(uniqDevName, parameters.at(0))));
+            devMutex->unlock();
+            emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
+            res = true;
+        }
     } else if(type == Type_Progress_Tmk13) {
-        deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk13(uniqDevName, parameters.at(0))));
-        emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
+        if(findDeviceByUnicIdent(uniqDevName) == nullptr) {
+            devMutex->lock();
+            deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk13(uniqDevName, parameters.at(0))));
+            devMutex->unlock();
+            emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
+            res = true;
+        }
     } else {
         throw QString("undefined class");
     }
@@ -24,29 +36,43 @@ bool DevicesFactory::addNewDevice(E_DeviceType type, QString uniqDevName, QStrin
     // TODO: может быть лучше как-то подругому перехватывать указатаель?
     connect(findDeviceByUnicIdent(uniqDevName)->second, SIGNAL(eventDevice(DeviceAbstract::E_DeviceEvent,QString,QString)),
             this, SLOT(deviceEventSlot(DeviceAbstract::E_DeviceEvent,QString,QString)));
-
-    return (bool)deviceMap.size();
+    return res;
 }
 
 bool DevicesFactory::removeDevice(QString uniqDevName) {
+    bool res = false;
+    devMutex->lock();
     QPair<QString,DeviceAbstract*>* pDev = findDeviceByUnicIdent(uniqDevName);
     if(pDev != nullptr) {
         deviceMap.erase(pDev); // TOOD: 0
-        emit deviceUpdateTree(DevicesFactory::Type_Update_Removed, 0);
-        return true;
+        res = true;
     }
-    return false;
+    devMutex->unlock();
+    emit deviceUpdateTree(DevicesFactory::Type_Update_Removed, 0);
+    return res;
 }
 
 bool DevicesFactory::removeDeviceByIndex(int index) {
+    bool res = false;
+    devMutex->lock();
     QPair<QString,DeviceAbstract*>* pDev = findDeviceByIndex(index);
     if(pDev != nullptr) {
         deviceMap.erase(pDev); // TOOD: 0
-        emit deviceUpdateTree(DevicesFactory::Type_Update_Removed, 0);
-        return true;
+        res = true;
     }
-    return false;
+    devMutex->unlock();
+    emit deviceUpdateTree(DevicesFactory::Type_Update_Removed, 0);
+    return res;
 }
+
+bool DevicesFactory::removeDeviceAll() {
+    devMutex->lock();
+    deviceMap.clear();
+    devMutex->unlock();
+    emit deviceUpdateTree(DevicesFactory::Type_Update_Removed, 0);
+    return true;
+}
+
 
 int DevicesFactory::getDeviceCount() {
     return deviceMap.size();
@@ -155,9 +181,19 @@ void DevicesFactory::devShedullerSlot() {
                 emit readReplyData();
             });
         } else {
+            devMutex->lock();
             CommandController::sCommandData command;
+            if(indexProcessedDev > deviceMap.size()-1) {
+                indexProcessedDev = 0;
+            }
             auto dev = deviceMap.at(indexProcessedDev);
-
+            if(!deviceMap.empty()) {
+                if(indexProcessedDev < deviceMap.size()-1) {
+                    indexProcessedDev++;
+                } else {
+                    indexProcessedDev = 0;
+                }
+            }
             switch(dev.second->getState()) {
             case DeviceAbstract::STATE_DISCONNECTED:
                 if(dev.second->getPriority() == 0) { // TODO: loop need priority
@@ -201,18 +237,13 @@ void DevicesFactory::devShedullerSlot() {
                 }
                 break;
             }
-            if(!deviceMap.empty()) {
-                if(indexProcessedDev < deviceMap.size()-1) {
-                    indexProcessedDev++;
-                } else {
-                    indexProcessedDev = 0;
-                }
-            }
+            devMutex->unlock();
         }
     }
 }
 
 void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
+    devMutex->lock();
     for(auto dev: deviceMap) {
         if(dev.second->getUniqIdent() == commandList.first().deviceIdent) {
             qDebug() << "placeDataReplyToCommand -len=" << data.length();
@@ -220,6 +251,7 @@ void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
             break;
         }
     }
+    devMutex->unlock();
     commandList.pop_front();
     //-- start sheduller after reply
     devShedullerTimer->start(devShedullerControlInterval);
@@ -283,7 +315,9 @@ void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QS
         // пароль не совпадает
         emit deviceUpdateTree(DevicesFactory::Type_Update_PasswordIncorrect, findDeviceIndex(devUniqueId));
         break;
-    default: qDebug() << "deviceEventSlot -type undefined!";
+    case DeviceAbstract::Type_DeviceEvent_TypeError:
+        // тип не совпадает с заявленным
+        emit deviceUpdateTree(DevicesFactory::Type_Update_TypeIncorrect, findDeviceIndex(devUniqueId));
         break;
     }
 }

@@ -13,7 +13,7 @@ public:
 
     Q_INVOKABLE QStringList getAvailableNameToSerialPort();
     Q_INVOKABLE bool addConnectionSerialPort(QString name, QString baudrate);
-    Q_INVOKABLE bool removeConnectionSerialPort(QString name);
+    Q_INVOKABLE bool removeActiveConnectionSerialPort();
 
     Q_INVOKABLE QStringList getAvailableDeviceNameToSerialPort();
 
@@ -45,6 +45,9 @@ signals:
 
     void updatePropertiesSerialPort(QStringList properties);
 
+    void addConnectionFail(QString devName);
+    void addDeviceFail(QString devName);
+
     void devConnectedTmk24();
     void devConnectedTmk13();
     void devDisconnectedTmk24();
@@ -60,6 +63,8 @@ signals:
     void devFullReadyTmk13(QStringList data);
 
     void devUpdatePasswordIncorrect(QString devNameId);
+
+    void devUpdateTypeDevIncorrect(QString devNameId);
 
     void devUpdateTree(QStringList devNames, QList<int>status);
 
@@ -79,6 +84,8 @@ private slots:
     void disconnectToDevSignals();
 
     DevicesFactory* getDeviceFactoryByIndex(int index);
+
+    int getInterfaceCount();
 
 private:
     ConnectionFactory *connFactory;

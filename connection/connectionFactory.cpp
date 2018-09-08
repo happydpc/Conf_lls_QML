@@ -1,8 +1,7 @@
 #include "./connection/connectionFactory.h"
 #include <QDebug>
 
-ConnectionFactory::ConnectionFactory()
-{
+ConnectionFactory::ConnectionFactory() {
     this->interface.clear();
 }
 ConnectionFactory::~ConnectionFactory() {}
@@ -16,7 +15,6 @@ bool ConnectionFactory::addConnection(interfacesAbstract::eInterfaceTypes type, 
                 SIGNAL(errorConnection(interfacesAbstract::eInterfaceTypes, QString)), this,
                 SLOT(errorFromConnection(interfacesAbstract::eInterfaceTypes, QString)));
         interface.push_back(std::move(pInterface));
-
         emit updateTree(ConnectionFactory::Type_Update_Add);
     } else {
         delete pInterface;
@@ -30,12 +28,19 @@ QStringList ConnectionFactory::getAvailableName() {
     return tInterface.getAvailableList();
 }
 
-// TODO: ~
 void ConnectionFactory::removeConnection(QString name) {
+    for(auto it = interface.begin(); it != interface.end(); it++) {
+        if((*it)->getInterfaceName() == name) {
+            interface.erase(it);
+        }
+    }
     emit updateTree(ConnectionFactory::Type_Update_Removed);
 }
-// TODO: ~
+
 void ConnectionFactory::removeConnection(int index) {
+    auto it = interface.begin();
+    (*it)->closeInterface();
+    interface.erase(it+= index);
     emit updateTree(ConnectionFactory::Type_Update_Removed);
 }
 

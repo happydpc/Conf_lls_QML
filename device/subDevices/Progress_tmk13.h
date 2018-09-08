@@ -14,7 +14,7 @@ public:
     Progress_tmk13(QString uniqIdentId, QString passwordSession);
     ~Progress_tmk13();
 
-    static constexpr char *name = "Progress tmk13";
+    static constexpr char *name = "Progress tmk4UX";
 
     QString getDevTypeName() override;
     QStringList getPropertyData() override;

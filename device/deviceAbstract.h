@@ -24,7 +24,8 @@ public:
         Type_DeviceEvent_ReadyReadProperties,
         Type_DeviceEvent_Inited,
         Type_DeviceEvent_CurrentDataUpdated,
-        Type_DeviceEvent_PasswordError
+        Type_DeviceEvent_PasswordError,
+        Type_DeviceEvent_TypeError
     }E_DeviceEvent;
 
     virtual QString getDevTypeName() = 0;

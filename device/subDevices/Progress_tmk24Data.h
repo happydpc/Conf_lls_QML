@@ -184,11 +184,6 @@ public:
             bool isValid;
         }llssValues;
 
-        struct {
-            QString name;
-            bool isValid;
-        }typeLls;
-
     }S_lls_data;
 };
 
