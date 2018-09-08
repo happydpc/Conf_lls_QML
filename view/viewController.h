@@ -11,10 +11,10 @@ class ViewController : public QObject
 public:
     explicit ViewController(QObject *parent = nullptr);
 
-    Q_INVOKABLE QStringList getAvailableNameToSerialPort();
     Q_INVOKABLE bool addConnectionSerialPort(QString name, QString baudrate);
     Q_INVOKABLE bool removeActiveConnectionSerialPort();
 
+    Q_INVOKABLE QStringList getAvailableNameToSerialPort();
     Q_INVOKABLE QStringList getAvailableDeviceNameToSerialPort();
 
     Q_INVOKABLE bool addDeviceToConnection(QString devTypeName, QString idNum, QString password);

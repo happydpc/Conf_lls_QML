@@ -21,12 +21,6 @@ Item {
                 }
             }
             MenuItem {
-                text: qsTr("Закрыть соединение")
-                onTriggered: {
-                    closeProject()
-                }
-            }
-            MenuItem {
                 text: qsTr("Закрыть")
                 onTriggered: exitFull()
             }

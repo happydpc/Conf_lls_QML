@@ -184,6 +184,8 @@ public:
             bool isValid;
         }llssValues;
 
+        bool typeIsValid;
+
     }S_lls_data;
 };
 

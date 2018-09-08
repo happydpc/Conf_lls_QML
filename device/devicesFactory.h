@@ -27,6 +27,7 @@ public:
         Type_Update_ChangeStatus,
         Type_Update_Removed,
         Type_Update_Added,
+        Type_Update_RamakeAfterChangeInterface,
         Type_Update_PasswordIncorrect,
         Type_Update_TypeIncorrect
     }E_DeviceUpdateType;

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QMultiMap>
+#include <QMutex>
 #include "interfaces/interface.h"
 
 class ConnectionFactory : public QObject
@@ -13,6 +14,7 @@ public:
     ~ConnectionFactory();
 
     typedef enum {
+        Type_Update_ChangedIndex,
         Type_Update_Removed,
         Type_Update_Add,
     }E_ConnectionUpdateType;
@@ -40,6 +42,7 @@ signals:
 private:
 
     QVector<Interface*>interface;
+    QMutex *lockInterface;
 
 };
 

@@ -244,7 +244,6 @@ void DevicesFactory::devShedullerSlot() {
 }
 
 void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
-    lockMutextDevMap();
     for(auto dev: deviceMap) {
         if(dev.second->getUniqIdent() == commandList.first().deviceIdent) {
             qDebug() << "placeDataReplyToCommand -len=" << data.length();
@@ -252,7 +251,6 @@ void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
             break;
         }
     }
-    unlockMutextDevMap();
     commandList.pop_front();
     //-- start sheduller after reply
     devShedullerTimer->start(devShedullerControlInterval);
@@ -315,10 +313,14 @@ void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QS
     case DeviceAbstract::Type_DeviceEvent_PasswordError:
         // пароль не совпадает
         emit deviceUpdateTree(DevicesFactory::Type_Update_PasswordIncorrect, findDeviceIndex(devUniqueId));
+        // удаляем устройство
+        removeDeviceByIndex(findDeviceIndex(devUniqueId));
         break;
     case DeviceAbstract::Type_DeviceEvent_TypeError:
         // тип не совпадает с заявленным
         emit deviceUpdateTree(DevicesFactory::Type_Update_TypeIncorrect, findDeviceIndex(devUniqueId));
+        // удаляем устройство
+        removeDeviceByIndex(findDeviceIndex(devUniqueId));
         break;
     }
 }

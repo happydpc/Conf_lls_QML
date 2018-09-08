@@ -3,11 +3,13 @@
 
 ConnectionFactory::ConnectionFactory() {
     this->interface.clear();
+    this->lockInterface = new QMutex();
 }
 ConnectionFactory::~ConnectionFactory() {}
 
 bool ConnectionFactory::addConnection(interfacesAbstract::eInterfaceTypes type, QString name, QStringList param) {
     bool res = false;
+    lockInterface->lock();
     Interface *pInterface = new Interface(type, name, param);
     res  = pInterface->openInterface(name, param);
     if(res) {
@@ -20,6 +22,7 @@ bool ConnectionFactory::addConnection(interfacesAbstract::eInterfaceTypes type, 
         delete pInterface;
         qDebug() << "ConnectionFactory: addConnection -ERR " + name;
     }
+    lockInterface->unlock();
     return res;
 }
 
@@ -29,18 +32,22 @@ QStringList ConnectionFactory::getAvailableName() {
 }
 
 void ConnectionFactory::removeConnection(QString name) {
+    lockInterface->lock();
     for(auto it = interface.begin(); it != interface.end(); it++) {
         if((*it)->getInterfaceName() == name) {
             interface.erase(it);
         }
     }
+    lockInterface->unlock();
     emit updateTree(ConnectionFactory::Type_Update_Removed);
 }
 
 void ConnectionFactory::removeConnection(int index) {
+    lockInterface->lock();
     auto it = interface.begin();
     (*it)->closeInterface();
     interface.erase(it+= index);
+    lockInterface->unlock();
     emit updateTree(ConnectionFactory::Type_Update_Removed);
 }
 

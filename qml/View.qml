@@ -18,6 +18,9 @@ Item {
         onChangeDeviceTreeStatus: {
             projectPanels.devicePanel.updateDeviceListStatus(index, status)
         }
+        onChangeInterfaceTreeStatus: {
+            projectPanels.devicePanel.updateIntefaceListStatus(index, status)
+        }
 
         onUpdatePropertiesSerialPort: {
             projectPanels.devicePanel.setPropertyToSerialPort(properties)

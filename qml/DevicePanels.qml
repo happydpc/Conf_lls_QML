@@ -26,12 +26,18 @@ Item {
             projectStack.pop()
         }
     }
+    function updateIntefaceListStatus(index, status) {
+        listInterfaceView.model.set(index, {"status": status})
+        viewController.setChangedIndexInteface(interfaceList.model.index)
+    }
+
     function remakeDeviceList(list, status) {
         listDeviceView.model.clear()
         var size = list.length
         if(size > 0) {
             for(var i=0; i<size; i++) {
                 listDeviceView.model.append({"text": list[i], "status": status[i]})
+                console.log("list[i] - status = " + status[i])
             }
         } else {
             devicePropertieslistModel1.pop()
@@ -46,7 +52,7 @@ Item {
     }
     function devShowTypeIncorrect(devNameId) {
         dialogTypeError.messageArg = devNameId
-//        dialogTypeError.open()
+        dialogTypeError.open()
     }
 
     Rectangle {
