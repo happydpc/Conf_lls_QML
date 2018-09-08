@@ -27,14 +27,15 @@ SOURCES += \
     view/viewController.cpp \
     interfaces/interface.cpp \
     command/commandController.cpp \
-    device/subDevices/Progress_Base.cpp \
-    device/subDevices/Progress_BaseData.cpp \
-    device/subDevices/Progress_tmk13.cpp \
-    device/subDevices/Progress_tmk13Data.cpp \
-    device/subDevices/Progress_tmk24.cpp \
-    device/subDevices/Progress_tmk24Data.cpp\
     other/crc.cpp \
-    tests/testDevReply.cpp
+    tests/testDevReply.cpp \
+    device/subDevices/Progress_Base.cpp \
+    device/subDevices/progress_base_data.cpp \
+    device/subDevices/Progress_BaseData.cpp \
+    device/subDevices/Progress_tmk4UX.cpp \
+    device/subDevices/Progress_tmk4UXData.cpp \
+    device/subDevices/Progress_tmk24.cpp \
+    device/subDevices/Progress_tmk24Data.cpp
 
 RESOURCES += \
     qml.qrc
@@ -62,13 +63,14 @@ HEADERS += \
     view/viewController.h \
     interfaces/interface.h \
     command/commandController.h \
+    other/crc.h \
+    tests/testDevReply.h \
     device/subDevices/Progress_Base.h \
     device/subDevices/Progress_BaseData.h \
-    device/subDevices/Progress_tmk13.h \
-    device/subDevices/Progress_tmk13Data.h \
+    device/subDevices/Progress_Base_Data.h \
+    device/subDevices/Progress_tmk4UX.h \
+    device/subDevices/Progress_tmk4UXData.h \
     device/subDevices/Progress_tmk24.h \
-    device/subDevices/Progress_tmk24Data.h\
-    other/crc.h \
-    tests/testDevReply.h
+    device/subDevices/Progress_tmk24Data.h
 
 DISTFILES +=

@@ -2,7 +2,7 @@
 #include "tests/testDevReply.h"
 #include "device/deviceAbstract.h"
 #include "device/subDevices/Progress_tmk24.h"
-#include "device/subDevices/Progress_tmk13.h"
+#include "device/subDevices/Progress_tmk4UX.h"
 
 TestDevReply::TestDevReply(QObject *parent) : QObject(parent) {
     this->replyByteArrayBuff.clear();
@@ -15,8 +15,8 @@ TestDevReply::TestDevReply(QObject *parent) : QObject(parent) {
 //        Progress_tmk24 *tmk24 = new Progress_tmk24();
 //        res = tmk24->makeDataRequestReply(data, replyByteArrayBuff);
 //        delete tmk24;
-//    } else if(type == DeviceAbstract::Type_Progress_Tmk13) {
-//        Progress_tmk13 *tmk13 = new Progress_tmk13();
+//    } else if(type == DeviceAbstract::Type_Progress_tmk4UX) {
+//        Progress_tmk4UX *tmk13 = new Progress_tmk4UX();
 //        res = tmk13->makeDataRequestReply(data, replyByteArrayBuff);
 //        delete tmk13;
 //    } else {

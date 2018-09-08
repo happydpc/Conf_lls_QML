@@ -15,17 +15,17 @@ bool DevicesFactory::addNewDevice(E_DeviceType type, QString uniqDevName, QStrin
     bool res = false;
     if(type == Type_Progress_Tmk24) {
         if(findDeviceByUnicIdent(uniqDevName) == nullptr) {
-            devMutex->lock();
+            lockMutextDevMap();
             deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk24(uniqDevName, parameters.at(0))));
-            devMutex->unlock();
+            unlockMutextDevMap();
             emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
             res = true;
         }
-    } else if(type == Type_Progress_Tmk13) {
+    } else if(type == Type_Progress_tmk4UX) {
         if(findDeviceByUnicIdent(uniqDevName) == nullptr) {
-            devMutex->lock();
-            deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk13(uniqDevName, parameters.at(0))));
-            devMutex->unlock();
+            lockMutextDevMap();
+            deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk4UX(uniqDevName, parameters.at(0))));
+            unlockMutextDevMap();
             emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
             res = true;
         }
@@ -41,34 +41,34 @@ bool DevicesFactory::addNewDevice(E_DeviceType type, QString uniqDevName, QStrin
 
 bool DevicesFactory::removeDevice(QString uniqDevName) {
     bool res = false;
-    devMutex->lock();
+    lockMutextDevMap();
     QPair<QString,DeviceAbstract*>* pDev = findDeviceByUnicIdent(uniqDevName);
     if(pDev != nullptr) {
         deviceMap.erase(pDev); // TOOD: 0
         res = true;
     }
-    devMutex->unlock();
+    unlockMutextDevMap();
     emit deviceUpdateTree(DevicesFactory::Type_Update_Removed, 0);
     return res;
 }
 
 bool DevicesFactory::removeDeviceByIndex(int index) {
     bool res = false;
-    devMutex->lock();
+    lockMutextDevMap();
     QPair<QString,DeviceAbstract*>* pDev = findDeviceByIndex(index);
     if(pDev != nullptr) {
         deviceMap.erase(pDev); // TOOD: 0
         res = true;
     }
-    devMutex->unlock();
+    unlockMutextDevMap();
     emit deviceUpdateTree(DevicesFactory::Type_Update_Removed, 0);
     return res;
 }
 
 bool DevicesFactory::removeDeviceAll() {
-    devMutex->lock();
+    lockMutextDevMap();
     deviceMap.clear();
-    devMutex->unlock();
+    unlockMutextDevMap();
     emit deviceUpdateTree(DevicesFactory::Type_Update_Removed, 0);
     return true;
 }
@@ -83,8 +83,8 @@ QString DevicesFactory::getDeviceName(int index) {
 }
 
 QString DevicesFactory::getDeviceNameByType(DevicesFactory::E_DeviceType type) {
-    if(type == DevicesFactory::Type_Progress_Tmk13) {
-        return QString::fromUtf8(Progress_tmk13::name, strlen(Progress_tmk13::name));
+    if(type == DevicesFactory::Type_Progress_tmk4UX) {
+        return QString::fromUtf8(Progress_tmk4UX::name, strlen(Progress_tmk4UX::name));
     } else if(type == DevicesFactory::Type_Progress_Tmk24) {
         return QString::fromUtf8(Progress_tmk24::name, strlen(Progress_tmk24::name));
     } else {
@@ -93,8 +93,8 @@ QString DevicesFactory::getDeviceNameByType(DevicesFactory::E_DeviceType type) {
 }
 
 DevicesFactory::E_DeviceType DevicesFactory::getDeviceType(QString typeText) {
-    if(typeText == QString::fromUtf8(Progress_tmk13::name, strlen(Progress_tmk13::name))) {
-        return DevicesFactory::Type_Progress_Tmk13;
+    if(typeText == QString::fromUtf8(Progress_tmk4UX::name, strlen(Progress_tmk4UX::name))) {
+        return DevicesFactory::Type_Progress_tmk4UX;
     } else if(typeText == QString::fromUtf8(Progress_tmk24::name, strlen(Progress_tmk24::name))) {
         return DevicesFactory::Type_Progress_Tmk24;
     } else {
@@ -166,7 +166,7 @@ DeviceAbstract::E_State DevicesFactory::getDevStateByIndex(int index) {
 
 QStringList DevicesFactory::getAvailableDeviceTypes() {
     QStringList types;
-    types << QString::fromUtf8(Progress_tmk13::name, strlen(Progress_tmk13::name));
+    types << QString::fromUtf8(Progress_tmk4UX::name, strlen(Progress_tmk4UX::name));
     types << QString::fromUtf8(Progress_tmk24::name, strlen(Progress_tmk24::name));
     return types;
 }
@@ -181,69 +181,70 @@ void DevicesFactory::devShedullerSlot() {
                 emit readReplyData();
             });
         } else {
-            devMutex->lock();
-            CommandController::sCommandData command;
-            if(indexProcessedDev > deviceMap.size()-1) {
-                indexProcessedDev = 0;
-            }
-            auto dev = deviceMap.at(indexProcessedDev);
-            if(!deviceMap.empty()) {
-                if(indexProcessedDev < deviceMap.size()-1) {
-                    indexProcessedDev++;
-                } else {
+            if(devMutex->tryLock(100)) {
+                CommandController::sCommandData command;
+                if(indexProcessedDev > deviceMap.size()-1) {
                     indexProcessedDev = 0;
                 }
+                auto dev = deviceMap.at(indexProcessedDev);
+                if(!deviceMap.empty()) {
+                    if(indexProcessedDev < deviceMap.size()-1) {
+                        indexProcessedDev++;
+                    } else {
+                        indexProcessedDev = 0;
+                    }
+                }
+                switch(dev.second->getState()) {
+                case DeviceAbstract::STATE_DISCONNECTED:
+                    if(dev.second->getPriority() == 0) { // TODO: loop need priority
+                        command = dev.second->getCommandToCheckConnected();
+                        dev.second->makeDataToCommand(command);
+                        commandList.push_back(command);
+                    }
+                    break;
+                case DeviceAbstract::STATE_CHECK_PASSWORD:
+                    if(dev.second->getPriority() == 0) { // TODO: loop need priority
+                        command = dev.second->getCommandtoCheckPassword();
+                        dev.second->makeDataToCommand(command);
+                        commandList.push_back(command);
+                    }
+                    break;
+                case DeviceAbstract::STATE_GET_TYPE:
+                    if(dev.second->getPriority() == 0) { // TODO: loop need priority
+                        for(sizeCommand=0; sizeCommand!= dev.second->getCommandListToInit().size(); sizeCommand++) {
+                            command = dev.second->getCommandListToInit().at(sizeCommand);
+                            dev.second->makeDataToCommand(command);
+                            commandList.push_back(command);
+                        }
+                    }
+                    break;
+                case DeviceAbstract::STATE_START_INIT:
+                    if(dev.second->getPriority() == 0) { // TODO: loop need priority
+                        for(sizeCommand=0; sizeCommand!= dev.second->getCommandListToInit().size(); sizeCommand++) {
+                            command = dev.second->getCommandListToInit().at(sizeCommand);
+                            dev.second->makeDataToCommand(command);
+                            commandList.push_back(command);
+                        }
+                    }
+                    break;
+                case DeviceAbstract::STATE_NORMAL_READY:
+                    if(dev.second->getPriority() == 0) { // TODO: loop need priority
+                        for(sizeCommand=0; sizeCommand != dev.second->getCommandListToCurrentData().size(); sizeCommand++) {
+                            command = dev.second->getCommandListToCurrentData().at(sizeCommand);
+                            dev.second->makeDataToCommand(command);
+                            commandList.push_back(command);
+                        }
+                    }
+                    break;
+                }
+                unlockMutextDevMap();
             }
-            switch(dev.second->getState()) {
-            case DeviceAbstract::STATE_DISCONNECTED:
-                if(dev.second->getPriority() == 0) { // TODO: loop need priority
-                    command = dev.second->getCommandToCheckConnected();
-                    dev.second->makeDataToCommand(command);
-                    commandList.push_back(command);
-                }
-                break;
-            case DeviceAbstract::STATE_CHECK_PASSWORD:
-                if(dev.second->getPriority() == 0) { // TODO: loop need priority
-                    command = dev.second->getCommandtoCheckPassword();
-                    dev.second->makeDataToCommand(command);
-                    commandList.push_back(command);
-                }
-                break;
-            case DeviceAbstract::STATE_GET_TYPE:
-                if(dev.second->getPriority() == 0) { // TODO: loop need priority
-                    for(sizeCommand=0; sizeCommand!= dev.second->getCommandListToInit().size(); sizeCommand++) {
-                        command = dev.second->getCommandListToInit().at(sizeCommand);
-                        dev.second->makeDataToCommand(command);
-                        commandList.push_back(command);
-                    }
-                }
-                break;
-            case DeviceAbstract::STATE_START_INIT:
-                if(dev.second->getPriority() == 0) { // TODO: loop need priority
-                    for(sizeCommand=0; sizeCommand!= dev.second->getCommandListToInit().size(); sizeCommand++) {
-                        command = dev.second->getCommandListToInit().at(sizeCommand);
-                        dev.second->makeDataToCommand(command);
-                        commandList.push_back(command);
-                    }
-                }
-                break;
-            case DeviceAbstract::STATE_NORMAL_READY:
-                if(dev.second->getPriority() == 0) { // TODO: loop need priority
-                    for(sizeCommand=0; sizeCommand != dev.second->getCommandListToCurrentData().size(); sizeCommand++) {
-                        command = dev.second->getCommandListToCurrentData().at(sizeCommand);
-                        dev.second->makeDataToCommand(command);
-                        commandList.push_back(command);
-                    }
-                }
-                break;
-            }
-            devMutex->unlock();
         }
     }
 }
 
 void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
-    devMutex->lock();
+    lockMutextDevMap();
     for(auto dev: deviceMap) {
         if(dev.second->getUniqIdent() == commandList.first().deviceIdent) {
             qDebug() << "placeDataReplyToCommand -len=" << data.length();
@@ -251,7 +252,7 @@ void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
             break;
         }
     }
-    devMutex->unlock();
+    unlockMutextDevMap();
     commandList.pop_front();
     //-- start sheduller after reply
     devShedullerTimer->start(devShedullerControlInterval);
@@ -320,6 +321,15 @@ void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QS
         emit deviceUpdateTree(DevicesFactory::Type_Update_TypeIncorrect, findDeviceIndex(devUniqueId));
         break;
     }
+}
+
+void DevicesFactory::lockMutextDevMap() {
+    qDebug() << "-lockMutextDevMap";
+    devMutex->lock();
+}
+void DevicesFactory::unlockMutextDevMap() {
+    qDebug() << "-unlockMutextDevMap";
+    devMutex->unlock();
 }
 
 void DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation, QStringList arguments) {

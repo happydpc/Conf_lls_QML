@@ -465,7 +465,7 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                     pbuf = (commandArrayReplyData.data() + 4 + SERIALNUMBER_STRING_SIZE);
                     lls_data.firmware.value.fromUtf8(pbuf,  strlen(pbuf));
 
-                    if(commandArrayReplyData.at(3) != Progress_tmk13Data::type_lls_tmk24) {
+                    if(commandArrayReplyData.at(3) != Progress_tmk4UXData::type_lls_tmk24) {
                         emit eventDevice(DeviceAbstract::Type_DeviceEvent_TypeError, getUniqIdent(), QString("Type Error!"));
                     }
 

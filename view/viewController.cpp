@@ -214,7 +214,7 @@ void ViewController::setCurrentDevLevelAsFull() {
 void ViewController::deviceConnected(DevicesFactory::E_DeviceType type, QString uniqNameId) {
     if(isCurrentDevice(uniqNameId)) {
         switch(type) {
-        case DevicesFactory::Type_Progress_Tmk13:
+        case DevicesFactory::Type_Progress_tmk4UX:
             emit devConnectedTmk13();
             break;
         case DevicesFactory::Type_Progress_Tmk24:
@@ -227,7 +227,7 @@ void ViewController::deviceConnected(DevicesFactory::E_DeviceType type, QString 
 void ViewController::deviceDisconnected(DevicesFactory::E_DeviceType type, QString uniqNameId) {
     if(isCurrentDevice(uniqNameId)) {
         switch(type) {
-        case DevicesFactory::Type_Progress_Tmk13:
+        case DevicesFactory::Type_Progress_tmk4UX:
             emit devDisconnectedTmk13();
             break;
         case DevicesFactory::Type_Progress_Tmk24:
@@ -240,7 +240,7 @@ void ViewController::deviceDisconnected(DevicesFactory::E_DeviceType type, QStri
 void ViewController::deviceReadyCurrentData(DevicesFactory::E_DeviceType type, QString uniqNameId) {
     if(isCurrentDevice(uniqNameId)) {
         switch(type) {
-        case DevicesFactory::Type_Progress_Tmk13:
+        case DevicesFactory::Type_Progress_tmk4UX:
             emit devReadyOtherDataTmk13(getCurrentDevOtherData());
             break;
         case DevicesFactory::Type_Progress_Tmk24:
@@ -253,7 +253,7 @@ void ViewController::deviceReadyCurrentData(DevicesFactory::E_DeviceType type, Q
 void ViewController::deviceReadyProperties(DevicesFactory::E_DeviceType type, QString uniqNameId) {
     if(isCurrentDevice(uniqNameId)) {
         switch(type) {
-        case DevicesFactory::Type_Progress_Tmk13:
+        case DevicesFactory::Type_Progress_tmk4UX:
             emit devReadyPropertiesTmk13(getCurrentDevPropertyByIndex());
             break;
         case DevicesFactory::Type_Progress_Tmk24:
@@ -266,7 +266,7 @@ void ViewController::deviceReadyProperties(DevicesFactory::E_DeviceType type, QS
 void ViewController::deviceReadyInit(DevicesFactory::E_DeviceType type, QString uniqNameId) {
     if(isCurrentDevice(uniqNameId)) {
         switch(type) {
-        case DevicesFactory::Type_Progress_Tmk13:
+        case DevicesFactory::Type_Progress_tmk4UX:
             emit devFullReadyTmk13(getCurrentDevPropertyByIndex());
             break;
         case DevicesFactory::Type_Progress_Tmk24:
@@ -313,14 +313,14 @@ void ViewController::deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, 
     }
         break;
     case DevicesFactory::Type_Update_PasswordIncorrect: {
-        emit devUpdatePasswordIncorrect(getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceHeaderByIndex(indexDev).first());
+//        emit devUpdatePasswordIncorrect(getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceHeaderByIndex(indexDev).first());
         // удаляем устройство
         removeActiveDevice();
     }
     case DevicesFactory::Type_Update_TypeIncorrect: {
-        emit devUpdateTypeDevIncorrect(getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceHeaderByIndex(indexDev).first());
+//        emit devUpdateTypeDevIncorrect(getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceHeaderByIndex(indexDev).first());
         // удаляем устройство
-        removeActiveDevice();
+//        removeActiveDevice();
     }
         break;
     }

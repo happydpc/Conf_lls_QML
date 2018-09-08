@@ -7,7 +7,7 @@
 #include <QMutex>
 #include "command/commandController.h"
 #include "device/deviceAbstract.h"
-#include "device/subDevices/Progress_tmk13.h"
+#include "device/subDevices/Progress_tmk4UX.h"
 #include "device/subDevices/Progress_tmk24.h"
 
 class DevicesFactory : public QObject
@@ -19,7 +19,7 @@ public:
 
     typedef enum {
         Type_Progress_Tmk24,
-        Type_Progress_Tmk13,
+        Type_Progress_tmk4UX,
         Type_Undefined
     }E_DeviceType;
 
@@ -86,6 +86,9 @@ private slots:
     void devShedullerSlot();
 
     void deviceEventSlot(DeviceAbstract::E_DeviceEvent type, QString devUniqueId, QString message);
+
+    void lockMutextDevMap();
+    void unlockMutextDevMap();
 
 private:
     QVector<QPair<QString,DeviceAbstract*>> deviceMap;

@@ -46,7 +46,7 @@ Item {
     }
     function devShowTypeIncorrect(devNameId) {
         dialogTypeError.messageArg = devNameId
-        dialogTypeError.open()
+//        dialogTypeError.open()
     }
 
     Rectangle {
