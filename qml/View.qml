@@ -71,6 +71,9 @@ Item {
             projectPanels.devicePanel.devPropertyProgressTmk24.readErrors(devNameId, errors)
             projectPanels.devicePanel.devPropertyProgressTmk24.messageReadErrorsOk.open()
         }
+        onDevUpdateLogMessage: {
+            projectPanels.devicePanel.devPropertyProgressTmk24.addLogMessage(codeMessage, message)
+        }
     }
 
     ProjectPanels {
