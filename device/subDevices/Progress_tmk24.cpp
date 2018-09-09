@@ -607,6 +607,9 @@ CommandController::sCommandData Progress_tmk24::getCommandCustom(QString operati
         command.devCommand = (int)Progress_tmk24Data::lls_read_settings;
     } else if(operation == "set current dev settings") {
         command.devCommand = (int)Progress_tmk24Data::lls_write_settings;
+        for(auto i:data) {
+            command.commandOptionArg.push_back(i.toInt());
+        }
     } else if(operation == "read current dev errors") {
         command.devCommand = (int)Progress_tmk24Data::lls_read_errors;
     } else if(operation == "set current dev cal table") {
