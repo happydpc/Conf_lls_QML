@@ -1,5 +1,6 @@
 #include "viewController.h"
 #include <QDebug>
+#include <QTime>
 
 ViewController::ViewController(QObject *parent) : QObject(parent) {
     this->connFactory = new ConnectionFactory();
@@ -23,6 +24,7 @@ ViewController::ViewController(QObject *parent) : QObject(parent) {
 QStringList ViewController::getAvailableNameToSerialPort() {
     QStringList retList;
     retList = connFactory->getAvailableName();
+    emit devUpdateLogMessage(0, QString("Получение списка интерфейсов [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
     return retList;
 }
 
@@ -32,6 +34,7 @@ bool ViewController::addConnectionSerialPort(QString name, QString baudrate) {
         res = connFactory->addConnection(interfacesAbstract::InterfaceTypeSerialPort, name, QStringList(baudrate));
         if(res) {
             qDebug() << "addConnectionSerialPort -open= "<< res << name;
+            emit devUpdateLogMessage(0, QString("Добавление интерфейса [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
         } else {
             emit addConnectionFail(name);
         }
@@ -44,6 +47,7 @@ bool ViewController::removeActiveConnectionSerialPort() {
     getDeviceFactoryByIndex(index.interfaceIndex)->removeDeviceAll();
     connFactory->removeConnection(index.interfaceIndex);
     connectToDevSignals();
+    emit devUpdateLogMessage(1, QString("Удаление интерфейса [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
     return true;
 }
 
@@ -67,8 +71,9 @@ bool ViewController::addDeviceToConnection(QString devTypeName, QString idNum, Q
             // make it device - "not ready"
             // while not read settings
             pInterface->getDeviceFactory()->setDeviceReInitByIndex(index.deviceIndex);
-            // add device command to read current property device
+            emit devUpdateLogMessage(0, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
         } else {
+            emit devUpdateLogMessage(2, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
             emit addDeviceFail(devTypeName);
         }
     } else {
@@ -79,6 +84,7 @@ bool ViewController::addDeviceToConnection(QString devTypeName, QString idNum, Q
 
 void ViewController::removeActiveDevice() {
     getDeviceFactoryByIndex(index.interfaceIndex)->removeDeviceByIndex(index.deviceIndex);
+    emit devUpdateLogMessage(2, QString("Удаление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
 }
 
 QString ViewController::getCurrentInterfaceNameToSerial() {
@@ -181,6 +187,7 @@ void ViewController::deviceConnected(DevicesFactory::E_DeviceType type, QString 
         case DevicesFactory::Type_Undefined: break;
         }
     }
+    emit devUpdateLogMessage(0, QString("Устройста подключено[%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
 }
 
 void ViewController::deviceDisconnected(DevicesFactory::E_DeviceType type, QString uniqNameId) {
@@ -195,6 +202,7 @@ void ViewController::deviceDisconnected(DevicesFactory::E_DeviceType type, QStri
         case DevicesFactory::Type_Undefined: break;
         }
     }
+    emit devUpdateLogMessage(2, QString("Устройство потеряно [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
 }
 void ViewController::deviceReadyCurrentData(DevicesFactory::E_DeviceType type, QString uniqNameId) {
     if(isCurrentDevice(uniqNameId)) {
@@ -208,6 +216,7 @@ void ViewController::deviceReadyCurrentData(DevicesFactory::E_DeviceType type, Q
         case DevicesFactory::Type_Undefined: break;
         }
     }
+    emit devUpdateLogMessage(1, QString("Получение данных с устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
 }
 void ViewController::deviceReadyProperties(DevicesFactory::E_DeviceType type, QString uniqNameId) {
     if(isCurrentDevice(uniqNameId)) {
@@ -221,6 +230,7 @@ void ViewController::deviceReadyProperties(DevicesFactory::E_DeviceType type, QS
         case DevicesFactory::Type_Undefined: break;
         }
     }
+    emit devUpdateLogMessage(0, QString("Получение информации с устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
 }
 void ViewController::deviceReadyInit(DevicesFactory::E_DeviceType type, QString uniqNameId) {
     if(isCurrentDevice(uniqNameId)) {
@@ -234,6 +244,7 @@ void ViewController::deviceReadyInit(DevicesFactory::E_DeviceType type, QString 
         case DevicesFactory::Type_Undefined: break;
         }
     }
+    emit devUpdateLogMessage(0, QString("Настройка устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
 }
 
 void ViewController::interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateType type) {
@@ -266,6 +277,7 @@ void ViewController::interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateT
     if(connFactory->getCountConnection() >0) {
         emit updatePropertiesSerialPort(connFactory->getInterace(index.interfaceIndex)->getInterfaceProperty());
     }
+    emit devUpdateLogMessage(2, QString("Перестроение дерева интерфейсов[%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
     connectToDevSignals();
 }
 
@@ -294,6 +306,7 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message) {
             break;
         case DevicesFactory::Type_Undefined: break;
         }
+        emit devUpdateLogMessage(2, QString("Получен ответ с команды [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
     }
 }
 
@@ -314,14 +327,17 @@ void ViewController::deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, 
                 status.push_back(getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceStatusByIndex(i));
             }
             emit remakeDeviceTree(list, status);
+            emit devUpdateLogMessage(2, QString("Перестроение дерева устройств [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
         }
     }
         break;
     case DevicesFactory::Type_Update_PasswordIncorrect:
         // внутри эвента удаляется устройство
         emit devUpdatePasswordIncorrect(getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceHeaderByIndex(indexDev).first());
+        emit devUpdateLogMessage(2, QString("Не правильный пароль [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
         break;
     case DevicesFactory::Type_Update_TypeIncorrect:
+        emit devUpdateLogMessage(2, QString("Не правильный тип [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
         emit devUpdateTypeDevIncorrect(getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceHeaderByIndex(indexDev).first());
         break;
     }
@@ -362,6 +378,7 @@ void ViewController::setChangedIndexDevice(int devIndex) {
     index.deviceIndex = devIndex;
     connectToDevSignals(); // get interface property
     getDeviceFactoryByIndex(index.interfaceIndex)->setDeviceInitCommandByIndex(index.deviceIndex);
+    emit devUpdateLogMessage(2, QString("Переключение устройства [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
 }
 
 void ViewController::setChangedIndexInteface(int interfaceIndex) {
@@ -371,4 +388,5 @@ void ViewController::setChangedIndexInteface(int interfaceIndex) {
     //...
     index.interfaceIndex = interfaceIndex;
     interfaceTreeChanged(ConnectionFactory::Type_Update_ChangedIndex);
+    emit devUpdateLogMessage(1, QString("Переключение интерфейса[%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
 }

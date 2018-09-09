@@ -77,6 +77,8 @@ signals:
     void devUpdateWriteSettingExecuted(QString devNameId);
     void devUpdateWriteScaleMeasureExecuted(QString devNameId);
 
+    void devUpdateLogMessage(int codeMessage, QString message);
+
     void devUpdateTree(QStringList devNames, QList<int>status);
 
 
