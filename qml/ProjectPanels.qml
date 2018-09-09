@@ -36,8 +36,9 @@ Item {
 
         Rectangle {
             id: statusBarRecangle
-            height: 30
+            height: 5//30
             color: "#dfe1e9"
+            visible: false
             radius: 0
             border.width: 0
             anchors.bottom: parent.bottom
