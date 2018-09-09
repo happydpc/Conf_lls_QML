@@ -81,8 +81,36 @@ QStringList Progress_tmk4UX::getCurrentData() {
     return res;
 }
 
+QStringList Progress_tmk4UX::getErrors() {
+    QStringList ret;
+    if(lls_data.errors.isValid) {
+        ret << QString::number(lls_data.errors.errors.GenFreq0);
+        ret << QString::number(lls_data.errors.errors.MaxFreqOut);
+        ret << QString::number(lls_data.errors.errors.MinFreqOut);
+        ret << QString::number(lls_data.errors.errors.NotCalibrated);
+        ret << QString::number(lls_data.errors.errors.QeueManagerError);
+        ret << QString::number(lls_data.errors.errors.ReplayNotComeRs232);
+        ret << QString::number(lls_data.errors.errors.ReplayNotComeRs485);
+        ret << QString::number(lls_data.errors.errors.Rs232Error);
+        ret << QString::number(lls_data.errors.errors.Rs485Error);
+        ret << QString::number(lls_data.errors.errors.Slave1Error);
+        ret << QString::number(lls_data.errors.errors.Slave2Error);
+        ret << QString::number(lls_data.errors.errors.Slave3Error);
+        ret << QString::number(lls_data.errors.errors.Slave4Error);
+    }
+    return ret;
+}
+
 DeviceAbstract::E_State Progress_tmk4UX::getState() {
     return state;
+}
+
+QStringList Progress_tmk4UX::getSettings() {
+
+}
+
+void Progress_tmk4UX::setSettings(QStringList &settings) {
+
 }
 
 void Progress_tmk4UX::setState(DeviceAbstract::E_State value) {
@@ -209,7 +237,7 @@ bool Progress_tmk4UX::makeDataToCommand(CommandController::sCommandData &command
     return res;
 }
 
-bool Progress_tmk4UX::placeDataReplyToCommand(QByteArray &commandArrayReplyData) {
+bool Progress_tmk4UX::placeDataReplyToCommand(QByteArray &commandArrayReplyData, bool isNeedMessageAboutExecuted) {
     bool res = false;
     uint8_t crcCalcResult = 0;
     uint16_t frequency = 0;

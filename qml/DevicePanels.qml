@@ -7,9 +7,11 @@ Item {
     id: projectDevicePanel
     anchors.fill: parent
 
-    property alias devPropertyLlsTMK24: devPropertyLlsTMK24
+    property alias devPropertyProgressTmk24: devPropertyProgressTmk24
+//    property alias devPropertyProgressTmk4ux: devPropertyProgressTmk4ux
     property alias dialogAddDeviceFail : dialogAddDeviceFail
     property alias dialogAddInterfaceFail: dialogAddInterfaceFail
+    property alias devicePropertieslistModel1: devicePropertieslistModel1
 
     function setPropertyToSerialPort(listData) {
         devPropertySerialPort.setPropertyValues(listData)
@@ -173,9 +175,14 @@ Item {
                     clip: true
                     initialItem: devPropertySerialPort
 
-                    DevPropertyLlsTMK324 {
-                        id: devPropertyLlsTMK24
+                    DevPropertyProgressTmk24 {
+                        id: devPropertyProgressTmk24
+//                        property bool isActive: false
                     }
+//                    DevPropertyProgressTmk4ux {
+//                        id: devPropertyProgressTmk4ux
+////                        property bool isActive: false
+//                    }
                     DevPropertySerialPort {
                         id: devPropertySerialPort
                     }
@@ -262,7 +269,8 @@ Item {
                         console.log("DeviceList clicked ")
                         if (mouse.button === Qt.LeftButton) {
                             viewDevice.currentIndex = model.index
-                            devicePropertieslistModel1.push(devPropertyLlsTMK24)
+                            devicePropertieslistModel1.push(devPropertyProgressTmk24)
+                            devPropertyProgressTmk24.setNoReady()
                             viewController.setChangedIndexDevice(model.index)
                         } else {
                             dialogRemoveDevice.open()

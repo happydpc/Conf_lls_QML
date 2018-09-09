@@ -110,6 +110,7 @@ void DevicesFactory::setDeviceInitCommandByIndex(int index) {
     QList<CommandController::sCommandData>commands = findDeviceByIndex(index)->second->getCommandListToInit();
     for(auto i:commands) {
         findDeviceByIndex(index)->second->makeDataToCommand(i);
+        i.isNeedAckMessage = false;
         commandList.push_back(i);
     }
 }
@@ -141,6 +142,14 @@ QString DevicesFactory::getDeviceIdTextByIndex(int index) {
     return findDeviceByIndex(index)->first;
 }
 
+QStringList DevicesFactory::getDeviceSettigns(int indexDev) {
+    return findDeviceByIndex(indexDev)->second->getSettings();
+}
+
+QStringList DevicesFactory::getDeviceErrrors(int indexDev) {
+    return findDeviceByIndex(indexDev)->second->getErrors();
+}
+
 int DevicesFactory::getDeviceStatusByIndex(int index) {
     if(deviceMap.empty()) {return false; }
     DeviceAbstract::E_State state = findDeviceByIndex(index)->second->getState();
@@ -166,7 +175,7 @@ DeviceAbstract::E_State DevicesFactory::getDevStateByIndex(int index) {
 
 QStringList DevicesFactory::getAvailableDeviceTypes() {
     QStringList types;
-    types << QString::fromUtf8(Progress_tmk4UX::name, strlen(Progress_tmk4UX::name));
+    //    types << QString::fromUtf8(Progress_tmk4UX::name, strlen(Progress_tmk4UX::name));
     types << QString::fromUtf8(Progress_tmk24::name, strlen(Progress_tmk24::name));
     return types;
 }
@@ -198,6 +207,7 @@ void DevicesFactory::devShedullerSlot() {
                 case DeviceAbstract::STATE_DISCONNECTED:
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         command = dev.second->getCommandToCheckConnected();
+                        command.isNeedAckMessage = false;
                         dev.second->makeDataToCommand(command);
                         commandList.push_back(command);
                     }
@@ -205,6 +215,7 @@ void DevicesFactory::devShedullerSlot() {
                 case DeviceAbstract::STATE_CHECK_PASSWORD:
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         command = dev.second->getCommandtoCheckPassword();
+                        command.isNeedAckMessage = false;
                         dev.second->makeDataToCommand(command);
                         commandList.push_back(command);
                     }
@@ -213,6 +224,7 @@ void DevicesFactory::devShedullerSlot() {
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         for(sizeCommand=0; sizeCommand!= dev.second->getCommandListToInit().size(); sizeCommand++) {
                             command = dev.second->getCommandListToInit().at(sizeCommand);
+                            command.isNeedAckMessage = false;
                             dev.second->makeDataToCommand(command);
                             commandList.push_back(command);
                         }
@@ -222,6 +234,7 @@ void DevicesFactory::devShedullerSlot() {
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         for(sizeCommand=0; sizeCommand!= dev.second->getCommandListToInit().size(); sizeCommand++) {
                             command = dev.second->getCommandListToInit().at(sizeCommand);
+                            command.isNeedAckMessage = false;
                             dev.second->makeDataToCommand(command);
                             commandList.push_back(command);
                         }
@@ -231,6 +244,7 @@ void DevicesFactory::devShedullerSlot() {
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         for(sizeCommand=0; sizeCommand != dev.second->getCommandListToCurrentData().size(); sizeCommand++) {
                             command = dev.second->getCommandListToCurrentData().at(sizeCommand);
+                            command.isNeedAckMessage = false;
                             dev.second->makeDataToCommand(command);
                             commandList.push_back(command);
                         }
@@ -247,7 +261,7 @@ void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
     for(auto dev: deviceMap) {
         if(dev.second->getUniqIdent() == commandList.first().deviceIdent) {
             qDebug() << "placeDataReplyToCommand -len=" << data.length();
-            dev.second->placeDataReplyToCommand(data);
+            dev.second->placeDataReplyToCommand(data, commandList.first().isNeedAckMessage);
             break;
         }
     }
@@ -301,10 +315,7 @@ void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QS
         emit deviceUpdateTree(DevicesFactory::Type_Update_ChangeStatus, findDeviceIndex(devUniqueId));
         break;
     case DeviceAbstract::Type_DeviceEvent_CurrentDataUpdated:
-        //
         // TODO: пересылаем на верх
-        // здесь ловим изменение с неинтита на инит и готовность отдать properties
-        //
         emit deviceReadyCurrentDataSignal(getDeviceType(findDeviceByUnicIdent(devUniqueId)->second->getDevTypeName()), devUniqueId);
         // TODO: отловить реальное изменение статус
         // чтобы не высылать после каждого пакета
@@ -322,6 +333,13 @@ void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QS
         // удаляем устройство
         removeDeviceByIndex(findDeviceIndex(devUniqueId));
         break;
+
+    case DeviceAbstract::Type_DeviceEvent_ExectCustomCommandNorlal:
+        emit deviceReadyCustomCommand(findDeviceIndex(devUniqueId), message);
+        break;
+    case DeviceAbstract::Type_DeviceEvent_ExectCustomCommandError:
+        // TODO: --
+        break;
     }
 }
 
@@ -337,6 +355,8 @@ void DevicesFactory::unlockMutextDevMap() {
 void DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation, QStringList arguments) {
     CommandController::sCommandData command;
     command = findDeviceByIndex(indexDev)->second->getCommandCustom(operation, arguments);
+    // что требует подтверждения о выполнении (на форме)
+    command.isNeedAckMessage = true;
     findDeviceByIndex(indexDev)->second->makeDataToCommand(command);
     commandList.push_back(command);
 }

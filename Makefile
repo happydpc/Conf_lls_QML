@@ -785,16 +785,19 @@ qrc_qml.cpp: qml.qrc \
 		qml/DevicePanels.qml \
 		qml/ProjectMenu.qml \
 		qml/AddDeviceDialog.qml \
+		qml/DevPropertyProgressTmk4ux.qml \
 		qml/TestFormForm.ui.qml \
 		qml/View.qml \
-		qml/DevPropertyLlsTMK324.qml \
 		qml/MainMenuBar.qml \
 		qml/ProjectPanels.qml \
 		qml/StartScreen.qml \
 		qml/SerialPort.qml \
 		qml/ProjectMainStack.qml \
 		qml/ProjectStartScreen.qml \
+		qml/DevPropertyProgressTmk24.qml \
 		images/logo/logo_progress.png \
+		images/icon/4372.png \
+		images/icon/4149.png \
 		images/icon/normal.png \
 		images/icon/no_normal.png
 	/opt/qt/5.11.0/gcc_64/bin/rcc -name qml qml.qrc -o qrc_qml.cpp
@@ -872,6 +875,7 @@ moc_connectionFactory.cpp: /opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontiguouscache.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QMutex \
 		interfaces/interface.h \
 		interfaces/interfaceBLE.h \
 		interfaces/interfacesAbstract.h \
@@ -888,7 +892,6 @@ moc_connectionFactory.cpp: /opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
 		interfaces/interfaceEthernet.h \
 		device/devicesFactory.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QMutex \
 		command/commandController.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QQueue \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
@@ -1025,7 +1028,6 @@ moc_devicesFactory.cpp: /opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
 		device/deviceAbstract.h \
 		device/subDevices/Progress_tmk4UX.h \
 		device/subDevices/Progress_tmk4UXData.h \
-		device/devicesFactory.h \
 		device/subDevices/Progress_tmk24.h \
 		device/subDevices/Progress_tmk24Data.h \
 		device/devicesFactory.h \
@@ -1393,6 +1395,7 @@ moc_viewController.cpp: /opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontiguouscache.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QMutex \
 		interfaces/interface.h \
 		interfaces/interfaceBLE.h \
 		interfaces/interfacesAbstract.h \
@@ -1409,7 +1412,6 @@ moc_viewController.cpp: /opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
 		interfaces/interfaceEthernet.h \
 		device/devicesFactory.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QMutex \
 		command/commandController.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QQueue \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
@@ -1988,6 +1990,7 @@ main.o: main.cpp view/viewController.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontiguouscache.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QMutex \
 		interfaces/interface.h \
 		interfaces/interfaceBLE.h \
 		interfaces/interfacesAbstract.h \
@@ -2004,7 +2007,6 @@ main.o: main.cpp view/viewController.h \
 		interfaces/interfaceEthernet.h \
 		device/devicesFactory.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QMutex \
 		command/commandController.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QQueue \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
@@ -2173,6 +2175,7 @@ connectionFactory.o: connection/connectionFactory.cpp connection/connectionFacto
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontiguouscache.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QMutex \
 		interfaces/interface.h \
 		interfaces/interfaceBLE.h \
 		interfaces/interfacesAbstract.h \
@@ -2189,7 +2192,6 @@ connectionFactory.o: connection/connectionFactory.cpp connection/connectionFacto
 		interfaces/interfaceEthernet.h \
 		device/devicesFactory.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QMutex \
 		command/commandController.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QQueue \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
@@ -2728,6 +2730,7 @@ viewController.o: view/viewController.cpp view/viewController.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontiguouscache.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QMutex \
 		interfaces/interface.h \
 		interfaces/interfaceBLE.h \
 		interfaces/interfacesAbstract.h \
@@ -2744,7 +2747,6 @@ viewController.o: view/viewController.cpp view/viewController.h \
 		interfaces/interfaceEthernet.h \
 		device/devicesFactory.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QMutex \
 		command/commandController.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QQueue \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
@@ -3007,11 +3009,6 @@ testDevReply.o: tests/testDevReply.cpp /opt/qt/5.11.0/gcc_64/include/QtCore/QDeb
 		device/subDevices/Progress_tmk24.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
 		device/subDevices/Progress_tmk24Data.h \
-		device/devicesFactory.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QTimer \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qtimer.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qbasictimer.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QMutex \
 		device/subDevices/Progress_tmk4UX.h \
 		device/subDevices/Progress_tmk4UXData.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o testDevReply.o tests/testDevReply.cpp
@@ -3235,6 +3232,15 @@ Progress_tmk4UX.o: device/subDevices/Progress_tmk4UX.cpp /opt/qt/5.11.0/gcc_64/i
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontiguouscache.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		device/subDevices/Progress_tmk4UX.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
+		device/deviceAbstract.h \
+		command/commandController.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QQueue \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QPair \
+		device/subDevices/Progress_tmk4UXData.h \
 		other/crc.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QByteArray
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Progress_tmk4UX.o device/subDevices/Progress_tmk4UX.cpp
@@ -3363,13 +3369,6 @@ Progress_tmk24.o: device/subDevices/Progress_tmk24.cpp /opt/qt/5.11.0/gcc_64/inc
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QPair \
 		device/subDevices/Progress_tmk24Data.h \
-		device/devicesFactory.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QTimer \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qtimer.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qbasictimer.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QMutex \
-		device/subDevices/Progress_tmk4UX.h \
-		device/subDevices/Progress_tmk4UXData.h \
 		other/crc.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QByteArray
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Progress_tmk24.o device/subDevices/Progress_tmk24.cpp

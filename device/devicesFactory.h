@@ -52,6 +52,10 @@ public slots:
     QStringList getDeviceHeaderByIndex(int index);
     QString getDeviceIdTextByIndex(int index);
 
+    QStringList getDeviceSettigns(int indexDev);
+
+    QStringList getDeviceErrrors(int indexDev);
+
     int getDeviceStatusByIndex(int index);
 
     QList<int> getDeviceChartByIndex(int index);
@@ -78,6 +82,7 @@ signals:
     void deviceReadyInitSignal(DevicesFactory::E_DeviceType, QString uniqNameId);
 
     void deviceUpdateTree(DevicesFactory::E_DeviceUpdateType status, int index);
+    void deviceReadyCustomCommand(int index, QString message);
 
 private slots:
     //-- find device by index

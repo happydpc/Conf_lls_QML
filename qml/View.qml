@@ -25,25 +25,25 @@ Item {
         onUpdatePropertiesSerialPort: {
             projectPanels.devicePanel.setPropertyToSerialPort(properties)
         }
-        onDevReadyPropertiesTmk13: {
-            projectPanels.devicePanel.devPropertyLlsTMK24.setDevProperty(data)
-        } 
-        onDevReadyPropertiesTmk24: {
-            projectPanels.devicePanel.devPropertyLlsTMK24.setDevProperty(data)
+        onDevReadyPropertiesTmk4ux: {
+            projectPanels.devicePanel.devPropertyProgressTmk4ux.setDevProperty(data)
         }
-        onDevReadyOtherDataTmk13: {
-            projectPanels.devicePanel.devPropertyLlsTMK24.setUpdateCurrentValues(data)
+        onDevReadyPropertiesTmk24: {
+            projectPanels.devicePanel.devPropertyProgressTmk24.setDevProperty(data)
+        }
+        onDevReadyOtherDataTmk4ux: {
+            projectPanels.devicePanel.devPropertyProgressTmk4ux.setUpdateCurrentValues(data)
         }
         onDevReadyOtherDataTmk24: {
-            projectPanels.devicePanel.devPropertyLlsTMK24.setUpdateCurrentValues(data)
+            projectPanels.devicePanel.devPropertyProgressTmk24.setUpdateCurrentValues(data)
         }
-        onDevFullReadyTmk13: {}
+        onDevFullReadyTmk4ux: {}
         onDevFullReadyTmk24: {}
-        onDevDisconnectedTmk13: {
-            projectPanels.devicePanel.devPropertyLlsTMK24.setNoActive()
+        onDevDisconnectedTmk4ux: {
+            projectPanels.devicePanel.devPropertyProgressTmk4ux.setNoReady()
         }
         onDevDisconnectedTmk24: {
-
+            projectPanels.devicePanel.devPropertyProgressTmk24.setNoReady()
         }
         onDevUpdatePasswordIncorrect: {
             projectPanels.devicePanel.devShowPasswordIncorrect(devNameId)
@@ -56,6 +56,20 @@ Item {
         }
         onAddDeviceFail: {
             projectPanels.devicePanel.dialogAddDeviceFail.open()
+        }
+        onDevUpdateWriteScaleMeasureExecuted: {
+            projectPanels.devicePanel.devPropertyProgressTmk24.messageMinMaxWriteOk.open()
+        }
+        onDevUpdateWriteSettingExecuted: {
+            projectPanels.devicePanel.devPropertyProgressTmk24.messageWriteSettingsOk.open()
+        }
+        onDevUpdateReadSettingExecuted: {
+            projectPanels.devicePanel.devPropertyProgressTmk24.readSettings(devNameId, settings)
+            projectPanels.devicePanel.devPropertyProgressTmk24.messageReadSettingsOk.open()
+        }
+        onDevUpdateReadErrorsExecuted: {
+            projectPanels.devicePanel.devPropertyProgressTmk24.readErrors(devNameId, errors)
+            projectPanels.devicePanel.devPropertyProgressTmk24.messageReadErrorsOk.open()
         }
     }
 

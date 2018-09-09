@@ -68,6 +68,7 @@ QStringList Progress_tmk24::getPropertyData() {
     res << getDevTypeName();
     res << lls_data.firmware.value;
     res << QString::number(lls_data.password.get.isValid);
+    res += getSettings();
     return res;
 }
 
@@ -79,6 +80,59 @@ QStringList Progress_tmk24::getCurrentData() {
     res << QString::number(lls_data.freq.value.value_u16);
     res << QString::number(lls_data.temp.value.value_i);
     return res;
+}
+
+QStringList Progress_tmk24::getSettings() {
+    QStringList ret;
+    if(lls_data.settings.get.isValid) {
+        ret << getDevTypeName();
+        ret << QString::number(lls_data.settings.get.value.k1, 'f');
+        ret << QString::number(lls_data.settings.get.value.k2, 'f');
+        ret << QString::number(lls_data.settings.get.value.thermoCompensationType);
+        ret << QString::number(lls_data.settings.get.value.periodicSendType);
+        ret << QString::number(lls_data.settings.get.value.periodicSendTime);
+        ret << QString::number(lls_data.settings.get.value.outputValue);
+        ret << QString::number(lls_data.settings.get.value.interpolationType);
+        ret << QString::number(lls_data.settings.get.value.filterType);
+        ret << QString::number(lls_data.settings.get.value.medianLength);
+        ret << QString::number(lls_data.settings.get.value.avarageLength);
+        ret << QString::number(lls_data.settings.get.value.q, 'f');
+        ret << QString::number(lls_data.settings.get.value.r, 'f');
+        ret << QString::number(lls_data.settings.get.value.minLevel);
+        ret << QString::number(lls_data.settings.get.value.maxLevel);
+        ret << QString::number(lls_data.settings.get.value.rs232Speed);
+        ret << QString::number(lls_data.settings.get.value.rs485Speed);
+        ret << QString::number(lls_data.settings.get.value.slaveCount);
+        ret << QString::number(lls_data.settings.get.value.slaveAddr[0]);
+        ret << QString::number(lls_data.settings.get.value.slaveAddr[1]);
+        ret << QString::number(lls_data.settings.get.value.slaveAddr[2]);
+        ret << QString::number(lls_data.settings.get.value.slaveAddr[3]);
+    }
+    return ret;
+}
+
+void Progress_tmk24::setSettings(QStringList &settings) {
+
+}
+
+QStringList Progress_tmk24::getErrors() {
+    QStringList ret;
+    if(lls_data.errors.isValid) {
+        ret << QString::number(lls_data.errors.errors.GenFreq0);
+        ret << QString::number(lls_data.errors.errors.MaxFreqOut);
+        ret << QString::number(lls_data.errors.errors.MinFreqOut);
+        ret << QString::number(lls_data.errors.errors.NotCalibrated);
+        ret << QString::number(lls_data.errors.errors.QeueManagerError);
+        ret << QString::number(lls_data.errors.errors.ReplayNotComeRs232);
+        ret << QString::number(lls_data.errors.errors.ReplayNotComeRs485);
+        ret << QString::number(lls_data.errors.errors.Rs232Error);
+        ret << QString::number(lls_data.errors.errors.Rs485Error);
+        ret << QString::number(lls_data.errors.errors.Slave1Error);
+        ret << QString::number(lls_data.errors.errors.Slave2Error);
+        ret << QString::number(lls_data.errors.errors.Slave3Error);
+        ret << QString::number(lls_data.errors.errors.Slave4Error);
+    }
+    return ret;
 }
 
 DeviceAbstract::E_State Progress_tmk24::getState() {
@@ -144,8 +198,7 @@ bool Progress_tmk24::makeDataToCommand(CommandController::sCommandData &commandD
                     if(!lls_data.password.session.value.isEmpty()) {
                         int passLen = lls_data.password.session.value.length();
                         for(int passCounter=0; passCounter<passLen; passCounter++) {
-                            commandData.commandOptionData.push_back(
-                                        lls_data.password.session.value.at(passCounter).toLatin1());
+                            passArray.push_back(lls_data.password.session.value.at(passCounter).toLatin1());
                         }
                     }
                 }
@@ -209,7 +262,7 @@ bool Progress_tmk24::makeDataToCommand(CommandController::sCommandData &commandD
     return res;
 }
 
-bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) {
+bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, bool isNeedMessageAboutExecuted) {
     bool res = false;
     uint8_t crcCalcResult = 0;
     uint16_t frequency = 0;
@@ -234,14 +287,12 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                 if(lls_data.typeIsValid) {
                     lls_data.temp.value.value_i = (int8_t)(0xFF & commandArrayReplyData.at(3));
                     lls_data.temp.isValid = true;
-
                     value = 0xFF & commandArrayReplyData.at(5);
                     value = value << 8;
                     value |= 0xFF & commandArrayReplyData.at(4);
                     frequency = 0xFF & commandArrayReplyData.at(7);
                     frequency = frequency << 8;
                     frequency |= 0xFF & commandArrayReplyData.at(6);
-
                     lls_data.fuelLevel.value.value_u32 = value;
                     if(lls_data.settings.get.isValid) {
                         lls_data.fuelProcent.value.value_u32 = ((float)((float)value/lls_data.settings.get.value.maxLevel)*100);
@@ -252,7 +303,7 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                     lls_data.freq.value.value_u32  = frequency;
                     lls_data.freq.isValid = true;
                     // TODO: random ok?
-                    chartData->push_back(lls_data.fuelLevel.value.value_u32 + (rand()%10));
+                    chartData->push_back(lls_data.fuelLevel.value.value_u32 + (rand()%1));
                     while(chartData->size() > 50) {
                         chartData->pop_front();
                     }
@@ -318,6 +369,9 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                             lls_data.settings.get.value = *pSettings;
                             lls_data.settings.get.isValid = true;
                         }
+                        if(isNeedMessageAboutExecuted) {
+                            emit eventDevice(DeviceAbstract::Type_DeviceEvent_ExectCustomCommandNorlal, getUniqIdent(), QString("lls_read_settings"));
+                        }
                         emit eventDevice(DeviceAbstract::Type_DeviceEvent_ReadyReadProperties, getUniqIdent(), QString("Ready read properties"));
                     }
                     res = true;
@@ -329,6 +383,9 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                 if(lls_data.typeIsValid) {
                     if(commandArrayReplyData.size() > 4) {
                         if(commandArrayReplyData.at(3) == 0) {
+                            if(isNeedMessageAboutExecuted) {
+                                emit eventDevice(DeviceAbstract::Type_DeviceEvent_ExectCustomCommandNorlal, getUniqIdent(), QString("lls_write_settings"));
+                            }
                             res = true;
                         }
                     }
@@ -352,6 +409,9 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                             index++;
                         }
                         lls_data.calibrateTable.get.isValid = true;
+                        if(isNeedMessageAboutExecuted) {
+                            emit eventDevice(DeviceAbstract::Type_DeviceEvent_ExectCustomCommandNorlal, getUniqIdent(), QString("lls_read_cal_table"));
+                        }
                         res = true;
                     }
                 }
@@ -362,17 +422,34 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                 if(lls_data.typeIsValid) {
                     if(commandArrayReplyData.size() > 4) {
                         if(commandArrayReplyData.at(3) == 0) {
+                            if(isNeedMessageAboutExecuted) {
+                                emit eventDevice(DeviceAbstract::Type_DeviceEvent_ExectCustomCommandNorlal, getUniqIdent(), QString("lls_write_cal_table"));
+                            }
                             res = true;
                         }
                     }
                 }
                 break;
             case Progress_tmk24Data::lls_calibrate_min:
+                if(commandArrayReplyData.size() > 3) {
+                    if(commandArrayReplyData.at(3) == 0) {
+                        if(isNeedMessageAboutExecuted) {
+                            emit eventDevice(DeviceAbstract::Type_DeviceEvent_ExectCustomCommandNorlal, getUniqIdent(), QString("lls_calibrate_min"));
+                        }
+                        res = true;
+                    } else {
+                        // TODO: обработка ошибки
+                    }
+                }
+                break;
+
             case Progress_tmk24Data::lls_calibrate_max:
                 if(lls_data.typeIsValid) {
                     if(commandArrayReplyData.size() > 3) {
                         if(commandArrayReplyData.at(3) == 0) {
-                            // TODO: обработка ок
+                            if(isNeedMessageAboutExecuted) {
+                                emit eventDevice(DeviceAbstract::Type_DeviceEvent_ExectCustomCommandNorlal, getUniqIdent(), QString("lls_calibrate_max"));
+                            }
                             res = true;
                         } else {
                             // TODO: обработка ошибки
@@ -388,6 +465,9 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                         Progress_tmk24Data::T_errors t_erros;
                         memcpy(&t_erros, (commandArrayReplyData.data() + 3), sizeof(t_erros));
                         memcpy(&lls_data.errors, &t_erros, sizeof(lls_data.errors));
+                        if(isNeedMessageAboutExecuted) {
+                            emit eventDevice(DeviceAbstract::Type_DeviceEvent_ExectCustomCommandNorlal, getUniqIdent(), QString("lls_read_errors"));
+                        }
                         lls_data.errors.isValid = true;
                         res = true;
                     }
@@ -412,6 +492,9 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
             case Progress_tmk24Data::lls_set_new_password:
                 if(commandArrayReplyData.size() >= 4) {
                     if(commandArrayReplyData.at(3) == 0) {
+                        if(isNeedMessageAboutExecuted) {
+
+                        }
                         res = true;
                     }
                 }
@@ -429,7 +512,11 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData) 
                 }
                 break;
 
-            case Progress_tmk24Data::lls_run_bootloader: break;
+            case Progress_tmk24Data::lls_run_bootloader:
+                if(isNeedMessageAboutExecuted) {
+
+                }
+                break;
             case Progress_tmk24Data::lls_read_cnt: {
                 uint32_t cnt = 0;
                 if(commandArrayReplyData.size() >= 8) {
@@ -516,6 +603,16 @@ CommandController::sCommandData Progress_tmk24::getCommandCustom(QString operati
         command.devCommand = (int)Progress_tmk24Data::lls_calibrate_min;
     } else if(operation == "set current level value as max") {
         command.devCommand = (int)Progress_tmk24Data::lls_calibrate_max;
+    } else if(operation == "get current dev settings") {
+        command.devCommand = (int)Progress_tmk24Data::lls_read_settings;
+    } else if(operation == "set current dev settings") {
+        command.devCommand = (int)Progress_tmk24Data::lls_write_settings;
+    } else if(operation == "read current dev errors") {
+        command.devCommand = (int)Progress_tmk24Data::lls_read_errors;
+    } else if(operation == "set current dev cal table") {
+        command.devCommand = (int)Progress_tmk24Data::lls_write_cal_table;
+    } else if(operation == "read current dev cal table") {
+        command.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
     } else {
         qDebug() << "getCommandCustom -type unknown!";
     }

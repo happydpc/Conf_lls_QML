@@ -20,7 +20,6 @@ Item {
         visible: false
     }
 
-    // device/connection stackList
     DevicePanels {
         id: devicePanel
         visible: false

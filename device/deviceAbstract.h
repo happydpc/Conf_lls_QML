@@ -25,18 +25,23 @@ public:
         Type_DeviceEvent_Inited,
         Type_DeviceEvent_CurrentDataUpdated,
         Type_DeviceEvent_PasswordError,
-        Type_DeviceEvent_TypeError
+        Type_DeviceEvent_TypeError,
+        Type_DeviceEvent_ExectCustomCommandNorlal,
+        Type_DeviceEvent_ExectCustomCommandError,
     }E_DeviceEvent;
 
     virtual QString getDevTypeName() = 0;
     virtual QStringList getPropertyData() = 0;
     virtual QStringList getCurrentData() = 0;
     virtual QString getUniqIdent() = 0;
+    virtual QStringList getSettings() = 0;
+    virtual QStringList getErrors() = 0;
+    virtual void setSettings(QStringList &settings) = 0;
     virtual E_State getState() = 0;
     virtual void setState(DeviceAbstract::E_State) = 0;
     virtual bool makeDataToCommand(CommandController::sCommandData &commandData) = 0;
 
-    virtual bool placeDataReplyToCommand(QByteArray &commandArrayReplyData) = 0;
+    virtual bool placeDataReplyToCommand(QByteArray &commandArrayReplyData, bool isNeedMessageAboutExecuted) = 0;
     virtual CommandController::sCommandData getCommandToCheckConnected() = 0;
     virtual CommandController::sCommandData getCommandToGetType() = 0;
     virtual CommandController::sCommandData getCommandtoCheckPassword() = 0;

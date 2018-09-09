@@ -16,6 +16,8 @@ public:
         QString deviceIdent;
         // dev command
         int devCommand;
+        // need ack what command executed?
+        bool isNeedAckMessage;
         // bytearray for command buf
         QByteArray commandOptionData;
         // buffer for transmit settings, firmware and other data

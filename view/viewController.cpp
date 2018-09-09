@@ -14,7 +14,7 @@ ViewController::ViewController(QObject *parent) : QObject(parent) {
         addConnectionSerialPort(strLis.first(), QString("19200"));
         addConnectionSerialPort(strLis.last(), QString("19200"));
 
-        for(int i=0; i<5; i++) { // 15
+        for(int i=0; i<1; i++) { // 15
             addDeviceToConnection("Progress tmk24", QString::number(i+1), "1234"); // tmk4UX tmk24
         }
     });
@@ -101,7 +101,7 @@ QList<int> ViewController::getCurrentDevChart() {
 QList<QString> ViewController::getCurrentDevOtherData() {
     QList<QString> res;
     QString name;
-    name = connFactory->getInteraceNameFromIndex(index.deviceIndex);
+    name = connFactory->getInteraceNameFromIndex(index.interfaceIndex);
     if(!name.isEmpty()) {
         res = connFactory->getInterace(name)->getDeviceFactory()->getDeviceCurrentDataByIndex(index.deviceIndex);
     }
@@ -123,8 +123,6 @@ QStringList ViewController::getCurrentDevPropertyByIndex() {
     QStringList ret = connFactory->getInterace(
                 connFactory->getInteraceNameFromIndex(index.interfaceIndex))->getDeviceFactory()
             ->getDevicePropertyByIndex(index.deviceIndex);
-    ret.push_front(connFactory->getInterace(connFactory->getInteraceNameFromIndex(index.interfaceIndex))->
-                   getDeviceFactory()->getDeviceName(index.deviceIndex));
     return ret;
 }
 
@@ -151,11 +149,31 @@ void ViewController::setCurrentDevLevelAsFull() {
     getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "set current level value as max", QStringList(""));
 }
 
+void ViewController::getCurrentDevSettings() {
+    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "get current dev settings", QStringList(""));
+}
+
+void ViewController::setCurrentDevSettings(QStringList settings) {
+    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "set current dev settings", settings);
+}
+
+void ViewController::getCurrentDevErrors() {
+    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "read current dev errors", QStringList(""));
+}
+
+void ViewController::getCurrentDevCalTable() {
+    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "read current dev cal table", QStringList(""));
+}
+
+void ViewController::setCurrentDevCalTable(QStringList calTable) {
+    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "set current dev cal table", calTable);
+}
+
 void ViewController::deviceConnected(DevicesFactory::E_DeviceType type, QString uniqNameId) {
     if(isCurrentDevice(uniqNameId)) {
         switch(type) {
         case DevicesFactory::Type_Progress_tmk4UX:
-            emit devConnectedTmk13();
+            emit devConnectedTmk4ux();
             break;
         case DevicesFactory::Type_Progress_Tmk24:
             emit devConnectedTmk24();
@@ -164,11 +182,12 @@ void ViewController::deviceConnected(DevicesFactory::E_DeviceType type, QString 
         }
     }
 }
+
 void ViewController::deviceDisconnected(DevicesFactory::E_DeviceType type, QString uniqNameId) {
     if(isCurrentDevice(uniqNameId)) {
         switch(type) {
         case DevicesFactory::Type_Progress_tmk4UX:
-            emit devDisconnectedTmk13();
+            emit devDisconnectedTmk4ux();
             break;
         case DevicesFactory::Type_Progress_Tmk24:
             emit devDisconnectedTmk24();
@@ -181,7 +200,7 @@ void ViewController::deviceReadyCurrentData(DevicesFactory::E_DeviceType type, Q
     if(isCurrentDevice(uniqNameId)) {
         switch(type) {
         case DevicesFactory::Type_Progress_tmk4UX:
-            emit devReadyOtherDataTmk13(getCurrentDevOtherData());
+            emit devReadyOtherDataTmk4ux(getCurrentDevOtherData());
             break;
         case DevicesFactory::Type_Progress_Tmk24:
             emit devReadyOtherDataTmk24(getCurrentDevOtherData());
@@ -194,7 +213,7 @@ void ViewController::deviceReadyProperties(DevicesFactory::E_DeviceType type, QS
     if(isCurrentDevice(uniqNameId)) {
         switch(type) {
         case DevicesFactory::Type_Progress_tmk4UX:
-            emit devReadyPropertiesTmk13(getCurrentDevPropertyByIndex());
+            emit devReadyPropertiesTmk4ux(getCurrentDevPropertyByIndex());
             break;
         case DevicesFactory::Type_Progress_Tmk24:
             emit devReadyPropertiesTmk24(getCurrentDevPropertyByIndex());
@@ -207,7 +226,7 @@ void ViewController::deviceReadyInit(DevicesFactory::E_DeviceType type, QString 
     if(isCurrentDevice(uniqNameId)) {
         switch(type) {
         case DevicesFactory::Type_Progress_tmk4UX:
-            emit devFullReadyTmk13(getCurrentDevPropertyByIndex());
+            emit devFullReadyTmk4ux(getCurrentDevPropertyByIndex());
             break;
         case DevicesFactory::Type_Progress_Tmk24:
             emit devFullReadyTmk24(getCurrentDevPropertyByIndex());
@@ -248,6 +267,34 @@ void ViewController::interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateT
         emit updatePropertiesSerialPort(connFactory->getInterace(index.interfaceIndex)->getInterfaceProperty());
     }
     connectToDevSignals();
+}
+
+void ViewController::deviceReadyCustomCommand(int indexDev, QString message) {
+    DevicesFactory *pDevFactory = nullptr;
+    pDevFactory = getDeviceFactoryByIndex(index.interfaceIndex);
+    if(pDevFactory != nullptr) {
+        switch(pDevFactory->getDeviceType(pDevFactory->getDeviceName(indexDev))) {
+        case DevicesFactory::Type_Progress_Tmk24:
+            if(message == "lls_calibrate_max") {
+                emit devUpdateWriteScaleMeasureExecuted(pDevFactory->getDeviceName(indexDev));
+            }
+            if(message == "lls_calibrate_min") {
+                emit devUpdateWriteScaleMeasureExecuted(pDevFactory->getDeviceName(indexDev));
+            }
+            if(message == "lls_read_settings") {
+                emit devUpdateReadSettingExecuted(pDevFactory->getDeviceName(indexDev),
+                                                  pDevFactory->getDeviceSettigns(indexDev));
+            }
+            if(message == "lls_read_errors") {;
+                emit devUpdateReadErrorsExecuted(pDevFactory->getDeviceName(indexDev),
+                                                 pDevFactory->getDeviceErrrors(indexDev));
+            }
+            break;
+        case DevicesFactory::Type_Progress_tmk4UX:
+            break;
+        case DevicesFactory::Type_Undefined: break;
+        }
+    }
 }
 
 void ViewController::deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, int indexDev) {
@@ -291,6 +338,8 @@ void ViewController::disconnectToDevSignals() {
         disconnect(getDeviceFactoryByIndex(i),
                    SIGNAL(deviceUpdateTree(DevicesFactory::E_DeviceUpdateType,int)),
                    this, SLOT(deviceTreeChanged(DevicesFactory::E_DeviceUpdateType,int)));
+        disconnect(getDeviceFactoryByIndex(i), SIGNAL(deviceReadyCustomCommand(int,QString)),
+                   this, SLOT(deviceReadyCustomCommand(int,QString)));
     }
 }
 
@@ -301,24 +350,12 @@ void ViewController::connectToDevSignals() {
         connect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyCurrentDataSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyCurrentData(DevicesFactory::E_DeviceType,QString)));
         connect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyInitSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyInit(DevicesFactory::E_DeviceType,QString)));
         connect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyPropertiesSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyProperties(DevicesFactory::E_DeviceType,QString)));
-        connect(getDeviceFactoryByIndex(index.interfaceIndex),
-                SIGNAL(deviceUpdateTree(DevicesFactory::E_DeviceUpdateType,int)),
+        connect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceUpdateTree(DevicesFactory::E_DeviceUpdateType,int)),
                 this, SLOT(deviceTreeChanged(DevicesFactory::E_DeviceUpdateType,int)));
+        connect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyCustomCommand(int,QString)),
+                this, SLOT(deviceReadyCustomCommand(int,QString)));
     }
 }
-
-//if(getDeviceCount() > 0) {
-//    if((index.deviceIndex > 0) && (index.deviceIndex <= getDeviceCount())) {
-//        index.deviceIndex--;
-//    } else {
-//        index.deviceIndex = 0;
-//        setChangedIndexInteface(index.interfaceIndex);
-//    }
-//} else {
-//    index.deviceIndex = 0;
-//    setChangedIndexInteface(index.interfaceIndex);
-//}
-//setChangedIndexDevice(index.deviceIndex);
 
 void ViewController::setChangedIndexDevice(int devIndex) {
     disconnectToDevSignals();

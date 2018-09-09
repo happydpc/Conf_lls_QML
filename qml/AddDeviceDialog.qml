@@ -50,6 +50,9 @@ Popup {
         SpinBox {
             id: typeDeviceIdText
             Layout.fillWidth: true
+            from: 1
+            to: 255
+            value: 1
         }
 
         Label {

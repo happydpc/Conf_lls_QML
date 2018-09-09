@@ -6,7 +6,6 @@
 #include "device/deviceAbstract.h"
 #include "command/commandController.h"
 #include "Progress_tmk4UXData.h"
-#include "device/devicesFactory.h"
 
 class Progress_tmk4UX : public DeviceAbstract
 {
@@ -21,9 +20,12 @@ public:
     QStringList getCurrentData() override;
     DeviceAbstract::E_State getState() override;
     void setState(DeviceAbstract::E_State) override;
+    QStringList getSettings() override;
+    void setSettings(QStringList &settings) override;
+    QStringList getErrors() override;
     QString getUniqIdent() override;
     bool makeDataToCommand(CommandController::sCommandData &commandData) override;
-    bool placeDataReplyToCommand(QByteArray &commandArrayReplyData) override;
+    bool placeDataReplyToCommand(QByteArray &commandArrayReplyData, bool isNeedMessageAboutExecuted) override;
 
     CommandController::sCommandData getCommandToCheckConnected() override;
     CommandController::sCommandData getCommandToGetType() override;

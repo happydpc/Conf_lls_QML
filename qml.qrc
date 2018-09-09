@@ -3,7 +3,6 @@
         <file>images/logo/logo_progress.png</file>
         <file>qml/app.qml</file>
         <file>qml/DevicePanels.qml</file>
-        <file>qml/DevPropertyLlsTMK324.qml</file>
         <file>qml/DevPropertySerialPort.qml</file>
         <file>qml/MainMenuBar.qml</file>
         <file>qml/ProjectMainStack.qml</file>
@@ -16,9 +15,13 @@
         <file>qml/TestFormForm.ui.qml</file>
         <file>qml/View.qml</file>
         <file>qml/AddDeviceDialog.qml</file>
+        <file>qml/DevPropertyProgressTmk4ux.qml</file>
+        <file>qml/DevPropertyProgressTmk24.qml</file>
     </qresource>
     <qresource prefix="/new/icons">
         <file>images/icon/normal.png</file>
         <file>images/icon/no_normal.png</file>
+        <file>images/icon/4149.png</file>
+        <file>images/icon/4372.png</file>
     </qresource>
 </RCC>
