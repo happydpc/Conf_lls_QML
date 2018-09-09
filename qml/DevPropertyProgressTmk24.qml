@@ -50,7 +50,13 @@ Rectangle {
         for(i=0; i<list.length; i++) {
             series1.append(i, parseInt(list[i]));
         }
+        logListView.positionViewAtEnd()
     }
+
+    function addLogMessage(codeMessage, message) {
+        logListModel.append({"message":message,"status":codeMessage})
+    }
+
     function readSettings(devName, settings) {
         k1.text = settings[0]
         k2.text = settings[1]
@@ -74,6 +80,31 @@ Rectangle {
         //        ret << QString::number(lls_data.settings.get.value.slaveAddr[2]);
         //        ret << QString::number(lls_data.settings.get.value.slaveAddr[3]);
     }
+    function writeSettings() {
+        var settings = [];
+        settings.push(k1.text)
+        settings.push(k2.text)
+        settings.push(typeTempCompensation.currentIndex) //        ret << QString::number(lls_data.settings.get.value.thermoCompensationType);
+        settings.push(periodicSendType.currentIndex)     //        ret << QString::number(lls_data.settings.get.value.periodicSendType);
+        settings.push(periodicSendTime.value)    //        ret << QString::number(lls_data.settings.get.value.periodicSendTime);
+        settings.push(typeOutMessage.currentIndex)    //        ret << QString::number(lls_data.settings.get.value.outputValue);
+        settings.push(typeInterpolation.currentIndex)    //        ret << QString::number(lls_data.settings.get.value.interpolationType);
+        settings.push(typeFiltration.currentIndex)   //        ret << QString::number(lls_data.settings.get.value.filterType);
+        settings.push(filterLenghtMediana.value) //        ret << QString::number(lls_data.settings.get.value.medianLength);
+        settings.push(filterAvarageValueSec.value)   //        ret << QString::number(lls_data.settings.get.value.avarageLength);
+        settings.push(filterValueR.value)   //        ret << QString::number(lls_data.settings.get.value.q, 'f');
+        settings.push(filterValueQ.value)   //        ret << QString::number(lls_data.settings.get.value.r, 'f');
+        settings.push(minLevelValue.value)  //      ret << QString::number(lls_data.settings.get.value.minLevel);
+        settings.push(maxLevelValue.value)  //      ret << QString::number(lls_data.settings.get.value.maxLevel);
+        //        ret << QString::number(lls_data.settings.get.value.rs232Speed);
+        //        ret << QString::number(lls_data.settings.get.value.rs485Speed);
+        //        ret << QString::number(lls_data.settings.get.value.slaveCount);
+        //        ret << QString::number(lls_data.settings.get.value.slaveAddr[0]);
+        //        ret << QString::number(lls_data.settings.get.value.slaveAddr[1]);
+        //        ret << QString::number(lls_data.settings.get.value.slaveAddr[2]);
+        //        ret << QString::number(lls_data.settings.get.value.slaveAddr[3]);
+        viewController.setCurrentDevSettings(settings)
+    }
     function readErrors(devName, errors) {
         error1Label.error1 = errors[0]
         error2Label.error2 = errors[1]
@@ -84,7 +115,6 @@ Rectangle {
         error7Label.error7 = errors[6]
         error8Label.error8 = errors[7]
     }
-
 
     Rectangle {
         id: devPropertyProgressTmk24
@@ -98,8 +128,9 @@ Rectangle {
             anchors.leftMargin: 10
             anchors.rightMargin: 10
             anchors.top: row7.bottom
-            anchors.right: tabBar.left
+            anchors.right: rightTabBarRect.left
             anchors.left: parent.left
+            width: 1000
             currentIndex: propertiesView.currentIndex
             font.pointSize: 8
 
@@ -672,204 +703,298 @@ Rectangle {
             }
         }
 
-
-        TabBar {
-            id: tabBar
+        Rectangle {
+            id:rightTabBarRect
             width: 300
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.top: parent.top
 
-            TabButton {
-                id: currentData
-                text: qsTr("Текущие данные")
-                focusPolicy: Qt.TabFocus
-                background: Rectangle {
-                    gradient: Gradient {
-                        GradientStop {
-                            position: 1
-                            color: "#4D75E0"
-                        }
-                        GradientStop {
-                            position: 0
-                            color: "#EEF0F6"
+            TabBar {
+                id: rightTabBar
+                width: 300
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.top: parent.top
+                currentIndex: rightPanelView.index
+
+                TabButton {
+                    id: currentData
+                    text: qsTr("Текущие данные")
+                    focusPolicy: Qt.TabFocus
+                    background: Rectangle {
+                        gradient: Gradient {
+                            GradientStop {
+                                position: 1
+                                color: "#4D75E0"
+                            }
+                            GradientStop {
+                                position: 0
+                                color: "#EEF0F6"
+                            }
                         }
                     }
                 }
 
-                Rectangle {
-                    id: currnetDataRect
-                    width: tabBar.width
-                    height: tabBar.height - currentData.height
-                    color: "#ffffff"
-                    anchors.topMargin: currentData.height
-                    anchors.top: parent.top
-                    anchors.left: parent.left
-                    clip: true
-
-                    Column {
-                        id: column
-                        anchors.top: parent.top
-                        anchors.topMargin: 10
-                        anchors.bottom: parent.bottom
-                        anchors.bottomMargin: 10
-                        anchors.left: parent.left
-                        anchors.leftMargin: 10
-                        anchors.right: parent.right
-                        anchors.rightMargin: 10
-                        spacing: 10
-
-                        Label {
-                            id: levelValue
-                            text: qsTr("Level/value:")
-                            anchors.left: parent.left
-                            anchors.leftMargin: 0
-                            anchors.right: parent.right
-                            anchors.rightMargin: 0
+                TabButton {
+                    id: slaves
+                    text: qsTr("Ведомые")
+                    enabled: false
+                    background: Rectangle {
+                        gradient: Gradient {
+                            GradientStop {
+                                position: 1
+                                color: "#4D75E0"
+                            }
+                            GradientStop {
+                                position: 0
+                                color: "#EEF0F6"
+                            }
                         }
+                    }
+                }
 
-                        ProgressBar {
-                            id: levelProgress
+                TabButton {
+                    id: log
+                    text: qsTr("Журнал")
+                    background: Rectangle {
+                        gradient: Gradient {
+                            GradientStop {
+                                position: 1
+                                color: "#4D75E0"
+                            }
+                            GradientStop {
+                                position: 0
+                                color: "#EEF0F6"
+                            }
+                        }
+                    }
+                }
+            }
+            Rectangle {
+                id: currnetDataRect
+                width: rightTabBarRect.width
+                height: rightTabBarRect.height - currentData.height
+                color: "#ffffff"
+                anchors.topMargin: currentData.height
+                anchors.top: parent.top
+                anchors.left: parent.left
+                clip: true
+
+                SwipeView {
+                    id: rightPanelView
+                    anchors.fill: parent
+                    currentIndex: rightTabBar.currentIndex
+
+                    Item {
+                        Column {
+                            id: column
+                            anchors.top: parent.top
+                            anchors.topMargin: 10
+                            anchors.bottom: parent.bottom
+                            anchors.bottomMargin: 10
                             anchors.left: parent.left
-                            anchors.leftMargin: 0
+                            anchors.leftMargin: 10
                             anchors.right: parent.right
-                            anchors.rightMargin: 0
-                            to: 100
-                            value: 30
+                            anchors.rightMargin: 10
+                            spacing: 10
 
-                            contentItem: Item {
-                                implicitWidth: levelProgress.width
-                                implicitHeight: 4
+                            Label {
+                                id: levelValue
+                                text: qsTr("Level/value:")
+                                anchors.left: parent.left
+                                anchors.leftMargin: 0
+                                anchors.right: parent.right
+                                anchors.rightMargin: 0
+                            }
 
-                                Rectangle {
-                                    id: bar
-                                    width: levelProgress.visualPosition * levelProgress.width
-                                    height: levelProgress.height
-                                    radius: 5
-                                    color: "#416FE1"
+                            ProgressBar {
+                                id: levelProgress
+                                anchors.left: parent.left
+                                anchors.leftMargin: 0
+                                anchors.right: parent.right
+                                anchors.rightMargin: 0
+                                to: 100
+                                value: 30
+
+                                contentItem: Item {
+                                    implicitWidth: levelProgress.width
+                                    implicitHeight: 4
+
+                                    Rectangle {
+                                        id: bar
+                                        width: levelProgress.visualPosition * levelProgress.width
+                                        height: levelProgress.height
+                                        radius: 5
+                                        color: "#416FE1"
+                                    }
+                                }
+                            }
+
+                            Label {
+                                id: label
+                                text: qsTr("CNT:")
+                                anchors.right: parent.right
+                                anchors.rightMargin: 0
+                                anchors.left: parent.left
+                                anchors.leftMargin: 0
+                            }
+
+                            TextField {
+                                id: cntValue
+                                height: 30
+                                text: qsTr("0")
+                                readOnly: true
+                                anchors.left: parent.left
+                                anchors.leftMargin: 0
+                                anchors.right: parent.right
+                                anchors.rightMargin: 0
+                            }
+
+                            Label {
+                                id: label1
+                                text: qsTr("Temperature:")
+                                anchors.left: parent.left
+                                anchors.leftMargin: 0
+                                anchors.right: parent.right
+                                anchors.rightMargin: 0
+                            }
+
+                            TextField {
+                                id: tempValue
+                                height: 30
+                                text: qsTr("0")
+                                anchors.left: parent.left
+                                anchors.leftMargin: 0
+                                anchors.right: parent.right
+                                anchors.rightMargin: 0
+                            }
+
+                            Label {
+                                id: label2
+                                text: qsTr("Frequency:")
+                            }
+
+                            TextField {
+                                id: freqValue
+                                height: 30
+                                text: qsTr("0")
+                                anchors.left: parent.left
+                                anchors.leftMargin: 0
+                                anchors.right: parent.right
+                                anchors.rightMargin: 0
+                            }
+
+                            ChartView {
+                                id: graph
+                                height: parent.height - 300
+                                width: parent.width + 100
+                                anchors.left: parent.left
+                                anchors.leftMargin: -20
+                                anchors.right: parent.right
+                                anchors.rightMargin: -20
+                                theme: ChartView.ChartThemeLight
+                                title: "Value/Level"
+                                antialiasing: true
+                                visible: devPropertyProgressTmk24.isReady
+                                property int graphLength: 1
+                                property int graphAmplitudeMax: 1
+                                ValueAxis {
+                                    id: axisX
+                                    min: 0
+                                    max: graph.graphLength
+                                    tickCount: 5
+                                }
+                                ValueAxis {
+                                    id: axisY
+                                    min: 0
+                                    max: graph.graphAmplitudeMax
+                                    tickCount: 5
+                                }
+                                LineSeries {
+                                    id: series1
+                                    axisX: axisX
+                                    axisY: axisY
                                 }
                             }
                         }
-
-                        Label {
-                            id: label
-                            text: qsTr("CNT:")
-                            anchors.right: parent.right
-                            anchors.rightMargin: 0
-                            anchors.left: parent.left
-                            anchors.leftMargin: 0
-                        }
-
-                        TextField {
-                            id: cntValue
-                            height: 30
-                            text: qsTr("0")
-                            readOnly: true
-                            anchors.left: parent.left
-                            anchors.leftMargin: 0
-                            anchors.right: parent.right
-                            anchors.rightMargin: 0
-                        }
-
-                        Label {
-                            id: label1
-                            text: qsTr("Temperature:")
-                            anchors.left: parent.left
-                            anchors.leftMargin: 0
-                            anchors.right: parent.right
-                            anchors.rightMargin: 0
-                        }
-
-                        TextField {
-                            id: tempValue
-                            height: 30
-                            text: qsTr("0")
-                            anchors.left: parent.left
-                            anchors.leftMargin: 0
-                            anchors.right: parent.right
-                            anchors.rightMargin: 0
-                        }
-
-                        Label {
-                            id: label2
-                            text: qsTr("Frequency:")
-                        }
-
-                        TextField {
-                            id: freqValue
-                            height: 30
-                            text: qsTr("0")
-                            anchors.left: parent.left
-                            anchors.leftMargin: 0
-                            anchors.right: parent.right
-                            anchors.rightMargin: 0
-                        }
-
-                        ChartView {
-                            id: graph
-                            height: parent.height - 300
-                            width: parent.width + 100
-                            anchors.left: parent.left
-                            anchors.leftMargin: -20
-                            anchors.right: parent.right
-                            anchors.rightMargin: -20
-                            theme: ChartView.ChartThemeLight
-                            title: "Value/Level"
-                            antialiasing: true
-                            visible: devPropertyProgressTmk24.isReady
-                            property int graphLength: 1
-                            property int graphAmplitudeMax: 1
-                            ValueAxis {
-                                id: axisX
-                                min: 0
-                                max: graph.graphLength
-                                tickCount: 5
-                            }
-                            ValueAxis {
-                                id: axisY
-                                min: 0
-                                max: graph.graphAmplitudeMax
-                                tickCount: 5
-                            }
-                            LineSeries {
-                                id: series1
-                                axisX: axisX
-                                axisY: axisY
-                            }
+                    }
+                    Item {
+                        id: slavesItem
+                        Column {
+                            spacing: 10
+                            anchors.topMargin: 20
+                            anchors.bottomMargin: 20
+                            anchors.rightMargin: 20
+                            anchors.leftMargin: 20
+                            anchors.fill: parent
                         }
                     }
-                }
-            }
+                    Item {
+                        id: logsItem
+                        Column {
+                            spacing: 20
+                            anchors.topMargin: 2
+                            anchors.bottomMargin: 2
+                            anchors.rightMargin: 2
+                            anchors.leftMargin: 2
+                            anchors.fill: parent
 
-            TabButton {
-                id: slaves
-                text: qsTr("Ведомые")
-                background: Rectangle {
-                    gradient: Gradient {
-                        GradientStop {
-                            position: 1
-                            color: "#4D75E0"
-                        }
-                        GradientStop {
-                            position: 0
-                            color: "#EEF0F6"
-                        }
-                    }
-                }
-            }
+                            ListView {
+                                id: logListView
+                                anchors.fill: parent
+                                clip: true
 
-            TabButton {
-                id: log
-                text: qsTr("Журнал")
-                background: Rectangle {
-                    gradient: Gradient {
-                        GradientStop {
-                            position: 1
-                            color: "#4D75E0"
-                        }
-                        GradientStop {
-                            position: 0
-                            color: "#EEF0F6"
+                                ScrollBar.vertical: ScrollBar {
+                                    id: scrollDeviceList
+                                    width: 20
+                                }
+
+                                delegate: Item {
+                                    id: item
+                                    height: 30
+                                    width: parent.width
+
+                                    Rectangle {
+                                        id: rect
+                                        width: item.width - 2
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 1
+                                        height: item.height
+                                        color: colorCode
+                                        gradient: Gradient {
+                                            GradientStop {
+                                                position: 0
+                                                color: (model.status == 0 ? ("#BFFfff") : (model.status == 1 ? ("#BFEfff") : (model.status == 2 ? ("#F3Bfff") : ("#F3Bfff"))))
+                                            }
+                                            GradientStop {
+                                                position: 1
+                                                color: (model.status == 0 ? ("#BFF3C2") : (model.status == 1 ? ("#BFEFF3") : (model.status == 2 ? ("#F3BFC5") : ("#F3BFC5"))))
+                                            }
+                                        }
+                                        Rectangle {
+                                            width: parent.width
+                                            anchors.top: messageText.bottom
+                                            anchors.topMargin: 5
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 1
+                                            height: 1
+                                            color: "black"
+                                        }
+                                        Label {
+                                            id:messageText
+                                            text: model.message
+                                            font.bold: false
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 10
+                                            anchors.verticalCenter: parent.verticalCenter
+                                        }
+                                    }
+                                }
+                                model: ListModel {
+                                    id: logListModel
+                                }
+                            }
                         }
                     }
                 }
@@ -881,7 +1006,7 @@ Rectangle {
             height: 25
             spacing: 5
             clip: true
-            anchors.right: tabBar.left
+            anchors.right: rightTabBarRect.left
             anchors.rightMargin: 10
             anchors.left: parent.left
             anchors.leftMargin: 10
@@ -948,7 +1073,7 @@ Rectangle {
             height: 25
             spacing: 5
             clip: true
-            anchors.right: tabBar.left
+            anchors.right: rightTabBarRect.left
             anchors.rightMargin: 10
             anchors.left: parent.left
             anchors.leftMargin: 10
@@ -1023,7 +1148,7 @@ Rectangle {
             anchors.topMargin: 10
             Button {
                 id: lButtonSettingsRead
-                text: qsTr("Считать настройки:")
+                text: qsTr("Считать настройки")
                 anchors.left: parent.left
                 anchors.leftMargin: 20
                 onClicked: {
@@ -1032,11 +1157,11 @@ Rectangle {
             }
             Button {
                 id: lButtonWriteRead
-                text: qsTr("Записать настройки:")
+                text: qsTr("Записать настройки")
                 anchors.left: lButtonSettingsRead.right
                 anchors.leftMargin: 10
                 onClicked: {
-                    viewController.setCurrentDevSettings()
+                    writeSettings()
                 }
             }
         }
