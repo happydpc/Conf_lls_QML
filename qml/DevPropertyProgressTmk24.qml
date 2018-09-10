@@ -18,7 +18,8 @@ Rectangle {
     property alias messageReadErrorsOk: messageReadErrorsOk
 
     function setNoReady() {
-        devPropertyProgressTmk24.isReady = false
+//        devPropertyProgressTmk24.isReady = false
+        devPropertyProgressTmk24.isReady = true
     }
     function setDevProperty(listProperty) {
         typeDeviceText.text = listProperty[2]
@@ -41,7 +42,7 @@ Rectangle {
         }
         //-- chart
         var list = viewController.getCurrentDevChart()
-        series1.clear();
+        currentChartLines.clear();
         graph.graphLength = list.length
         graph.graphAmplitudeMax = 0
         for(var i=0; i<list.length; i++) {
@@ -50,7 +51,7 @@ Rectangle {
             }
         }
         for(i=0; i<list.length; i++) {
-            series1.append(i, parseInt(list[i]));
+            currentChartLines.append(i, parseInt(list[i]));
         }
         logListView.positionViewAtEnd()
     }
@@ -118,14 +119,35 @@ Rectangle {
         error7Label.error7 = errors[6]
         error8Label.error8 = errors[7]
     }
-    function remakeTarTableChart() {
+    function remakeTarTableChart() {        
         chartTarTableLine.clear()
-        chartTarTable.chartTarTableAmplitudeMax = 10000
-        var size = tarTabView.columnCount
-        for(var i=0; i<size; i++) {
+
+        var tarArrayLevel = [];
+        var tarArrayValue = [];
+        var minLevel = 0;
+        var maxLevel = 0;
+        var maxValue = 0;
+        for(var i=0; i<tarTabView.rowCount; i++) {
             var item = tarTabView.model.get(i)
-            console.log("Value=" + item.Value + "Level=" + item.Level)
-            chartTarTableLine.append(i, item.Value);
+            tarArrayLevel.push(item.Level)
+            tarArrayValue.push(item.Value)
+            if(minLevel > item.Level) {
+                minLevel = item.Level
+            }
+            if(maxLevel < item.Level) {
+                maxLevel = item.Level
+            }
+            if(maxValue < item.Value) {
+                maxValue = item.Value
+            }
+            console.log("Value =" + item.Value + "\nLevel=" + item.Level)
+        }
+        chartTarTable.chartTarTableAmplitudeMax = parseInt(maxLevel)
+        chartTarTable.chartTarTableLength = parseInt(maxValue)
+        console.log("MaxLevel =" + chartTarTable.chartTarTableAmplitudeMax)
+        for(i=0; i<chartTarTable.chartTarTableLength; i++) {
+            chartTarTableLine.append(parseInt(tarArrayValue[i]), parseInt(tarArrayLevel[i]));
+            console.log("Add=" + i + " " + tarArrayLevel[i])
         }
     }
 
@@ -986,6 +1008,40 @@ Rectangle {
                                 height: parent.height
                                 width: tarTabRect.width / 2
 
+
+//                                ChartView {
+//                                    id: graph
+//                                    height: parent.height - 300
+//                                    width: parent.width + 100
+//                                    anchors.left: parent.left
+//                                    anchors.leftMargin: -20
+//                                    anchors.right: parent.right
+//                                    anchors.rightMargin: -20
+//                                    theme: ChartView.ChartThemeLight
+//                                    title: "Value/Level"
+//                                    antialiasing: true
+//                                    visible: devPropertyProgressTmk24.isReady
+//                                    property int graphLength: 1
+//                                    property int graphAmplitudeMax: 1
+//                                    ValueAxis {
+//                                        id: currentChartAxisX
+//                                        min: 0
+//                                        max: graph.graphLength
+//                                        tickCount: 5
+//                                    }
+//                                    ValueAxis {
+//                                        id: currentChartAxisY
+//                                        min: 0
+//                                        max: graph.graphAmplitudeMax
+//                                        tickCount: 5
+//                                    }
+//                                    LineSeries {
+//                                        id: currentChartLines
+//                                        axisX: currentChartAxisX
+//                                        axisY: currentChartAxisY
+//                                    }
+//                                }
+
                                 ChartView {
                                     id: chartTarTable
                                     anchors.fill: parent
@@ -1239,21 +1295,21 @@ Rectangle {
                                 property int graphLength: 1
                                 property int graphAmplitudeMax: 1
                                 ValueAxis {
-                                    id: axisX
+                                    id: currentChartAxisX
                                     min: 0
                                     max: graph.graphLength
                                     tickCount: 5
                                 }
                                 ValueAxis {
-                                    id: axisY
+                                    id: currentChartAxisY
                                     min: 0
                                     max: graph.graphAmplitudeMax
                                     tickCount: 5
                                 }
                                 LineSeries {
-                                    id: series1
-                                    axisX: axisX
-                                    axisY: axisY
+                                    id: currentChartLines
+                                    axisX: currentChartAxisX
+                                    axisY: currentChartAxisY
                                 }
                             }
                         }
