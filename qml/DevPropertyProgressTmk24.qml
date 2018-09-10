@@ -5,7 +5,7 @@ import QtQuick.Window 2.10
 import Qt.labs.platform 1.0
 import QtCharts 2.2
 import QtQuick.Dialogs 1.2
-
+import QtQuick.Controls 1.4 as ControlOld
 import QtQuick.Controls.Styles 1.4
 
 Rectangle {
@@ -57,8 +57,6 @@ Rectangle {
 
     function addLogMessage(codeMessage, message) {
         logListModel.append({"message":message,"status":codeMessage})
-
-        tarTableListModel.append({"message":message,"status":codeMessage})
     }
 
     function readSettings(devName, settings) {
@@ -119,6 +117,16 @@ Rectangle {
         error6Label.error6 = errors[5]
         error7Label.error7 = errors[6]
         error8Label.error8 = errors[7]
+    }
+    function remakeTarTableChart() {
+        chartTarTableLine.clear()
+        chartTarTable.chartTarTableAmplitudeMax = 10000
+        var size = tarTabView.columnCount
+        for(var i=0; i<size; i++) {
+            var item = tarTabView.model.get(i)
+            console.log("Value=" + item.Value + "Level=" + item.Level)
+            chartTarTableLine.append(i, item.Value);
+        }
     }
 
     Rectangle {
@@ -915,64 +923,120 @@ Rectangle {
                     ScrollView {
                         anchors.fill: parent
                         clip: true
+                        Rectangle{
+                            id:tarTabRect
+                            width: propertiesView.width
+                            height: parent.height - tarBatButtons.height
 
-                        ListView {
-                            id: tarTableView
-                            anchors.left: parent.left
-                            anchors.right: parent.right
-                            anchors.leftMargin: 0
-                            anchors.rightMargin: 0
-                            anchors.top: parent.top
-                            anchors.topMargin: 0
-                            anchors.bottom: parent.bottom
-                            clip: true
+                            ControlOld.TableView {
+                                id:tarTabView
+                                anchors.top: tarTabRect.top
+                                anchors.left: tarTabRect.left
+                                anchors.bottom: tarTabRect.bottom
+                                width: tarTabRect.width / 2
 
-                            ScrollBar.vertical: ScrollBar {
-                                width: 20
+                                ControlOld.TableViewColumn {
+                                    id: tableDelegateValue
+                                    role: "Value"
+                                    title: "Объем"
+                                    property int value: model.Value
+                                    delegate: Rectangle {
+                                        anchors.fill: parent
+                                        color: valueInputValue.text.length >0 ? "transparent" : "red"
+                                        TextInput {
+                                            id:valueInputValue
+                                            anchors.fill: parent
+                                            text:(model.Value===0) ? "0" : model.Value
+                                            validator: RegExpValidator { regExp: /[0-9A-F]+/ }
+                                            onEditingFinished: {
+                                                model.Value = text
+                                                remakeTarTableChart()
+                                            }
+                                        }
+                                    }
+                                }
+                                ControlOld.TableViewColumn {
+                                    id: tableDelegateLevel
+                                    role: "Level"
+                                    title: "Уровень"
+                                    property int level: model.Level
+                                    delegate: Rectangle {
+                                        anchors.fill: parent
+                                        color: valueInputLevel.text.length >0 ? "transparent" : "red"
+                                        TextInput {
+                                            id:valueInputLevel
+                                            anchors.fill: parent
+                                            text:(model.Level===0) ? "0" : model.Level
+                                            validator: RegExpValidator { regExp: /[0-9A-F]+/ }
+                                            onEditingFinished: {
+                                                model.Level = text
+                                                remakeTarTableChart()
+                                            }
+                                        }
+                                    }
+                                }
+                                model: ListModel {
+                                    id: tarTableListModel
+                                }
                             }
+                            Rectangle {
+                                anchors.top: tarTabRect.top
+                                anchors.right: tarTabRect.right
+                                anchors.bottom: tarTabRect.bottom
+                                height: parent.height
+                                width: tarTabRect.width / 2
 
-                            // good #4DBE23
-                            // bad #BE3923
-                            // neutral #E0E0E0
-                            // yelow #E9E4AA
-                            delegate: Item {
-                                id: item
-                                height: 25
-                                width: parent.width
-                                property bool isFocused: false
-                                TextField {
-                                    id: exerciseResult
-                                    height: parent.height
-                                    anchors.top: item.top
-                                    anchors.right: parent.right
-                                    placeholderText: "Введите"
-                                    color: exerciseResult.text.length == 0 ? "white" : "black"
-
-                                    background: Rectangle {
-                                        implicitWidth: 200
-                                        implicitHeight: 40
-                                        color: (exerciseResult.activeFocus === true) ? ("orange") : (exerciseResult.text.length == 0 ? "red" : "green")
-                                        border.color: exerciseResult.text.length == 0 ? "red" : "transparent"
+                                ChartView {
+                                    id: chartTarTable
+                                    anchors.fill: parent
+                                    theme: ChartView.ChartThemeBlueCerulean
+                                    clip: true
+                                    antialiasing: true
+                                    property int chartTarTableLength: 1
+                                    property int chartTarTableAmplitudeMax: 1
+                                    ValueAxis {
+                                        id: chartTarTableAxisX
+                                        min: 0
+                                        max: chartTarTable.chartTarTableLength
+                                        tickCount: 5
+                                    }
+                                    ValueAxis {
+                                        id: chartTarTableAxisY
+                                        min: 0
+                                        max: chartTarTable.chartTarTableAmplitudeMax
+                                        tickCount: 5
+                                    }
+                                    LineSeries {
+                                        id:chartTarTableLine
+                                        color: "red"
+                                        axisX: chartTarTableAxisX
+                                        axisY: chartTarTableAxisY
                                     }
                                 }
                             }
-                            model: ListModel {
-                                id: tarTableListModel
+                        }
+                        Row {
+                            id:tarBatButtons
+                            anchors.bottom: parent.bottom
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            Button {
+                                id:tarTabAddStep
+                                text:"Добавить"
+                                height: 50
+                                width: 100
+                                onClicked: {
+                                    tarTableListModel.append({"Value":"0","Level":"0"})
+                                    remakeTarTableChart()
+                                }
+                            }
+                            Button {
+                                id:tarTabCleaarFull
+                                text:"Очистить"
+                                height: 50
+                                width: 100
                             }
                         }
-
-                        Row {
-                            spacing: 10
-                            anchors.topMargin: 20
-                            anchors.bottomMargin: 20
-                            anchors.rightMargin: 20
-                            anchors.leftMargin: 20
-                            anchors.fill: parent
-
-                            Label {
-                                text: qsTr("Тарировка:")
-                            }
-                        }//                        viewController.getCurrentDevTarTable
                     }
                 }
             }

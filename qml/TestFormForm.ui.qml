@@ -14,6 +14,13 @@ Rectangle {
         anchors.fill: parent
 
         TableView {
+            activeFocusOnTab: true
+            alternatingRowColors: true
+            backgroundVisible: true
+            sortIndicatorColumn: 1
+            verticalScrollBarPolicy: 3
+            currentRow: 1
+            highlightOnFocus: true
             anchors.fill: parent
 
             TableViewColumn {
