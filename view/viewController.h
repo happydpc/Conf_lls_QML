@@ -39,8 +39,8 @@ public:
     Q_INVOKABLE void getCurrentDevSettings();
     Q_INVOKABLE void setCurrentDevSettings(QStringList settings);
     Q_INVOKABLE void getCurrentDevErrors();
-    Q_INVOKABLE void getCurrentDevCalTable();
-    Q_INVOKABLE void setCurrentDevCalTable(QStringList calTable);
+    Q_INVOKABLE void getCurrentDevTarTable();
+    Q_INVOKABLE void setCurrentDevTarTable(QStringList tarTable);
 
 signals:
     void remakeInterfaceTree(QStringList list, QList<int>status);

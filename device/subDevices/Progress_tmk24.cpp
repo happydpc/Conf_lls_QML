@@ -100,6 +100,7 @@ QStringList Progress_tmk24::getSettings() {
         ret << QString::number(lls_data.settings.get.value.r, 'f');
         ret << QString::number(lls_data.settings.get.value.minLevel);
         ret << QString::number(lls_data.settings.get.value.maxLevel);
+        ret << QString::number(lls_data.settings.get.value.masterMode);
         ret << QString::number(lls_data.settings.get.value.rs232Speed);
         ret << QString::number(lls_data.settings.get.value.rs485Speed);
         ret << QString::number(lls_data.settings.get.value.slaveCount);
@@ -612,9 +613,9 @@ CommandController::sCommandData Progress_tmk24::getCommandCustom(QString operati
         }
     } else if(operation == "read current dev errors") {
         command.devCommand = (int)Progress_tmk24Data::lls_read_errors;
-    } else if(operation == "set current dev cal table") {
+    } else if(operation == "set current dev tar table") {
         command.devCommand = (int)Progress_tmk24Data::lls_write_cal_table;
-    } else if(operation == "read current dev cal table") {
+    } else if(operation == "read current dev tar table") {
         command.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
     } else {
         qDebug() << "getCommandCustom -type unknown!";

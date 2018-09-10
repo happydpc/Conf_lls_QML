@@ -167,12 +167,12 @@ void ViewController::getCurrentDevErrors() {
     getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "read current dev errors", QStringList(""));
 }
 
-void ViewController::getCurrentDevCalTable() {
+void ViewController::getCurrentDevTarTable() {
     getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "read current dev cal table", QStringList(""));
 }
 
-void ViewController::setCurrentDevCalTable(QStringList calTable) {
-    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "set current dev cal table", calTable);
+void ViewController::setCurrentDevTarTable(QStringList tarTable) {
+    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "set current dev tar table", tarTable);
 }
 
 void ViewController::deviceConnected(DevicesFactory::E_DeviceType type, QString uniqNameId) {

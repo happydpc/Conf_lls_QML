@@ -1,10 +1,12 @@
 import QtQuick 2.4
-import QtQuick.Controls 2.3
+import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.10
 import Qt.labs.platform 1.0
 import QtCharts 2.2
 import QtQuick.Dialogs 1.2
+
+import QtQuick.Controls.Styles 1.4
 
 Rectangle {
     color: "#e7e9eb"
@@ -55,6 +57,8 @@ Rectangle {
 
     function addLogMessage(codeMessage, message) {
         logListModel.append({"message":message,"status":codeMessage})
+
+        tarTableListModel.append({"message":message,"status":codeMessage})
     }
 
     function readSettings(devName, settings) {
@@ -72,13 +76,14 @@ Rectangle {
         filterValueQ.value = settings[11]   //        ret << QString::number(lls_data.settings.get.value.r, 'f');
         minLevelValue.value = settings[12]  //      ret << QString::number(lls_data.settings.get.value.minLevel);
         maxLevelValue.value = settings[13]  //      ret << QString::number(lls_data.settings.get.value.maxLevel);
-        //        ret << QString::number(lls_data.settings.get.value.rs232Speed);
-        //        ret << QString::number(lls_data.settings.get.value.rs485Speed);
-        //        ret << QString::number(lls_data.settings.get.value.slaveCount);
-        //        ret << QString::number(lls_data.settings.get.value.slaveAddr[0]);
-        //        ret << QString::number(lls_data.settings.get.value.slaveAddr[1]);
-        //        ret << QString::number(lls_data.settings.get.value.slaveAddr[2]);
-        //        ret << QString::number(lls_data.settings.get.value.slaveAddr[3]);
+        masterSlaveModes.currentIndex = settings[14]
+        baudrateRs232Values.currentIndex = settings[15] //        ret << QString::number(lls_data.settings.get.value.rs232Speed);
+        baudrateRs485Values.currentIndex = settings[16]//        ret << QString::number(lls_data.settings.get.value.rs485Speed);
+        masterSlaveFullCountes.value = settings[17]//        ret << QString::number(lls_data.settings.get.value.slaveCount);
+        masterSlaveSlaveId_1.value = settings[18] //        ret << QString::number(lls_data.settings.get.value.slaveAddr[0]);
+        masterSlaveSlaveId_2.value = settings[19] //        ret << QString::number(lls_data.settings.get.value.slaveAddr[1]);
+        masterSlaveSlaveId_3.value = settings[20] //        ret << QString::number(lls_data.settings.get.value.slaveAddr[2]);
+        masterSlaveSlaveId_4.value = settings[21] //        ret << QString::number(lls_data.settings.get.value.slaveAddr[3]);
     }
     function writeSettings() {
         var settings = [];
@@ -218,8 +223,7 @@ Rectangle {
             }
             TabButton {
                 id: masterSlaveTab
-                text: qsTr("Ведущий/ведомый")
-                enabled: false
+                text: qsTr("Ведущий\nведомый")
                 focusPolicy: Qt.TabFocus
                 background: Rectangle {
                     gradient: Gradient {
@@ -254,60 +258,74 @@ Rectangle {
         }
 
         Rectangle {
+            id:properiesViewRect
             anchors.top: propertiesTabBar.bottom
+            anchors.topMargin: 10
             anchors.right: parent.right
+            anchors.rightMargin: (rightPanelView.width + 10)
             anchors.left: parent.left
-            anchors.topMargin: 0
+            anchors.leftMargin: 10
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 10
+            color: "transparent"
             SwipeView {
                 id: propertiesView
-                anchors.fill: parent
+                anchors.fill: properiesViewRect
                 currentIndex: propertiesTabBar.currentIndex
+                clip: true
+
+                onCurrentIndexChanged: {
+                    if(propertiesView.currentItem == errorsItem) {
+                        viewController.getCurrentDevErrors()
+                    }
+                    if(propertiesView.currentItem == tarItem) {
+                        //                        viewController.getCurrentDevTarTable()
+                    }
+                }
 
                 // 1- calibration
                 Item {
                     id: calibrationItem
-                    Column {
-                        spacing: 10
-                        anchors.topMargin: 20
-                        anchors.bottomMargin: 20
-                        anchors.rightMargin: 20
-                        anchors.leftMargin: 20
+                    ScrollView {
                         anchors.fill: parent
-
-                        Label {
-                            text: qsTr("Задание границ измерения:")
-                        }
-                        Button {
-                            id: buttonEmpty
-                            text: "Пустой"
-                            onClicked: {
-                                dialogLevelSetEmpty.open()
+                        clip: true
+                        Column {
+                            spacing: 10
+                            Label {
+                                text: qsTr("Задание границ измерения:")
                             }
-                        }
-                        Button {
-                            id: buttonFull
-                            text: "Полный"
-                            onClicked: {
-                                dialogLevelSetFull.open()
-                            }
-                        }
-                        Button {
-                            id: buttonEdit
-                            text: "Редактировать"
-                            enabled: false
-                        }
-                        Label {
-                            text: "Тип жидкости"
-                        }
-                        ComboBox {
-                            id: typeFuel
-                            height: 25
-                            model: ListModel {
-                                ListElement {
-                                    text: "Топливо"
+                            Button {
+                                id: buttonEmpty
+                                text: "Пустой"
+                                onClicked: {
+                                    dialogLevelSetEmpty.open()
                                 }
-                                ListElement {
-                                    text: "Вода"
+                            }
+                            Button {
+                                id: buttonFull
+                                text: "Полный"
+                                onClicked: {
+                                    dialogLevelSetFull.open()
+                                }
+                            }
+                            Button {
+                                id: buttonEdit
+                                text: "Редактировать"
+                                enabled: false
+                            }
+                            Label {
+                                text: "Тип жидкости"
+                            }
+                            ComboBox {
+                                id: typeFuel
+                                height: 25
+                                model: ListModel {
+                                    ListElement {
+                                        text: "Топливо"
+                                    }
+                                    ListElement {
+                                        text: "Вода"
+                                    }
                                 }
                             }
                         }
@@ -316,237 +334,305 @@ Rectangle {
                 // 2- filtration
                 Item {
                     id: filtrationItem
-                    Column {
-                        spacing: 10
-                        anchors.topMargin: 20
-                        anchors.bottomMargin: 20
-                        anchors.rightMargin: 20
-                        anchors.leftMargin: 20
+                    ScrollView {
                         anchors.fill: parent
-
-                        Label {
-                            text: "Тип фильтрации:"
-                        }
-                        ComboBox {
-                            id: typeFiltration
-                            height: 25
-                            model: ListModel {
-                                ListElement {
-                                    text: "Выключена"
-                                }
-                                ListElement {
-                                    text: "Усреднение"
-                                }
-                                ListElement {
-                                    text: "Медиана"
-                                }
-                                ListElement {
-                                    text: "Адаптивный"
+                        clip: true
+                        Column {
+                            spacing: 10
+                            Label {
+                                text: "Тип фильтрации:"
+                            }
+                            ComboBox {
+                                id: typeFiltration
+                                height: 25
+                                model: ListModel {
+                                    ListElement {
+                                        text: "Выключена"
+                                    }
+                                    ListElement {
+                                        text: "Усреднение"
+                                    }
+                                    ListElement {
+                                        text: "Медиана"
+                                    }
+                                    ListElement {
+                                        text: "Адаптивный"
+                                    }
                                 }
                             }
-                        }
-                        Label {
-                            text: "Время усреднения (0-21), с:"
-                        }
-                        SpinBox {
-                            id: filterAvarageValueSec
-                            height: 25
-                        }
-                        Label {
-                            text: "Длина медианы (0-7):"
-                        }
-                        SpinBox {
-                            id: filterLenghtMediana
-                            height: 25
-                        }
-                        Label {
-                            text: "Ковариация шума процесса (Q):"
-                        }
-                        SpinBox {
-                            id: filterValueQ
-                            height: 25
-                        }
-                        Label {
-                            text: "Ковариация шума измерения (R):"
-                        }
-                        SpinBox {
-                            id: filterValueR
-                            height: 25
+                            Label {
+                                text: "Время усреднения (0-21), с:"
+                            }
+                            SpinBox {
+                                id: filterAvarageValueSec
+                                height: 25
+                            }
+                            Label {
+                                text: "Длина медианы (0-7):"
+                            }
+                            SpinBox {
+                                id: filterLenghtMediana
+                                height: 25
+                            }
+                            Label {
+                                text: "Ковариация шума процесса (Q):"
+                            }
+                            SpinBox {
+                                id: filterValueQ
+                                height: 25
+                            }
+                            Label {
+                                text: "Ковариация шума измерения (R):"
+                            }
+                            SpinBox {
+                                id: filterValueR
+                                height: 25
+                            }
                         }
                     }
                 }
                 // 3- temperature
                 Item {
                     id: tempCompensationItem
-                    Column {
-                        spacing: 10
-                        anchors.topMargin: 20
-                        anchors.bottomMargin: 20
-                        anchors.rightMargin: 20
-                        anchors.leftMargin: 20
+                    ScrollView {
                         anchors.fill: parent
-
-                        Label {
-                            text: qsTr("Температурная компенсация линейного расширения топлива")
-                            anchors.left: parent.left
-                            anchors.leftMargin: 0
-                            anchors.right: parent.right
-                            anchors.rightMargin: 0
-                        }
-                        Label {
-                            text: qsTr("Режим:")
-                            anchors.left: parent.left
-                            anchors.leftMargin: 0
-                            anchors.right: parent.right
-                            anchors.rightMargin: 0
-                        }
-                        ComboBox {
-                            id: typeTempCompensation
-                            height: 25
-                            model: ListModel {
-                                ListElement {
-                                    text: "Выключен"
-                                }
-                                ListElement {
-                                    text: "АИ-95"
-                                }
-                                ListElement {
-                                    text: "АИ-92"
-                                }
-                                ListElement {
-                                    text: "АИ-80 (лето)"
-                                }
-                                ListElement {
-                                    text: "АИ-80 (зима)"
-                                }
-                                ListElement {
-                                    text: "ДТ (лето)"
-                                }
-                                ListElement {
-                                    text: "ДТ (зима)"
-                                }
-                                ListElement {
-                                    text: "Пользовательский"
+                        clip: true
+                        Column {
+                            spacing: 10
+                            Label {
+                                text: qsTr("Температурная компенсация линейного расширения топлива")
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                            }
+                            Label {
+                                text: qsTr("Режим:")
+                                anchors.left: parent.left
+                                anchors.leftMargin: 0
+                                anchors.right: parent.right
+                                anchors.rightMargin: 0
+                            }
+                            ComboBox {
+                                id: typeTempCompensation
+                                height: 25
+                                model: ListModel {
+                                    ListElement {
+                                        text: "Выключен"
+                                    }
+                                    ListElement {
+                                        text: "АИ-95"
+                                    }
+                                    ListElement {
+                                        text: "АИ-92"
+                                    }
+                                    ListElement {
+                                        text: "АИ-80 (лето)"
+                                    }
+                                    ListElement {
+                                        text: "АИ-80 (зима)"
+                                    }
+                                    ListElement {
+                                        text: "ДТ (лето)"
+                                    }
+                                    ListElement {
+                                        text: "ДТ (зима)"
+                                    }
+                                    ListElement {
+                                        text: "Пользовательский"
+                                    }
                                 }
                             }
-                        }
-                        Label {
-                            text: qsTr("K1:")
-                            anchors.left: parent.left
-                            anchors.leftMargin: 0
-                            anchors.right: parent.right
-                            anchors.rightMargin: 0
-                        }
-                        TextField {
-                            id: k1
-                            text: "0.0"
-                            height: 25
-                        }
-                        Label {
-                            text: qsTr("K2:")
-                            anchors.left: parent.left
-                            anchors.leftMargin: 0
-                            anchors.right: parent.right
-                            anchors.rightMargin: 0
-                        }
-                        TextField {
-                            id: k2
-                            text: "0.0"
-                            height: 25
+                            Label {
+                                text: qsTr("K1:")
+                                anchors.left: parent.left
+                                anchors.leftMargin: 0
+                                anchors.right: parent.right
+                                anchors.rightMargin: 0
+                            }
+                            TextField {
+                                id: k1
+                                text: "0.0"
+                                height: 25
+                            }
+                            Label {
+                                text: qsTr("K2:")
+                                anchors.left: parent.left
+                                anchors.leftMargin: 0
+                                anchors.right: parent.right
+                                anchors.rightMargin: 0
+                            }
+                            TextField {
+                                id: k2
+                                text: "0.0"
+                                height: 25
+                            }
                         }
                     }
                 }
                 // base parameters
                 Item {
                     id: basePropertiesItem
-                    Column {
-                        spacing: 10
-                        anchors.topMargin: 20
-                        anchors.bottomMargin: 20
-                        anchors.rightMargin: 20
-                        anchors.leftMargin: 20
+                    ScrollView {
                         anchors.fill: parent
+                        clip: true
+                        Column {
+                            spacing: 10
 
-                        Button {
-                            text: "Сменить сетевой адрес"
-                            id: changeIdAddr
-                        }
-                        Label {
-                            text: "Самостоятельная выдача данных:"
-                        }
-                        ComboBox {
-                            id: periodicSendType
-                            height: 25
-                            model: ListModel {
-                                ListElement {
-                                    text: "Выключена"
-                                }
-                                ListElement {
-                                    text: "Бинарная"
-                                }
-                                ListElement {
-                                    text: "Символьная"
+                            Button {
+                                text: "Сменить сетевой адрес"
+                                id: changeIdAddr
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                            }
+                            Label {
+                                text: "Самостоятельная выдача данных:"
+                            }
+                            ComboBox {
+                                id: periodicSendType
+                                height: 25
+                                model: ListModel {
+                                    ListElement {
+                                        text: "Выключена"
+                                    }
+                                    ListElement {
+                                        text: "Бинарная"
+                                    }
+                                    ListElement {
+                                        text: "Символьная"
+                                    }
                                 }
                             }
-                        }
-                        Label {
-                            text: "Период выдачи данных (0-255), с:"
-                        }
-                        SpinBox {
-                            id:periodicSendTime
-                            height: 25
-                        }
-                        Label {
-                            text: "Мин. значение уровня (0-1023):"
-                        }
-                        SpinBox {
-                            id:minLevelValue
-                            height: 25
-                            to: 4095
-                            from: 0
-                            value: 0
-                        }
-                        Label {
-                            text: "Макс.значение уровня (0-4095):"
-                        }
-                        SpinBox {
-                            id:maxLevelValue
-                            height: 25
-                            to: 4095
-                            from: 0
-                            value: 0
-                        }
-                        Label {
-                            text: "Параметр в выходном сообщении датчика:"
-                        }
-                        ComboBox {
-                            id: typeOutMessage
-                            width: 250
-                            height: 25
-                            model: ListModel {
-                                ListElement {
-                                    text: "Относительный уровень"
-                                }
-                                ListElement {
-                                    text: "Объем (по таблице таррировки)"
+                            Label {
+                                text: "Период выдачи данных (0-255), с:"
+                            }
+                            SpinBox {
+                                id:periodicSendTime
+                                height: 25
+                            }
+                            Label {
+                                text: "Мин. значение уровня (0-1023):"
+                            }
+                            SpinBox {
+                                id:minLevelValue
+                                height: 25
+                                to: 4095
+                                from: 0
+                                value: 0
+                            }
+                            Label {
+                                text: "Макс.значение уровня (0-4095):"
+                            }
+                            SpinBox {
+                                id:maxLevelValue
+                                height: 25
+                                to: 4095
+                                from: 0
+                                value: 0
+                            }
+                            Label {
+                                text: "Параметр в выходном сообщении датчика:"
+                            }
+                            ComboBox {
+                                id: typeOutMessage
+                                width: 250
+                                height: 25
+                                model: ListModel {
+                                    ListElement {
+                                        text: "Относительный уровень"
+                                    }
+                                    ListElement {
+                                        text: "Объем (по таблице таррировки)"
+                                    }
                                 }
                             }
-                        }
-                        Label {
-                            text: "Тип интерполяции:"
-                        }
-                        ComboBox {
-                            id: typeInterpolation
-                            height: 25
-                            model: ListModel {
-                                ListElement {
-                                    text: "Линейная"
+                            Label {
+                                text: "Тип интерполяции:"
+                            }
+                            ComboBox {
+                                id: typeInterpolation
+                                height: 25
+                                model: ListModel {
+                                    ListElement {
+                                        text: "Линейная"
+                                    }
+                                    ListElement {
+                                        text: "Квадратичная"
+                                    }
+                                    ListElement {
+                                        text: "Сплайновая"
+                                    }
                                 }
-                                ListElement {
-                                    text: "Квадратичная"
+                            }
+                            Label {
+                                text: "Скорость обмена:"
+                                id: baudrateLabel
+                            }
+                            Label {
+                                text: "По RS232:"
+                                id: baudrateRs232Label
+                            }
+                            ComboBox {
+                                id: baudrateRs232Values
+                                height: 25
+                                model: ListModel {
+                                    ListElement {
+                                        text: "2800"
+                                    }
+                                    ListElement {
+                                        text: "4800"
+                                    }
+                                    ListElement {
+                                        text: "9600"
+                                    }
+                                    ListElement {
+                                        text: "19200"
+                                    }
+                                    ListElement {
+                                        text: "28800"
+                                    }
+                                    ListElement {
+                                        text: "38400"
+                                    }
+                                    ListElement {
+                                        text: "57600"
+                                    }
+                                    ListElement {
+                                        text: "115200"
+                                    }
                                 }
-                                ListElement {
-                                    text: "Сплайновая"
+                            }
+                            Label {
+                                text: "По RS485:"
+                                id: baudrateRs485Label
+                            }
+
+                            ComboBox {
+                                id: baudrateRs485Values
+                                height: 25
+                                model: ListModel {
+                                    ListElement {
+                                        text: "2800"
+                                    }
+                                    ListElement {
+                                        text: "4800"
+                                    }
+                                    ListElement {
+                                        text: "9600"
+                                    }
+                                    ListElement {
+                                        text: "19200"
+                                    }
+                                    ListElement {
+                                        text: "28800"
+                                    }
+                                    ListElement {
+                                        text: "38400"
+                                    }
+                                    ListElement {
+                                        text: "57600"
+                                    }
+                                    ListElement {
+                                        text: "115200"
+                                    }
                                 }
                             }
                         }
@@ -555,115 +641,114 @@ Rectangle {
                 // errors
                 Item {
                     id: errorsItem
-                    Column {
-                        spacing: 20
-                        anchors.topMargin: 20
-                        anchors.bottomMargin: 20
-                        anchors.rightMargin: 20
-                        anchors.leftMargin: 20
+                    ScrollView {
                         anchors.fill: parent
-                        Button {
-                            text: "Считать ошибки"
-                            id: readErrors
-                            onClicked: {
-                                viewController.getCurrentDevErrors()
+                        clip: true
+                        Column {
+                            spacing: 20
+                            Button {
+                                text: "Считать ошибки"
+                                id: readErrors
+                                onClicked: {
+                                    viewController.getCurrentDevErrors()
+                                }
                             }
-                        }
 
-                        Label {
-                            id:error1Label
-                            text: "Датчик не откалиброван:"
-                            property bool error1: false
-                            Image {
-                                height: 32
-                                width: 32
-                                anchors.left: parent.right
-                                anchors.rightMargin: 20
-                                source: error1Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                            Label {
+                                id:error1Label
+                                text: "Датчик не откалиброван:"
+                                property bool error1: false
+                                Image {
+                                    height: 32
+                                    width: 32
+                                    anchors.left: parent.right
+                                    anchors.rightMargin: 20
+                                    source: error1Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                }
                             }
-                        }
-                        Label {
-                            id:error2Label
-                            text: "Выход за минимальную границу измерения на 10%:"
-                            property bool error2: false
-                            Image {
-                                height: 32
-                                width: 32
-                                anchors.left: parent.right
-                                anchors.rightMargin: 20
-                                source: error2Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                            Label {
+                                id:error2Label
+                                text: "Выход за минимальную границу измерения на 10%:"
+                                property bool error2: false
+                                Image {
+                                    height: 32
+                                    width: 32
+                                    anchors.left: parent.right
+                                    anchors.rightMargin: 20
+                                    source: error2Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                }
                             }
-                        }
-                        Label {
-                            id:error3Label
-                            text: "Выход за максимальную границу измерения на 10%:"
-                            property bool error3: false
-                            Image {
-                                height: 32
-                                width: 32
-                                anchors.left: parent.right
-                                anchors.rightMargin: 20
-                                source: error3Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                            Label {
+                                id:error3Label
+                                text: "Выход за максимальную границу измерения на 10%:"
+                                property bool error3: false
+                                Image {
+                                    height: 32
+                                    width: 32
+                                    anchors.left: parent.right
+                                    anchors.rightMargin: 20
+                                    source: error3Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                }
                             }
-                        }
-                        Label {
-                            id:error4Label
-                            text: "Частота измерительного генератора 0 Гц:"
-                            property bool error4: false
-                            Image {
-                                height: 32
-                                width: 32
-                                anchors.left: parent.right
-                                anchors.rightMargin: 20
-                                source: error4Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                            Label {
+                                id:error4Label
+                                text: "Частота измерительного генератора 0 Гц:"
+                                property bool error4: false
+                                Image {
+                                    height: 32
+                                    width: 32
+                                    anchors.left: parent.right
+                                    anchors.rightMargin: 20
+                                    source: error4Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                }
                             }
-                        }
-                        Label {
-                            id:error5Label
-                            text: "Ведомый датчик №1 не отвечает:"
-                            property bool error5: false
-                            Image {
-                                height: 32
-                                width: 32
-                                anchors.left: parent.right
-                                anchors.rightMargin: 20
-                                source: error5Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                            Label {
+                                id:error5Label
+                                text: "Ведомый датчик №1 не отвечает:"
+                                property bool error5: false
+                                Image {
+                                    height: 32
+                                    width: 32
+                                    anchors.left: parent.right
+                                    anchors.rightMargin: 20
+                                    source: error5Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                }
                             }
-                        }
-                        Label {
-                            id:error6Label
-                            text: "Ведомый датчик №2 не отвечает:"
-                            property bool error6: false
-                            Image {
-                                height: 32
-                                width: 32
-                                anchors.left: parent.right
-                                anchors.rightMargin: 20
-                                source: error6Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                            Label {
+                                id:error6Label
+                                text: "Ведомый датчик №2 не отвечает:"
+                                property bool error6: false
+                                Image {
+                                    height: 32
+                                    width: 32
+                                    anchors.left: parent.right
+                                    anchors.rightMargin: 20
+                                    source: error6Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                }
                             }
-                        }
-                        Label {
-                            id:error7Label
-                            text: "Ведомый датчик №3 не отвечает:"
-                            property bool error7: false
-                            Image {
-                                height: 32
-                                width: 32
-                                anchors.left: parent.right
-                                anchors.rightMargin: 20
-                                source: error7Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                            Label {
+                                id:error7Label
+                                text: "Ведомый датчик №3 не отвечает:"
+                                property bool error7: false
+                                Image {
+                                    height: 32
+                                    width: 32
+                                    anchors.left: parent.right
+                                    anchors.rightMargin: 20
+                                    source: error7Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                }
                             }
-                        }
-                        Label {
-                            id:error8Label
-                            text: "Ведомый датчик №4 не отвечает:"
-                            property bool error8: false
-                            Image {
-                                height: 32
-                                width: 32
-                                anchors.left: parent.right
-                                anchors.rightMargin: 20
-                                source: error8Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                            Label {
+                                id:error8Label
+                                text: "Ведомый датчик №4 не отвечает:"
+                                property bool error8: false
+                                Image {
+                                    height: 32
+                                    width: 32
+                                    anchors.left: parent.right
+                                    anchors.rightMargin: 20
+                                    source: error8Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                }
                             }
                         }
                     }
@@ -671,33 +756,223 @@ Rectangle {
                 // masterSlave
                 Item {
                     id: masterSlaveItem
-                    Column {
-                        spacing: 10
-                        anchors.topMargin: 20
-                        anchors.bottomMargin: 20
-                        anchors.rightMargin: 20
-                        anchors.leftMargin: 20
+                    ScrollView {
                         anchors.fill: parent
+                        clip: true
+                        Rectangle{
+                            id:masterSlaveRect
+                            width: propertiesView.width
+                            height: properiesViewRect.height
+                            color: "transparent"
 
-                        Label {
-                            text: qsTr("Ведущий-ведомый:")
+                            Row {
+                                id: masterSlaveRow
+                                anchors.fill: masterSlaveRect
+                                Rectangle {
+                                    id: rectangle1
+                                    width: masterSlaveRect.width / 2
+                                    color: "transparent"
+                                    anchors.bottom: parent.bottom
+                                    anchors.top: parent.top
+                                    Label {
+                                        id: masterSlaveModeLabel
+                                        text: "Режим ведущий/ведомый:"
+                                    }
+                                    ComboBox {
+                                        id: masterSlaveModes
+                                        anchors.top: masterSlaveModeLabel.bottom
+                                        anchors.topMargin: 5
+                                        height: 25
+                                        model: ListModel {
+                                            ListElement {
+                                                text: "Выключен"
+                                            }
+                                            ListElement {
+                                                text: "Ведомый"
+                                            }
+                                            ListElement {
+                                                text: "Ведущий"
+                                            }
+                                            ListElement {
+                                                text: "Трансляция"
+                                            }
+                                        }
+                                        onCurrentIndexChanged: {
+                                            if(masterSlaveModes.currentIndex == 2) {
+                                                masterSlavesAddresRectange.enabled = true
+                                            } else {
+                                                masterSlavesAddresRectange.enabled = false
+                                                masterSlaveFullCountes.value = 0
+                                            }
+                                        }
+                                    }
+                                }
+                                Rectangle {
+                                    id: masterSlavesAddresRectange
+                                    width: masterSlaveRect.width / 2
+                                    color: "transparent"
+                                    anchors.bottom: parent.bottom
+                                    anchors.top: parent.top
+                                    Label {
+                                        id: masterSlaveModeCountAllLabel
+                                        text: "Количество ведомых:"
+                                        anchors.topMargin: 20
+                                    }
+                                    SpinBox {
+                                        id: masterSlaveFullCountes
+                                        height: 25
+                                        anchors.top: masterSlaveModeCountAllLabel.bottom
+                                        from: 0
+                                        to: 4
+                                        onValueChanged: {
+                                            if(masterSlaveFullCountes.value >= 1) {
+                                                masterSlaveSlaveId_1.enabled = true
+                                            } else {
+                                                masterSlaveFullCountes.value = 0
+                                                masterSlaveModes.currentIndex = 0
+                                                masterSlaveSlaveId_1.enabled = false
+                                                masterSlaveSlaveId_2.enabled = false
+                                                masterSlaveSlaveId_3.enabled = false
+                                                masterSlaveSlaveId_4.enabled = false
+                                            }
+                                            if(masterSlaveFullCountes.value >= 2) {
+                                                masterSlaveSlaveId_2.enabled = true
+                                            } else {
+                                                masterSlaveSlaveId_2.enabled = false
+                                            }
+                                            if(masterSlaveFullCountes.value >= 3) {
+                                                masterSlaveSlaveId_3.enabled = true
+                                            } else {
+                                                masterSlaveSlaveId_3.enabled = false
+                                            }
+                                            if(masterSlaveFullCountes.value >= 4) {
+                                                masterSlaveSlaveId_4.enabled = true
+                                            } else {
+                                                masterSlaveSlaveId_4.enabled = false
+                                            }
+                                        }
+                                    }
+                                    Label {
+                                        text: "Адрес ведомого №1"
+                                        id: masterSlaveAddress_1
+                                        anchors.top: masterSlaveFullCountes.bottom
+                                        anchors.topMargin: 15
+                                    }
+                                    SpinBox {
+                                        id: masterSlaveSlaveId_1
+                                        from: 1
+                                        to: 254
+                                        height: 25
+                                        anchors.top: masterSlaveAddress_1.bottom
+                                    }
+                                    Label {
+                                        text: "Адрес ведомого №2"
+                                        id: masterSlaveAddress_2
+                                        anchors.top: masterSlaveSlaveId_1.bottom
+                                        anchors.topMargin: 5
+                                    }
+                                    SpinBox {
+                                        id: masterSlaveSlaveId_2
+                                        height: 25
+                                        from: 1
+                                        to: 254
+                                        anchors.top: masterSlaveAddress_2.bottom
+                                    }
+                                    Label {
+                                        text: "Адрес ведомого №3"
+                                        id: masterSlaveAddress_3
+                                        anchors.top: masterSlaveSlaveId_2.bottom
+                                        anchors.topMargin: 5
+                                    }
+                                    SpinBox {
+                                        id: masterSlaveSlaveId_3
+                                        height: 25
+                                        from: 1
+                                        to: 254
+                                        anchors.top: masterSlaveAddress_3.bottom
+                                    }
+                                    Label {
+                                        text: "Адрес ведомого №4"
+                                        id: masterSlaveAddress_4
+                                        anchors.top: masterSlaveSlaveId_3.bottom
+                                        anchors.topMargin: 5
+                                    }
+                                    SpinBox {
+                                        id: masterSlaveSlaveId_4
+                                        height: 25
+                                        from: 1
+                                        to: 254
+                                        anchors.top: masterSlaveAddress_4.bottom
+                                    }
+                                }
+                            }
                         }
                     }
                 }
                 // calibration
                 Item {
                     id: tarItem
-                    Column {
-                        spacing: 10
-                        anchors.topMargin: 20
-                        anchors.bottomMargin: 20
-                        anchors.rightMargin: 20
-                        anchors.leftMargin: 20
+                    ScrollView {
                         anchors.fill: parent
+                        clip: true
 
-                        Label {
-                            text: qsTr("Тарировка:")
+                        ListView {
+                            id: tarTableView
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.leftMargin: 0
+                            anchors.rightMargin: 0
+                            anchors.top: parent.top
+                            anchors.topMargin: 0
+                            anchors.bottom: parent.bottom
+                            clip: true
+
+                            ScrollBar.vertical: ScrollBar {
+                                width: 20
+                            }
+
+                            // good #4DBE23
+                            // bad #BE3923
+                            // neutral #E0E0E0
+                            // yelow #E9E4AA
+                            delegate: Item {
+                                id: item
+                                height: 25
+                                width: parent.width
+                                property bool isFocused: false
+                                TextField {
+                                    id: exerciseResult
+                                    height: parent.height
+                                    anchors.top: item.top
+                                    anchors.right: parent.right
+                                    placeholderText: "Введите"
+                                    color: exerciseResult.text.length == 0 ? "white" : "black"
+
+                                    background: Rectangle {
+                                        implicitWidth: 200
+                                        implicitHeight: 40
+                                        color: (exerciseResult.activeFocus === true) ? ("orange") : (exerciseResult.text.length == 0 ? "red" : "green")
+                                        border.color: exerciseResult.text.length == 0 ? "red" : "transparent"
+                                    }
+                                }
+                            }
+                            model: ListModel {
+                                id: tarTableListModel
+                            }
                         }
+
+                        Row {
+                            spacing: 10
+                            anchors.topMargin: 20
+                            anchors.bottomMargin: 20
+                            anchors.rightMargin: 20
+                            anchors.leftMargin: 20
+                            anchors.fill: parent
+
+                            Label {
+                                text: qsTr("Тарировка:")
+                            }
+                        }//                        viewController.getCurrentDevTarTable
                     }
                 }
             }
@@ -946,21 +1221,19 @@ Rectangle {
                                 clip: true
 
                                 ScrollBar.vertical: ScrollBar {
-                                    id: scrollDeviceList
                                     width: 20
                                 }
 
                                 delegate: Item {
-                                    id: item
+                                    id: logItemDelegate
                                     height: 30
                                     width: parent.width
 
                                     Rectangle {
-                                        id: rect
-                                        width: item.width - 2
+                                        width: logItemDelegate.width - 2
                                         anchors.left: parent.left
                                         anchors.leftMargin: 1
-                                        height: item.height
+                                        height: logItemDelegate.height
                                         color: colorCode
                                         gradient: Gradient {
                                             GradientStop {
@@ -974,7 +1247,7 @@ Rectangle {
                                         }
                                         Rectangle {
                                             width: parent.width
-                                            anchors.top: messageText.bottom
+                                            anchors.top: logMessageText.bottom
                                             anchors.topMargin: 5
                                             anchors.left: parent.left
                                             anchors.leftMargin: 1
@@ -982,7 +1255,7 @@ Rectangle {
                                             color: "black"
                                         }
                                         Label {
-                                            id:messageText
+                                            id:logMessageText
                                             text: model.message
                                             font.bold: false
                                             anchors.left: parent.left
