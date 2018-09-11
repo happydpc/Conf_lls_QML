@@ -17,7 +17,7 @@ ViewController::ViewController(QObject *parent) : QObject(parent) {
         addConnectionSerialPort(strLis.last(), QString("19200"));
 
         for(int i=0; i<1; i++) { // 15
-            addDeviceToConnection("Progress tmk24", QString::number(i+1), "1234"); // tmk4UX tmk24
+            addDeviceToConnection("PROGRESS TMK24", QString::number(i+1), "1234"); // tmk4UX tmk24
         }
     });
 }

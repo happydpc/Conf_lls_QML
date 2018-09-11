@@ -777,6 +777,7 @@ compiler_rcc_clean:
 qrc_qml.cpp: qml.qrc \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/rcc \
 		qml/app.qml \
+		qml/ChangeId.qml \
 		qml/DevPropertySerialPort.qml \
 		qml/SerialPortForm.ui.qml \
 		qml/DevicePanels.qml \
@@ -2783,7 +2784,10 @@ viewController.o: view/viewController.cpp view/viewController.h \
 		tests/testDevReply.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QDebug \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QTime \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qdatetime.h
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qdatetime.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QFile \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qfile.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qfiledevice.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o viewController.o view/viewController.cpp
 
 interface.o: interfaces/interface.cpp interfaces/interface.h \

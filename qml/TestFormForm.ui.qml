@@ -3,48 +3,72 @@ import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 
 Rectangle {
-    id: rectangle2
+    id: cnangeId
     color: "#e7e9eb"
-    width: 500
-    height: 500
+    width: 160
+    height: 240
 
-    Item {
-        id: rectangle
-        clip: true
+    Column {
+        id: column
+        spacing: 10
         anchors.fill: parent
 
-        TableView {
-            activeFocusOnTab: true
-            alternatingRowColors: true
-            backgroundVisible: true
-            sortIndicatorColumn: 1
-            verticalScrollBarPolicy: 3
-            currentRow: 1
-            highlightOnFocus: true
-            anchors.fill: parent
-
-            TableViewColumn {
-                role: "date"    // These roles are roles names coincide with a C ++ model
-                title: "Date"
-            }
-
-            TableViewColumn {
-                role: "time"    // These roles are roles names coincide with a C ++ model
-                title: "Time"
-            }
-
-            TableViewColumn {
-                role: "random"  // These roles are roles names coincide with a C ++ model
-                title: "Random"
-            }
-
-            TableViewColumn {
-                role: "message" // These roles are roles names coincide with a C ++ model
-                title: "Message"
-            }
-
-            // We set the model in the TableView
-            model: myModel
+        Label {
+            text: qsTr("ID текущий:")
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+        TextField {
+            id: currentId
+            text: "1"
+            anchors.right: parent.right
+            anchors.rightMargin: 10
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            readOnly: true
+        }
+        Label {
+            text: qsTr("ID новый:")
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+        SpinBox {
+            id: idNew
+            anchors.right: parent.right
+            anchors.rightMargin: 10
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            minimumValue: 1
+            maximumValue: 254
+            value: 1
+        }
+        Label {
+            text: qsTr("Проверочный пароль:")
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+        TextField {
+            id: passwordCheck
+            text: ""
+            anchors.right: parent.right
+            anchors.rightMargin: 10
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+            readOnly: true
+            echoMode: TextInput.Password
+        }
+        Button {
+            id: accept
+            text: qsTr("Сменить")
+            anchors.right: parent.right
+            anchors.rightMargin: 10
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+        }
+        Button {
+            id: exit
+            text: qsTr("Выйти")
+            anchors.right: parent.right
+            anchors.rightMargin: 10
+            anchors.left: parent.left
+            anchors.leftMargin: 10
         }
     }
 }

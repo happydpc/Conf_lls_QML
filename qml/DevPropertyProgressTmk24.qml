@@ -415,6 +415,29 @@ Rectangle {
                                         text: "Адаптивный"
                                     }
                                 }
+                                onCurrentIndexChanged: {
+                                    if(typeFiltration.currentIndex == 0) {
+                                        filterAvarageValueSec.enabled = false
+                                        filterLenghtMediana.enabled = false
+                                        filterValueQ.enabled = false
+                                        filterValueR.enabled = false
+                                    } else if(typeFiltration.currentIndex == 1) {
+                                        filterAvarageValueSec.enabled = true
+                                        filterLenghtMediana.enabled = false
+                                        filterValueQ.enabled = false
+                                        filterValueR.enabled = false
+                                    } else if(typeFiltration.currentIndex == 2) {
+                                        filterAvarageValueSec.enabled = true
+                                        filterLenghtMediana.enabled = true
+                                        filterValueQ.enabled = false
+                                        filterValueR.enabled = false
+                                    } else if(typeFiltration.currentIndex == 3) {
+                                        filterAvarageValueSec.enabled = false
+                                        filterLenghtMediana.enabled = false
+                                        filterValueQ.enabled = true
+                                        filterValueR.enabled = true
+                                    }
+                                }
                             }
                             Label {
                                 text: "Время усреднения (0-21), с:"
@@ -496,6 +519,15 @@ Rectangle {
                                         text: "Пользовательский"
                                     }
                                 }
+                                onCurrentIndexChanged: {
+                                    if(typeTempCompensation.currentIndex == 7) {
+                                        k1.enabled = true
+                                        k2.enabled = true
+                                    } else {
+                                        k1.enabled = false
+                                        k2.enabled = false
+                                    }
+                                }
                             }
                             Label {
                                 text: qsTr("K1:")
@@ -554,6 +586,13 @@ Rectangle {
                                     }
                                     ListElement {
                                         text: "Символьная"
+                                    }
+                                }
+                                onCurrentIndexChanged: {
+                                    if(periodicSendType.currentIndex != 0) {
+                                        periodicSendTime.enabled = true
+                                    } else {
+                                        periodicSendTime.enabled = false
                                     }
                                 }
                             }
@@ -1531,11 +1570,11 @@ Rectangle {
                                         gradient: Gradient {
                                             GradientStop {
                                                 position: 0
-                                                color: (model.status == 0 ? ("#BFFfff") : (model.status == 1 ? ("#BFEfff") : (model.status == 2 ? ("#F3Bfff") : ("#F3Bfff"))))
+                                                color: (model.status === 0 ? ("#BFFfff") : (model.status === 1 ? ("#BFEfff") : (model.status === 2 ? ("#F3Bfff") : ("#F3Bfff"))))
                                             }
                                             GradientStop {
                                                 position: 1
-                                                color: (model.status == 0 ? ("#BFF3C2") : (model.status == 1 ? ("#BFEFF3") : (model.status == 2 ? ("#F3BFC5") : ("#F3BFC5"))))
+                                                color: (model.status === 0 ? ("#BFF3C2") : (model.status === 1 ? ("#BFEFF3") : (model.status === 2 ? ("#F3BFC5") : ("#F3BFC5"))))
                                             }
                                         }
                                         Rectangle {
@@ -1667,12 +1706,33 @@ Rectangle {
                 TextField {
                     id: netIdText
                     text: qsTr("")
-                    anchors.right: parent.right
-                    anchors.rightMargin: 0
+                    width: 50
                     anchors.left: lNetId.right
                     anchors.leftMargin: 10
                     height: parent.height
                     readOnly: true
+                }
+                Button {
+                    id: netIdChange
+                    text: qsTr("Сменить")
+                    anchors.right: parent.right
+                    anchors.rightMargin: 0
+                    anchors.left: netIdText.right
+                    anchors.leftMargin: 10
+                    height: parent.height
+                    ChangeId {
+                        id:changeId
+                        visible: false
+                        onAccept: {
+                            close()
+                        }
+                        onExit: {
+                            close()
+                        }
+                    }
+                    onClicked: {
+                        changeId.open()
+                    }
                 }
             }
 
