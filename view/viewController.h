@@ -39,8 +39,9 @@ public:
     Q_INVOKABLE void getCurrentDevSettings();
     Q_INVOKABLE void setCurrentDevSettings(QStringList settings);
     Q_INVOKABLE void getCurrentDevErrors();
+
     Q_INVOKABLE void getCurrentDevTarTable();
-    Q_INVOKABLE void setCurrentDevTarTable(QStringList tarTable);
+    Q_INVOKABLE void setCurrentDevTarTable(QStringList values, QStringList levels);
 
 signals:
     void remakeInterfaceTree(QStringList list, QList<int>status);
@@ -76,6 +77,7 @@ signals:
     void devUpdateReadErrorsExecuted(QString devNameId, QStringList errors);
     void devUpdateWriteSettingExecuted(QString devNameId);
     void devUpdateWriteScaleMeasureExecuted(QString devNameId);
+    void devUpdateReadTarTable(QString devNameId, QStringList table);
 
     void devUpdateLogMessage(int codeMessage, QString message);
 
@@ -91,7 +93,7 @@ private slots:
 
     void interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateType type);
     void deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, int index);
-    void deviceReadyCustomCommand(int index, QString message);
+    void deviceReadyCustomCommand(int index, QString message, QStringList customData);
 
     bool isCurrentDevice(QString uniqNameId);
 

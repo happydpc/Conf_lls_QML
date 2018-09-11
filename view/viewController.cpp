@@ -168,11 +168,17 @@ void ViewController::getCurrentDevErrors() {
 }
 
 void ViewController::getCurrentDevTarTable() {
-    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "read current dev cal table", QStringList(""));
+    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "read current dev tar table", QStringList(""));
 }
 
-void ViewController::setCurrentDevTarTable(QStringList tarTable) {
-    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "set current dev tar table", tarTable);
+void ViewController::setCurrentDevTarTable(QStringList values, QStringList levels) {
+    QStringList table;
+    int size = values.size();
+    for(auto i=0; i<size; i++) {
+        table.push_back(values.at(i));
+        table.push_back(levels.at(i));
+    }
+    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "set current dev tar table", table);
 }
 
 void ViewController::deviceConnected(DevicesFactory::E_DeviceType type, QString uniqNameId) {
@@ -281,7 +287,7 @@ void ViewController::interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateT
     connectToDevSignals();
 }
 
-void ViewController::deviceReadyCustomCommand(int indexDev, QString message) {
+void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QStringList customData) {
     DevicesFactory *pDevFactory = nullptr;
     pDevFactory = getDeviceFactoryByIndex(index.interfaceIndex);
     if(pDevFactory != nullptr) {
@@ -300,6 +306,9 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message) {
             if(message == "lls_read_errors") {;
                 emit devUpdateReadErrorsExecuted(pDevFactory->getDeviceName(indexDev),
                                                  pDevFactory->getDeviceErrrors(indexDev));
+            }
+            if(message == "lls_read_cal_table") {
+                emit devUpdateReadTarTable(pDevFactory->getDeviceName(indexDev), customData);
             }
             break;
         case DevicesFactory::Type_Progress_tmk4UX:
@@ -354,8 +363,8 @@ void ViewController::disconnectToDevSignals() {
         disconnect(getDeviceFactoryByIndex(i),
                    SIGNAL(deviceUpdateTree(DevicesFactory::E_DeviceUpdateType,int)),
                    this, SLOT(deviceTreeChanged(DevicesFactory::E_DeviceUpdateType,int)));
-        disconnect(getDeviceFactoryByIndex(i), SIGNAL(deviceReadyCustomCommand(int,QString)),
-                   this, SLOT(deviceReadyCustomCommand(int,QString)));
+        disconnect(getDeviceFactoryByIndex(i), SIGNAL(deviceReadyCustomCommand(int,QString, QStringList)),
+                   this, SLOT(deviceReadyCustomCommand(int,QString, QStringList)));
     }
 }
 
@@ -368,8 +377,8 @@ void ViewController::connectToDevSignals() {
         connect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyPropertiesSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyProperties(DevicesFactory::E_DeviceType,QString)));
         connect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceUpdateTree(DevicesFactory::E_DeviceUpdateType,int)),
                 this, SLOT(deviceTreeChanged(DevicesFactory::E_DeviceUpdateType,int)));
-        connect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyCustomCommand(int,QString)),
-                this, SLOT(deviceReadyCustomCommand(int,QString)));
+        connect(getDeviceFactoryByIndex(index.interfaceIndex), SIGNAL(deviceReadyCustomCommand(int,QString,QStringList)),
+                this, SLOT(deviceReadyCustomCommand(int,QString,QStringList)));
     }
 }
 

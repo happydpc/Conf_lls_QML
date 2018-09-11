@@ -74,6 +74,9 @@ Item {
         onDevUpdateLogMessage: {
             projectPanels.devicePanel.devPropertyProgressTmk24.addLogMessage(codeMessage, message)
         }
+        onDevUpdateReadTarTable: {
+            projectPanels.devicePanel.devPropertyProgressTmk24.readTarTable(table)
+        }
     }
 
     ProjectPanels {

@@ -248,7 +248,7 @@ bool Progress_tmk4UX::placeDataReplyToCommand(QByteArray &commandArrayReplyData,
     if(!commandArrayReplyData.isEmpty()) {
         if(getState() == STATE_DISCONNECTED) {
             setState(DeviceAbstract::STATE_START_INIT); // после этой команды настройки уже считаны
-            emit eventDevice(DeviceAbstract::Type_DeviceEvent_Connected, getUniqIdent(), QString("Connected"));
+            emit eventDevice(DeviceAbstract::Type_DeviceEvent_Connected, getUniqIdent(), QString("Connected"), QStringList(""));
         }
         //-- caculate crc
         crcCalcResult = crc->crc8_dallas(commandArrayReplyData.data(),
@@ -284,7 +284,7 @@ bool Progress_tmk4UX::placeDataReplyToCommand(QByteArray &commandArrayReplyData,
                     while(chartData->size() > 50) {
                         chartData->pop_front();
                     }
-                    emit eventDevice(DeviceAbstract::Type_DeviceEvent_CurrentDataUpdated, getUniqIdent(), QString("Ready current data"));
+                    emit eventDevice(DeviceAbstract::Type_DeviceEvent_CurrentDataUpdated, getUniqIdent(), QString("Ready current data"), QStringList(""));
                     res = true;
                 }
             }
@@ -338,14 +338,14 @@ bool Progress_tmk4UX::placeDataReplyToCommand(QByteArray &commandArrayReplyData,
                     // проверка типа
                     if(commandArrayReplyData.at(3) != Progress_tmk4UXData::type_lls_tmk4ux) {
                         lls_data.typeIsValid = false;
-                        emit eventDevice(DeviceAbstract::Type_DeviceEvent_TypeError, getUniqIdent(), QString("Type Error!"));
+                        emit eventDevice(DeviceAbstract::Type_DeviceEvent_TypeError, getUniqIdent(), QString("Type Error!"), QStringList(""));
                     } else { // TODO: is valid conversion?
                         Progress_tmk4UXData::T_settings *pSettings = (Progress_tmk4UXData::T_settings*)(commandArrayReplyData.data() + 34);
                         if(pSettings->netAddress == commandArrayReplyData.at(Progress_tmk4UXData::param_id_address)) {
                             lls_data.settings.get.value = *pSettings;
                             lls_data.settings.get.isValid = true;
                         }
-                        emit eventDevice(DeviceAbstract::Type_DeviceEvent_ReadyReadProperties, getUniqIdent(), QString("Ready read properties"));
+                        emit eventDevice(DeviceAbstract::Type_DeviceEvent_ReadyReadProperties, getUniqIdent(), QString("Ready read properties"), QStringList(""));
                     }
                     res = true;
                 }
@@ -450,7 +450,7 @@ bool Progress_tmk4UX::placeDataReplyToCommand(QByteArray &commandArrayReplyData,
                         lls_data.password.get.isValid = true; // TOOD: обработка ошибок
                     } else {
                         lls_data.password.get.isValid = false;
-                        emit eventDevice(DeviceAbstract::Type_DeviceEvent_PasswordError, getUniqIdent(), QString("Password error"));
+                        emit eventDevice(DeviceAbstract::Type_DeviceEvent_PasswordError, getUniqIdent(), QString("Password error"), QStringList(""));
                     }
                     res = true;
                 }
@@ -481,7 +481,7 @@ bool Progress_tmk4UX::placeDataReplyToCommand(QByteArray &commandArrayReplyData,
                         && (lls_data.password.get.isValid) && (lls_data.calibrateTable.get.isValid)
                         && (lls_data.llssValues.isValid)) {
                     setState(DeviceAbstract::STATE_NORMAL_READY);
-                    emit eventDevice(DeviceAbstract::Type_DeviceEvent_Inited, getUniqIdent(), QString("Inited"));
+                    emit eventDevice(DeviceAbstract::Type_DeviceEvent_Inited, getUniqIdent(), QString("Inited"), QStringList(""));
                 }
             }
         } else {
@@ -489,7 +489,7 @@ bool Progress_tmk4UX::placeDataReplyToCommand(QByteArray &commandArrayReplyData,
         }
     } else {
         state = STATE_DISCONNECTED;
-        emit eventDevice(DeviceAbstract::Type_DeviceEvent_Disconnected, getUniqIdent(), QString("Status disconnected"));
+        emit eventDevice(DeviceAbstract::Type_DeviceEvent_Disconnected, getUniqIdent(), QString("Status disconnected"), QStringList(""));
     }
     return res;
 }

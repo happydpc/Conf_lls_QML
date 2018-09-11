@@ -18,8 +18,8 @@ Rectangle {
     property alias messageReadErrorsOk: messageReadErrorsOk
 
     function setNoReady() {
-//        devPropertyProgressTmk24.isReady = false
-        devPropertyProgressTmk24.isReady = true
+        devPropertyProgressTmk24.isReady = false
+        //        devPropertyProgressTmk24.isReady = true
     }
     function setDevProperty(listProperty) {
         typeDeviceText.text = listProperty[2]
@@ -100,7 +100,7 @@ Rectangle {
         settings.push(filterValueQ.value)   //        ret << QString::number(lls_data.settings.get.value.r, 'f');
         settings.push(minLevelValue.value)  //      ret << QString::number(lls_data.settings.get.value.minLevel);
         settings.push(maxLevelValue.value)  //      ret << QString::number(lls_data.settings.get.value.maxLevel);
-        //        ret << QString::number(lls_data.settings.get.value.rs232Speed);
+        //        settings.push(//        ret << QString::number(lls_data.settings.get.value.rs232Speed);
         //        ret << QString::number(lls_data.settings.get.value.rs485Speed);
         //        ret << QString::number(lls_data.settings.get.value.slaveCount);
         //        ret << QString::number(lls_data.settings.get.value.slaveAddr[0]);
@@ -119,21 +119,16 @@ Rectangle {
         error7Label.error7 = errors[6]
         error8Label.error8 = errors[7]
     }
-    function remakeTarTableChart() {        
+    function remakeTarTableChart() {
         chartTarTableLine.clear()
-
         var tarArrayLevel = [];
         var tarArrayValue = [];
-        var minLevel = 0;
         var maxLevel = 0;
         var maxValue = 0;
         for(var i=0; i<tarTabView.rowCount; i++) {
             var item = tarTabView.model.get(i)
             tarArrayLevel.push(item.Level)
             tarArrayValue.push(item.Value)
-            if(minLevel > item.Level) {
-                minLevel = item.Level
-            }
             if(maxLevel < item.Level) {
                 maxLevel = item.Level
             }
@@ -149,6 +144,39 @@ Rectangle {
             chartTarTableLine.append(parseInt(tarArrayValue[i]), parseInt(tarArrayLevel[i]));
             console.log("Add=" + i + " " + tarArrayLevel[i])
         }
+    }
+
+    function writeTarTable() {
+        var tarArrayLevel = [];
+        var tarArrayValue = [];
+        for(var i=0; i<tarTabView.rowCount; i++) {
+            var item = tarTabView.model.get(i)
+            tarArrayLevel.push(item.Level)
+            tarArrayValue.push(item.Value)
+        }
+        viewController.setCurrentDevWriteTarTable(tarArrayValue, tarArrayLevel)
+    }
+
+    function readTarTable(table) {
+        tarTabView.model.clear()
+        var stepCounter = 0;
+        var level = 0;
+        var value = 0;
+        for(var i=0; i<table.length; i++) {
+            if(stepCounter == 0) {
+                stepCounter++;
+                value = table[i]
+            } else {
+                level = table[i]
+                stepCounter = 0;
+                tarTableListModel.append({"Value":parseInt(value),"Level":parseInt(level)})
+            }
+        }
+        //        tarTableListModel.append({"Value":"0","Level":"100"})
+        //        tarTableListModel.append({"Value":"10","Level":"200"})
+        //        tarTableListModel.append({"Value":"20","Level":"300"})
+        //        tarTableListModel.append({"Value":"30","Level":"400"})
+        timerAffterRefrashTarTable.start()
     }
 
     Rectangle {
@@ -994,7 +1022,11 @@ Rectangle {
                                                 model.Level = text
                                                 remakeTarTableChart()
                                             }
+
                                         }
+                                    }
+                                    onLevelChanged: {
+                                        remakeTarTableChart()
                                     }
                                 }
                                 model: ListModel {
@@ -1007,47 +1039,13 @@ Rectangle {
                                 anchors.bottom: tarTabRect.bottom
                                 height: parent.height
                                 width: tarTabRect.width / 2
-
-
-//                                ChartView {
-//                                    id: graph
-//                                    height: parent.height - 300
-//                                    width: parent.width + 100
-//                                    anchors.left: parent.left
-//                                    anchors.leftMargin: -20
-//                                    anchors.right: parent.right
-//                                    anchors.rightMargin: -20
-//                                    theme: ChartView.ChartThemeLight
-//                                    title: "Value/Level"
-//                                    antialiasing: true
-//                                    visible: devPropertyProgressTmk24.isReady
-//                                    property int graphLength: 1
-//                                    property int graphAmplitudeMax: 1
-//                                    ValueAxis {
-//                                        id: currentChartAxisX
-//                                        min: 0
-//                                        max: graph.graphLength
-//                                        tickCount: 5
-//                                    }
-//                                    ValueAxis {
-//                                        id: currentChartAxisY
-//                                        min: 0
-//                                        max: graph.graphAmplitudeMax
-//                                        tickCount: 5
-//                                    }
-//                                    LineSeries {
-//                                        id: currentChartLines
-//                                        axisX: currentChartAxisX
-//                                        axisY: currentChartAxisY
-//                                    }
-//                                }
-
                                 ChartView {
                                     id: chartTarTable
                                     anchors.fill: parent
                                     theme: ChartView.ChartThemeBlueCerulean
                                     clip: true
                                     antialiasing: true
+                                    title: "Уровень"
                                     property int chartTarTableLength: 1
                                     property int chartTarTableAmplitudeMax: 1
                                     ValueAxis {
@@ -1076,21 +1074,135 @@ Rectangle {
                             anchors.bottom: parent.bottom
                             anchors.left: parent.left
                             anchors.right: parent.right
+                            spacing: 5
                             Button {
                                 id:tarTabAddStep
                                 text:"Добавить"
                                 height: 50
-                                width: 100
                                 onClicked: {
                                     tarTableListModel.append({"Value":"0","Level":"0"})
-                                    remakeTarTableChart()
+                                    timerAffterRefrashTarTable.start()
+                                }
+                            }
+                            Button {
+                                id:tarTabRemoveStep
+                                text:"Удалить"
+                                height: 50
+                                Dialog {
+                                    id: dialogRemoveTarTableRow
+                                    visible: false
+                                    title: "Удаление записи таблицы"
+                                    standardButtons: StandardButton.Apply
+                                    Rectangle {
+                                        color: "transparent"
+                                        implicitWidth: 500
+                                        implicitHeight: 50
+                                        Text {
+                                            text: "Для удаления сначала кликните по удалялемой строке в таблице"
+                                            color: "navy"
+                                            anchors.centerIn: parent
+                                        }
+                                    }
+                                    onApply: {
+                                        close()
+                                    }
+                                }
+                                onClicked: {
+                                    if(tarTabView.currentRow == -1) {
+                                        dialogRemoveTarTableRow.open()
+                                        close()
+                                    } else {
+                                        tarTabView.model.remove(tarTabView.currentRow)
+                                        timerAffterRefrashTarTable.start()
+                                    }
                                 }
                             }
                             Button {
                                 id:tarTabCleaarFull
                                 text:"Очистить"
                                 height: 50
-                                width: 100
+                                Dialog {
+                                    id: dialogClearTarTable
+                                    visible: false
+                                    title: "Очистка записей таблицы"
+                                    standardButtons: StandardButton.Close | StandardButton.Apply
+                                    Rectangle {
+                                        color: "transparent"
+                                        implicitWidth: 500
+                                        implicitHeight: 50
+                                        Text {
+                                            text: "Очистить таблицу\nВы уверены?"
+                                            color: "navy"
+                                            anchors.centerIn: parent
+                                        }
+                                    }
+                                    onApply: {
+                                        dialogClearTarTable.open()
+                                        var size = tarTabView.rowCount
+                                        tarTabView.model.clear()
+                                        timerAffterRefrashTarTable.start()
+                                        close()
+                                    }
+                                }
+                                onClicked: {
+                                    dialogClearTarTable.open()
+                                }
+                            }
+                            Button {
+                                id:tarTabReadTable
+                                text:"Считать таблицу"
+                                height: 50
+                                onClicked: {
+                                    dialogReadTarTable.open()
+                                }
+                                Dialog {
+                                    id: dialogReadTarTable
+                                    visible: false
+                                    title: "Чтение записей таблицы из устройства"
+                                    standardButtons: StandardButton.Close | StandardButton.Apply
+                                    Rectangle {
+                                        color: "transparent"
+                                        implicitWidth: 500
+                                        implicitHeight: 50
+                                        Text {
+                                            text: "Считать данные?\nВсе не сохраненные изменения будут утеряны!\nВы уверены?"
+                                            color: "navy"
+                                            anchors.centerIn: parent
+                                        }
+                                    }
+                                    onApply: {
+                                        viewController.getCurrentDevTarTable()
+                                        close()
+                                    }
+                                }
+                            }
+                            Button {
+                                id:tarTabWriteTable
+                                text:"Записать таблицу"
+                                height: 50
+                                Dialog {
+                                    id: dialogWriteTarTable
+                                    visible: false
+                                    title: "Запись таблицы"
+                                    standardButtons: StandardButton.Close | StandardButton.Apply
+                                    Rectangle {
+                                        color: "transparent"
+                                        implicitWidth: 500
+                                        implicitHeight: 50
+                                        Text {
+                                            text: "Записать таблицу в устройство!\nВы уверены?"
+                                            color: "navy"
+                                            anchors.centerIn: parent
+                                        }
+                                    }
+                                    onApply: {
+                                        writeTarTable()
+                                        close()
+                                    }
+                                }
+                                onClicked: {
+                                    dialogWriteTarTable.open()
+                                }
                             }
                         }
                     }
@@ -1688,6 +1800,15 @@ Rectangle {
         }
         onApply: {
             close()
+        }
+    }
+    Timer {
+        id: timerAffterRefrashTarTable
+        interval: 100
+        running: false
+        repeat: false
+        onTriggered: {
+            remakeTarTableChart()
         }
     }
 }

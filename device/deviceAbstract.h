@@ -57,7 +57,7 @@ public:
 
 signals:
 
-    void eventDevice(DeviceAbstract::E_DeviceEvent typeEvent, QString deviceUniqueId, QString message);
+    void eventDevice(DeviceAbstract::E_DeviceEvent typeEvent, QString deviceUniqueId, QString message, QStringList customData);
 
 private:
     int priority = 0;

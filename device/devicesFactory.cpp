@@ -34,8 +34,8 @@ bool DevicesFactory::addNewDevice(E_DeviceType type, QString uniqDevName, QStrin
     }
 
     // TODO: может быть лучше как-то подругому перехватывать указатаель?
-    connect(findDeviceByUnicIdent(uniqDevName)->second, SIGNAL(eventDevice(DeviceAbstract::E_DeviceEvent,QString,QString)),
-            this, SLOT(deviceEventSlot(DeviceAbstract::E_DeviceEvent,QString,QString)));
+    connect(findDeviceByUnicIdent(uniqDevName)->second, SIGNAL(eventDevice(DeviceAbstract::E_DeviceEvent,QString,QString,QStringList)),
+            this, SLOT(deviceEventSlot(DeviceAbstract::E_DeviceEvent,QString,QString,QStringList)));
     return res;
 }
 
@@ -271,7 +271,7 @@ void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
 }
 
 // сюда приходят все сигналы от девайсов
-void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QString devUniqueId, QString message) {
+void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QString devUniqueId, QString message, QStringList customData) {
     qDebug() << "deviceEventSlot -" << message << "uniqId=" << devUniqueId;
     switch (eventType) {
     case DeviceAbstract::Type_DeviceEvent_Connected:
@@ -335,7 +335,7 @@ void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QS
         break;
 
     case DeviceAbstract::Type_DeviceEvent_ExectCustomCommandNorlal:
-        emit deviceReadyCustomCommand(findDeviceIndex(devUniqueId), message);
+        emit deviceReadyCustomCommand(findDeviceIndex(devUniqueId), message, customData);
         break;
     case DeviceAbstract::Type_DeviceEvent_ExectCustomCommandError:
         // TODO: --

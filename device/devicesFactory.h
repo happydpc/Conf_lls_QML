@@ -82,7 +82,7 @@ signals:
     void deviceReadyInitSignal(DevicesFactory::E_DeviceType, QString uniqNameId);
 
     void deviceUpdateTree(DevicesFactory::E_DeviceUpdateType status, int index);
-    void deviceReadyCustomCommand(int index, QString message);
+    void deviceReadyCustomCommand(int index, QString message, QStringList customData);
 
 private slots:
     //-- find device by index
@@ -91,7 +91,7 @@ private slots:
     int findDeviceIndex(QString uniqNameId);
     void devShedullerSlot();
 
-    void deviceEventSlot(DeviceAbstract::E_DeviceEvent type, QString devUniqueId, QString message);
+    void deviceEventSlot(DeviceAbstract::E_DeviceEvent type, QString devUniqueId, QString message, QStringList customData);
 
     void lockMutextDevMap();
     void unlockMutextDevMap();
