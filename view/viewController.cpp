@@ -386,6 +386,9 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
             if(message == "lls_write_cal_table") {
                 emit devUpdateWriteTarTableExecuted(pDevFactory->getDeviceName(indexDev));
             }
+            if(message == "lls_write_settings") {
+                emit devUpdateWriteSettingExecuted(pDevFactory->getDeviceName(indexDev));
+            }
             break;
         case DevicesFactory::Type_Progress_tmk4UX:
             break;

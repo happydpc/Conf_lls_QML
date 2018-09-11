@@ -21,7 +21,6 @@ public:
     DeviceAbstract::E_State getState() override;
     void setState(DeviceAbstract::E_State) override;
     QStringList getSettings() override;
-    void setSettings(QStringList &settings) override;
     QStringList getErrors() override;
     QString getUniqIdent() override;
     bool makeDataToCommand(CommandController::sCommandData &commandData) override;

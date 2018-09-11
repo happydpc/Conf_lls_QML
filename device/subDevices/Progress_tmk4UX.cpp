@@ -109,10 +109,6 @@ QStringList Progress_tmk4UX::getSettings() {
 
 }
 
-void Progress_tmk4UX::setSettings(QStringList &settings) {
-
-}
-
 void Progress_tmk4UX::setState(DeviceAbstract::E_State value) {
     state = value; // если дисконектим или сбрасываем - тогда сбрасываем и данные
     if((state == DeviceAbstract::STATE_DISCONNECTED) || (state == DeviceAbstract::STATE_START_INIT)) {

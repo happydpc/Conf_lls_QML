@@ -101,13 +101,14 @@ Rectangle {
         settings.push(filterValueQ.value)   //        ret << QString::number(lls_data.settings.get.value.r, 'f');
         settings.push(minLevelValue.value)  //      ret << QString::number(lls_data.settings.get.value.minLevel);
         settings.push(maxLevelValue.value)  //      ret << QString::number(lls_data.settings.get.value.maxLevel);
-        //        settings.push(//        ret << QString::number(lls_data.settings.get.value.rs232Speed);
-        //        ret << QString::number(lls_data.settings.get.value.rs485Speed);
-        //        ret << QString::number(lls_data.settings.get.value.slaveCount);
-        //        ret << QString::number(lls_data.settings.get.value.slaveAddr[0]);
-        //        ret << QString::number(lls_data.settings.get.value.slaveAddr[1]);
-        //        ret << QString::number(lls_data.settings.get.value.slaveAddr[2]);
-        //        ret << QString::number(lls_data.settings.get.value.slaveAddr[3]);
+        settings.push(masterSlaveModes.currentIndex)
+        settings.push(baudrateRs232Values.currentIndex) //        ret << QString::number(lls_data.settings.get.value.rs232Speed);
+        settings.push(baudrateRs485Values.currentIndex)//        ret << QString::number(lls_data.settings.get.value.rs485Speed);
+        settings.push(masterSlaveFullCountes.value)//        ret << QString::number(lls_data.settings.get.value.slaveCount);
+        settings.push(masterSlaveSlaveId_1.value) //        ret << QString::number(lls_data.settings.get.value.slaveAddr[0]);
+        settings.push(masterSlaveSlaveId_2.value) //        ret << QString::number(lls_data.settings.get.value.slaveAddr[1]);
+        settings.push(masterSlaveSlaveId_3.value) //        ret << QString::number(lls_data.settings.get.value.slaveAddr[2]);
+        settings.push(masterSlaveSlaveId_4.value) //        ret << QString::number(lls_data.settings.get.value.slaveAddr[3]);
         viewController.setCurrentDevSettings(settings)
     }
     function readErrors(devName, errors) {

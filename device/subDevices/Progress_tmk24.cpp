@@ -112,10 +112,6 @@ QStringList Progress_tmk24::getSettings() {
     return ret;
 }
 
-void Progress_tmk24::setSettings(QStringList &settings) {
-
-}
-
 QStringList Progress_tmk24::getErrors() {
     QStringList ret;
     if(lls_data.errors.isValid) {
@@ -171,16 +167,53 @@ bool Progress_tmk24::makeDataToCommand(CommandController::sCommandData &commandD
 
             case Progress_tmk24Data::lls_write_settings: {
                 // сперва заносим текущий пароль для разрешения доступа
-                //                QString password = QString::fromUtf8(commandArg.Progress_tmk24::E_param_suquence::param_password_session), 0);
-                //                for(uint8_t i=0; i<sizeof(password_session); i++) {
-                //                    array.push_back(password_session[i]);
-                //                }
-                //                array.push_back(0xFF);
-                //                array.push_back(0xFF);
-                //                array.insert(13, (char*)&tcommand.data.settings_new, sizeof(T_settings));
-                //                while(array.size() != 62) {
-                //                    array.push_back(0xFF);
-                //                }
+                QByteArray passArray;
+                if(lls_data.password.session.isValid) {
+                    if(!lls_data.password.session.value.isEmpty()) {
+                        int passLen = lls_data.password.session.value.length();
+                        for(int passCounter=0; passCounter<passLen; passCounter++) {
+                            passArray.push_back(lls_data.password.session.value.at(passCounter).toLatin1());
+                        }
+                    }
+                }
+                while(passArray.size() < PASSWORD_SIZE) {
+                    passArray.push_back((char)0);
+                }
+                commandData.commandOptionData.insert(commandData.commandOptionData.size(), passArray);
+                commandData.commandOptionData.push_back(0xFF);
+                commandData.commandOptionData.push_back(0xFF);
+
+                Progress_tmk24Data::T_settings tSettings;
+                if(lls_data.settings.get.isValid) {
+                    memcpy(&tSettings, &lls_data.settings.get.value, sizeof(tSettings));
+                    tSettings.k1 = commandData.commandOptionArg[0];
+                    tSettings.k2 = commandData.commandOptionArg[1];
+                    tSettings.thermoCompensationType = commandData.commandOptionArg[2];
+                    tSettings.periodicSendType = commandData.commandOptionArg[3];
+                    tSettings.periodicSendTime = commandData.commandOptionArg[4];
+                    tSettings.outputValue = commandData.commandOptionArg[5];
+                    tSettings.interpolationType = commandData.commandOptionArg[6];
+                    tSettings.filterType = commandData.commandOptionArg[7];
+                    tSettings.medianLength = commandData.commandOptionArg[8];
+                    tSettings.avarageLength = commandData.commandOptionArg[9]; //
+                    tSettings.q = commandData.commandOptionArg[10];
+                    tSettings.r = commandData.commandOptionArg[11];
+                    tSettings.minLevel = commandData.commandOptionArg[12];
+                    tSettings.maxLevel = commandData.commandOptionArg[13];
+                    tSettings.masterMode = commandData.commandOptionArg[14];
+                    tSettings.rs232Speed = commandData.commandOptionArg[15];
+                    tSettings.rs485Speed = commandData.commandOptionArg[16];
+                    tSettings.slaveCount = commandData.commandOptionArg[17];
+                    tSettings.slaveAddr[0] = commandData.commandOptionArg[18];
+                    tSettings.slaveAddr[1] = commandData.commandOptionArg[19];
+                    tSettings.slaveAddr[2] = commandData.commandOptionArg[20];
+                    tSettings.slaveAddr[3] = commandData.commandOptionArg[21];
+
+                    commandData.commandOptionData.insert(13, (char*)&tSettings, sizeof(Progress_tmk24Data::T_settings));
+                    while(commandData.commandOptionData.size() != 62) {
+                        commandData.commandOptionData.push_back(0xFF);
+                    }
+                }
             }
                 break;
 
@@ -206,8 +239,8 @@ bool Progress_tmk24::makeDataToCommand(CommandController::sCommandData &commandD
 
                 for(uint8_t i=0; i<(TAR_TABLE_SIZE*2); i++) {
                     if(i < commandData.commandOptionArg.size()) {
-                        commandData.commandOptionData.push_back(commandData.commandOptionArg.at(i) & 0xFF);
-                        commandData.commandOptionData.push_back((commandData.commandOptionArg.at(i) & 0xFF00) >> 8);
+                        commandData.commandOptionData.push_back((uint32_t)commandData.commandOptionArg.at(i) & 0xFF);
+                        commandData.commandOptionData.push_back(((uint32_t)commandData.commandOptionArg.at(i) & 0xFF00) >> 8);
                     } else {
                         commandData.commandOptionData.push_back((char)0);
                         commandData.commandOptionData.push_back((char)0);
@@ -637,7 +670,7 @@ CommandController::sCommandData Progress_tmk24::getCommandCustom(QString operati
     } else if(operation == "set current dev settings") {
         command.devCommand = (int)Progress_tmk24Data::lls_write_settings;
         for(auto i:data) {
-            command.commandOptionArg.push_back(i.toInt());
+            command.commandOptionArg.push_back(i.toDouble());
         }
     } else if(operation == "read current dev errors") {
         command.devCommand = (int)Progress_tmk24Data::lls_read_errors;

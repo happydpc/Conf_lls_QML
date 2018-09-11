@@ -158,10 +158,6 @@ public:
                 T_settings value;
                 bool isValid;
             }get;
-            struct {
-                T_settings value;
-                bool isValid;
-            }set;
         }settings;
 
         struct {
