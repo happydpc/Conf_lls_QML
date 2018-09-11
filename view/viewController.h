@@ -76,6 +76,7 @@ signals:
     void devUpdateReadSettingExecuted(QString devNameId, QStringList settings);
     void devUpdateReadErrorsExecuted(QString devNameId, QStringList errors);
     void devUpdateWriteSettingExecuted(QString devNameId);
+    void devUpdateWriteTarTableExecuted(QString devNameId);
     void devUpdateWriteScaleMeasureExecuted(QString devNameId);
     void devUpdateReadTarTable(QString devNameId, QStringList table);
 

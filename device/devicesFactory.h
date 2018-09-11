@@ -107,7 +107,7 @@ private:
 
     int indexProcessedDev = 0;
 
-    const int delayAfterSendCommandMs = 100;
+    const int delayAfterSendCommandMs = 150;
     const int devShedullerControlInterval = 100;
 };
 

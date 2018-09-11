@@ -9,6 +9,7 @@
 #define CPU_ID_SIZE                         12
 #define DUT_TYPE                            13
 #define PASSWORD_SIZE                       8
+#define TAR_TABLE_SIZE                      30
 
 class Progress_tmk24Data : public QObject
 {
@@ -106,8 +107,8 @@ public:
 
     typedef struct {
         uint8_t TableSize;
-        uint16_t x[30];
-        uint16_t y[30];
+        uint16_t x[TAR_TABLE_SIZE];
+        uint16_t y[TAR_TABLE_SIZE];
     }T_calibrationTable;
 
     typedef struct {
@@ -173,10 +174,6 @@ public:
                 T_calibrationTable table;
                 bool isValid;
             }get;
-            struct {
-                T_calibrationTable table;
-                bool isValid;
-            }set;
         }calibrateTable;
 
         struct{

@@ -16,6 +16,7 @@ Rectangle {
     property alias messageReadSettingsOk: messageReadSettingsOk
     property alias messageWriteSettingsOk: messageWriteSettingsOk
     property alias messageReadErrorsOk: messageReadErrorsOk
+    property alias messageReadTarTableOk: messageReadTarTableOk
 
     function setNoReady() {
         devPropertyProgressTmk24.isReady = false
@@ -154,7 +155,7 @@ Rectangle {
             tarArrayLevel.push(item.Level)
             tarArrayValue.push(item.Value)
         }
-        viewController.setCurrentDevWriteTarTable(tarArrayValue, tarArrayLevel)
+        viewController.setCurrentDevTarTable(tarArrayLevel,tarArrayValue)
     }
 
     function readTarTable(table) {
@@ -172,10 +173,6 @@ Rectangle {
                 tarTableListModel.append({"Value":parseInt(value),"Level":parseInt(level)})
             }
         }
-        //        tarTableListModel.append({"Value":"0","Level":"100"})
-        //        tarTableListModel.append({"Value":"10","Level":"200"})
-        //        tarTableListModel.append({"Value":"20","Level":"300"})
-        //        tarTableListModel.append({"Value":"30","Level":"400"})
         timerAffterRefrashTarTable.start()
     }
 
@@ -1113,7 +1110,7 @@ Rectangle {
                                         implicitHeight: 50
                                         Text {
                                             text: "Для удаления сначала кликните по удалялемой строке в таблице"
-                                            color: "navy"
+                                            color: "black"
                                             anchors.centerIn: parent
                                         }
                                     }
@@ -1146,7 +1143,7 @@ Rectangle {
                                         implicitHeight: 50
                                         Text {
                                             text: "Очистить таблицу\nВы уверены?"
-                                            color: "navy"
+                                            color: "black"
                                             anchors.centerIn: parent
                                         }
                                     }
@@ -1180,7 +1177,7 @@ Rectangle {
                                         implicitHeight: 50
                                         Text {
                                             text: "Считать данные?\nВсе не сохраненные изменения будут утеряны!\nВы уверены?"
-                                            color: "navy"
+                                            color: "black"
                                             anchors.centerIn: parent
                                         }
                                     }
@@ -1205,7 +1202,7 @@ Rectangle {
                                         implicitHeight: 50
                                         Text {
                                             text: "Записать таблицу в устройство!\nВы уверены?"
-                                            color: "navy"
+                                            color: "black"
                                             anchors.centerIn: parent
                                         }
                                     }
@@ -1703,7 +1700,7 @@ Rectangle {
             implicitHeight: 100
             Text {
                 text: "Присвоить уровень \"Минимум\""
-                color: "navy"
+                color: "black"
                 anchors.centerIn: parent
             }
         }
@@ -1724,7 +1721,7 @@ Rectangle {
             implicitHeight: 100
             Text {
                 text: "Присвоить уровень \"Максимум\""
-                color: "navy"
+                color: "black"
                 anchors.centerIn: parent
             }
         }
@@ -1746,7 +1743,7 @@ Rectangle {
             anchors.fill: parent
             Text {
                 text: qsTr("Задание границы измерения успешно выполнено")
-                color: "navy"
+                color: "black"
                 anchors.centerIn: parent
             }
         }
@@ -1767,7 +1764,7 @@ Rectangle {
             anchors.fill: parent
             Text {
                 text: qsTr("Чтение настроек успешно выполнено")
-                color: "navy"
+                color: "black"
                 anchors.centerIn: parent
             }
         }
@@ -1788,7 +1785,7 @@ Rectangle {
             anchors.fill: parent
             Text {
                 text: qsTr("Запись настроек успешно выполнена")
-                color: "navy"
+                color: "black"
                 anchors.centerIn: parent
             }
         }
@@ -1808,7 +1805,27 @@ Rectangle {
             anchors.fill: parent
             Text {
                 text: qsTr("Ошибки считаны успешно")
-                color: "navy"
+                color: "black"
+                anchors.centerIn: parent
+            }
+        }
+        onApply: {
+            close()
+        }
+    }
+    Dialog {
+        id: messageReadTarTableOk
+        visible: false
+        title: "Чтение таблицы"
+        standardButtons: StandardButton.Apply
+        width: 500
+        height: 150
+        Rectangle {
+            color: "transparent"
+            anchors.fill: parent
+            Text {
+                text: qsTr("Таблица тарировки успешно записана")
+                color: "black"
                 anchors.centerIn: parent
             }
         }

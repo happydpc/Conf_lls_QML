@@ -310,6 +310,9 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
             if(message == "lls_read_cal_table") {
                 emit devUpdateReadTarTable(pDevFactory->getDeviceName(indexDev), customData);
             }
+            if(message == "lls_write_cal_table") {
+                emit devUpdateWriteTarTableExecuted(pDevFactory->getDeviceName(indexDev));
+            }
             break;
         case DevicesFactory::Type_Progress_tmk4UX:
             break;

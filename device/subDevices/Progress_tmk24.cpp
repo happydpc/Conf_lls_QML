@@ -188,6 +188,31 @@ bool Progress_tmk24::makeDataToCommand(CommandController::sCommandData &commandD
                 break;
 
             case Progress_tmk24Data::lls_write_cal_table: {
+                // сперва заносим текущий пароль для разрешения доступа
+                QByteArray passArray;
+                if(lls_data.password.session.isValid) {
+                    if(!lls_data.password.session.value.isEmpty()) {
+                        int passLen = lls_data.password.session.value.length();
+                        for(int passCounter=0; passCounter<passLen; passCounter++) {
+                            passArray.push_back(lls_data.password.session.value.at(passCounter).toLatin1());
+                        }
+                    }
+                }
+                while(passArray.size() < PASSWORD_SIZE) {
+                    passArray.push_back((char)0);
+                }
+                commandData.commandOptionData.insert(commandData.commandOptionData.size(), passArray);
+                commandData.commandOptionData.push_back(commandData.commandOptionArg.size()/2);
+
+                for(uint8_t i=0; i<(TAR_TABLE_SIZE*2); i++) {
+                    if(i < commandData.commandOptionArg.size()) {
+                        commandData.commandOptionData.push_back(commandData.commandOptionArg.at(i) & 0xFF);
+                        commandData.commandOptionData.push_back((commandData.commandOptionArg.at(i) & 0xFF00) >> 8);
+                    } else {
+                        commandData.commandOptionData.push_back((char)0);
+                        commandData.commandOptionData.push_back((char)0);
+                    }
+                }
             }
                 break;
             case Progress_tmk24Data::lls_calibrate_min:
@@ -409,8 +434,8 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                             index++;
                             lls_data.calibrateTable.get.table.y[i] |= ((0xFF & commandArrayReplyData.at(index+4)) << 8);
                             index++;
-                            tableList.push_back(QString::number(lls_data.calibrateTable.get.table.x[i]));
                             tableList.push_back(QString::number(lls_data.calibrateTable.get.table.y[i]));
+                            tableList.push_back(QString::number(lls_data.calibrateTable.get.table.x[i]));
                         }
                         lls_data.calibrateTable.get.isValid = true;
                         if(isNeedMessageAboutExecuted) {
@@ -618,6 +643,9 @@ CommandController::sCommandData Progress_tmk24::getCommandCustom(QString operati
         command.devCommand = (int)Progress_tmk24Data::lls_read_errors;
     } else if(operation == "set current dev tar table") {
         command.devCommand = (int)Progress_tmk24Data::lls_write_cal_table;
+        for(auto i:data) {
+            command.commandOptionArg.push_back(i.toInt());
+        }
     } else if(operation == "read current dev tar table") {
         command.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
     } else {

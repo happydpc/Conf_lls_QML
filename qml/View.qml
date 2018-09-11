@@ -77,6 +77,9 @@ Item {
         onDevUpdateReadTarTable: {
             projectPanels.devicePanel.devPropertyProgressTmk24.readTarTable(table)
         }
+        onDevUpdateWriteTarTableExecuted: {
+            projectPanels.devicePanel.devPropertyProgressTmk24.messageReadTarTableOk.open()
+        }
     }
 
     ProjectPanels {
