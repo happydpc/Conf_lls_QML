@@ -984,7 +984,6 @@ Rectangle {
                                 anchors.left: tarTabRect.left
                                 anchors.bottom: tarTabRect.bottom
                                 width: tarTabRect.width / 2
-
                                 ControlOld.TableViewColumn {
                                     id: tableDelegateValue
                                     role: "Value"
@@ -996,6 +995,7 @@ Rectangle {
                                         TextInput {
                                             id:valueInputValue
                                             anchors.fill: parent
+                                            selectionColor: "red"
                                             text:(model.Value===0) ? "0" : model.Value
                                             validator: RegExpValidator { regExp: /[0-9A-F]+/ }
                                             onEditingFinished: {
@@ -1016,6 +1016,7 @@ Rectangle {
                                         TextInput {
                                             id:valueInputLevel
                                             anchors.fill: parent
+                                            selectionColor: "red"
                                             text:(model.Level===0) ? "0" : model.Level
                                             validator: RegExpValidator { regExp: /[0-9A-F]+/ }
                                             onEditingFinished: {
@@ -1025,13 +1026,26 @@ Rectangle {
 
                                         }
                                     }
-                                    onLevelChanged: {
-                                        remakeTarTableChart()
-                                    }
                                 }
                                 model: ListModel {
                                     id: tarTableListModel
                                 }
+                                onCurrentRowChanged: {
+                                    tarTabView.selection.clear()
+                                    tarTabView.selection.select(tarTabView.currentRow)
+                                }
+
+                                rowDelegate: Rectangle {
+                                    SystemPalette {
+                                        id: systemPalette
+                                        colorGroup: SystemPalette.Active
+                                    }
+                                    color: {
+                                        var baseColor = styleData.alternate ? systemPalette.alternateBase : systemPalette.base
+                                        return styleData.selected ? "orange" : baseColor
+                                    }
+                                }
+
                             }
                             Rectangle {
                                 anchors.top: tarTabRect.top
