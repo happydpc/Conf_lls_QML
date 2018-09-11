@@ -42,6 +42,7 @@ public:
 
     Q_INVOKABLE void getCurrentDevTarTable();
     Q_INVOKABLE void setCurrentDevTarTable(QStringList values, QStringList levels);
+    Q_INVOKABLE void setCurrentDevExportTarTable(QString pathFile, QStringList values, QStringList levels);
 
 signals:
     void remakeInterfaceTree(QStringList list, QList<int>status);
@@ -83,7 +84,6 @@ signals:
     void devUpdateLogMessage(int codeMessage, QString message);
 
     void devUpdateTree(QStringList devNames, QList<int>status);
-
 
 private slots:
     void deviceConnected(DevicesFactory::E_DeviceType, QString uniqNameId);

@@ -1085,11 +1085,13 @@ Rectangle {
                             anchors.bottom: parent.bottom
                             anchors.left: parent.left
                             anchors.right: parent.right
-                            spacing: 5
+                            spacing: 0
                             Button {
                                 id:tarTabAddStep
                                 text:"Добавить"
                                 height: 50
+                                width: 70
+                                font.pointSize: 8
                                 onClicked: {
                                     tarTableListModel.append({"Value":"0","Level":"0"})
                                     timerAffterRefrashTarTable.start()
@@ -1098,7 +1100,9 @@ Rectangle {
                             Button {
                                 id:tarTabRemoveStep
                                 text:"Удалить"
+                                font.pointSize: 8
                                 height: 50
+                                width: 70
                                 Dialog {
                                     id: dialogRemoveTarTableRow
                                     visible: false
@@ -1131,7 +1135,9 @@ Rectangle {
                             Button {
                                 id:tarTabCleaarFull
                                 text:"Очистить"
+                                font.pointSize: 8
                                 height: 50
+                                width: 70
                                 Dialog {
                                     id: dialogClearTarTable
                                     visible: false
@@ -1161,7 +1167,9 @@ Rectangle {
                             }
                             Button {
                                 id:tarTabReadTable
-                                text:"Считать таблицу"
+                                text:"Считать\nтаблицу"
+                                font.pointSize: 8
+                                width: 70
                                 height: 50
                                 onClicked: {
                                     dialogReadTarTable.open()
@@ -1189,8 +1197,10 @@ Rectangle {
                             }
                             Button {
                                 id:tarTabWriteTable
-                                text:"Записать таблицу"
+                                text:"Записать\nтаблицу"
+                                width: 70
                                 height: 50
+                                font.pointSize: 8
                                 Dialog {
                                     id: dialogWriteTarTable
                                     visible: false
@@ -1212,7 +1222,46 @@ Rectangle {
                                     }
                                 }
                                 onClicked: {
-                                    dialogWriteTarTable.open()
+                                    if(tarTabView.rowCount >0) {
+                                        dialogWriteTarTable.open()
+                                    }
+                                }
+                            }
+                            Button {
+                                id:tarTabTableExport
+                                text:"Выгрузить\n.csv"
+                                width: 80
+                                font.pointSize: 8
+                                height: 50
+
+                                FileDialog {
+                                    id: dialogExportTarTable
+                                    folder: shortcuts.home
+                                    selectMultiple: false
+                                    selectFolder: false
+                                    title: "Save to file"
+                                    nameFilters: [ "All files (*)" ]
+                                    selectExisting: false
+                                    onAccepted: {
+                                        if(dialogExportTarTable.selectExisting == true) {
+                                            console.log(dialogExportTarTable.fileUrl)
+                                        }
+                                        else {
+                                            console.log(dialogExportTarTable.fileUrl)
+                                            console.log("You chose: " + dialogExportTarTable.fileUrls)//--------   (1)
+                                            var tarArrayLevel = [];
+                                            var tarArrayValue = [];
+                                            for(var i=0; i<tarTabView.rowCount; i++) {
+                                                var item = tarTabView.model.get(i)
+                                                tarArrayLevel.push(item.Level)
+                                                tarArrayValue.push(item.Value)
+                                            }
+                                            viewController.setCurrentDevExportTarTable(dialogExportTarTable.fileUrls, tarArrayLevel,tarArrayValue)
+                                        }
+                                    }
+                                }
+                                onClicked: {
+                                    dialogExportTarTable.open()
                                 }
                             }
                         }

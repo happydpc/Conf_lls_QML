@@ -1,6 +1,7 @@
 #include "viewController.h"
 #include <QDebug>
 #include <QTime>
+#include <QFile>
 
 ViewController::ViewController(QObject *parent) : QObject(parent) {
     this->connFactory = new ConnectionFactory();
@@ -180,6 +181,78 @@ void ViewController::setCurrentDevTarTable(QStringList values, QStringList level
     }
     getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "set current dev tar table", table);
 }
+
+void ViewController::setCurrentDevExportTarTable(QString pathFile, QStringList values, QStringList levels) {
+    QStringList table;
+    int size = values.size();
+    for(auto i=0; i<size; i++) {
+        table.push_back(values.at(i));
+        table.push_back(levels.at(i));
+    }
+    if(!table.empty()) {
+        if(pathFile.size() > 0) {
+            if(!pathFile.contains(".csv")) {
+                pathFile.push_back(".csv");
+            }
+            QString str;
+            pathFile.remove("file://");
+
+            QStringList exportList;
+            str.push_back("\"" + QString("Уровень") + "\"" + ",");
+            str.push_back("\"" + QString("Объем") + "\"");
+            exportList.push_back(str);
+            for(int counterPr=0; counterPr<table.size();) {
+                str.clear();
+                str.push_back("\"" + table.at(counterPr) + "\"" + ",");
+                counterPr++;
+                str.push_back("\"" + table.at(counterPr) + "\"");
+                counterPr++;
+                exportList.push_back(str);
+            }
+            QFile file(pathFile);
+            if (file.open(QFile::WriteOnly | QFile::Text)) {
+                QTextStream s(&file);
+                for (int counterExport=0; counterExport<exportList.size(); ++counterExport) {
+                    s << exportList.at(counterExport) << '\n';
+                }
+            }
+            file.close();
+        }
+    }
+}
+
+//bool Settings::saveTableCsv(QStringList list_table, QString path) {
+//    bool res = false;
+//    QFile file(path);
+//      if (file.open(QFile::WriteOnly | QFile::Text)) {
+//        QTextStream s(&file);
+//        for (int i = 0; i < list_table.size(); ++i) {
+//            s << list_table.at(i) << '\n';
+//        }
+//        res = true;
+//      }
+//    file.close();
+//    return res;
+//}
+
+//            QModelIndex model_index;
+////            Settings *sets = new Settings();
+//            QStringList string_list;
+//            string_list.push_back("Lavel, Value");
+//            for(uint8_t i=0; i<model->rowCount(); i++) {
+//                QString str;
+//                model_index = model->index(i, 0);
+//                str.push_back("\"" + model->data(model_index, Qt::DisplayRole).toString() + "\"" + ",");
+//                model_index = model->index(i, 1);
+//                str.push_back("\"" + model->data(model_index, Qt::DisplayRole).toString() + "\"");
+//                string_list.push_back(str);
+//            }
+//            if(!sets->saveTableCsv(string_list, pathFile)) {
+//                QMessageBox::critical(this, "Сохранение настроек", "Ошибка сохранения настроек");
+//            }
+//        }
+//    }
+
 
 void ViewController::deviceConnected(DevicesFactory::E_DeviceType type, QString uniqNameId) {
     if(isCurrentDevice(uniqNameId)) {
