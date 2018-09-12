@@ -34,7 +34,7 @@ public:
     virtual QStringList getPropertyData() = 0;
     virtual QStringList getCurrentData() = 0;
     virtual QString getUniqIdent() = 0;
-    virtual QStringList getSettings() = 0;
+    virtual QPair<QStringList,QStringList> getSettings() = 0;
     virtual QStringList getErrors() = 0;
     virtual E_State getState() = 0;
     virtual void setState(DeviceAbstract::E_State) = 0;
@@ -46,7 +46,8 @@ public:
     virtual CommandController::sCommandData getCommandtoCheckPassword() = 0;
     virtual QList<CommandController::sCommandData> getCommandListToInit() = 0;
     virtual QList<CommandController::sCommandData> getCommandListToCurrentData() = 0;
-    virtual CommandController::sCommandData getCommandCustom(QString operation, QStringList data) = 0;
+    virtual QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList>) = 0;
+    virtual QList<CommandController::sCommandData> getCommandCustom(QString operation) = 0;
     virtual QList<int> getChart() = 0;
 
     int getPriority();

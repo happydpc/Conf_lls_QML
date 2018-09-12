@@ -20,7 +20,7 @@ public:
     QStringList getCurrentData() override;
     DeviceAbstract::E_State getState() override;
     void setState(DeviceAbstract::E_State) override;
-    QStringList getSettings() override;
+    QPair<QStringList,QStringList> getSettings() override;
     QStringList getErrors() override;
     QString getUniqIdent() override;
     bool makeDataToCommand(CommandController::sCommandData &commandData) override;
@@ -31,7 +31,8 @@ Progress_tmk24_H
     CommandController::sCommandData getCommandtoCheckPassword() override;
     QList<CommandController::sCommandData> getCommandListToInit() override;
     QList<CommandController::sCommandData> getCommandListToCurrentData() override;
-    CommandController::sCommandData getCommandCustom(QString operation, QStringList data) override;
+    QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList> data) override;
+    QList<CommandController::sCommandData> getCommandCustom(QString operation) override;
 
     QList<int> getChart() override;
 

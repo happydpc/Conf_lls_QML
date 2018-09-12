@@ -64,8 +64,11 @@ Item {
             projectPanels.devicePanel.devPropertyProgressTmk24.messageWriteSettingsOk.open()
         }
         onDevUpdateReadSettingExecuted: {
-            projectPanels.devicePanel.devPropertyProgressTmk24.readSettings(devNameId, settings)
+            projectPanels.devicePanel.devPropertyProgressTmk24.readSettings(devNameId, key, settings)
             projectPanels.devicePanel.devPropertyProgressTmk24.messageReadSettingsOk.open()
+        }
+        onDevUpdateReadSettingWithoutRequest: {
+            projectPanels.devicePanel.devPropertyProgressTmk24.readSettings(devNameId, key, settings)
         }
         onDevUpdateReadErrorsExecuted: {
             projectPanels.devicePanel.devPropertyProgressTmk24.readErrors(devNameId, errors)
@@ -79,6 +82,10 @@ Item {
         }
         onDevUpdateWriteTarTableExecuted: {
             projectPanels.devicePanel.devPropertyProgressTmk24.messageReadTarTableOk.open()
+        }
+        onDevErrorOperation: {
+            projectPanels.devicePanel.messageOperationError.message = message
+            projectPanels.devicePanel.messageOperationError.open()
         }
     }
 

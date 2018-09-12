@@ -105,7 +105,7 @@ DeviceAbstract::E_State Progress_tmk4UX::getState() {
     return state;
 }
 
-QStringList Progress_tmk4UX::getSettings() {
+QPair<QStringList,QStringList> Progress_tmk4UX::getSettings() {
 
 }
 
@@ -528,19 +528,23 @@ CommandController::sCommandData Progress_tmk4UX::getCommandToGetType() {
     return command;
 }
 
-CommandController::sCommandData Progress_tmk4UX::getCommandCustom(QString operation, QStringList data) {
-    CommandController::sCommandData command;
-    command.deviceIdent = getUniqIdent();
-    command.devCommand = (int)Progress_tmk4UXData::lls_read_settings;
+QList<CommandController::sCommandData> Progress_tmk4UX::getCommandCustom(QString operation, QPair<QStringList, QStringList> data) {
+    QList <CommandController::sCommandData> command;
+//    command.deviceIdent = getUniqIdent();
+//    command.devCommand = (int)Progress_tmk4UXData::lls_read_settings;
 
-    if(operation == "set current level value as min") {
-        command.devCommand = (int)Progress_tmk4UXData::lls_calibrate_min;
-    } else if(operation == "set current level value as max") {
-        command.devCommand = (int)Progress_tmk4UXData::lls_calibrate_max;
-    } else {
-        qDebug() << "getCommandCustom -type unknown!";
-    }
+//    if(operation == "set current level value as min") {
+//        command.devCommand = (int)Progress_tmk4UXData::lls_calibrate_min;
+//    } else if(operation == "set current level value as max") {
+//        command.devCommand = (int)Progress_tmk4UXData::lls_calibrate_max;
+//    } else {
+//        qDebug() << "getCommandCustom -type unknown!";
+//    }
     return command;
+}
+
+QList<CommandController::sCommandData> Progress_tmk4UX::getCommandCustom(QString operation) {
+
 }
 
 

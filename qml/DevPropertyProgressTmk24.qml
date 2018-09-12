@@ -20,15 +20,14 @@ Rectangle {
 
     function setNoReady() {
         devPropertyProgressTmk24.isReady = false
-        //        devPropertyProgressTmk24.isReady = true
     }
     function setDevProperty(listProperty) {
         typeDeviceText.text = listProperty[2]
         snText.text = listProperty[0]
         netIdText.text = listProperty[1]
         versionFirmwareText.text = listProperty[3]
-        listProperty.splice(0, 6)
-        readSettings("", listProperty)
+        // give settings without request to device (copy allready readed)
+        viewController.getCurrentDevSettingsWithoutRequest()
     }
 
     function setUpdateCurrentValues(data) {
@@ -38,8 +37,8 @@ Rectangle {
             levelValue.text = values[0]
             levelProgress.value = values[1]
             cntValue.text = values[2]
-            freqValue.text = values[3]
-            tempValue.text = values[4]
+            freqValue.text = values[3] + "Гц"
+            tempValue.text = values[4] + "°C"
         }
         //-- chart
         var list = viewController.getCurrentDevChart()
@@ -61,55 +60,106 @@ Rectangle {
         logListModel.append({"message":message,"status":codeMessage})
     }
 
-    function readSettings(devName, settings) {
-        k1.text = settings[0]
-        k2.text = settings[1]
-        typeTempCompensation.currentIndex = settings[2] //        ret << QString::number(lls_data.settings.get.value.thermoCompensationType);
-        periodicSendType.currentIndex = settings[3]     //        ret << QString::number(lls_data.settings.get.value.periodicSendType);
-        periodicSendTime.value = settings[4]    //        ret << QString::number(lls_data.settings.get.value.periodicSendTime);
-        typeOutMessage.currentIndex = settings[5]    //        ret << QString::number(lls_data.settings.get.value.outputValue);
-        typeInterpolation.currentIndex = settings[6]    //        ret << QString::number(lls_data.settings.get.value.interpolationType);
-        typeFiltration.currentIndex = settings[7]   //        ret << QString::number(lls_data.settings.get.value.filterType);
-        filterLenghtMediana.value = settings[8] //        ret << QString::number(lls_data.settings.get.value.medianLength);
-        filterAvarageValueSec.value = settings[9]   //        ret << QString::number(lls_data.settings.get.value.avarageLength);
-        filterValueR.value= settings[10]   //        ret << QString::number(lls_data.settings.get.value.q, 'f');
-        filterValueQ.value = settings[11]   //        ret << QString::number(lls_data.settings.get.value.r, 'f');
-        minLevelValue.value = settings[12]  //      ret << QString::number(lls_data.settings.get.value.minLevel);
-        maxLevelValue.value = settings[13]  //      ret << QString::number(lls_data.settings.get.value.maxLevel);
-        masterSlaveModes.currentIndex = settings[14]
-        baudrateRs232Values.currentIndex = settings[15] //        ret << QString::number(lls_data.settings.get.value.rs232Speed);
-        baudrateRs485Values.currentIndex = settings[16]//        ret << QString::number(lls_data.settings.get.value.rs485Speed);
-        masterSlaveFullCountes.value = settings[17]//        ret << QString::number(lls_data.settings.get.value.slaveCount);
-        masterSlaveSlaveId_1.value = settings[18] //        ret << QString::number(lls_data.settings.get.value.slaveAddr[0]);
-        masterSlaveSlaveId_2.value = settings[19] //        ret << QString::number(lls_data.settings.get.value.slaveAddr[1]);
-        masterSlaveSlaveId_3.value = settings[20] //        ret << QString::number(lls_data.settings.get.value.slaveAddr[2]);
-        masterSlaveSlaveId_4.value = settings[21] //        ret << QString::number(lls_data.settings.get.value.slaveAddr[3]);
+    function readSettings(devName, key, settings) {
+        for(var i=0; i<settings.length; i++) {
+            if(key[i] === "k1_value") {
+                k1.text = settings[i]
+            } else if(key[i] === "k2_value") {
+                k2.text = settings[i]
+            } else if(key[i] === "typeTempCompensation_value") {
+                typeTempCompensation.currentIndex = settings[i]
+            } else if(key[i] === "periodicSendType_value") {
+                periodicSendType.currentIndex = settings[i]
+            } else if(key[i] === "periodicSendTime_value") {
+                periodicSendTime.value = settings[i]
+            } else if(key[i] === "typeOutMessage_value") {
+                typeOutMessage.currentIndex = settings[i]
+            } else if(key[i] === "typeInterpolation_value") {
+                typeInterpolation.currentIndex = settings[i]
+            } else if(key[i] === "typeFiltration_value") {
+                typeFiltration.currentIndex = settings[i]
+            } else if(key[i] === "filterLenghtMediana_value") {
+                filterLenghtMediana.value = settings[i]
+            } else if(key[i] === "filterAvarageValueSec_value") {
+                filterAvarageValueSec.value = settings[i]
+            } else if(key[i] === "filterValueR_value") {
+                filterValueR.value= settings[i]
+            } else if(key[i] === "filterValueQ_value") {
+                filterValueQ.value = settings[i]
+            } else if(key[i] === "minLevelValue_value") {
+                minLevelValue.value = settings[i]
+            } else if(key[i] === "maxLevelValue_value") {
+                maxLevelValue.value = settings[i]
+            } else if(key[i] === "masterSlaveModes_value") {
+                masterSlaveModes.currentIndex = settings[i]
+            } else if(key[i] === "baudrateRs232Values_value") {
+                baudrateRs232Values.currentIndex = settings[i]
+            } else if(key[i] === "baudrateRs485Values_value") {
+                baudrateRs485Values.currentIndex = settings[i]
+            } else if(key[i] === "masterSlaveFullCountes_value") {
+                masterSlaveFullCountes.value = settings[i]
+            } else if(key[i] === "masterSlaveSlaveId_1_value") {
+                masterSlaveSlaveId_1.value = settings[i]
+            } else if(key[i] === "masterSlaveSlaveId_2_value") {
+                masterSlaveSlaveId_2.value = settings[i]
+            } else if(key[i] === "masterSlaveSlaveId_3_value") {
+                masterSlaveSlaveId_3.value = settings[i]
+            } else if(key[i] === "masterSlaveSlaveId_4_value") {
+                masterSlaveSlaveId_4.value = settings[i]
+            } else {
+                console.log("settings -Bad Parameters")
+            }
+        }
     }
     function writeSettings() {
         var settings = [];
+        var key = [];
+        key.push("k1_value")
         settings.push(k1.text)
+        key.push("k2_value")
         settings.push(k2.text)
-        settings.push(typeTempCompensation.currentIndex) //        ret << QString::number(lls_data.settings.get.value.thermoCompensationType);
-        settings.push(periodicSendType.currentIndex)     //        ret << QString::number(lls_data.settings.get.value.periodicSendType);
-        settings.push(periodicSendTime.value)    //        ret << QString::number(lls_data.settings.get.value.periodicSendTime);
-        settings.push(typeOutMessage.currentIndex)    //        ret << QString::number(lls_data.settings.get.value.outputValue);
-        settings.push(typeInterpolation.currentIndex)    //        ret << QString::number(lls_data.settings.get.value.interpolationType);
-        settings.push(typeFiltration.currentIndex)   //        ret << QString::number(lls_data.settings.get.value.filterType);
-        settings.push(filterLenghtMediana.value) //        ret << QString::number(lls_data.settings.get.value.medianLength);
-        settings.push(filterAvarageValueSec.value)   //        ret << QString::number(lls_data.settings.get.value.avarageLength);
-        settings.push(filterValueR.value)   //        ret << QString::number(lls_data.settings.get.value.q, 'f');
-        settings.push(filterValueQ.value)   //        ret << QString::number(lls_data.settings.get.value.r, 'f');
-        settings.push(minLevelValue.value)  //      ret << QString::number(lls_data.settings.get.value.minLevel);
-        settings.push(maxLevelValue.value)  //      ret << QString::number(lls_data.settings.get.value.maxLevel);
+        key.push("typeTempCompensation_value")
+        settings.push(typeTempCompensation.currentIndex)
+        key.push("periodicSendType_value")
+        settings.push(periodicSendType.currentIndex)
+        key.push("periodicSendTime_value")
+        settings.push(periodicSendTime.value)
+        key.push("typeOutMessage_value")
+        settings.push(typeOutMessage.currentIndex)
+        key.push("typeInterpolation_value")
+        settings.push(typeInterpolation.currentIndex)
+        key.push("typeFiltration_value")
+        settings.push(typeFiltration.currentIndex)
+        key.push("filterLenghtMediana_value")
+        settings.push(filterLenghtMediana.value)
+        key.push("filterAvarageValueSec_value")
+        settings.push(filterAvarageValueSec.value)
+        key.push("filterValueR_value")
+        settings.push(filterValueR.value)
+        key.push("filterValueQ_value")
+        settings.push(filterValueQ.value)
+        key.push("minLevelValue_value")
+        settings.push(minLevelValue.value)
+        key.push("maxLevelValue_value")
+        settings.push(maxLevelValue.value)
+        key.push("masterSlaveModes_value")
         settings.push(masterSlaveModes.currentIndex)
-        settings.push(baudrateRs232Values.currentIndex) //        ret << QString::number(lls_data.settings.get.value.rs232Speed);
-        settings.push(baudrateRs485Values.currentIndex)//        ret << QString::number(lls_data.settings.get.value.rs485Speed);
-        settings.push(masterSlaveFullCountes.value)//        ret << QString::number(lls_data.settings.get.value.slaveCount);
-        settings.push(masterSlaveSlaveId_1.value) //        ret << QString::number(lls_data.settings.get.value.slaveAddr[0]);
-        settings.push(masterSlaveSlaveId_2.value) //        ret << QString::number(lls_data.settings.get.value.slaveAddr[1]);
-        settings.push(masterSlaveSlaveId_3.value) //        ret << QString::number(lls_data.settings.get.value.slaveAddr[2]);
-        settings.push(masterSlaveSlaveId_4.value) //        ret << QString::number(lls_data.settings.get.value.slaveAddr[3]);
-        viewController.setCurrentDevSettings(settings)
+        key.push("baudrateRs232Values_value")
+        settings.push(baudrateRs232Values.currentIndex)
+        key.push("baudrateRs485Values_value")
+        settings.push(baudrateRs485Values.currentIndex)
+        key.push("masterSlaveFullCountes_value")
+        settings.push(masterSlaveFullCountes.value)
+        key.push("masterSlaveSlaveId_1_value")
+        settings.push(masterSlaveSlaveId_1.value)
+        key.push("masterSlaveSlaveId_2_value")
+        settings.push(masterSlaveSlaveId_2.value)
+        key.push("masterSlaveSlaveId_3_value")
+        settings.push(masterSlaveSlaveId_3.value)
+        key.push("masterSlaveSlaveId_4_value")
+        settings.push(masterSlaveSlaveId_4.value)
+
+        viewController.setCurrentDevSettings(key, settings)
     }
     function readErrors(devName, errors) {
         error1Label.error1 = errors[0]
@@ -1324,10 +1374,11 @@ Rectangle {
                 anchors.bottom: parent.bottom
                 anchors.top: parent.top
                 currentIndex: rightPanelView.index
+                font.pointSize: 8
 
                 TabButton {
                     id: currentData
-                    text: qsTr("Текущие данные")
+                    text: qsTr("Текущие\nданные")
                     focusPolicy: Qt.TabFocus
                     background: Rectangle {
                         gradient: Gradient {
@@ -1501,7 +1552,7 @@ Rectangle {
                                 anchors.right: parent.right
                                 anchors.rightMargin: -20
                                 theme: ChartView.ChartThemeLight
-                                title: "Value/Level"
+                                title: "Уровень/Объем"
                                 antialiasing: true
                                 visible: devPropertyProgressTmk24.isReady
                                 property int graphLength: 1
@@ -1535,6 +1586,9 @@ Rectangle {
                             anchors.rightMargin: 20
                             anchors.leftMargin: 20
                             anchors.fill: parent
+                            Label {
+                                text: "Отсутствует в этой версии"
+                            }
                         }
                     }
                     Item {
@@ -1724,6 +1778,7 @@ Rectangle {
                         id:changeId
                         visible: false
                         onAccept: {
+                            viewController.setCurrentDevChangeId(password, idNew)
                             close()
                         }
                         onExit: {
@@ -1778,7 +1833,7 @@ Rectangle {
                 anchors.left: parent.left
                 anchors.leftMargin: 20
                 onClicked: {
-                    viewController.getCurrentDevSettings()
+                    viewController.getCurrentDevSettings(true) // true - need ack message read ok
                 }
             }
             Button {

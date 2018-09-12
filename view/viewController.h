@@ -36,13 +36,16 @@ public:
     Q_INVOKABLE void setCurrentDevLevelAsEmpty();
     Q_INVOKABLE void setCurrentDevLevelAsFull();
 
+    Q_INVOKABLE void getCurrentDevSettingsWithoutRequest();
     Q_INVOKABLE void getCurrentDevSettings();
-    Q_INVOKABLE void setCurrentDevSettings(QStringList settings);
+    Q_INVOKABLE void setCurrentDevSettings(QStringList key, QStringList settings);
     Q_INVOKABLE void getCurrentDevErrors();
 
     Q_INVOKABLE void getCurrentDevTarTable();
     Q_INVOKABLE void setCurrentDevTarTable(QStringList values, QStringList levels);
     Q_INVOKABLE void setCurrentDevExportTarTable(QString pathFile, QStringList values, QStringList levels);
+
+    Q_INVOKABLE void setCurrentDevChangeId(QString passwordCheck, QString idNew);
 
 signals:
     void remakeInterfaceTree(QStringList list, QList<int>status);
@@ -70,11 +73,14 @@ signals:
     void devFullReadyTmk24(QStringList data);
     void devFullReadyTmk4ux(QStringList data);
 
+    void devErrorOperation(QString message);
+
     void devUpdatePasswordIncorrect(QString devNameId);
 
     void devUpdateTypeDevIncorrect(QString devNameId);
 
-    void devUpdateReadSettingExecuted(QString devNameId, QStringList settings);
+    void devUpdateReadSettingExecuted(QString devNameId, QStringList key, QStringList settings);
+    void devUpdateReadSettingWithoutRequest(QString devNameId, QStringList key, QStringList settings);
     void devUpdateReadErrorsExecuted(QString devNameId, QStringList errors);
     void devUpdateWriteSettingExecuted(QString devNameId);
     void devUpdateWriteTarTableExecuted(QString devNameId);

@@ -21,7 +21,10 @@ public:
         // bytearray for command buf
         QByteArray commandOptionData;
         // buffer for transmit settings, firmware and other data
-        QList<double>commandOptionArg;
+        struct {
+            QList<QString>key;
+            QList<double>value;
+        }args;
     }sCommandData;
 
     bool addCommandToStack(sCommandData commandData);

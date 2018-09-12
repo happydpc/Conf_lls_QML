@@ -4,7 +4,7 @@ import QtQuick 2.4
 import QtQuick.Layouts 1.1
 
 Popup {
-    signal accept()
+    signal accept(var password, var idNew)
     signal exit()
 
     Column {
@@ -49,24 +49,29 @@ Popup {
             anchors.rightMargin: 10
             anchors.left: parent.left
             anchors.leftMargin: 10
-            readOnly: true
             echoMode: TextInput.Password
         }
         Button {
-            id: accept
+            id: acceptButton
             text: qsTr("Сменить")
             anchors.right: parent.right
             anchors.rightMargin: 10
             anchors.left: parent.left
             anchors.leftMargin: 10
+            onClicked: {
+                accept(passwordCheck.text, idNew.value)
+            }
         }
         Button {
-            id: exit
+            id: exitButton
             text: qsTr("Выйти")
             anchors.right: parent.right
             anchors.rightMargin: 10
             anchors.left: parent.left
             anchors.leftMargin: 10
+            onClicked: {
+                exit()
+            }
         }
     }
 }

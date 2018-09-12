@@ -52,7 +52,7 @@ public slots:
     QStringList getDeviceHeaderByIndex(int index);
     QString getDeviceIdTextByIndex(int index);
 
-    QStringList getDeviceSettigns(int indexDev);
+    QPair<QStringList,QStringList> getDeviceSettigns(int indexDev);
 
     QStringList getDeviceErrrors(int indexDev);
 
@@ -69,7 +69,8 @@ public slots:
 
     void setDeviceReInitByIndex(int index);
 
-    void sendCustomCommadToDev(int indexDev, QString operation, QStringList arguments);
+    void sendCustomCommadToDev(int indexDev, QString operation, QPair<QStringList, QStringList> arguments);
+    void sendCustomCommadToDev(int indexDev, QString operation);
 
 signals:
     void writeData(QByteArray data);

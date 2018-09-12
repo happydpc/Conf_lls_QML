@@ -12,6 +12,7 @@ Item {
     property alias dialogAddDeviceFail : dialogAddDeviceFail
     property alias dialogAddInterfaceFail: dialogAddInterfaceFail
     property alias devicePropertieslistModel1: devicePropertieslistModel1
+    property alias messageOperationError: messageOperationError
 
     function setPropertyToSerialPort(listData) {
         devPropertySerialPort.setPropertyValues(listData)
@@ -404,4 +405,23 @@ Item {
             close()
         }
     }
+
+    Dialog {
+        id: messageOperationError
+        visible: false
+        title: "Ошибка операции"
+        standardButtons: StandardButton.Close
+        property string message: ""
+        Rectangle {
+            color: "transparent"
+            implicitWidth: 450
+            implicitHeight: 100
+            Text {
+                text: messageOperationError.message
+                color: "navy"
+                anchors.centerIn: parent
+            }
+        }
+    }
+
 }

@@ -142,7 +142,7 @@ QString DevicesFactory::getDeviceIdTextByIndex(int index) {
     return findDeviceByIndex(index)->first;
 }
 
-QStringList DevicesFactory::getDeviceSettigns(int indexDev) {
+QPair<QStringList,QStringList> DevicesFactory::getDeviceSettigns(int indexDev) {
     return findDeviceByIndex(indexDev)->second->getSettings();
 }
 
@@ -260,7 +260,7 @@ void DevicesFactory::devShedullerSlot() {
 void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
     for(auto dev: deviceMap) {
         if(dev.second->getUniqIdent() == commandList.first().deviceIdent) {
-            qDebug() << "placeDataReplyToCommand -len=" << data.length();
+            //qDebug() << "placeDataReplyToCommand -len=" << data.length();
             dev.second->placeDataReplyToCommand(data, commandList.first().isNeedAckMessage);
             break;
         }
@@ -272,7 +272,7 @@ void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
 
 // сюда приходят все сигналы от девайсов
 void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QString devUniqueId, QString message, QStringList customData) {
-    qDebug() << "deviceEventSlot -" << message << "uniqId=" << devUniqueId;
+    //qDebug() << "deviceEventSlot -" << message << "uniqId=" << devUniqueId;
     switch (eventType) {
     case DeviceAbstract::Type_DeviceEvent_Connected:
         //
@@ -344,21 +344,32 @@ void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QS
 }
 
 void DevicesFactory::lockMutextDevMap() {
-    qDebug() << "-lockMutextDevMap";
+    //qDebug() << "-lockMutextDevMap";
     devMutex->lock();
 }
 void DevicesFactory::unlockMutextDevMap() {
-    qDebug() << "-unlockMutextDevMap";
+    //qDebug() << "-unlockMutextDevMap";
     devMutex->unlock();
 }
 
-void DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation, QStringList arguments) {
-    CommandController::sCommandData command;
+void DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation) {
+    QList<CommandController::sCommandData> command;
+    command = findDeviceByIndex(indexDev)->second->getCommandCustom(operation);
+    // что требует подтверждения о выполнении (на форме)
+    for(auto cIt: command) {
+        findDeviceByIndex(indexDev)->second->makeDataToCommand(cIt);
+        commandList.push_back(cIt);
+    }
+}
+
+void DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation, QPair<QStringList, QStringList> arguments) {
+    QList<CommandController::sCommandData> command;
     command = findDeviceByIndex(indexDev)->second->getCommandCustom(operation, arguments);
     // что требует подтверждения о выполнении (на форме)
-    command.isNeedAckMessage = true;
-    findDeviceByIndex(indexDev)->second->makeDataToCommand(command);
-    commandList.push_back(command);
+    for(auto cIt: command) {
+        findDeviceByIndex(indexDev)->second->makeDataToCommand(cIt);
+        commandList.push_back(cIt);
+    }
 }
 
 QPair<QString,DeviceAbstract*>* DevicesFactory::findDeviceByIndex(int index) {

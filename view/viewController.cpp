@@ -150,34 +150,48 @@ bool ViewController::isCurrentDevice(QString uniqNameId) {
 }
 
 void ViewController::setCurrentDevLevelAsEmpty() {
-    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "set current level value as min", QStringList(""));
+    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "set current level value as min");
 }
 void ViewController::setCurrentDevLevelAsFull() {
-    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "set current level value as max", QStringList(""));
+    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "set current level value as max");
+}
+
+void ViewController::getCurrentDevSettingsWithoutRequest() {
+    emit devUpdateReadSettingWithoutRequest("",
+                                            getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceSettigns(index.deviceIndex).first,
+                                            getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceSettigns(index.deviceIndex).second);
 }
 
 void ViewController::getCurrentDevSettings() {
-    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "get current dev settings", QStringList(""));
+    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "get current dev settings");
 }
 
-void ViewController::setCurrentDevSettings(QStringList settings) {
+void ViewController::setCurrentDevSettings(QStringList key, QStringList settingsValues) {
+    QPair<QStringList,QStringList> settings;
+    int counter = 0;
+    for(auto it:key) {
+        settings.first.push_back(it);
+        settings.second.push_back(settingsValues.at(counter));
+        counter++;
+    }
     getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "set current dev settings", settings);
 }
 
 void ViewController::getCurrentDevErrors() {
-    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "read current dev errors", QStringList(""));
+    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "read current dev errors");
 }
 
 void ViewController::getCurrentDevTarTable() {
-    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "read current dev tar table", QStringList(""));
+    getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "read current dev tar table");
 }
 
 void ViewController::setCurrentDevTarTable(QStringList values, QStringList levels) {
-    QStringList table;
+    QPair<QStringList,QStringList> table;
     int size = values.size();
-    for(auto i=0; i<size; i++) {
-        table.push_back(values.at(i));
-        table.push_back(levels.at(i));
+    for(auto i=0; i<size; i++) { // TODO: данные должны быть сортированныеми!!! std::sort(tcommand.args.key.begin(), tcommand.args.key.end());
+        table.first.push_back(QString::number(i));
+        table.second.push_back(values.at(i));
+        table.second.push_back(levels.at(i));
     }
     getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "set current dev tar table", table);
 }
@@ -221,38 +235,17 @@ void ViewController::setCurrentDevExportTarTable(QString pathFile, QStringList v
     }
 }
 
-//bool Settings::saveTableCsv(QStringList list_table, QString path) {
-//    bool res = false;
-//    QFile file(path);
-//      if (file.open(QFile::WriteOnly | QFile::Text)) {
-//        QTextStream s(&file);
-//        for (int i = 0; i < list_table.size(); ++i) {
-//            s << list_table.at(i) << '\n';
-//        }
-//        res = true;
-//      }
-//    file.close();
-//    return res;
-//}
-
-//            QModelIndex model_index;
-////            Settings *sets = new Settings();
-//            QStringList string_list;
-//            string_list.push_back("Lavel, Value");
-//            for(uint8_t i=0; i<model->rowCount(); i++) {
-//                QString str;
-//                model_index = model->index(i, 0);
-//                str.push_back("\"" + model->data(model_index, Qt::DisplayRole).toString() + "\"" + ",");
-//                model_index = model->index(i, 1);
-//                str.push_back("\"" + model->data(model_index, Qt::DisplayRole).toString() + "\"");
-//                string_list.push_back(str);
-//            }
-//            if(!sets->saveTableCsv(string_list, pathFile)) {
-//                QMessageBox::critical(this, "Сохранение настроек", "Ошибка сохранения настроек");
-//            }
-//        }
-//    }
-
+void ViewController::setCurrentDevChangeId(QString passwordCheck, QString idNew) {
+    QPair<QStringList,QStringList> id;
+    id.first.push_back("netAddress_value");
+    id.second.push_back(idNew);
+    if((getDeviceFactoryByIndex(index.interfaceIndex)->getDeviceProperty(index.deviceIndex).at(5) == passwordCheck)
+    && (idNew.toInt() > 0)) {
+        getDeviceFactoryByIndex(index.interfaceIndex)->sendCustomCommadToDev(index.deviceIndex, "change current dev id", id);
+    } else {
+        emit devErrorOperation(tr("Ошибка операции!\nНе правильные параметры или ошибка в действиях оператора"));
+    }
+}
 
 void ViewController::deviceConnected(DevicesFactory::E_DeviceType type, QString uniqNameId) {
     if(isCurrentDevice(uniqNameId)) {
@@ -373,8 +366,9 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
                 emit devUpdateWriteScaleMeasureExecuted(pDevFactory->getDeviceName(indexDev));
             }
             if(message == "lls_read_settings") {
-                emit devUpdateReadSettingExecuted(pDevFactory->getDeviceName(indexDev),
-                                                  pDevFactory->getDeviceSettigns(indexDev));
+                emit devUpdateReadSettingExecuted(pDevFactory->getDeviceName(indexDev),           // devName
+                                                  pDevFactory->getDeviceSettigns(indexDev).first, // key
+                                                  pDevFactory->getDeviceSettigns(indexDev).second); // value
             }
             if(message == "lls_read_errors") {;
                 emit devUpdateReadErrorsExecuted(pDevFactory->getDeviceName(indexDev),

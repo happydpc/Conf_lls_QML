@@ -68,7 +68,7 @@ QStringList Progress_tmk24::getPropertyData() {
     res << getDevTypeName();
     res << lls_data.firmware.value;
     res << QString::number(lls_data.password.get.isValid);
-    res += getSettings();
+    res << lls_data.password.get.value;
     return res;
 }
 
@@ -82,34 +82,57 @@ QStringList Progress_tmk24::getCurrentData() {
     return res;
 }
 
-QStringList Progress_tmk24::getSettings() {
-    QStringList ret;
+QPair<QStringList,QStringList> Progress_tmk24::getSettings() {
+    QPair<QStringList,QStringList> res;
     if(lls_data.settings.get.isValid) {
-        ret << getDevTypeName();
-        ret << QString::number(lls_data.settings.get.value.k1, 'f');
-        ret << QString::number(lls_data.settings.get.value.k2, 'f');
-        ret << QString::number(lls_data.settings.get.value.thermoCompensationType);
-        ret << QString::number(lls_data.settings.get.value.periodicSendType);
-        ret << QString::number(lls_data.settings.get.value.periodicSendTime);
-        ret << QString::number(lls_data.settings.get.value.outputValue);
-        ret << QString::number(lls_data.settings.get.value.interpolationType);
-        ret << QString::number(lls_data.settings.get.value.filterType);
-        ret << QString::number(lls_data.settings.get.value.medianLength);
-        ret << QString::number(lls_data.settings.get.value.avarageLength);
-        ret << QString::number(lls_data.settings.get.value.q, 'f');
-        ret << QString::number(lls_data.settings.get.value.r, 'f');
-        ret << QString::number(lls_data.settings.get.value.minLevel);
-        ret << QString::number(lls_data.settings.get.value.maxLevel);
-        ret << QString::number(lls_data.settings.get.value.masterMode);
-        ret << QString::number(lls_data.settings.get.value.rs232Speed);
-        ret << QString::number(lls_data.settings.get.value.rs485Speed);
-        ret << QString::number(lls_data.settings.get.value.slaveCount);
-        ret << QString::number(lls_data.settings.get.value.slaveAddr[0]);
-        ret << QString::number(lls_data.settings.get.value.slaveAddr[1]);
-        ret << QString::number(lls_data.settings.get.value.slaveAddr[2]);
-        ret << QString::number(lls_data.settings.get.value.slaveAddr[3]);
+        res.first.push_back("device_value");
+        res.second.push_back(getDevTypeName());
+        res.first.push_back("k1_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.k1, 'f'));
+        res.first.push_back("k2_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.k2, 'f'));
+        res.first.push_back("typeTempCompensation_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.thermoCompensationType));
+        res.first.push_back("periodicSendType_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.periodicSendType));
+        res.first.push_back("periodicSendTime_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.periodicSendTime));
+        res.first.push_back("typeOutMessage_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.outputValue));
+        res.first.push_back("typeInterpolation_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.interpolationType));
+        res.first.push_back("typeFiltration_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.filterType));
+        res.first.push_back("filterLenghtMediana_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.medianLength));
+        res.first.push_back("filterAvarageValueSec_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.avarageLength));
+        res.first.push_back("filterValueQ_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.q, 'f'));
+        res.first.push_back("filterValueR_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.r, 'f'));
+        res.first.push_back("minLevelValue_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.minLevel));
+        res.first.push_back("maxLevelValue_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.maxLevel));
+        res.first.push_back("masterSlaveModes_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.masterMode));
+        res.first.push_back("baudrateRs232Values_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.rs232Speed));
+        res.first.push_back("baudrateRs485Values_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.rs485Speed));
+        res.first.push_back("masterSlaveFullCountes_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.slaveCount));
+        res.first.push_back("masterSlaveSlaveId_1_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.slaveAddr[0]));
+        res.first.push_back("masterSlaveSlaveId_2_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.slaveAddr[1]));
+        res.first.push_back("masterSlaveSlaveId_3_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.slaveAddr[2]));
+        res.first.push_back("masterSlaveSlaveId_4_value");
+        res.second.push_back(QString::number(lls_data.settings.get.value.slaveAddr[3]));
     }
-    return ret;
+    return res;
 }
 
 QStringList Progress_tmk24::getErrors() {
@@ -186,28 +209,57 @@ bool Progress_tmk24::makeDataToCommand(CommandController::sCommandData &commandD
                 Progress_tmk24Data::T_settings tSettings;
                 if(lls_data.settings.get.isValid) {
                     memcpy(&tSettings, &lls_data.settings.get.value, sizeof(tSettings));
-                    tSettings.k1 = commandData.commandOptionArg[0];
-                    tSettings.k2 = commandData.commandOptionArg[1];
-                    tSettings.thermoCompensationType = commandData.commandOptionArg[2];
-                    tSettings.periodicSendType = commandData.commandOptionArg[3];
-                    tSettings.periodicSendTime = commandData.commandOptionArg[4];
-                    tSettings.outputValue = commandData.commandOptionArg[5];
-                    tSettings.interpolationType = commandData.commandOptionArg[6];
-                    tSettings.filterType = commandData.commandOptionArg[7];
-                    tSettings.medianLength = commandData.commandOptionArg[8];
-                    tSettings.avarageLength = commandData.commandOptionArg[9]; //
-                    tSettings.q = commandData.commandOptionArg[10];
-                    tSettings.r = commandData.commandOptionArg[11];
-                    tSettings.minLevel = commandData.commandOptionArg[12];
-                    tSettings.maxLevel = commandData.commandOptionArg[13];
-                    tSettings.masterMode = commandData.commandOptionArg[14];
-                    tSettings.rs232Speed = commandData.commandOptionArg[15];
-                    tSettings.rs485Speed = commandData.commandOptionArg[16];
-                    tSettings.slaveCount = commandData.commandOptionArg[17];
-                    tSettings.slaveAddr[0] = commandData.commandOptionArg[18];
-                    tSettings.slaveAddr[1] = commandData.commandOptionArg[19];
-                    tSettings.slaveAddr[2] = commandData.commandOptionArg[20];
-                    tSettings.slaveAddr[3] = commandData.commandOptionArg[21];
+                    for(int i=0; i<commandData.args.key.size(); i++) {
+                        if(commandData.args.key.at(i) == "k1_value") {
+                            tSettings.k1 = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "k2_value") {
+                            tSettings.k2 = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "typeTempCompensation_value") {
+                            tSettings.thermoCompensationType = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "netAddress_value") {
+                            tSettings.netAddress = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "periodicSendType_value") {
+                            tSettings.periodicSendType = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "periodicSendTime_value") {
+                            tSettings.periodicSendTime = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "typeOutMessage_value") {
+                            tSettings.outputValue = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "typeInterpolation_value") {
+                            tSettings.interpolationType = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "typeFiltration_value") {
+                            tSettings.filterType = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "filterLenghtMediana_value") {
+                            tSettings.medianLength = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "filterAvarageValueSec_value") {
+                            tSettings.avarageLength = commandData.args.value.at(i); //
+                        } else if(commandData.args.key.at(i) == "filterValueQ_value") {
+                            tSettings.q = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "filterValueR_value") {
+                            tSettings.r = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "minLevelValue_value") {
+                            tSettings.minLevel = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "maxLevelValue_value") {
+                            tSettings.maxLevel = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "masterSlaveModes_value") {
+                            tSettings.masterMode = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "baudrateRs232Values_value") {
+                            tSettings.rs232Speed = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "baudrateRs485Values_value") {
+                            tSettings.rs485Speed = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "masterSlaveFullCountes_value") {
+                            tSettings.slaveCount = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "masterSlaveSlaveId_1_value") {
+                            tSettings.slaveAddr[0] = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "masterSlaveSlaveId_2_value") {
+                            tSettings.slaveAddr[1] = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "masterSlaveSlaveId_3_value") {
+                            tSettings.slaveAddr[2] = commandData.args.value.at(i);
+                        } else if(commandData.args.key.at(i) == "masterSlaveSlaveId_4_value") {
+                            tSettings.slaveAddr[3] = commandData.args.value.at(i);
+                        } else {
+                            qDebug() << "settings udnefined type parcing";
+                        }
+                    }
 
                     commandData.commandOptionData.insert(13, (char*)&tSettings, sizeof(Progress_tmk24Data::T_settings));
                     while(commandData.commandOptionData.size() != 62) {
@@ -235,12 +287,12 @@ bool Progress_tmk24::makeDataToCommand(CommandController::sCommandData &commandD
                     passArray.push_back((char)0);
                 }
                 commandData.commandOptionData.insert(commandData.commandOptionData.size(), passArray);
-                commandData.commandOptionData.push_back(commandData.commandOptionArg.size()/2);
+                commandData.commandOptionData.push_back(commandData.args.value.size()/2);
 
                 for(uint8_t i=0; i<(TAR_TABLE_SIZE*2); i++) {
-                    if(i < commandData.commandOptionArg.size()) {
-                        commandData.commandOptionData.push_back((uint32_t)commandData.commandOptionArg.at(i) & 0xFF);
-                        commandData.commandOptionData.push_back(((uint32_t)commandData.commandOptionArg.at(i) & 0xFF00) >> 8);
+                    if(i < commandData.args.value.size()) {
+                        commandData.commandOptionData.push_back((uint32_t)commandData.args.value.at(i) & 0xFF);
+                        commandData.commandOptionData.push_back(((uint32_t)commandData.args.value.at(i) & 0xFF00) >> 8);
                     } else {
                         commandData.commandOptionData.push_back((char)0);
                         commandData.commandOptionData.push_back((char)0);
@@ -656,36 +708,97 @@ CommandController::sCommandData Progress_tmk24::getCommandToGetType() {
     return command;
 }
 
-CommandController::sCommandData Progress_tmk24::getCommandCustom(QString operation, QStringList data) {
-    CommandController::sCommandData command;
-    command.deviceIdent = getUniqIdent();
-    command.devCommand = (int)Progress_tmk24Data::lls_read_settings;
+QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString operation) {
+    return getCommandCustom(operation, QPair<QStringList,QStringList>());
+}
 
+QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString operation, QPair<QStringList, QStringList> data) {
+    QList <CommandController::sCommandData> command;
+    CommandController::sCommandData tcommand;
     if(operation == "set current level value as min") {
-        command.devCommand = (int)Progress_tmk24Data::lls_calibrate_min;
+        tcommand.deviceIdent = getUniqIdent();
+        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.devCommand = (int)Progress_tmk24Data::lls_calibrate_min;
+        command.push_back(tcommand);
     } else if(operation == "set current level value as max") {
-        command.devCommand = (int)Progress_tmk24Data::lls_calibrate_max;
+        tcommand.deviceIdent = getUniqIdent();
+        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.devCommand = (int)Progress_tmk24Data::lls_calibrate_max;
+        command.push_back(tcommand);
     } else if(operation == "get current dev settings") {
-        command.devCommand = (int)Progress_tmk24Data::lls_read_settings;
+        tcommand.deviceIdent = getUniqIdent();
+        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;
+        command.push_back(tcommand);
+    } else if(operation == "get current dev settings without ack dialog") {
+        tcommand.deviceIdent = getUniqIdent();
+        tcommand.isNeedAckMessage = false;
+        tcommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;
+        command.push_back(tcommand);
     } else if(operation == "set current dev settings") {
-        command.devCommand = (int)Progress_tmk24Data::lls_write_settings;
-        for(auto i:data) {
-            command.commandOptionArg.push_back(i.toDouble());
+        tcommand.deviceIdent = getUniqIdent();
+        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.devCommand = (int)Progress_tmk24Data::lls_write_settings;
+        // key
+        for(auto i:data.first) {
+            tcommand.args.key.push_back(i);
         }
+        // value
+        for(auto i:data.second) {
+            tcommand.args.value.push_back(i.toDouble());
+        }
+        command.push_back(tcommand);
     } else if(operation == "read current dev errors") {
-        command.devCommand = (int)Progress_tmk24Data::lls_read_errors;
+        tcommand.deviceIdent = getUniqIdent();
+        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.devCommand = (int)Progress_tmk24Data::lls_read_errors;
+        command.push_back(tcommand);
     } else if(operation == "set current dev tar table") {
-        command.devCommand = (int)Progress_tmk24Data::lls_write_cal_table;
-        for(auto i:data) {
-            command.commandOptionArg.push_back(i.toInt());
+        tcommand.deviceIdent = getUniqIdent();
+        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.devCommand = (int)Progress_tmk24Data::lls_write_cal_table;
+        // key
+        for(auto i:data.first) { // string index
+            tcommand.args.key.push_back(i);
         }
+        // value
+        for(auto i:data.second) { // qstringList values
+            tcommand.args.value.push_back(i.toInt());
+        }
+        command.push_back(tcommand);
     } else if(operation == "read current dev tar table") {
-        command.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
+        tcommand.deviceIdent = getUniqIdent();
+        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
+        command.push_back(tcommand);
+    } else if(operation == "change current dev id") {
+        // first read settings
+        tcommand.deviceIdent = getUniqIdent();
+        tcommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;
+        tcommand.isNeedAckMessage = false;
+        tcommand.args.key.clear();
+        tcommand.args.value.clear();
+        tcommand.commandOptionData.clear();
+        command.push_back(tcommand);
+        // потоm запись id
+        tcommand.deviceIdent = getUniqIdent();
+        tcommand.devCommand = (int)Progress_tmk24Data::lls_write_settings;
+        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        // key
+        for(auto i:data.first) { // string index
+            tcommand.args.key.push_back(i);
+        }
+        // value
+        for(auto i:data.second) { // qstringList values
+            tcommand.args.value.push_back(i.toInt());
+        }
+        command.push_back(tcommand);
     } else {
         qDebug() << "getCommandCustom -type unknown!";
     }
     return command;
 }
+
 
 
 QList<CommandController::sCommandData> Progress_tmk24::getCommandListToCurrentData() {
