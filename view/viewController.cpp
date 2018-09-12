@@ -209,6 +209,12 @@ void ViewController::setCurrentDevExportTarTable(QString pathFile, QStringList v
                 pathFile.push_back(".csv");
             }
             QString str;
+            if(pathFile.count(':') > 1) { // windows
+                pathFile.remove("file:///");
+            } else {    // unix
+                pathFile.remove("file://");
+            }
+
             QStringList exportList;
             str.push_back("\"" + QString("Уровень") + "\"" + ",");
             str.push_back("\"" + QString("Объем") + "\"");
