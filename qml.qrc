@@ -18,6 +18,7 @@
         <file>qml/DevPropertyProgressTmk4ux.qml</file>
         <file>qml/DevPropertyProgressTmk24.qml</file>
         <file>qml/ChangeId.qml</file>
+        <file>qml/SearchDevice.qml</file>
     </qresource>
     <qresource prefix="/new/icons">
         <file>images/icon/normal.png</file>

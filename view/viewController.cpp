@@ -9,17 +9,17 @@ ViewController::ViewController(QObject *parent) : QObject(parent) {
     connect(connFactory, SIGNAL(updateTree(ConnectionFactory::E_ConnectionUpdateType)),
             this, SLOT(interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateType)));
 
-//    QTimer::singleShot(500, Qt::CoarseTimer, [&] {
-//        QStringList strLis;
-//        strLis = connFactory->getAvailableName();
-//        qDebug() << strLis;
-//        addConnectionSerialPort(strLis.first(), QString("19200"));
-//        addConnectionSerialPort(strLis.last(), QString("19200"));
+    QTimer::singleShot(500, Qt::CoarseTimer, [&] {
+        QStringList strLis;
+        strLis = connFactory->getAvailableName();
+        qDebug() << strLis;
+        addConnectionSerialPort(strLis.first(), QString("19200"));
+        addConnectionSerialPort(strLis.last(), QString("19200"));
 
-//        for(int i=0; i<1; i++) { // 15
-//            addDeviceToConnection("PROGRESS TMK24", QString::number(i+1), "1234"); // tmk4UX tmk24
-//        }
-//    });
+        for(int i=0; i<1; i++) { // 15
+            addDeviceToConnection("PROGRESS TMK24", QString::number(i+1), ""); // tmk4UX tmk24
+        }
+    });
 }
 
 QStringList ViewController::getAvailableNameToSerialPort() {
@@ -209,7 +209,7 @@ void ViewController::setCurrentDevExportTarTable(QString pathFile, QStringList v
                 pathFile.push_back(".csv");
             }
             QString str;
-            pathFile.remove("file://");
+            pathFile.remove("file:/");
 
             QStringList exportList;
             str.push_back("\"" + QString("Уровень") + "\"" + ",");

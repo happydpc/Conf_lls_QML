@@ -776,23 +776,24 @@ compiler_rcc_clean:
 	-$(DEL_FILE) qrc_qml.cpp
 qrc_qml.cpp: qml.qrc \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/rcc \
-		qml/app.qml \
-		qml/ChangeId.qml \
-		qml/DevPropertySerialPort.qml \
-		qml/SerialPortForm.ui.qml \
-		qml/DevicePanels.qml \
 		qml/ProjectMenu.qml \
-		qml/AddDeviceDialog.qml \
-		qml/DevPropertyProgressTmk4ux.qml \
-		qml/TestFormForm.ui.qml \
+		qml/app.qml \
 		qml/View.qml \
 		qml/MainMenuBar.qml \
+		qml/DevicePanels.qml \
+		qml/DevPropertySerialPort.qml \
+		qml/DevPropertyProgressTmk4ux.qml \
 		qml/ProjectPanels.qml \
+		qml/ProjectStartScreen.qml \
 		qml/StartScreen.qml \
+		qml/DevPropertyProgressTmk24.qml \
+		qml/SearchDevice.qml \
+		qml/SerialPortForm.ui.qml \
 		qml/SerialPort.qml \
 		qml/ProjectMainStack.qml \
-		qml/ProjectStartScreen.qml \
-		qml/DevPropertyProgressTmk24.qml \
+		qml/TestFormForm.ui.qml \
+		qml/AddDeviceDialog.qml \
+		qml/ChangeId.qml \
 		images/logo/logo_progress.png \
 		images/icon/4372.png \
 		images/icon/4149.png \

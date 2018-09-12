@@ -1244,7 +1244,6 @@ Rectangle {
                                         }
                                     }
                                     onApply: {
-                                        dialogClearTarTable.open()
                                         var size = tarTabView.rowCount
                                         tarTabView.model.clear()
                                         timerAffterRefrashTarTable.start()
