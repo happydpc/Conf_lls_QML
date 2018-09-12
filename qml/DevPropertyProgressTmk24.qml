@@ -1336,8 +1336,10 @@ Rectangle {
                                             console.log(dialogExportTarTable.fileUrl)
                                         }
                                         else {
-                                            console.log(dialogExportTarTable.fileUrl)
-                                            console.log("You chose: " + dialogExportTarTable.fileUrls)//--------   (1)
+                                            var path = dialogExportTarTable.fileUrl.toString();
+                                            path = path.replace(/^(file:\/{3})|(qrc:\/{2})|(http:\/{2})/,"");
+                                            var exportPath = decodeURIComponent(path);
+                                            console.log(exportPath)
                                             var tarArrayLevel = [];
                                             var tarArrayValue = [];
                                             for(var i=0; i<tarTabView.rowCount; i++) {
@@ -1345,7 +1347,7 @@ Rectangle {
                                                 tarArrayLevel.push(item.Level)
                                                 tarArrayValue.push(item.Value)
                                             }
-                                            viewController.setCurrentDevExportTarTable(dialogExportTarTable.fileUrls, tarArrayLevel,tarArrayValue)
+                                            viewController.setCurrentDevExportTarTable(exportPath, tarArrayLevel,tarArrayValue)
                                         }
                                     }
                                 }
