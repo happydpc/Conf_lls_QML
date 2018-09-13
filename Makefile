@@ -796,8 +796,10 @@ qrc_qml.cpp: qml.qrc \
 		qml/ChangeId.qml \
 		images/logo/logo_progress.png \
 		images/icon/4372.png \
+		images/icon/connectionSelected.png \
 		images/icon/4149.png \
 		images/icon/normal.png \
+		images/icon/connectionNoSelected.png \
 		images/icon/no_normal.png
 	/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/rcc -name qml qml.qrc -o qrc_qml.cpp
 

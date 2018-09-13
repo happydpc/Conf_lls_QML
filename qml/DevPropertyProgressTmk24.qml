@@ -246,6 +246,23 @@ Rectangle {
             font.pointSize: 8
 
             TabButton {
+                id: basePropertiesTab
+                text: qsTr("Общие\nпараметры")
+                focusPolicy: Qt.TabFocus
+                background: Rectangle {
+                    gradient: Gradient {
+                        GradientStop {
+                            position: 1
+                            color: "#4D75E0"
+                        }
+                        GradientStop {
+                            position: 0
+                            color: "#EEF0F6"
+                        }
+                    }
+                }
+            }
+            TabButton {
                 id: calibrationTab
                 text: qsTr("Калибровка\nMinMax")
                 background: Rectangle {
@@ -280,23 +297,6 @@ Rectangle {
             TabButton {
                 id: tempCompensationTab
                 text: qsTr("Тем-ная\nкомпенсация")
-                background: Rectangle {
-                    gradient: Gradient {
-                        GradientStop {
-                            position: 1
-                            color: "#4D75E0"
-                        }
-                        GradientStop {
-                            position: 0
-                            color: "#EEF0F6"
-                        }
-                    }
-                }
-            }
-            TabButton {
-                id: basePropertiesTab
-                text: qsTr("Общие\nпараметры")
-                focusPolicy: Qt.TabFocus
                 background: Rectangle {
                     gradient: Gradient {
                         GradientStop {
@@ -389,7 +389,343 @@ Rectangle {
                     }
                 }
 
-                // 1- calibration
+                // 1- base parameters
+                Item {
+                    id: basePropertiesItem
+                    ScrollView {
+                        anchors.fill: parent
+                        clip: true
+
+                        Row {
+                            id: row2
+                            height: 25
+                            spacing: 5
+                            clip: true
+                            anchors.right: rightTabBarRect.left
+                            anchors.rightMargin: 10
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            anchors.top: parent.top
+                            anchors.topMargin: 10
+                            Row {
+                                id: row1
+                                clip: true
+                                anchors.right: row.left
+                                anchors.rightMargin: 0
+                                anchors.left: parent.left
+                                anchors.leftMargin: 0
+                                width: row2.width / 2
+                                height: parent.height
+                                Label {
+                                    id: lSn
+                                    text: qsTr("Зав/ном:")
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 0
+                                }
+
+                                TextField {
+                                    id: snText
+                                    text: qsTr("")
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 0
+                                    anchors.left: lSn.right
+                                    anchors.leftMargin: 10
+                                    height: parent.height
+                                    readOnly: true
+                                }
+                            }
+
+                            Row {
+                                id: row
+                                clip: true
+                                anchors.right: parent.right
+                                anchors.rightMargin: 0
+                                width: row2.width / 2
+                                height: parent.height
+                                Label {
+                                    id: lTypeDevice
+                                    text: qsTr("Тип датчика")
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 10
+                                }
+
+                                TextField {
+                                    id: typeDeviceText
+                                    text: qsTr("")
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 0
+                                    anchors.left: lTypeDevice.right
+                                    anchors.leftMargin: 10
+                                    font.underline: false
+                                    readOnly: true
+                                    height: parent.height
+                                }
+                            }
+                        }
+
+                        Row {
+                            id: row5
+                            height: 25
+                            spacing: 5
+                            clip: true
+                            anchors.right: rightTabBarRect.left
+                            anchors.rightMargin: 10
+                            anchors.left: parent.left
+                            anchors.leftMargin: 10
+                            anchors.top: row2.bottom
+                            anchors.topMargin: 10
+                            z: 2
+
+                            Row {
+                                id: row4
+                                height: parent.height
+                                clip: true
+                                anchors.right: row.left
+                                anchors.rightMargin: 0
+                                anchors.left: parent.left
+                                anchors.leftMargin: 0
+                                width: row2.width / 2
+
+                                Label {
+                                    id: lNetId
+                                    text: qsTr("Сетевой адрес:")
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 0
+                                }
+
+                                TextField {
+                                    id: netIdText
+                                    text: qsTr("")
+                                    width: 50
+                                    anchors.left: lNetId.right
+                                    anchors.leftMargin: 10
+                                    height: parent.height
+                                    readOnly: true
+                                }
+                                Button {
+                                    id: netIdChange
+                                    text: qsTr("Сменить")
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 0
+                                    anchors.left: netIdText.right
+                                    anchors.leftMargin: 10
+                                    height: parent.height
+                                    ChangeId {
+                                        id:changeId
+                                        visible: false
+                                        onAccept: {
+                                            viewController.setCurrentDevChangeId(password, idNew)
+                                            close()
+                                        }
+                                        onExit: {
+                                            close()
+                                        }
+                                    }
+                                    onClicked: {
+                                        changeId.open()
+                                    }
+                                }
+                            }
+
+                            Row {
+                                id: row6
+                                clip: true
+                                anchors.right: parent.right
+                                anchors.rightMargin: 0
+                                width: row2.width / 2
+                                height: parent.height
+                                Label {
+                                    id: lversionFirmwareText
+                                    text: qsTr("Версия ПО")
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 10
+                                }
+
+                                TextField {
+                                    id: versionFirmwareText
+                                    text: qsTr("")
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: 0
+                                    anchors.left: lversionFirmwareText.right
+                                    anchors.leftMargin: 10
+                                    font.underline: false
+                                    height: parent.height
+                                    readOnly: true
+                                }
+                            }
+                        }
+                        Column {
+                            spacing: 10
+
+                            Button {
+                                text: "Сменить сетевой адрес"
+                                id: changeIdAddr
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                            }
+                            Label {
+                                text: "Самостоятельная выдача данных:"
+                            }
+                            ComboBox {
+                                id: periodicSendType
+                                height: 25
+                                model: ListModel {
+                                    ListElement {
+                                        text: "Выключена"
+                                    }
+                                    ListElement {
+                                        text: "Бинарная"
+                                    }
+                                    ListElement {
+                                        text: "Символьная"
+                                    }
+                                }
+                                onCurrentIndexChanged: {
+                                    if(periodicSendType.currentIndex != 0) {
+                                        periodicSendTime.enabled = true
+                                    } else {
+                                        periodicSendTime.enabled = false
+                                    }
+                                }
+                            }
+                            Label {
+                                text: "Период выдачи данных (0-255), с:"
+                            }
+                            SpinBox {
+                                id:periodicSendTime
+                                height: 25
+                            }
+                            Label {
+                                text: "Мин. значение уровня (0-1023):"
+                            }
+                            SpinBox {
+                                id:minLevelValue
+                                height: 25
+                                to: 4095
+                                from: 0
+                                value: 0
+                            }
+                            Label {
+                                text: "Макс.значение уровня (0-4095):"
+                            }
+                            SpinBox {
+                                id:maxLevelValue
+                                height: 25
+                                to: 4095
+                                from: 0
+                                value: 0
+                            }
+                            Label {
+                                text: "Параметр в выходном сообщении датчика:"
+                            }
+                            ComboBox {
+                                id: typeOutMessage
+                                width: 250
+                                height: 25
+                                model: ListModel {
+                                    ListElement {
+                                        text: "Относительный уровень"
+                                    }
+                                    ListElement {
+                                        text: "Объем (по таблице таррировки)"
+                                    }
+                                }
+                            }
+                            Label {
+                                text: "Тип интерполяции:"
+                            }
+                            ComboBox {
+                                id: typeInterpolation
+                                height: 25
+                                model: ListModel {
+                                    ListElement {
+                                        text: "Линейная"
+                                    }
+                                    ListElement {
+                                        text: "Квадратичная"
+                                    }
+                                    ListElement {
+                                        text: "Сплайновая"
+                                    }
+                                }
+                            }
+                            Label {
+                                text: "Скорость обмена:"
+                                id: baudrateLabel
+                            }
+                            Label {
+                                text: "По RS232:"
+                                id: baudrateRs232Label
+                            }
+                            ComboBox {
+                                id: baudrateRs232Values
+                                height: 25
+                                model: ListModel {
+                                    ListElement {
+                                        text: "2800"
+                                    }
+                                    ListElement {
+                                        text: "4800"
+                                    }
+                                    ListElement {
+                                        text: "9600"
+                                    }
+                                    ListElement {
+                                        text: "19200"
+                                    }
+                                    ListElement {
+                                        text: "28800"
+                                    }
+                                    ListElement {
+                                        text: "38400"
+                                    }
+                                    ListElement {
+                                        text: "57600"
+                                    }
+                                    ListElement {
+                                        text: "115200"
+                                    }
+                                }
+                            }
+                            Label {
+                                text: "По RS485:"
+                                id: baudrateRs485Label
+                            }
+
+                            ComboBox {
+                                id: baudrateRs485Values
+                                height: 25
+                                model: ListModel {
+                                    ListElement {
+                                        text: "2800"
+                                    }
+                                    ListElement {
+                                        text: "4800"
+                                    }
+                                    ListElement {
+                                        text: "9600"
+                                    }
+                                    ListElement {
+                                        text: "19200"
+                                    }
+                                    ListElement {
+                                        text: "28800"
+                                    }
+                                    ListElement {
+                                        text: "38400"
+                                    }
+                                    ListElement {
+                                        text: "57600"
+                                    }
+                                    ListElement {
+                                        text: "115200"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                // 2- calibration
                 Item {
                     id: calibrationItem
                     ScrollView {
@@ -602,183 +938,6 @@ Rectangle {
                                 id: k2
                                 text: "0.0"
                                 height: 25
-                            }
-                        }
-                    }
-                }
-                // base parameters
-                Item {
-                    id: basePropertiesItem
-                    ScrollView {
-                        anchors.fill: parent
-                        clip: true
-                        Column {
-                            spacing: 10
-
-                            Button {
-                                text: "Сменить сетевой адрес"
-                                id: changeIdAddr
-                                anchors.left: parent.left
-                                anchors.right: parent.right
-                            }
-                            Label {
-                                text: "Самостоятельная выдача данных:"
-                            }
-                            ComboBox {
-                                id: periodicSendType
-                                height: 25
-                                model: ListModel {
-                                    ListElement {
-                                        text: "Выключена"
-                                    }
-                                    ListElement {
-                                        text: "Бинарная"
-                                    }
-                                    ListElement {
-                                        text: "Символьная"
-                                    }
-                                }
-                                onCurrentIndexChanged: {
-                                    if(periodicSendType.currentIndex != 0) {
-                                        periodicSendTime.enabled = true
-                                    } else {
-                                        periodicSendTime.enabled = false
-                                    }
-                                }
-                            }
-                            Label {
-                                text: "Период выдачи данных (0-255), с:"
-                            }
-                            SpinBox {
-                                id:periodicSendTime
-                                height: 25
-                            }
-                            Label {
-                                text: "Мин. значение уровня (0-1023):"
-                            }
-                            SpinBox {
-                                id:minLevelValue
-                                height: 25
-                                to: 4095
-                                from: 0
-                                value: 0
-                            }
-                            Label {
-                                text: "Макс.значение уровня (0-4095):"
-                            }
-                            SpinBox {
-                                id:maxLevelValue
-                                height: 25
-                                to: 4095
-                                from: 0
-                                value: 0
-                            }
-                            Label {
-                                text: "Параметр в выходном сообщении датчика:"
-                            }
-                            ComboBox {
-                                id: typeOutMessage
-                                width: 250
-                                height: 25
-                                model: ListModel {
-                                    ListElement {
-                                        text: "Относительный уровень"
-                                    }
-                                    ListElement {
-                                        text: "Объем (по таблице таррировки)"
-                                    }
-                                }
-                            }
-                            Label {
-                                text: "Тип интерполяции:"
-                            }
-                            ComboBox {
-                                id: typeInterpolation
-                                height: 25
-                                model: ListModel {
-                                    ListElement {
-                                        text: "Линейная"
-                                    }
-                                    ListElement {
-                                        text: "Квадратичная"
-                                    }
-                                    ListElement {
-                                        text: "Сплайновая"
-                                    }
-                                }
-                            }
-                            Label {
-                                text: "Скорость обмена:"
-                                id: baudrateLabel
-                            }
-                            Label {
-                                text: "По RS232:"
-                                id: baudrateRs232Label
-                            }
-                            ComboBox {
-                                id: baudrateRs232Values
-                                height: 25
-                                model: ListModel {
-                                    ListElement {
-                                        text: "2800"
-                                    }
-                                    ListElement {
-                                        text: "4800"
-                                    }
-                                    ListElement {
-                                        text: "9600"
-                                    }
-                                    ListElement {
-                                        text: "19200"
-                                    }
-                                    ListElement {
-                                        text: "28800"
-                                    }
-                                    ListElement {
-                                        text: "38400"
-                                    }
-                                    ListElement {
-                                        text: "57600"
-                                    }
-                                    ListElement {
-                                        text: "115200"
-                                    }
-                                }
-                            }
-                            Label {
-                                text: "По RS485:"
-                                id: baudrateRs485Label
-                            }
-
-                            ComboBox {
-                                id: baudrateRs485Values
-                                height: 25
-                                model: ListModel {
-                                    ListElement {
-                                        text: "2800"
-                                    }
-                                    ListElement {
-                                        text: "4800"
-                                    }
-                                    ListElement {
-                                        text: "9600"
-                                    }
-                                    ListElement {
-                                        text: "19200"
-                                    }
-                                    ListElement {
-                                        text: "28800"
-                                    }
-                                    ListElement {
-                                        text: "38400"
-                                    }
-                                    ListElement {
-                                        text: "57600"
-                                    }
-                                    ListElement {
-                                        text: "115200"
-                                    }
-                                }
                             }
                         }
                     }
@@ -1659,192 +1818,34 @@ Rectangle {
             }
         }
 
-        Row {
-            id: row2
-            height: 25
-            spacing: 5
-            clip: true
-            anchors.right: rightTabBarRect.left
-            anchors.rightMargin: 10
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-            anchors.top: parent.top
-            anchors.topMargin: 10
-            Row {
-                id: row1
-                clip: true
-                anchors.right: row.left
-                anchors.rightMargin: 0
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-                width: row2.width / 2
-                height: parent.height
-                Label {
-                    id: lSn
-                    text: qsTr("Зав/ном:")
-                    anchors.left: parent.left
-                    anchors.leftMargin: 0
-                }
-
-                TextField {
-                    id: snText
-                    text: qsTr("")
-                    anchors.right: parent.right
-                    anchors.rightMargin: 0
-                    anchors.left: lSn.right
-                    anchors.leftMargin: 10
-                    height: parent.height
-                    readOnly: true
-                }
-            }
-
-            Row {
-                id: row
-                clip: true
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                width: row2.width / 2
-                height: parent.height
-                Label {
-                    id: lTypeDevice
-                    text: qsTr("Тип датчика")
-                    anchors.left: parent.left
-                    anchors.leftMargin: 10
-                }
-
-                TextField {
-                    id: typeDeviceText
-                    text: qsTr("")
-                    anchors.right: parent.right
-                    anchors.rightMargin: 0
-                    anchors.left: lTypeDevice.right
-                    anchors.leftMargin: 10
-                    font.underline: false
-                    readOnly: true
-                    height: parent.height
-                }
-            }
-        }
-
-        Row {
-            id: row5
-            height: 25
-            spacing: 5
-            clip: true
-            anchors.right: rightTabBarRect.left
-            anchors.rightMargin: 10
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-            anchors.top: row2.bottom
-            anchors.topMargin: 10
-            z: 2
-
-            Row {
-                id: row4
-                height: parent.height
-                clip: true
-                anchors.right: row.left
-                anchors.rightMargin: 0
-                anchors.left: parent.left
-                anchors.leftMargin: 0
-                width: row2.width / 2
-
-                Label {
-                    id: lNetId
-                    text: qsTr("Сетевой адрес:")
-                    anchors.left: parent.left
-                    anchors.leftMargin: 0
-                }
-
-                TextField {
-                    id: netIdText
-                    text: qsTr("")
-                    width: 50
-                    anchors.left: lNetId.right
-                    anchors.leftMargin: 10
-                    height: parent.height
-                    readOnly: true
-                }
-                Button {
-                    id: netIdChange
-                    text: qsTr("Сменить")
-                    anchors.right: parent.right
-                    anchors.rightMargin: 0
-                    anchors.left: netIdText.right
-                    anchors.leftMargin: 10
-                    height: parent.height
-                    ChangeId {
-                        id:changeId
-                        visible: false
-                        onAccept: {
-                            viewController.setCurrentDevChangeId(password, idNew)
-                            close()
-                        }
-                        onExit: {
-                            close()
-                        }
-                    }
-                    onClicked: {
-                        changeId.open()
-                    }
-                }
-            }
-
-            Row {
-                id: row6
-                clip: true
-                anchors.right: parent.right
-                anchors.rightMargin: 0
-                width: row2.width / 2
-                height: parent.height
-                Label {
-                    id: lversionFirmwareText
-                    text: qsTr("Версия ПО")
-                    anchors.left: parent.left
-                    anchors.leftMargin: 10
-                }
-
-                TextField {
-                    id: versionFirmwareText
-                    text: qsTr("")
-                    anchors.right: parent.right
-                    anchors.rightMargin: 0
-                    anchors.left: lversionFirmwareText.right
-                    anchors.leftMargin: 10
-                    font.underline: false
-                    height: parent.height
-                    readOnly: true
-                }
-            }
-        }
-        Row {
-            id:row7
-            clip: true
-            anchors.right: row.left
-            anchors.rightMargin: 0
-            width: 300
-            height: 50
-            anchors.top: row5.bottom
-            anchors.topMargin: 10
-            Button {
-                id: lButtonSettingsRead
-                text: qsTr("Считать настройки")
-                anchors.left: parent.left
-                anchors.leftMargin: 20
-                onClicked: {
-                    viewController.getCurrentDevSettings(true) // true - need ack message read ok
-                }
-            }
-            Button {
-                id: lButtonWriteRead
-                text: qsTr("Записать настройки")
-                anchors.left: lButtonSettingsRead.right
-                anchors.leftMargin: 10
-                onClicked: {
-                    writeSettings()
-                }
-            }
-        }
+//        Row {
+//            id:row7
+//            clip: true
+//            anchors.right: row.left
+//            anchors.rightMargin: 0
+//            width: 300
+//            height: 50
+//            anchors.top: row5.bottom
+//            anchors.topMargin: 10
+//            Button {
+//                id: lButtonSettingsRead
+//                text: qsTr("Считать настройки")
+//                anchors.left: parent.left
+//                anchors.leftMargin: 20
+//                onClicked: {
+//                    viewController.getCurrentDevSettings(true) // true - need ack message read ok
+//                }
+//            }
+//            Button {
+//                id: lButtonWriteRead
+//                text: qsTr("Записать настройки")
+//                anchors.left: lButtonSettingsRead.right
+//                anchors.leftMargin: 10
+//                onClicked: {
+//                    writeSettings()
+//                }
+//            }
+//        }
     }
     BusyIndicator {
         id:waitReadyIndicator

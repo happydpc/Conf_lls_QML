@@ -90,24 +90,31 @@ Item {
     }
 
     ProjectPanels {
+        id:projectPanels
         height: parent.height
         width: parent.width
-        id:projectPanels
     }
 
-    MainMenuBar {
-        id:mainMenuBar
-        onAddNewConnection: {
-            var list = viewController.getAvailableNameToSerialPort()
-            console.log("Available interface-" + list)
-            serialPort.setListInterfaces(list)
-            serialPort.open()
-        }
-        onCloseProject: {
-        }
-        onExitFull: {
-            Qt.quit()
-        }
+//    MainMenuBar {
+//        id:mainMenuBar
+//        onAddNewConnection: {
+//            var list = viewController.getAvailableNameToSerialPort()
+//            console.log("Available interface-" + list)
+//            serialPort.setListInterfaces(list)
+//            serialPort.open()
+//        }
+//        onCloseProject: {
+//        }
+//        onExitFull: {
+//            Qt.quit()
+//        }
+//    }
+
+    Rectangle {
+        id:upBar
+        color: "#404558"
+        height: 50
+        width: parent.width
     }
 
 

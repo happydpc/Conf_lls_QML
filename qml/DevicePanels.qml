@@ -65,12 +65,11 @@ Item {
         anchors.left: parent.left
         anchors.leftMargin: 10
         anchors.top: parent.top
-        anchors.topMargin: 50
-        border.color: "#9899a7"
+        anchors.topMargin: 60
+        border.color: "#ffffff"
 
         ListView {
             id: listInterfaceView
-            anchors.leftMargin: 0
             anchors.fill: parent
             clip: true
             maximumFlickVelocity: 0
@@ -83,7 +82,7 @@ Item {
 
             delegate: Item {
                 id: item
-                height: 50
+                height: 30
                 width: interfaceList.width
 
                 property var view: ListView.view
@@ -101,23 +100,22 @@ Item {
                         anchors.left: parent.left
                         anchors.leftMargin: 1
                         height: item.height
-                        color: colorCode
-                        gradient: Gradient {
-                            GradientStop {
-                                position: 0
-                                color: isCurrent ? (mouseArea.pressed ? "#416FE1" : "#416FE1") : (mouseArea.pressed ? "#8FAAFA" : "#84A4F5")
-                            }
-                            GradientStop {
-                                position: 1
-                                color: isCurrent ? (mouseArea.pressed ? "#416FE1" : "#416FE1") : (mouseArea.pressed ? "#416FE1" : "#C0D0F7")
-                            }
+                        color: "transparent"
+                        Image {
+                            id: iconConnection
+                            height: 24
+                            width: 24
+                            anchors.left: parent.left
+                            anchors.top: parent.top
+                            source: isCurrent ? "/new/icons/images/icon/connectionSelected.png" : "/new/icons/images/icon/connectionNoSelected.png"
                         }
                         Label {
                             id: buttonText
                             text: model.text
                             font.bold: false
-                            anchors.left: parent.left
-                            anchors.leftMargin: 10
+                            color: isCurrent ? (mouseArea.pressed ? "#3598fa" : "#3598fa") : (mouseArea.pressed ? "#3598fa" : "#d1dfe9")
+                            anchors.left: iconConnection.left
+                            anchors.leftMargin: 45
                             anchors.verticalCenter: parent.verticalCenter
                         }
                     }
@@ -201,7 +199,6 @@ Item {
         anchors.rightMargin: 10
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
-        border.color: "#9899a7"
         anchors.left: parent.left
 
         ListView {
@@ -221,7 +218,7 @@ Item {
 
             delegate: Item {
                 id: item_2
-                height: 50
+                height: 25
                 width: deviceList.width
                 property var viewDevice: ListView.view
                 property var isCurrentDevice: ListView.isCurrentItem
@@ -238,30 +235,22 @@ Item {
                         anchors.left: parent.left
                         anchors.leftMargin: 1
                         height: item_2.height
-                        color: colorCode
-                        gradient: Gradient {
-                            GradientStop {
-                                position: 0
-                                color: isCurrentDevice ? (mouseArea_2.pressed ? "#416FE1" : "#416FE1") : (mouseArea_2.pressed ? "#8FAAFA" : "#84A4F5")
-                            }
-                            GradientStop {
-                                position: 1
-                                color: isCurrentDevice ? (mouseArea_2.pressed ? "#416FE1" : "#416FE1") : (mouseArea_2.pressed ? "#416FE1" : "#C0D0F7")
-                            }
-                        }
+                        color: "transparent"
                         Label {
                             id: buttonText_2
                             text: model.text
                             font.bold: false
+                            color: isCurrentDevice ? (mouseArea_2.pressed ? "#416FE1" : "#416FE1") : (mouseArea_2.pressed ? "#416FE1" : "#C0D0F7")
                             anchors.left: parent.left
                             anchors.leftMargin: 15
                             anchors.verticalCenter: parent.verticalCenter
                         }
                         Image {
                             id: icon
-                            height: 32
-                            width: 32
+                            height: 24
+                            width: 24
                             anchors.right: parent.right
+                            anchors.top: parent.top
                             anchors.rightMargin: 15
                             source: model.status === 1 ? "/new/icons/images/icon/normal.png" : "/new/icons/images/icon/no_normal.png"
                         }

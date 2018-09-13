@@ -25,5 +25,7 @@
         <file>images/icon/no_normal.png</file>
         <file>images/icon/4149.png</file>
         <file>images/icon/4372.png</file>
+        <file>images/icon/connectionSelected.png</file>
+        <file>images/icon/connectionNoSelected.png</file>
     </qresource>
 </RCC>
