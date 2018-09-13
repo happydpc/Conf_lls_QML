@@ -198,6 +198,8 @@ void ViewController::setCurrentDevTarTable(QStringList values, QStringList level
 
 void ViewController::setCurrentDevExportTarTable(QString pathFile, QStringList values, QStringList levels) {
     QStringList table;
+    QStringList exportList;
+    QString str;
     int size = values.size();
     for(auto i=0; i<size; i++) {
         table.push_back(values.at(i));
@@ -208,14 +210,11 @@ void ViewController::setCurrentDevExportTarTable(QString pathFile, QStringList v
             if(!pathFile.contains(".csv")) {
                 pathFile.push_back(".csv");
             }
-            QString str;
             if(pathFile.count(':') > 1) { // windows
                 pathFile.remove("file:///");
-            } else {    // unix
-                pathFile.remove("file://");
+            } else {
+                pathFile.remove("file://"); // unix
             }
-
-            QStringList exportList;
             str.push_back("\"" + QString("Уровень") + "\"" + ",");
             str.push_back("\"" + QString("Объем") + "\"");
             exportList.push_back(str);
