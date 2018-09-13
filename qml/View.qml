@@ -95,21 +95,6 @@ Item {
         width: parent.width
     }
 
-//    MainMenuBar {
-//        id:mainMenuBar
-//        onAddNewConnection: {
-//            var list = viewController.getAvailableNameToSerialPort()
-//            console.log("Available interface-" + list)
-//            serialPort.setListInterfaces(list)
-//            serialPort.open()
-//        }
-//        onCloseProject: {
-//        }
-//        onExitFull: {
-//            Qt.quit()
-//        }
-//    }
-
     Rectangle {
         id:upBar
         color: "#404558"
@@ -134,6 +119,20 @@ Item {
     }
 }
 
+//    MainMenuBar {
+//        id:mainMenuBar
+//        onAddNewConnection: {
+//            var list = viewController.getAvailableNameToSerialPort()
+//            console.log("Available interface-" + list)
+//            serialPort.setListInterfaces(list)
+//            serialPort.open()
+//        }
+//        onCloseProject: {
+//        }
+//        onExitFull: {
+//            Qt.quit()
+//        }
+//    }
 
 /*##^## Designer {
     D{i:0;autoSize:true;height:480;width:640}

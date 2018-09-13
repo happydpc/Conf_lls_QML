@@ -2,13 +2,14 @@ import QtQuick 2.4
 import QtQuick.Controls 2.3
 import Qt.labs.platform 1.0
 import QtQuick.Dialogs 1.2
+import QtQml.Models 2.11
 
 Item {
     id: projectDevicePanel
     anchors.fill: parent
 
     property alias devPropertyProgressTmk24: devPropertyProgressTmk24
-//    property alias devPropertyProgressTmk4ux: devPropertyProgressTmk4ux
+    //    property alias devPropertyProgressTmk4ux: devPropertyProgressTmk4ux
     property alias dialogAddDeviceFail : dialogAddDeviceFail
     property alias dialogAddInterfaceFail: dialogAddInterfaceFail
     property alias devicePropertieslistModel1: devicePropertieslistModel1
@@ -35,19 +36,37 @@ Item {
     }
 
     function remakeDeviceList(list, status) {
-        listDeviceView.model.clear()
-        var size = list.length
-        if(size > 0) {
-            for(var i=0; i<size; i++) {
-                listDeviceView.model.append({"text": list[i], "status": status[i]})
-                console.log("list[i] - status = " + status[i])
-            }
-        } else {
-            devicePropertieslistModel1.pop()
-        }
+        //        listDeviceView.model.clear()
+        //        var size = list.length
+        //        if(size > 0) {
+        //            for(var i=0; i<size; i++) {
+        //                listDeviceView.model.append({"text": list[i], "status": status[i]})
+        //                console.log("list[i] - status = " + status[i])
+        //            }
+        //        } else {
+        //            devicePropertieslistModel1.pop()
+        //        }
+
+        listInterfaceView.model.append({"text": "name", "status": status[1]})
+        listInterfaceView.model.append({"text": "name", "status": status[1]})
+        listInterfaceView.model.append({"text": "name", "status": status[1]})
+        listInterfaceView.model.append({"text": "name", "status": status[1]})
+        listInterfaceView.model.append({"text": "name", "status": status[1]})
+        listInterfaceView.model.append({"text": "name", "status": status[1]})
+        listInterfaceView.model.append({"text": "name", "status": status[1]})
+
+        //        wrapper.listDeviceView_2.model.append({"text":"dddd","status":0})
+        //        wrapper.listDeviceView_2.model.append({"text": "TMK-xxxx", "status": 0})
+        //        wrapper.listDeviceView_2.model.append({"text": "TMK-xxxx", "status": 0})
+        //        wrapper.listDeviceView_2.model.append({"text": "TMK-xxxx", "status": 0})
+        //        wrapper.listDeviceView_2.model.append({"text": "TMK-xxxx", "status": 0})
+        //        wrapper.listDeviceView_2.model.append({"text": "TMK-xxxx", "status": 0})
+        //        wrapper.listDeviceView_2.model.append({"text": "TMK-xxxx", "status": 0})
+        //        wrapper.listDeviceView_2.model.append({"text": "TMK-xxxx", "status": 0})
+        //        wrapper.listDeviceView_2.model.append({"text": "TMK-xxxx", "status": 0})
     }
     function updateDeviceListStatus(index, status) {
-        listDeviceView.model.set(index, {"status": status})
+        //        listDeviceView.model.set(index, {"status": status})
     }
     function devShowPasswordIncorrect(devNameId) {
         dialogPasswordError.messageArg = devNameId
@@ -61,11 +80,11 @@ Item {
     Rectangle {
         id: interfaceList
         width: 200
-        height: portOrDeviceStack.height / 2 - 10
         anchors.left: parent.left
         anchors.leftMargin: 10
         anchors.top: parent.top
         anchors.topMargin: 60
+        anchors.bottom: parent.bottom
         border.color: "#ffffff"
 
         ListView {
@@ -79,62 +98,195 @@ Item {
                 id: scrollDeviceList
                 width: 20
             }
+            delegate: treeDelegate
 
-            delegate: Item {
-                id: item
-                height: 30
-                width: interfaceList.width
+            model: ListModel {
+                id: listModel
+            }
 
-                property var view: ListView.view
-                property var isCurrent: ListView.isCurrentItem
-
-                MouseArea {
-                    id: mouseArea
-                    width: item.width
-                    height: item.height
-                    acceptedButtons: Qt.LeftButton | Qt.RightButton
-
+            //Компонент делегата
+            Component {
+                id: treeDelegate
+                Item {
+                    id: wrapper
+                    height: activeParent === false ? 30 : devRect.heightActive
+                    width: interfaceList.width
+                    property bool activeParent: false
                     Rectangle {
-                        id: rect
-                        width: item.width - 2
-                        anchors.left: parent.left
-                        anchors.leftMargin: 1
-                        height: item.height
-                        color: "transparent"
-                        Image {
-                            id: iconConnection
-                            height: 24
-                            width: 24
-                            anchors.left: parent.left
-                            anchors.top: parent.top
-                            source: isCurrent ? "/new/icons/images/icon/connectionSelected.png" : "/new/icons/images/icon/connectionNoSelected.png"
-                        }
-                        Label {
-                            id: buttonText
-                            text: model.text
-                            font.bold: false
-                            color: isCurrent ? (mouseArea.pressed ? "#3598fa" : "#3598fa") : (mouseArea.pressed ? "#3598fa" : "#d1dfe9")
-                            anchors.left: iconConnection.left
-                            anchors.leftMargin: 45
-                            anchors.verticalCenter: parent.verticalCenter
+                        id:devRect
+                        anchors.fill: parent
+                        visible: wrapper.activeParent
+                        property int heightActive: listDeviceView_2.count * 100
+                        ListView {
+                            id: listDeviceView_2
+                            anchors.leftMargin: 0
+                            anchors.fill: parent
+                            anchors.topMargin: 20
+                            clip: true
+                            maximumFlickVelocity: 0
+                            highlightFollowsCurrentItem: false
+                            ScrollBar.vertical: ScrollBar {
+                                hoverEnabled: true
+                                active: hovered || pressed
+                                orientation: Qt.Vertical
+                                width: 10
+                            }
+
+                            delegate: Item {
+                                id: item_2_2
+                                height: 25
+                                width: deviceList.width
+                                property var viewDevice: ListView.view
+                                property var isCurrentDevice: ListView.isCurrentItem
+
+                                MouseArea {
+                                    id: mouseArea_2_2
+                                    width: item_2_2.width
+                                    height: item_2_2.height
+                                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+                                    Rectangle {
+                                        id: rect_2_2
+                                        width: item_2_2.width - 2
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 1
+                                        height: item_2_2.height
+                                        color: "transparent"
+                                        Label {
+                                            id: buttonText_2_2
+                                            text: model.text
+                                            font.bold: false
+                                            color: isCurrentDevice ? (mouseArea_2_2.pressed ? "#416FE1" : "#416FE1") : (mouseArea_2_2.pressed ? "#416FE1" : "#C0D0F7")
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            anchors.verticalCenter: parent.verticalCenter
+                                        }
+                                        Image {
+                                            id: icon_2
+                                            height: 24
+                                            width: 24
+                                            anchors.right: parent.right
+                                            anchors.top: parent.top
+                                            anchors.rightMargin: 15
+                                            source: model.status === 1 ? "/new/icons/images/icon/normal.png" : "/new/icons/images/icon/no_normal.png"
+                                        }
+                                    }
+                                    onClicked: {
+                                        console.log("DeviceList clicked ")
+                                        if (mouse.button === Qt.LeftButton) {
+                                            viewDevice.currentIndex = model.index
+                                            devicePropertieslistModel1.push(devPropertyProgressTmk24)
+                                            devPropertyProgressTmk24.setNoReady()
+                                            viewController.setChangedIndexDevice(model.index)
+                                        } else {
+                                            dialogRemoveDevice.open()
+                                        }
+                                    }
+                                }
+                            }
+                            model: ListModel {
+                                id: listModel_2_2
+                            }
                         }
                     }
-                    onClicked: {
-                        console.log("Interface List clicked ")
-                        if (mouse.button === Qt.LeftButton) {
-                            view.currentIndex = model.index
-                            devicePropertieslistModel1.pop()
-                            viewController.setChangedIndexInteface(model.index)
-                        } else {
-                            dialogRemoveSerialPort.open()
+                    //Область для отображения данных элемента
+                    Text {
+                        id: nameTextElement_2
+                        text: model.text
+                        verticalAlignment: "AlignVCenter"
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: wrapper.top
+                        //Отлавливаем нажатие мышкой и открываем/закрываем элемент
+                        MouseArea {
+                            anchors.fill: parent
+                            height: 50
+                            onClicked: {
+                                console.log("clicked MouseArea")
+                                if(wrapper.activeParent === true) {
+                                    wrapper.activeParent = false
+                                } else {
+                                    wrapper.activeParent = true
+                                    listDeviceView_2.model.append({"text":"1111122"})
+                                    listDeviceView_2.model.append({"text":"1111122"})
+                                    listDeviceView_2.model.append({"text":"1111122"})
+                                    listDeviceView_2.model.append({"text":"1111122"})
+                                    listDeviceView_2.model.append({"text":"1111122"})
+                                    listDeviceView_2.model.append({"text":"1111122"})
+                                }
+                            }
                         }
                     }
                 }
             }
-            model: ListModel {
-                id: listModel
-            }
         }
+        //        ListView {
+        //            id: listInterfaceView
+        //            anchors.fill: parent
+        //            clip: true
+        //            maximumFlickVelocity: 0
+        //            highlightFollowsCurrentItem: true
+
+        //            ScrollBar.vertical: ScrollBar {
+        //                id: scrollDeviceList
+        //                width: 20
+        //            }
+
+        //            delegate: Item {
+        //                id: item
+        //                height: 30
+        //                width: interfaceList.width
+
+        //                property var view: ListView.view
+        //                property var isCurrent: ListView.isCurrentItem
+
+        //                MouseArea {
+        //                    id: mouseArea
+        //                    width: item.width
+        //                    height: item.height
+        //                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+        //                    Rectangle {
+        //                        id: rect
+        //                        width: item.width - 2
+        //                        anchors.left: parent.left
+        //                        anchors.leftMargin: 1
+        //                        height: item.height
+        //                        color: "transparent"
+        //                        Image {
+        //                            id: iconConnection
+        //                            height: 24
+        //                            width: 24
+        //                            anchors.left: parent.left
+        //                            anchors.top: parent.top
+        //                            source: isCurrent ? "/new/icons/images/icon/connectionSelected.png" : "/new/icons/images/icon/connectionNoSelected.png"
+        //                        }
+        //                        Label {
+        //                            id: buttonText
+        //                            text: model.text
+        //                            font.bold: false
+        //                            color: isCurrent ? (mouseArea.pressed ? "#3598fa" : "#3598fa") : (mouseArea.pressed ? "#3598fa" : "#d1dfe9")
+        //                            anchors.left: iconConnection.left
+        //                            anchors.leftMargin: 45
+        //                            anchors.verticalCenter: parent.verticalCenter
+        //                        }
+        //                    }
+        //                    onClicked: {
+        //                        console.log("Interface List clicked ")
+        //                        if (mouse.button === Qt.LeftButton) {
+        //                            view.currentIndex = model.index
+        //                            devicePropertieslistModel1.pop()
+        //                            viewController.setChangedIndexInteface(model.index)
+        //                        } else {
+        //                            dialogRemoveSerialPort.open()
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //            model: ListModel {
+        //                id: listModel
+        //            }
+        //        }
     }
 
     Rectangle {
@@ -176,12 +328,12 @@ Item {
 
                     DevPropertyProgressTmk24 {
                         id: devPropertyProgressTmk24
-//                        property bool isActive: false
+                        //                        property bool isActive: false
                     }
-//                    DevPropertyProgressTmk4ux {
-//                        id: devPropertyProgressTmk4ux
-////                        property bool isActive: false
-//                    }
+                    //                    DevPropertyProgressTmk4ux {
+                    //                        id: devPropertyProgressTmk4ux
+                    ////                        property bool isActive: false
+                    //                    }
                     DevPropertySerialPort {
                         id: devPropertySerialPort
                     }
