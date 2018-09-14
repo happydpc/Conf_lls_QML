@@ -19,6 +19,9 @@
         <file>qml/DevPropertyProgressTmk24.qml</file>
         <file>qml/ChangeId.qml</file>
         <file>qml/SearchDevice.qml</file>
+        <file>qml/InterfaceItemView.qml</file>
+        <file>qml/DeviceTree.qml</file>
+        <file>qml/DeviceItemEmpty.qml</file>
     </qresource>
     <qresource prefix="/new/icons">
         <file>images/icon/normal.png</file>

@@ -2,14 +2,16 @@
 #define VIEWCONTROLLER_H
 
 #include <QObject>
-
 #include "connection/connectionFactory.h"
+#include "interfaceListControll/model.h"
 
 class ViewController : public QObject
 {
     Q_OBJECT
 public:
     explicit ViewController(QObject *parent = nullptr);
+
+//    Model interfaceListModel;
 
     Q_INVOKABLE bool addConnectionSerialPort(QString name, QString baudrate);
     Q_INVOKABLE bool removeActiveConnectionSerialPort();

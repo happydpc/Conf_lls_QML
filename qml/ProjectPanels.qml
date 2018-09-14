@@ -29,7 +29,7 @@ Item {
         id: vewRootForm
         color: "#ffffff"
         anchors.top: parent.top
-        anchors.topMargin: mainMenuBar.height - 5
+        anchors.topMargin: devicePanel.height - 5
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right

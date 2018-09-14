@@ -70,7 +70,10 @@ SOURCES       = main.cpp \
 		device/subDevices/Progress_tmk4UX.cpp \
 		device/subDevices/Progress_tmk4UXData.cpp \
 		device/subDevices/Progress_tmk24.cpp \
-		device/subDevices/Progress_tmk24Data.cpp qrc_qml.cpp \
+		device/subDevices/Progress_tmk24Data.cpp \
+		view/interfaceListControll/treeitem.cpp \
+		view/interfaceListControll/model.cpp \
+		view/qtquick2applicationviewer.cpp qrc_qml.cpp \
 		moc_connectionFactory.cpp \
 		moc_deviceAbstract.cpp \
 		moc_devicesFactory.cpp \
@@ -87,7 +90,10 @@ SOURCES       = main.cpp \
 		moc_Progress_BaseData.cpp \
 		moc_Progress_Base_Data.cpp \
 		moc_Progress_tmk4UXData.cpp \
-		moc_Progress_tmk24Data.cpp
+		moc_Progress_tmk24Data.cpp \
+		moc_model.cpp \
+		moc_treeitem.cpp \
+		moc_qtquick2applicationviewer.cpp
 OBJECTS       = main.o \
 		connectionFactory.o \
 		deviceAbstract.o \
@@ -109,6 +115,9 @@ OBJECTS       = main.o \
 		Progress_tmk4UXData.o \
 		Progress_tmk24.o \
 		Progress_tmk24Data.o \
+		treeitem.o \
+		model.o \
+		qtquick2applicationviewer.o \
 		qrc_qml.o \
 		moc_connectionFactory.o \
 		moc_deviceAbstract.o \
@@ -126,7 +135,10 @@ OBJECTS       = main.o \
 		moc_Progress_BaseData.o \
 		moc_Progress_Base_Data.o \
 		moc_Progress_tmk4UXData.o \
-		moc_Progress_tmk24Data.o
+		moc_Progress_tmk24Data.o \
+		moc_model.o \
+		moc_treeitem.o \
+		moc_qtquick2applicationviewer.o
 DIST          = ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/common/unix.conf \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/common/linux.conf \
@@ -323,7 +335,10 @@ DIST          = ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/features/
 		device/subDevices/Progress_tmk4UX.h \
 		device/subDevices/Progress_tmk4UXData.h \
 		device/subDevices/Progress_tmk24.h \
-		device/subDevices/Progress_tmk24Data.h main.cpp \
+		device/subDevices/Progress_tmk24Data.h \
+		view/interfaceListControll/model.h \
+		view/interfaceListControll/treeitem.h \
+		view/qtquick2applicationviewer.h main.cpp \
 		connection/connectionFactory.cpp \
 		device/deviceAbstract.cpp \
 		device/devicesFactory.cpp \
@@ -343,7 +358,10 @@ DIST          = ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/features/
 		device/subDevices/Progress_tmk4UX.cpp \
 		device/subDevices/Progress_tmk4UXData.cpp \
 		device/subDevices/Progress_tmk24.cpp \
-		device/subDevices/Progress_tmk24Data.cpp
+		device/subDevices/Progress_tmk24Data.cpp \
+		view/interfaceListControll/treeitem.cpp \
+		view/interfaceListControll/model.cpp \
+		view/qtquick2applicationviewer.cpp
 QMAKE_TARGET  = Lls_QML_conf
 DESTDIR       = 
 TARGET        = Lls_QML_conf
@@ -746,8 +764,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents qml.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents connection/connectionFactory.h device/deviceAbstract.h device/devicesFactory.h interfaces/interfaceBLE.h interfaces/interfaceEthernet.h interfaces/interfacesAbstract.h interfaces/interfaceSerial.h settings/settings.h view/viewController.h interfaces/interface.h command/commandController.h other/crc.h tests/testDevReply.h device/subDevices/Progress_Base.h device/subDevices/Progress_BaseData.h device/subDevices/Progress_Base_Data.h device/subDevices/Progress_tmk4UX.h device/subDevices/Progress_tmk4UXData.h device/subDevices/Progress_tmk24.h device/subDevices/Progress_tmk24Data.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp connection/connectionFactory.cpp device/deviceAbstract.cpp device/devicesFactory.cpp interfaces/interfaceBLE.cpp interfaces/interfaceEthernet.cpp interfaces/interfacesAbstract.cpp interfaces/interfaceSerial.cpp settings/settings.cpp view/viewController.cpp interfaces/interface.cpp command/commandController.cpp other/crc.cpp tests/testDevReply.cpp device/subDevices/Progress_Base.cpp device/subDevices/progress_base_data.cpp device/subDevices/Progress_BaseData.cpp device/subDevices/Progress_tmk4UX.cpp device/subDevices/Progress_tmk4UXData.cpp device/subDevices/Progress_tmk24.cpp device/subDevices/Progress_tmk24Data.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents connection/connectionFactory.h device/deviceAbstract.h device/devicesFactory.h interfaces/interfaceBLE.h interfaces/interfaceEthernet.h interfaces/interfacesAbstract.h interfaces/interfaceSerial.h settings/settings.h view/viewController.h interfaces/interface.h command/commandController.h other/crc.h tests/testDevReply.h device/subDevices/Progress_Base.h device/subDevices/Progress_BaseData.h device/subDevices/Progress_Base_Data.h device/subDevices/Progress_tmk4UX.h device/subDevices/Progress_tmk4UXData.h device/subDevices/Progress_tmk24.h device/subDevices/Progress_tmk24Data.h view/interfaceListControll/model.h view/interfaceListControll/treeitem.h view/qtquick2applicationviewer.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp connection/connectionFactory.cpp device/deviceAbstract.cpp device/devicesFactory.cpp interfaces/interfaceBLE.cpp interfaces/interfaceEthernet.cpp interfaces/interfacesAbstract.cpp interfaces/interfaceSerial.cpp settings/settings.cpp view/viewController.cpp interfaces/interface.cpp command/commandController.cpp other/crc.cpp tests/testDevReply.cpp device/subDevices/Progress_Base.cpp device/subDevices/progress_base_data.cpp device/subDevices/Progress_BaseData.cpp device/subDevices/Progress_tmk4UX.cpp device/subDevices/Progress_tmk4UXData.cpp device/subDevices/Progress_tmk24.cpp device/subDevices/Progress_tmk24Data.cpp view/interfaceListControll/treeitem.cpp view/interfaceListControll/model.cpp view/qtquick2applicationviewer.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -777,9 +795,11 @@ compiler_rcc_clean:
 qrc_qml.cpp: qml.qrc \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/rcc \
 		qml/ProjectMenu.qml \
+		qml/InterfaceItemView.qml \
 		qml/app.qml \
 		qml/View.qml \
 		qml/MainMenuBar.qml \
+		qml/DeviceItemEmpty.qml \
 		qml/DevicePanels.qml \
 		qml/DevPropertySerialPort.qml \
 		qml/DevPropertyProgressTmk4ux.qml \
@@ -791,6 +811,7 @@ qrc_qml.cpp: qml.qrc \
 		qml/SerialPortForm.ui.qml \
 		qml/SerialPort.qml \
 		qml/ProjectMainStack.qml \
+		qml/DeviceTree.qml \
 		qml/TestFormForm.ui.qml \
 		qml/AddDeviceDialog.qml \
 		qml/ChangeId.qml \
@@ -809,9 +830,9 @@ compiler_moc_predefs_clean:
 moc_predefs.h: ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -std=gnu++1y -Wall -W -dM -E -o moc_predefs.h ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_connectionFactory.cpp moc_deviceAbstract.cpp moc_devicesFactory.cpp moc_interfaceBLE.cpp moc_interfaceEthernet.cpp moc_interfacesAbstract.cpp moc_interfaceSerial.cpp moc_settings.cpp moc_viewController.cpp moc_interface.cpp moc_commandController.cpp moc_testDevReply.cpp moc_Progress_Base.cpp moc_Progress_BaseData.cpp moc_Progress_Base_Data.cpp moc_Progress_tmk4UXData.cpp moc_Progress_tmk24Data.cpp
+compiler_moc_header_make_all: moc_connectionFactory.cpp moc_deviceAbstract.cpp moc_devicesFactory.cpp moc_interfaceBLE.cpp moc_interfaceEthernet.cpp moc_interfacesAbstract.cpp moc_interfaceSerial.cpp moc_settings.cpp moc_viewController.cpp moc_interface.cpp moc_commandController.cpp moc_testDevReply.cpp moc_Progress_Base.cpp moc_Progress_BaseData.cpp moc_Progress_Base_Data.cpp moc_Progress_tmk4UXData.cpp moc_Progress_tmk24Data.cpp moc_model.cpp moc_treeitem.cpp moc_qtquick2applicationviewer.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_connectionFactory.cpp moc_deviceAbstract.cpp moc_devicesFactory.cpp moc_interfaceBLE.cpp moc_interfaceEthernet.cpp moc_interfacesAbstract.cpp moc_interfaceSerial.cpp moc_settings.cpp moc_viewController.cpp moc_interface.cpp moc_commandController.cpp moc_testDevReply.cpp moc_Progress_Base.cpp moc_Progress_BaseData.cpp moc_Progress_Base_Data.cpp moc_Progress_tmk4UXData.cpp moc_Progress_tmk24Data.cpp
+	-$(DEL_FILE) moc_connectionFactory.cpp moc_deviceAbstract.cpp moc_devicesFactory.cpp moc_interfaceBLE.cpp moc_interfaceEthernet.cpp moc_interfacesAbstract.cpp moc_interfaceSerial.cpp moc_settings.cpp moc_viewController.cpp moc_interface.cpp moc_commandController.cpp moc_testDevReply.cpp moc_Progress_Base.cpp moc_Progress_BaseData.cpp moc_Progress_Base_Data.cpp moc_Progress_tmk4UXData.cpp moc_Progress_tmk24Data.cpp moc_model.cpp moc_treeitem.cpp moc_qtquick2applicationviewer.cpp
 moc_connectionFactory.cpp: ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
@@ -1432,6 +1453,7 @@ moc_viewController.cpp: ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/Q
 		device/subDevices/Progress_tmk24.h \
 		device/subDevices/Progress_tmk24Data.h \
 		tests/testDevReply.h \
+		view/interfaceListControll/model.h \
 		view/viewController.h \
 		moc_predefs.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/moc
@@ -1926,6 +1948,252 @@ moc_Progress_tmk24Data.cpp: ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/inclu
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/moc
 	/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/linux-g++ -I/media/khomin/66F0D010F0CFE501/PROJECTs/temp/Lls_Conf_QML -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCharts -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtWidgets -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtNetwork -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSerialPort -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include device/subDevices/Progress_tmk24Data.h -o moc_Progress_tmk24Data.cpp
 
+moc_model.cpp: ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnamespace.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobal.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtcore-config.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsystemdetection.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qprocessordetection.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtypeinfo.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsysinfo.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlogging.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qflags.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbasicatomic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qgenericatomic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_msvc.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobalstatic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmutex.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnumeric.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qversiontagging.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstring.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qchar.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearray.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qrefcount.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qarraydata.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringliteral.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringview.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringbuilder.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlist.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qalgorithms.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qiterator.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qhashfunctions.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qpair.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearraylist.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringlist.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qregexp.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringmatcher.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcoreevent.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qscopedpointer.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmetatype.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject_impl.h \
+		view/interfaceListControll/model.h \
+		moc_predefs.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/moc
+	/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/linux-g++ -I/media/khomin/66F0D010F0CFE501/PROJECTs/temp/Lls_Conf_QML -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCharts -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtWidgets -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtNetwork -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSerialPort -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include view/interfaceListControll/model.h -o moc_model.cpp
+
+moc_treeitem.cpp: ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnamespace.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobal.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtcore-config.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsystemdetection.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qprocessordetection.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtypeinfo.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsysinfo.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlogging.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qflags.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbasicatomic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qgenericatomic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_msvc.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobalstatic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmutex.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnumeric.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qversiontagging.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstring.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qchar.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearray.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qrefcount.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qarraydata.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringliteral.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringview.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringbuilder.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlist.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qalgorithms.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qiterator.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qhashfunctions.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qpair.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearraylist.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringlist.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qregexp.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringmatcher.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcoreevent.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qscopedpointer.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmetatype.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject_impl.h \
+		view/interfaceListControll/treeitem.h \
+		moc_predefs.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/moc
+	/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/linux-g++ -I/media/khomin/66F0D010F0CFE501/PROJECTs/temp/Lls_Conf_QML -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCharts -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtWidgets -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtNetwork -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSerialPort -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include view/interfaceListControll/treeitem.h -o moc_treeitem.cpp
+
+moc_qtquick2applicationviewer.cpp: ../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick/QQuickView \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick/qquickview.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick/qquickwindow.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick/qtquickglobal.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qtqmlglobal.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobal.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtcore-config.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsystemdetection.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qprocessordetection.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtypeinfo.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsysinfo.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlogging.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qflags.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbasicatomic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qgenericatomic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_msvc.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobalstatic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmutex.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnumeric.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qversiontagging.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qtqml-config.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtNetwork/qtnetworkglobal.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtNetwork/qtnetwork-config.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qtguiglobal.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qtgui-config.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick/qtquick-config.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick/qsgrendererinterface.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick/qsgnode.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick/qsggeometry.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qopengl.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qt_windows.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qopengles2ext.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qopenglext.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QRectF \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qrect.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmargins.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnamespace.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsize.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qpoint.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/QMatrix4x4 \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qmatrix4x4.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qvector3d.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmetatype.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearray.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qrefcount.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qarraydata.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qalgorithms.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qvector4d.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qquaternion.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qgenericmatrix.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qdebug.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qhash.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qchar.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qiterator.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlist.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qhashfunctions.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstring.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringliteral.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringview.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringbuilder.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qpair.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearraylist.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringlist.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qregexp.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringmatcher.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmap.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtextstream.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qiodevice.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcoreevent.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qscopedpointer.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject_impl.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlocale.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvariant.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qshareddata.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvector.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qset.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcontiguouscache.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsharedpointer.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qdatastream.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qwindow.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QEvent \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QMargins \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QRect \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qsurface.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qsurfaceformat.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qwindowdefs.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qwindowdefs_win.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qicon.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qpixmap.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qpaintdevice.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qcolor.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qrgb.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qrgba64.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qimage.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qpixelformat.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qtransform.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qmatrix.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qpolygon.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qregion.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qline.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qpainterpath.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qcursor.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qevent.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qkeysequence.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qurl.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qurlquery.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qfile.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qfiledevice.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qvector2d.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qtouchdevice.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qqml.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qqmlprivate.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qqmlparserstatus.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qqmlpropertyvaluesource.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qqmllist.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmetaobject.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qqmldebug.h \
+		view/qtquick2applicationviewer.h \
+		moc_predefs.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/moc
+	/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/linux-g++ -I/media/khomin/66F0D010F0CFE501/PROJECTs/temp/Lls_Conf_QML -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCharts -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtWidgets -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtNetwork -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSerialPort -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include view/qtquick2applicationviewer.h -o moc_qtquick2applicationviewer.cpp
+
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
 compiler_moc_source_make_all:
@@ -2036,6 +2304,7 @@ main.o: main.cpp view/viewController.h \
 		device/subDevices/Progress_tmk24.h \
 		device/subDevices/Progress_tmk24Data.h \
 		tests/testDevReply.h \
+		view/interfaceListControll/model.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtWidgets/QApplication \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtWidgets/qapplication.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
@@ -2126,7 +2395,10 @@ main.o: main.cpp view/viewController.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qqmlengine.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qjsengine.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qjsvalue.h \
-		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qqmlerror.h
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qqmlerror.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/QGuiApplication \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/QQmlContext \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qqmlcontext.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 connectionFactory.o: connection/connectionFactory.cpp connection/connectionFactory.h \
@@ -2785,6 +3057,7 @@ viewController.o: view/viewController.cpp view/viewController.h \
 		device/subDevices/Progress_tmk24.h \
 		device/subDevices/Progress_tmk24Data.h \
 		tests/testDevReply.h \
+		view/interfaceListControll/model.h \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QDebug \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QTime \
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qdatetime.h \
@@ -3469,6 +3742,258 @@ Progress_tmk24Data.o: device/subDevices/Progress_tmk24Data.cpp device/subDevices
 		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject_impl.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Progress_tmk24Data.o device/subDevices/Progress_tmk24Data.cpp
 
+treeitem.o: view/interfaceListControll/treeitem.cpp view/interfaceListControll/treeitem.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnamespace.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobal.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtcore-config.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsystemdetection.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qprocessordetection.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtypeinfo.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsysinfo.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlogging.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qflags.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbasicatomic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qgenericatomic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_msvc.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobalstatic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmutex.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnumeric.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qversiontagging.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstring.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qchar.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearray.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qrefcount.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qarraydata.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringliteral.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringview.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringbuilder.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlist.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qalgorithms.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qiterator.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qhashfunctions.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qpair.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearraylist.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringlist.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qregexp.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringmatcher.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcoreevent.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qscopedpointer.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmetatype.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject_impl.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o treeitem.o view/interfaceListControll/treeitem.cpp
+
+model.o: view/interfaceListControll/model.cpp view/interfaceListControll/model.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnamespace.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobal.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtcore-config.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsystemdetection.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qprocessordetection.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtypeinfo.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsysinfo.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlogging.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qflags.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbasicatomic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qgenericatomic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_msvc.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobalstatic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmutex.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnumeric.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qversiontagging.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstring.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qchar.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearray.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qrefcount.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qarraydata.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringliteral.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringview.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringbuilder.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlist.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qalgorithms.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qiterator.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qhashfunctions.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qpair.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearraylist.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringlist.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qregexp.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringmatcher.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcoreevent.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qscopedpointer.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmetatype.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject_impl.h \
+		view/interfaceListControll/treeitem.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o model.o view/interfaceListControll/model.cpp
+
+qtquick2applicationviewer.o: view/qtquick2applicationviewer.cpp view/qtquick2applicationviewer.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick/QQuickView \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick/qquickview.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick/qquickwindow.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick/qtquickglobal.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qtqmlglobal.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobal.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtcore-config.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsystemdetection.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qprocessordetection.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtypeinfo.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsysinfo.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlogging.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qflags.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbasicatomic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qgenericatomic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_msvc.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobalstatic.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmutex.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnumeric.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qversiontagging.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qtqml-config.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtNetwork/qtnetworkglobal.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtNetwork/qtnetwork-config.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qtguiglobal.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qtgui-config.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick/qtquick-config.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick/qsgrendererinterface.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick/qsgnode.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick/qsggeometry.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qopengl.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qt_windows.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qopengles2ext.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qopenglext.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QRectF \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qrect.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmargins.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnamespace.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsize.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qpoint.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/QMatrix4x4 \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qmatrix4x4.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qvector3d.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmetatype.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearray.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qrefcount.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qarraydata.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qalgorithms.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qvector4d.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qquaternion.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qgenericmatrix.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qdebug.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qhash.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qchar.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qiterator.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlist.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qhashfunctions.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstring.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringliteral.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringview.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringbuilder.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qpair.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearraylist.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringlist.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qregexp.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringmatcher.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmap.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtextstream.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qiodevice.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcoreevent.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qscopedpointer.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject_impl.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlocale.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvariant.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qshareddata.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvector.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qset.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcontiguouscache.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsharedpointer.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qdatastream.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qwindow.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QEvent \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QMargins \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QRect \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qsurface.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qsurfaceformat.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qwindowdefs.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qwindowdefs_win.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qicon.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qpixmap.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qpaintdevice.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qcolor.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qrgb.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qrgba64.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qimage.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qpixelformat.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qtransform.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qmatrix.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qpolygon.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qregion.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qline.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qpainterpath.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qcursor.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qevent.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qkeysequence.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qurl.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qurlquery.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qfile.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qfiledevice.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qvector2d.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui/qtouchdevice.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qqml.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qqmlprivate.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qqmlparserstatus.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qqmlpropertyvaluesource.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qqmllist.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmetaobject.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qqmldebug.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QCoreApplication \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcoreapplication.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qeventloop.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QDir \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qdir.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qfileinfo.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/QQmlEngine \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qqmlengine.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qjsengine.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qjsvalue.h \
+		../../../../DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml/qqmlerror.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qtquick2applicationviewer.o view/qtquick2applicationviewer.cpp
+
 qrc_qml.o: qrc_qml.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_qml.o qrc_qml.cpp
 
@@ -3522,6 +4047,15 @@ moc_Progress_tmk4UXData.o: moc_Progress_tmk4UXData.cpp
 
 moc_Progress_tmk24Data.o: moc_Progress_tmk24Data.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Progress_tmk24Data.o moc_Progress_tmk24Data.cpp
+
+moc_model.o: moc_model.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_model.o moc_model.cpp
+
+moc_treeitem.o: moc_treeitem.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_treeitem.o moc_treeitem.cpp
+
+moc_qtquick2applicationviewer.o: moc_qtquick2applicationviewer.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_qtquick2applicationviewer.o moc_qtquick2applicationviewer.cpp
 
 ####### Install
 
