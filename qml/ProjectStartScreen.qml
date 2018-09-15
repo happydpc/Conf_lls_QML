@@ -5,7 +5,8 @@ import QtQuick.Controls 2.4
 Component {
     id:projectStartScreen
     Rectangle {
-        color: "#ffffff"
+//        color: "#ffffff"
+                color: "transparent"
         anchors.fill: parent
 
         Image {

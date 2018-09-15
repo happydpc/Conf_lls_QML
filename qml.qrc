@@ -2,16 +2,13 @@
     <qresource prefix="/">
         <file>images/logo/logo_progress.png</file>
         <file>qml/app.qml</file>
-        <file>qml/DevicePanels.qml</file>
         <file>qml/DevPropertySerialPort.qml</file>
         <file>qml/MainMenuBar.qml</file>
         <file>qml/ProjectMainStack.qml</file>
         <file>qml/ProjectMenu.qml</file>
-        <file>qml/ProjectPanels.qml</file>
         <file>qml/ProjectStartScreen.qml</file>
         <file>qml/SerialPort.qml</file>
         <file>qml/SerialPortForm.ui.qml</file>
-        <file>qml/StartScreen.qml</file>
         <file>qml/TestFormForm.ui.qml</file>
         <file>qml/View.qml</file>
         <file>qml/AddDeviceDialog.qml</file>
@@ -22,13 +19,22 @@
         <file>qml/InterfaceItemView.qml</file>
         <file>qml/DeviceTree.qml</file>
         <file>qml/DeviceItemEmpty.qml</file>
+        <file>qml/StartPanel.qml</file>
+        <file>qml/LogoPanel.qml</file>
+        <file>qml/DevicePropertyPanel.qml</file>
+        <file>qml/DevicePanel.qml</file>
+        <file>qml/TabButtonUp.qml</file>
     </qresource>
     <qresource prefix="/new/icons">
         <file>images/icon/normal.png</file>
         <file>images/icon/no_normal.png</file>
         <file>images/icon/4149.png</file>
         <file>images/icon/4372.png</file>
-        <file>images/icon/connectionSelected.png</file>
-        <file>images/icon/connectionNoSelected.png</file>
+        <file>images/icon/cables_no_selected.png</file>
+        <file>images/icon/cables_selected.png</file>
+        <file>images/icon/battery-level.png</file>
+        <file>images/icon/calibration.png</file>
+        <file>images/icon/tunes-connect.png</file>
     </qresource>
+    <qresource prefix="/controls"/>
 </RCC>

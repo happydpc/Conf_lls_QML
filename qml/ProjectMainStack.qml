@@ -6,7 +6,8 @@ Component {
 
     Rectangle {
         id: projectDevicePanel
-        color: "#ffffff"
+//        color: "#ffffff"
+        color: "transparent"
 
         Rectangle {
             id: deviceList
@@ -89,53 +90,53 @@ Component {
         }
 
 
-        Rectangle {
-            id: currentStateRectangle
-            width: 300
-            color: "#fdfdfd"
-            radius: 0
-            border.width: 1
-            border.color: "#9899a7"
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 10
-            anchors.top: parent.top
-            anchors.topMargin: 10
-            anchors.right: parent.right
-            anchors.rightMargin: 10
+//        Rectangle {
+//            id: currentStateRectangle
+//            width: 300
+//            color: "#fdfdfd"
+//            radius: 0
+//            border.width: 1
+//            border.color: "#9899a7"
+//            anchors.bottom: parent.bottom
+//            anchors.bottomMargin: 10
+//            anchors.top: parent.top
+//            anchors.topMargin: 10
+//            anchors.right: parent.right
+//            anchors.rightMargin: 10
 
-            StackView {
-                id: deviceTabParameters
-                initialItem: parametersRectangle
-                anchors.bottomMargin: 0
-                anchors.fill: parent
+//            StackView {
+//                id: deviceTabParameters
+//                initialItem: parametersRectangle
+//                anchors.bottomMargin: 0
+//                anchors.fill: parent
 
-                TabBar {
-                    id: tabBar
-                    anchors.left: parent.left
-                    anchors.leftMargin: 1
-                    anchors.right: parent.right
-                    anchors.rightMargin: 1
-                    anchors.top: parent.top
-                    anchors.topMargin: 1
+//                TabBar {
+//                    id: tabBar
+//                    anchors.left: parent.left
+//                    anchors.leftMargin: 1
+//                    anchors.right: parent.right
+//                    anchors.rightMargin: 1
+//                    anchors.top: parent.top
+//                    anchors.topMargin: 1
 
-                    TabButton {
-                        id: currentData
-                        text: qsTr("Текущие данные")
-                        focusPolicy: Qt.TabFocus
-                    }
+//                    TabButton {
+//                        id: currentData
+//                        text: qsTr("Текущие данные")
+//                        focusPolicy: Qt.TabFocus
+//                    }
 
-                    TabButton {
-                        id: slaves
-                        text: qsTr("Ведомые")
-                    }
+//                    TabButton {
+//                        id: slaves
+//                        text: qsTr("Ведомые")
+//                    }
 
-                    TabButton {
-                        id: log
-                        text: qsTr("Журнал")
-                    }
-                }
-            }
-        }
+//                    TabButton {
+//                        id: log
+//                        text: qsTr("Журнал")
+//                    }
+//                }
+//            }
+//        }
 
         Rectangle {
             id: parametersRectangle

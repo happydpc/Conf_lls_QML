@@ -10,98 +10,103 @@ Item {
         id: viewController
 
         onRemakeInterfaceTree: {
-            projectPanels.devicePanel.remakeInterfaceList(list, status)
+//            projectPanel.devicePanel.remakeInterfaceList(list, status)
         }
         onRemakeDeviceTree: {
-            projectPanels.devicePanel.remakeDeviceList(list, status)
+//            projectPanel.devicePanel.remakeDeviceList(list, status)
         }
         onChangeDeviceTreeStatus: {
-            projectPanels.devicePanel.updateDeviceListStatus(index, status)
+//            projectPanel.devicePanel.updateDeviceListStatus(index, status)
         }
         onChangeInterfaceTreeStatus: {
-            projectPanels.devicePanel.updateIntefaceListStatus(index, status)
+//            projectPanel.devicePanel.updateIntefaceListStatus(index, status)
         }
 
         onUpdatePropertiesSerialPort: {
-            projectPanels.devicePanel.setPropertyToSerialPort(properties)
+            projectPanel.devicePanel.devicePropertyPanel.setActivePanelType("SerialPort")
+//            projectPanel.devicePanel.setPropertyToSerialPort(properties)
         }
         onDevReadyPropertiesTmk4ux: {
-            projectPanels.devicePanel.devPropertyProgressTmk4ux.setDevProperty(data)
+//            projectPanel.devicePanel.devPropertyProgressTmk4ux.setDevProperty(data)
         }
         onDevReadyPropertiesTmk24: {
-            projectPanels.devicePanel.devPropertyProgressTmk24.setDevProperty(data)
+//            projectPanel.devicePanel.devPropertyProgressTmk24.setDevProperty(data)
         }
         onDevReadyOtherDataTmk4ux: {
-            projectPanels.devicePanel.devPropertyProgressTmk4ux.setUpdateCurrentValues(data)
+//            projectPanel.devicePanel.devPropertyProgressTmk4ux.setUpdateCurrentValues(data)
         }
         onDevReadyOtherDataTmk24: {
-            projectPanels.devicePanel.devPropertyProgressTmk24.setUpdateCurrentValues(data)
+//            projectPanel.devicePanel.devPropertyProgressTmk24.setUpdateCurrentValues(data)
         }
         onDevFullReadyTmk4ux: {}
         onDevFullReadyTmk24: {}
         onDevDisconnectedTmk4ux: {
-            projectPanels.devicePanel.devPropertyProgressTmk4ux.setNoReady()
+//            projectPanel.devicePanel.devPropertyProgressTmk4ux.setNoReady()
         }
         onDevDisconnectedTmk24: {
-            projectPanels.devicePanel.devPropertyProgressTmk24.setNoReady()
+//            projectPanel.devicePanel.devPropertyProgressTmk24.setNoReady()
         }
         onDevUpdatePasswordIncorrect: {
-            projectPanels.devicePanel.devShowPasswordIncorrect(devNameId)
+//            projectPanel.devicePanel.devShowPasswordIncorrect(devNameId)
         }
         onDevUpdateTypeDevIncorrect: {
-            projectPanels.devicePanel.devShowTypeIncorrect(devNameId)
+//            projectPanel.devicePanel.devShowTypeIncorrect(devNameId)
         }
         onAddConnectionFail: {
-            projectPanels.devicePanel.dialogAddInterfaceFail.open()
+//            projectPanel.devicePanel.dialogAddInterfaceFail.open()
         }
         onAddDeviceFail: {
-            projectPanels.devicePanel.dialogAddDeviceFail.open()
+//            projectPanel.devicePanel.dialogAddDeviceFail.open()
         }
         onDevUpdateWriteScaleMeasureExecuted: {
-            projectPanels.devicePanel.devPropertyProgressTmk24.messageMinMaxWriteOk.open()
+//            projectPanel.devicePanel.devPropertyProgressTmk24.messageMinMaxWriteOk.open()
         }
         onDevUpdateWriteSettingExecuted: {
-            projectPanels.devicePanel.devPropertyProgressTmk24.messageWriteSettingsOk.open()
+//            projectPanel.devicePanel.devPropertyProgressTmk24.messageWriteSettingsOk.open()
         }
         onDevUpdateReadSettingExecuted: {
-            projectPanels.devicePanel.devPropertyProgressTmk24.readSettings(devNameId, key, settings)
-            projectPanels.devicePanel.devPropertyProgressTmk24.messageReadSettingsOk.open()
+//            projectPanel.devicePanel.devPropertyProgressTmk24.readSettings(devNameId, key, settings)
+//            projectPanel.devicePanel.devPropertyProgressTmk24.messageReadSettingsOk.open()
         }
         onDevUpdateReadSettingWithoutRequest: {
-            projectPanels.devicePanel.devPropertyProgressTmk24.readSettings(devNameId, key, settings)
+//            projectPanel.devicePanel.devPropertyProgressTmk24.readSettings(devNameId, key, settings)
         }
         onDevUpdateReadErrorsExecuted: {
-            projectPanels.devicePanel.devPropertyProgressTmk24.readErrors(devNameId, errors)
-            projectPanels.devicePanel.devPropertyProgressTmk24.messageReadErrorsOk.open()
+//            projectPanel.devicePanel.devPropertyProgressTmk24.readErrors(devNameId, errors)
+//            projectPanel.devicePanel.devPropertyProgressTmk24.messageReadErrorsOk.open()
         }
         onDevUpdateLogMessage: {
-            projectPanels.devicePanel.devPropertyProgressTmk24.addLogMessage(codeMessage, message)
+//            projectPanel.devicePanel.devPropertyProgressTmk24.addLogMessage(codeMessage, message)
         }
         onDevUpdateReadTarTable: {
-            projectPanels.devicePanel.devPropertyProgressTmk24.readTarTable(table)
+//            projectPanel.devicePanel.devPropertyProgressTmk24.readTarTable(table)
         }
         onDevUpdateWriteTarTableExecuted: {
-            projectPanels.devicePanel.devPropertyProgressTmk24.messageReadTarTableOk.open()
+//            projectPanel.devicePanel.devPropertyProgressTmk24.messageReadTarTableOk.open()
         }
         onDevErrorOperation: {
-            projectPanels.devicePanel.messageOperationError.message = message
-            projectPanels.devicePanel.messageOperationError.open()
+            projectPanel.devicePanel.messageOperationError.message = message
+            projectPanel.devicePanel.messageOperationError.open()
         }
-    }
-
-    ProjectPanels {
-        id:projectPanels
-        height: parent.height
-        width: parent.width
     }
 
     Rectangle {
         id:upBar
         color: "#404558"
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
         height: 50
         width: parent.width
     }
 
+    StartPanel {
+        id:projectPanel
+        anchors.top: upBar.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+    }
 
     SerialPort {
         id:serialPort
@@ -110,7 +115,7 @@ Item {
             console.log("addConnectionSerialPort=" + res)
             if(res) {
                 close()
-                projectPanels.openDeviceProject()
+                projectPanel.openDeviceProject()
             }
         }
         onAbortConnectButton: {

@@ -11,13 +11,13 @@ Row{
         width: 10
         height: 10
 
-        Rectangle {
+        Image {
             id:itemRectIcon
             anchors.left: itemRectRoot.left
             anchors.leftMargin: 5
-            width: 16
-            height: 16
-            color: "#3598fa"
+            width: 24
+            height: 24
+            source: modelData.isCurrent ? "/new/icons/images/icon/cables_selected.png" : "/new/icons/images/icon/cables_no_selected.png"
         }
         MouseArea{
             id:aread

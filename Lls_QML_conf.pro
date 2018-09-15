@@ -37,8 +37,7 @@ SOURCES += \
     device/subDevices/Progress_tmk24.cpp \
     device/subDevices/Progress_tmk24Data.cpp \
     view/interfaceListControll/treeitem.cpp \
-    view/interfaceListControll/model.cpp \
-    view/qtquick2applicationviewer.cpp
+    view/interfaceListControll/model.cpp
 
 RESOURCES += \
     qml.qrc
@@ -76,7 +75,6 @@ HEADERS += \
     device/subDevices/Progress_tmk24.h \
     device/subDevices/Progress_tmk24Data.h \
     view/interfaceListControll/model.h \
-    view/interfaceListControll/treeitem.h \
-    view/qtquick2applicationviewer.h
+    view/interfaceListControll/treeitem.h
 
 DISTFILES +=
