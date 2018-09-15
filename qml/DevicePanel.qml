@@ -54,6 +54,18 @@ Rectangle {
         height: 2
         color: "#f0f3f6"
     }
+    Rectangle {
+        id:spacerListVectical
+        anchors.top: interfaceTree.top
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 5
+        anchors.topMargin: 5
+        anchors.right: interfaceTree.right
+        width: 2
+        height: parent.height
+        color: "#f0f3f6"
+    }
+
     DevicePropertyPanel {
         id: devicePropertyPanel
         visible: true

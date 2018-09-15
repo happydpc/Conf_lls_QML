@@ -37,7 +37,8 @@ SOURCES += \
     device/subDevices/Progress_tmk24.cpp \
     device/subDevices/Progress_tmk24Data.cpp \
     view/interfaceListControll/treeitem.cpp \
-    view/interfaceListControll/model.cpp
+    view/interfaceListControll/model.cpp \
+    view/radialbar.cpp
 
 RESOURCES += \
     qml.qrc
@@ -75,6 +76,7 @@ HEADERS += \
     device/subDevices/Progress_tmk24.h \
     device/subDevices/Progress_tmk24Data.h \
     view/interfaceListControll/model.h \
-    view/interfaceListControll/treeitem.h
+    view/interfaceListControll/treeitem.h \
+    view/radialbar.h
 
 DISTFILES +=

@@ -7,6 +7,8 @@ import QtCharts 2.2
 import QtQuick.Dialogs 1.2
 import QtQuick.Controls 1.4 as ControlOld
 import QtQuick.Controls.Styles 1.4
+import CustomControls 1.0
+import QtGraphicalEffects 1.0
 
 Rectangle {
     anchors.fill: parent
@@ -226,8 +228,7 @@ Rectangle {
         property bool isReady: true
         anchors.fill: parent
         enabled: isReady
-//        color: "#f9fafc"
-                color: "transparent"
+        color: "transparent"
         Rectangle {
             id: barup
             color: "#ffffff"
@@ -236,7 +237,7 @@ Rectangle {
             anchors.right: parent.right
 
             TabBar {
-                id: propertiesTabBar
+                id: tabProperty
                 height: 25
                 anchors.left: barup.left
                 anchors.leftMargin: 30
@@ -247,9 +248,9 @@ Rectangle {
                 font.pointSize: 8
 
                 TabButtonUp {
-                    name: "Фильтрация"
+                    name: "Текущее состояние"
                     textLine:1
-                    widthBody: 115
+                    widthBody: 155
                 }
                 TabButtonUp {
                     name: "Конфигурирование"
@@ -269,7 +270,6 @@ Rectangle {
             width: parent.width
             height: 2
             color: "#f0f3f6"
-//                    color: "transparent"
         }
 
         SwipeView {
@@ -278,7 +278,247 @@ Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            currentIndex: 0//propertiesTabBar.currentIndex
+            currentIndex: tabProperty.currentIndex
+
+
+            Item {
+                clip: true
+                Column {
+                    id: column
+                    anchors.top: parent.top
+                    anchors.topMargin: 10
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
+                    anchors.right: parent.right
+                    anchors.rightMargin: 10
+                    spacing: 10
+
+                    Row{
+                        spacing: 10
+                        Rectangle{
+                            width: 200
+                            height: 200
+                            layer.enabled: true
+                            radius: 15
+                            Label {
+                                id: levelValueLabel
+                                text: qsTr("Уровень/Объем:")
+                                anchors.left: parent.left
+                                color: "#888d91"
+                                anchors.leftMargin: 30
+                                anchors.right: parent.right
+                                anchors.rightMargin: 0
+                            }
+                            RadialBar {
+                                id:levelProgress
+                                anchors.top: levelValueLabel.bottom
+                                anchors.topMargin: 15
+                                width: 150
+                                height: 150
+                                penStyle: Qt.RoundCap
+                                dialType: RadialBar.FullDial
+                                progressColor: "#05fff0"
+                                foregroundColor: "transparent"
+                                dialWidth: 30
+                                startAngle: 180
+                                spanAngle: 70
+                                minValue: 0
+                                maxValue: 100
+                                value: 58
+                                textFont {
+                                    family: "Halvetica"
+                                    italic: false
+                                    pointSize: 16
+                                }
+                                suffixText: "%"
+                                textColor: "#888d91"
+                            }
+                            layer.effect: DropShadow {
+                                transparentBorder: true
+                                horizontalOffset: 0
+                                verticalOffset: 1
+                                color: "#e0e5ef"
+                                samples: 10
+                                radius: 10
+                            }
+                        }
+
+                        Rectangle{
+                            width: 200
+                            height: 200
+                            layer.enabled: true
+                            radius: 15
+                            Label {
+                                id: levelCntLabel
+                                text: qsTr("CNT значение:")
+                                anchors.left: parent.left
+                                color: "#888d91"
+                                anchors.leftMargin: 30
+                                anchors.right: parent.right
+                                anchors.rightMargin: 0
+                            }
+                            RadialBar {
+                                id:levelCnt
+                                anchors.top: levelCntLabel.bottom
+                                anchors.topMargin: 15
+                                width: 150
+                                height: 150
+                                penStyle: Qt.RoundCap
+                                dialType: RadialBar.FullDial
+                                progressColor: "#1dc58f"
+                                foregroundColor: "transparent"
+                                dialWidth: 30
+                                startAngle: 180
+                                spanAngle: 70
+                                minValue: 0
+                                maxValue: 100
+                                value: 58
+                                textFont {
+                                    family: "Halvetica"
+                                    italic: false
+                                    pointSize: 16
+                                }
+                                suffixText: ""
+                                textColor: "#888d91"
+                            }
+                            layer.effect: DropShadow {
+                                transparentBorder: true
+                                horizontalOffset: 0
+                                verticalOffset: 1
+                                color: "#e0e5ef"
+                                samples: 10
+                                radius: 10
+                            }
+                        }
+
+                        Rectangle{
+                            width: 200
+                            height: 200
+                            layer.enabled: true
+                            radius: 15
+                            Label {
+                                id: levelTempLabel
+                                text: qsTr("Температура:")
+                                anchors.left: parent.left
+                                color: "#888d91"
+                                anchors.leftMargin: 30
+                                anchors.right: parent.right
+                                anchors.rightMargin: 0
+                            }
+                            RadialBar {
+                                id:levelTemp
+                                anchors.top: levelTempLabel.bottom
+                                anchors.topMargin: 15
+                                width: 150
+                                height: 150
+                                penStyle: Qt.RoundCap
+                                dialType: RadialBar.FullDial
+                                progressColor: "#f329b8"
+                                foregroundColor: "transparent"
+                                dialWidth: 30
+                                startAngle: 180
+                                spanAngle: 70
+                                minValue: 0
+                                maxValue: 100
+                                value: 58
+                                textFont {
+                                    family: "Halvetica"
+                                    italic: false
+                                    pointSize: 16
+                                }
+                                suffixText: "°C"
+                                textColor: "#888d91"
+                            }
+                            layer.effect: DropShadow {
+                                transparentBorder: true
+                                horizontalOffset: 0
+                                verticalOffset: 1
+                                color: "#e0e5ef"
+                                samples: 10
+                                radius: 10
+                            }
+                        }
+
+                        Rectangle{
+                            width: 200
+                            height: 200
+                            layer.enabled: true
+                            radius: 15
+                            Label {
+                                id: levelFreqLabel
+                                text: qsTr("Частота:")
+                                anchors.left: parent.left
+                                color: "#888d91"
+                                anchors.leftMargin: 30
+                                anchors.right: parent.right
+                                anchors.rightMargin: 0
+                            }
+                            RadialBar {
+                                id:levelFreq
+                                anchors.top: levelFreqLabel.bottom
+                                anchors.topMargin: 15
+                                width: 150
+                                height: 150
+                                penStyle: Qt.RoundCap
+                                dialType: RadialBar.FullDial
+                                progressColor: "#f3c129"
+                                foregroundColor: "transparent"
+                                dialWidth: 30
+                                startAngle: 180
+                                spanAngle: 70
+                                minValue: 0
+                                maxValue: 100
+                                value: 58
+                                textFont {
+                                    family: "Halvetica"
+                                    italic: false
+                                    pointSize: 16
+                                }
+                                suffixText: "Hz"
+                                textColor: "#888d91"
+                            }
+                            layer.effect: DropShadow {
+                                transparentBorder: true
+                                horizontalOffset: 0
+                                verticalOffset: 1
+                                color: "#e0e5ef"
+                                samples: 10
+                                radius: 10
+                            }
+                        }
+                    }
+                }
+                ChartView {
+                    id: graph
+                    anchors.left: parent.left
+                    anchors.top: column.bottom
+                    anchors.bottom: parent.bottom
+                    width: parentt.width
+                    anchors.right: parent.right
+                    theme: ChartView.ChartThemeLight
+                    title: "Уровень/Объем"
+                    antialiasing: true
+                    property int graphLength: 1
+                    property int graphAmplitudeMax: 1
+                    ValueAxis {
+                        id: currentChartAxisX
+                        min: 0
+                        max: graph.graphLength
+                        tickCount: 5
+                    }
+                    ValueAxis {
+                        id: currentChartAxisY
+                        min: 0
+                        max: graph.graphAmplitudeMax
+                        tickCount: 5
+                    }
+                    LineSeries {
+                        id: currentChartLines
+                        axisX: currentChartAxisX
+                        axisY: currentChartAxisY
+                    }
+                }
+            }
 
             Item {
                 clip: true
@@ -291,6 +531,7 @@ Rectangle {
                     anchors.right: parent.right
 
                     TabBar {
+                        id:tabSubProperty
                         height: 25
                         anchors.left: parent.left
                         anchors.right: parent.right
@@ -340,120 +581,70 @@ Rectangle {
                             widthBody: 100
                         }
                     }
+
+                    SwipeView {
+                        id: stackSubProperty
+                        anchors.top: barup.bottom
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.bottom: parent.bottom
+                        currentIndex: tabSubProperty.currentIndex
+                        clip: true
+
+                        Item {
+                            ScrollView {
+                                anchors.fill: parent
+                                clip: true
+                                Row {
+                                    Button {
+                                        text: "Сменить сетевой адрес"
+                                        id: changeIdAddr
+                                        anchors.left: parent.left
+                                        anchors.right: parent.right
+                                    }
+                                    Label {
+                                        text: "Самостоятельная выдача данных:"
+                                    }
+                                    ComboBox {
+                                        id: periodicSendType
+                                        height: 25
+                                        model: ListModel {
+                                            ListElement {
+                                                text: "Выключена"
+                                            }
+                                            ListElement {
+                                                text: "Бинарная"
+                                            }
+                                            ListElement {
+                                                text: "Символьная"
+                                            }
+                                        }
+                                        onCurrentIndexChanged: {
+                                            if(periodicSendType.currentIndex != 0) {
+                                                periodicSendTime.enabled = true
+                                            } else {
+                                                periodicSendTime.enabled = false
+                                            }
+                                        }
+                                    }
+                                    Label {
+                                        text: "Период выдачи данных (0-255), с:"
+                                    }
+                                    SpinBox {
+                                        id:periodicSendTime
+                                        height: 25
+                                    }
+                                }
+                            }
+                        }
+                        onCurrentIndexChanged: {
+
+                        }
+                    }
                 }
             }
         }
     }
-
-
-    //                text: qsTr("Общие\nпараметры")
-    //                text: qsTr("Калибровка\nMinMax")
-    //                text: qsTr("Фильтрация")
-    //                text: qsTr("Тем-ная\nкомпенсация")
-    //                text: qsTr("Ошибки")
-    //                text: qsTr("Ведущий\nведомый")
-    //                text: qsTr("Тарировка")
-
-
-    //    SwipeView {
-    //        id: devStackParam
-    //        anchors.top: barup.bottom
-    //        anchors.left: parent.left
-    //        anchors.right: parent.right
-    //        anchors.bottom: parent.bottom
-    //        currentIndex: 0//propertiesTabBar.currentIndex
-    //        clip: true
-
-    //        Rectangle {
-    ////            id: subBarup
-    //            color: "red"
-    //            anchors.fill: parent
-    //        }
-    //    }
-    //        onCurrentIndexChanged: {
-    //            if(propertiesView.currentItem == errorsItem) {
-    //                viewController.getCurrentDevErrors()
-    //            }
-    //            if(propertiesView.currentItem == tarItem) {
-    //                //                        viewController.getCurrentDevTarTable()
-    //            }
-    //        }
-
-    //        Item {
-    //            Rectangle {
-    //                id: subBarup
-    //                color: "red"
-    //                anchors.fill: parent
-    //                height: 70
-    //                anchors.top: devStackParam.top
-    //                anchors.left: devStackParam.left
-    //                anchors.right: devStackParam.right
-    //                anchors.bottom: devStackParam.bottom
-
-    //                Row {
-    //                    anchors.left: barup.left
-    //                    anchors.leftMargin: 30
-    //                    anchors.top: barup.top
-    //                    anchors.topMargin: barup.height / 2 - rect2.height / 2
-    //                    spacing: 15
-
-    //                    Rectangle {
-    //                        height: 35
-    //                        width: 190
-    //                        radius: 25
-    //                        color: "#ffffff"
-    //                        border.color: "#e9eff4"
-    //                        border.width: 2
-    //                        Rectangle {
-    //                            anchors.left: parent.left
-    //                            anchors.leftMargin: 16
-    //                            anchors.top: parent.top
-    //                            anchors.topMargin: 10
-    //                            //source: "/new/icons/images/icon/battery-level.png"
-    //                            color: "#3598fa"
-    //                            width: 16
-    //                            height: 16
-    //                        }
-    //                        Text {
-    //                            anchors.centerIn: parent
-    //                            color: "#3598fa"
-    //                            font.pointSize: 8
-    //                            text: qsTr("Текущее состояние")
-    //                        }
-    //                    }
-
-    //                    Rectangle {
-    //                        height: 35
-    //                        width: 190
-    //                        radius: 25
-    //                        color: "#ffffff"
-    //                        border.color: "#e9eff4"
-    //                        border.width: 2
-    //                        anchors.left: barup.left
-    //                        anchors.leftMargin: 50
-    //                        anchors.top: barup.top
-    //                        anchors.topMargin: barup.height / 2 - rect2.height / 2
-    //                        Rectangle {
-    //                            anchors.left: parent.left
-    //                            anchors.leftMargin: 16
-    //                            anchors.top: parent.top
-    //                            anchors.topMargin: 10
-    //                            //source: "/new/icons/images/icon/tunes-connect.png"
-    //                            color: "#3598fa"
-    //                            width: 16
-    //                            height: 16
-    //                        }
-    //                        Text {
-    //                            anchors.centerIn: parent
-    //                            color: "#3598fa"
-    //                            font.pointSize: 8
-    //                            text: qsTr("Конфигурирование")
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
 
     //        // 1- base parameters
     //        Item {
@@ -623,44 +814,7 @@ Rectangle {
     //                Column {
     //                    spacing: 10
 
-    //                    Button {
-    //                        text: "Сменить сетевой адрес"
-    //                        id: changeIdAddr
-    //                        anchors.left: parent.left
-    //                        anchors.right: parent.right
-    //                    }
-    //                    Label {
-    //                        text: "Самостоятельная выдача данных:"
-    //                    }
-    //                    ComboBox {
-    //                        id: periodicSendType
-    //                        height: 25
-    //                        model: ListModel {
-    //                            ListElement {
-    //                                text: "Выключена"
-    //                            }
-    //                            ListElement {
-    //                                text: "Бинарная"
-    //                            }
-    //                            ListElement {
-    //                                text: "Символьная"
-    //                            }
-    //                        }
-    //                        onCurrentIndexChanged: {
-    //                            if(periodicSendType.currentIndex != 0) {
-    //                                periodicSendTime.enabled = true
-    //                            } else {
-    //                                periodicSendTime.enabled = false
-    //                            }
-    //                        }
-    //                    }
-    //                    Label {
-    //                        text: "Период выдачи данных (0-255), с:"
-    //                    }
-    //                    SpinBox {
-    //                        id:periodicSendTime
-    //                        height: 25
-    //                    }
+    //
     //                    Label {
     //                        text: "Мин. значение уровня (0-1023):"
     //                    }

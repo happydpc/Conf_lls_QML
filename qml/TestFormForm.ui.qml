@@ -2,6 +2,16 @@ import QtQuick 2.0
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls 1.4 as ControlOld
+import QtQuick.Controls.Styles.Desktop 1.0
+import QtQuick.Extras 1.4
+import QtGraphicalEffects 1.0
+import Qt.labs.platform 1.0
+import QtCharts 2.2
+import QtQuick.Window 2.10
+import QtQuick.Layouts 1.3
+import Qt.labs.calendar 1.0
+import QtTest 1.2
+import QtQuick.Dialogs.qml 1.0
 
 Rectangle {
     id: cnangeId
@@ -83,6 +93,15 @@ Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: 10
             height: 50
+        }
+
+        CircularGauge {
+            id: circularGauge
+        }
+
+        ToggleButton {
+            id: toggleButton
+            text: qsTr("Button")
         }
     }
 }

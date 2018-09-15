@@ -1,14 +1,12 @@
-#include "./view/viewController.h"
-
 #include <QtWidgets/QApplication>
 #include <QtQuick/QQuickView>
 #include <QtCore/QDir>
 #include <QtQml/QQmlEngine>
-
 #include <QtGui/QGuiApplication>
 #include <QQmlContext>
-//#include "qtquick2applicationviewer.h"
-//#include "model.h"
+
+#include "./view/viewController.h"
+#include "view/radialbar.h"
 
 int main(int argc, char *argv[])
 {
@@ -24,6 +22,7 @@ int main(int argc, char *argv[])
     Model interfaceListModel;
 
     qmlRegisterType<ViewController>("viewController", 0, 0, "ViewController");
+    qmlRegisterType<RadialBar>("CustomControls", 1, 0, "RadialBar");
     viewer.rootContext()->setContextProperty("programmModel", &interfaceListModel);
 //    viewer.set "programmModel", &m);
     viewer.setSource(QUrl("qrc:/qml/app.qml"));

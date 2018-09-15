@@ -72,7 +72,8 @@ SOURCES       = main.cpp \
 		device/subDevices/Progress_tmk24.cpp \
 		device/subDevices/Progress_tmk24Data.cpp \
 		view/interfaceListControll/treeitem.cpp \
-		view/interfaceListControll/model.cpp qrc_qml.cpp \
+		view/interfaceListControll/model.cpp \
+		view/radialbar.cpp qrc_qml.cpp \
 		moc_connectionFactory.cpp \
 		moc_deviceAbstract.cpp \
 		moc_devicesFactory.cpp \
@@ -91,7 +92,8 @@ SOURCES       = main.cpp \
 		moc_Progress_tmk4UXData.cpp \
 		moc_Progress_tmk24Data.cpp \
 		moc_model.cpp \
-		moc_treeitem.cpp
+		moc_treeitem.cpp \
+		moc_radialbar.cpp
 OBJECTS       = main.o \
 		connectionFactory.o \
 		deviceAbstract.o \
@@ -115,6 +117,7 @@ OBJECTS       = main.o \
 		Progress_tmk24Data.o \
 		treeitem.o \
 		model.o \
+		radialbar.o \
 		qrc_qml.o \
 		moc_connectionFactory.o \
 		moc_deviceAbstract.o \
@@ -134,7 +137,8 @@ OBJECTS       = main.o \
 		moc_Progress_tmk4UXData.o \
 		moc_Progress_tmk24Data.o \
 		moc_model.o \
-		moc_treeitem.o
+		moc_treeitem.o \
+		moc_radialbar.o
 DIST          = /opt/qt/5.11.0/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/qt/5.11.0/gcc_64/mkspecs/common/unix.conf \
 		/opt/qt/5.11.0/gcc_64/mkspecs/common/linux.conf \
@@ -334,7 +338,8 @@ DIST          = /opt/qt/5.11.0/gcc_64/mkspecs/features/spec_pre.prf \
 		device/subDevices/Progress_tmk24.h \
 		device/subDevices/Progress_tmk24Data.h \
 		view/interfaceListControll/model.h \
-		view/interfaceListControll/treeitem.h main.cpp \
+		view/interfaceListControll/treeitem.h \
+		view/radialbar.h main.cpp \
 		connection/connectionFactory.cpp \
 		device/deviceAbstract.cpp \
 		device/devicesFactory.cpp \
@@ -356,7 +361,8 @@ DIST          = /opt/qt/5.11.0/gcc_64/mkspecs/features/spec_pre.prf \
 		device/subDevices/Progress_tmk24.cpp \
 		device/subDevices/Progress_tmk24Data.cpp \
 		view/interfaceListControll/treeitem.cpp \
-		view/interfaceListControll/model.cpp
+		view/interfaceListControll/model.cpp \
+		view/radialbar.cpp
 QMAKE_TARGET  = Lls_QML_conf
 DESTDIR       = 
 TARGET        = Lls_QML_conf
@@ -761,8 +767,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents qml.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /opt/qt/5.11.0/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents connection/connectionFactory.h device/deviceAbstract.h device/devicesFactory.h interfaces/interfaceBLE.h interfaces/interfaceEthernet.h interfaces/interfacesAbstract.h interfaces/interfaceSerial.h settings/settings.h view/viewController.h interfaces/interface.h command/commandController.h other/crc.h tests/testDevReply.h device/subDevices/Progress_Base.h device/subDevices/Progress_BaseData.h device/subDevices/Progress_Base_Data.h device/subDevices/Progress_tmk4UX.h device/subDevices/Progress_tmk4UXData.h device/subDevices/Progress_tmk24.h device/subDevices/Progress_tmk24Data.h view/interfaceListControll/model.h view/interfaceListControll/treeitem.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp connection/connectionFactory.cpp device/deviceAbstract.cpp device/devicesFactory.cpp interfaces/interfaceBLE.cpp interfaces/interfaceEthernet.cpp interfaces/interfacesAbstract.cpp interfaces/interfaceSerial.cpp settings/settings.cpp view/viewController.cpp interfaces/interface.cpp command/commandController.cpp other/crc.cpp tests/testDevReply.cpp device/subDevices/Progress_Base.cpp device/subDevices/progress_base_data.cpp device/subDevices/Progress_BaseData.cpp device/subDevices/Progress_tmk4UX.cpp device/subDevices/Progress_tmk4UXData.cpp device/subDevices/Progress_tmk24.cpp device/subDevices/Progress_tmk24Data.cpp view/interfaceListControll/treeitem.cpp view/interfaceListControll/model.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents connection/connectionFactory.h device/deviceAbstract.h device/devicesFactory.h interfaces/interfaceBLE.h interfaces/interfaceEthernet.h interfaces/interfacesAbstract.h interfaces/interfaceSerial.h settings/settings.h view/viewController.h interfaces/interface.h command/commandController.h other/crc.h tests/testDevReply.h device/subDevices/Progress_Base.h device/subDevices/Progress_BaseData.h device/subDevices/Progress_Base_Data.h device/subDevices/Progress_tmk4UX.h device/subDevices/Progress_tmk4UXData.h device/subDevices/Progress_tmk24.h device/subDevices/Progress_tmk24Data.h view/interfaceListControll/model.h view/interfaceListControll/treeitem.h view/radialbar.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp connection/connectionFactory.cpp device/deviceAbstract.cpp device/devicesFactory.cpp interfaces/interfaceBLE.cpp interfaces/interfaceEthernet.cpp interfaces/interfacesAbstract.cpp interfaces/interfaceSerial.cpp settings/settings.cpp view/viewController.cpp interfaces/interface.cpp command/commandController.cpp other/crc.cpp tests/testDevReply.cpp device/subDevices/Progress_Base.cpp device/subDevices/progress_base_data.cpp device/subDevices/Progress_BaseData.cpp device/subDevices/Progress_tmk4UX.cpp device/subDevices/Progress_tmk4UXData.cpp device/subDevices/Progress_tmk24.cpp device/subDevices/Progress_tmk24Data.cpp view/interfaceListControll/treeitem.cpp view/interfaceListControll/model.cpp view/radialbar.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -832,9 +838,9 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /opt/qt/5.11.0/gcc_64/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -std=gnu++1y -Wall -W -dM -E -o moc_predefs.h /opt/qt/5.11.0/gcc_64/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_connectionFactory.cpp moc_deviceAbstract.cpp moc_devicesFactory.cpp moc_interfaceBLE.cpp moc_interfaceEthernet.cpp moc_interfacesAbstract.cpp moc_interfaceSerial.cpp moc_settings.cpp moc_viewController.cpp moc_interface.cpp moc_commandController.cpp moc_testDevReply.cpp moc_Progress_Base.cpp moc_Progress_BaseData.cpp moc_Progress_Base_Data.cpp moc_Progress_tmk4UXData.cpp moc_Progress_tmk24Data.cpp moc_model.cpp moc_treeitem.cpp
+compiler_moc_header_make_all: moc_connectionFactory.cpp moc_deviceAbstract.cpp moc_devicesFactory.cpp moc_interfaceBLE.cpp moc_interfaceEthernet.cpp moc_interfacesAbstract.cpp moc_interfaceSerial.cpp moc_settings.cpp moc_viewController.cpp moc_interface.cpp moc_commandController.cpp moc_testDevReply.cpp moc_Progress_Base.cpp moc_Progress_BaseData.cpp moc_Progress_Base_Data.cpp moc_Progress_tmk4UXData.cpp moc_Progress_tmk24Data.cpp moc_model.cpp moc_treeitem.cpp moc_radialbar.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_connectionFactory.cpp moc_deviceAbstract.cpp moc_devicesFactory.cpp moc_interfaceBLE.cpp moc_interfaceEthernet.cpp moc_interfacesAbstract.cpp moc_interfaceSerial.cpp moc_settings.cpp moc_viewController.cpp moc_interface.cpp moc_commandController.cpp moc_testDevReply.cpp moc_Progress_Base.cpp moc_Progress_BaseData.cpp moc_Progress_Base_Data.cpp moc_Progress_tmk4UXData.cpp moc_Progress_tmk24Data.cpp moc_model.cpp moc_treeitem.cpp
+	-$(DEL_FILE) moc_connectionFactory.cpp moc_deviceAbstract.cpp moc_devicesFactory.cpp moc_interfaceBLE.cpp moc_interfaceEthernet.cpp moc_interfacesAbstract.cpp moc_interfaceSerial.cpp moc_settings.cpp moc_viewController.cpp moc_interface.cpp moc_commandController.cpp moc_testDevReply.cpp moc_Progress_Base.cpp moc_Progress_BaseData.cpp moc_Progress_Base_Data.cpp moc_Progress_tmk4UXData.cpp moc_Progress_tmk24Data.cpp moc_model.cpp moc_treeitem.cpp moc_radialbar.cpp
 moc_connectionFactory.cpp: /opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qobjectdefs.h \
@@ -2041,27 +2047,11 @@ moc_treeitem.cpp: /opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
 		/opt/qt/5.11.0/gcc_64/bin/moc
 	/opt/qt/5.11.0/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/qt/5.11.0/gcc_64/mkspecs/linux-g++ -I/media/khomin/D/PROJECTs/Qt/Lls_Conf_QML -I/opt/qt/5.11.0/gcc_64/include -I/opt/qt/5.11.0/gcc_64/include/QtQuick -I/opt/qt/5.11.0/gcc_64/include/QtCharts -I/opt/qt/5.11.0/gcc_64/include/QtWidgets -I/opt/qt/5.11.0/gcc_64/include/QtGui -I/opt/qt/5.11.0/gcc_64/include/QtQml -I/opt/qt/5.11.0/gcc_64/include/QtNetwork -I/opt/qt/5.11.0/gcc_64/include/QtSerialPort -I/opt/qt/5.11.0/gcc_64/include/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include view/interfaceListControll/treeitem.h -o moc_treeitem.cpp
 
-compiler_moc_objc_header_make_all:
-compiler_moc_objc_header_clean:
-compiler_moc_source_make_all:
-compiler_moc_source_clean:
-compiler_uic_make_all:
-compiler_uic_clean:
-compiler_yacc_decl_make_all:
-compiler_yacc_decl_clean:
-compiler_yacc_impl_make_all:
-compiler_yacc_impl_clean:
-compiler_lex_make_all:
-compiler_lex_clean:
-compiler_clean: compiler_rcc_clean compiler_moc_predefs_clean compiler_moc_header_clean 
-
-####### Compile
-
-main.o: main.cpp view/viewController.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qobjectdefs.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qnamespace.h \
+moc_radialbar.cpp: /opt/qt/5.11.0/gcc_64/include/QtQuick/QQuickPaintedItem \
+		/opt/qt/5.11.0/gcc_64/include/QtQuick/qquickpainteditem.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQuick/qquickitem.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQuick/qtquickglobal.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qtqmlglobal.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qglobal.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qconfig-bootstrapped.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qconfig.h \
@@ -2082,16 +2072,148 @@ main.o: main.cpp view/viewController.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qmutex.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qnumeric.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qversiontagging.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qtqml-config.h \
+		/opt/qt/5.11.0/gcc_64/include/QtNetwork/qtnetworkglobal.h \
+		/opt/qt/5.11.0/gcc_64/include/QtNetwork/qtnetwork-config.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qtguiglobal.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qtgui-config.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQuick/qtquick-config.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qqml.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qqmlprivate.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qvariant.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qbytearray.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qrefcount.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qnamespace.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qarraydata.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qlist.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qalgorithms.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qiterator.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qhashfunctions.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstring.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qchar.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringliteral.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringalgorithms.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringview.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringbuilder.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qpair.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qbytearraylist.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringlist.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qregexp.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qmetatype.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qvarlengtharray.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontainerfwd.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobjectdefs.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qmap.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qdebug.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qhash.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qtextstream.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qiodevice.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qcoreevent.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qscopedpointer.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject_impl.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qlocale.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qshareddata.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qvector.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qpoint.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qset.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontiguouscache.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qurl.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qurlquery.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qqmlparserstatus.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qqmlpropertyvaluesource.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qqmllist.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qmetaobject.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qqmlcomponent.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qqmlerror.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qjsvalue.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QList \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qevent.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qwindowdefs.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qregion.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qrect.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qmargins.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qsize.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qdatastream.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qkeysequence.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qfile.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qfiledevice.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qvector2d.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qtouchdevice.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qfont.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qaccessible.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qcoreapplication.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qeventloop.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qcolor.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qrgb.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qrgba64.h \
+		view/radialbar.h \
+		moc_predefs.h \
+		/opt/qt/5.11.0/gcc_64/bin/moc
+	/opt/qt/5.11.0/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/opt/qt/5.11.0/gcc_64/mkspecs/linux-g++ -I/media/khomin/D/PROJECTs/Qt/Lls_Conf_QML -I/opt/qt/5.11.0/gcc_64/include -I/opt/qt/5.11.0/gcc_64/include/QtQuick -I/opt/qt/5.11.0/gcc_64/include/QtCharts -I/opt/qt/5.11.0/gcc_64/include/QtWidgets -I/opt/qt/5.11.0/gcc_64/include/QtGui -I/opt/qt/5.11.0/gcc_64/include/QtQml -I/opt/qt/5.11.0/gcc_64/include/QtNetwork -I/opt/qt/5.11.0/gcc_64/include/QtSerialPort -I/opt/qt/5.11.0/gcc_64/include/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include view/radialbar.h -o moc_radialbar.cpp
+
+compiler_moc_objc_header_make_all:
+compiler_moc_objc_header_clean:
+compiler_moc_source_make_all:
+compiler_moc_source_clean:
+compiler_uic_make_all:
+compiler_uic_clean:
+compiler_yacc_decl_make_all:
+compiler_yacc_decl_clean:
+compiler_yacc_impl_make_all:
+compiler_yacc_impl_clean:
+compiler_lex_make_all:
+compiler_lex_clean:
+compiler_clean: compiler_rcc_clean compiler_moc_predefs_clean compiler_moc_header_clean 
+
+####### Compile
+
+main.o: main.cpp /opt/qt/5.11.0/gcc_64/include/QtWidgets/QApplication \
+		/opt/qt/5.11.0/gcc_64/include/QtWidgets/qapplication.h \
+		/opt/qt/5.11.0/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qtguiglobal.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qglobal.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qconfig.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qtcore-config.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qsystemdetection.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qprocessordetection.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qcompilerdetection.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qtypeinfo.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qsysinfo.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qlogging.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qflags.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qatomic.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qbasicatomic.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qgenericatomic.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qglobalstatic.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qmutex.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qnumeric.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qversiontagging.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qtgui-config.h \
+		/opt/qt/5.11.0/gcc_64/include/QtWidgets/qtwidgets-config.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qcoreapplication.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qstring.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qchar.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qbytearray.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qrefcount.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qnamespace.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qarraydata.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringliteral.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringalgorithms.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringview.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringbuilder.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobjectdefs_impl.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qlist.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qalgorithms.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qiterator.h \
@@ -2107,60 +2229,10 @@ main.o: main.cpp view/viewController.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qvarlengtharray.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontainerfwd.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject_impl.h \
-		connection/connectionFactory.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QMultiMap \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qmap.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qdebug.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qhash.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qtextstream.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qiodevice.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qlocale.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qvariant.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qshareddata.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qvector.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qpoint.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qset.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontiguouscache.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QMutex \
-		interfaces/interface.h \
-		interfaces/interfaceBLE.h \
-		interfaces/interfacesAbstract.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QStringList \
-		/opt/qt/5.11.0/gcc_64/include/QtSerialPort/QSerialPort \
-		/opt/qt/5.11.0/gcc_64/include/QtSerialPort/qserialport.h \
-		/opt/qt/5.11.0/gcc_64/include/QtSerialPort/qserialportglobal.h \
-		/opt/qt/5.11.0/gcc_64/include/QtSerialPort/QSerialPortInfo \
-		/opt/qt/5.11.0/gcc_64/include/QtSerialPort/qserialportinfo.h \
-		interfaces/interfaceSerial.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QTimer \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qtimer.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qbasictimer.h \
-		interfaces/interfaceEthernet.h \
-		device/devicesFactory.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
-		command/commandController.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QQueue \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/QPair \
-		device/deviceAbstract.h \
-		device/subDevices/Progress_tmk4UX.h \
-		device/subDevices/Progress_tmk4UXData.h \
-		device/subDevices/Progress_tmk24.h \
-		device/subDevices/Progress_tmk24Data.h \
-		tests/testDevReply.h \
-		view/interfaceListControll/model.h \
-		/opt/qt/5.11.0/gcc_64/include/QtWidgets/QApplication \
-		/opt/qt/5.11.0/gcc_64/include/QtWidgets/qapplication.h \
-		/opt/qt/5.11.0/gcc_64/include/QtWidgets/qtwidgetsglobal.h \
-		/opt/qt/5.11.0/gcc_64/include/QtGui/qtguiglobal.h \
-		/opt/qt/5.11.0/gcc_64/include/QtGui/qtgui-config.h \
-		/opt/qt/5.11.0/gcc_64/include/QtWidgets/qtwidgets-config.h \
-		/opt/qt/5.11.0/gcc_64/include/QtCore/qcoreapplication.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qeventloop.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qwindowdefs.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qpoint.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qsize.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qcursor.h \
 		/opt/qt/5.11.0/gcc_64/include/QtWidgets/qdesktopwidget.h \
@@ -2173,22 +2245,35 @@ main.o: main.cpp view/viewController.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qrgb.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qrgba64.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qbrush.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qvector.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qmatrix.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qpolygon.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qregion.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qdatastream.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qiodevice.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qline.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qtransform.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qpainterpath.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qimage.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qpixelformat.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qpixmap.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qshareddata.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qhash.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qfont.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qfontmetrics.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qfontinfo.h \
 		/opt/qt/5.11.0/gcc_64/include/QtWidgets/qsizepolicy.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qkeysequence.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qevent.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qvariant.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qmap.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qdebug.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qtextstream.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qlocale.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qset.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontiguouscache.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qurl.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qurlquery.h \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/qfile.h \
@@ -2221,6 +2306,7 @@ main.o: main.cpp view/viewController.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qquaternion.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qgenericmatrix.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/qwindow.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QEvent \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QMargins \
 		/opt/qt/5.11.0/gcc_64/include/QtCore/QRect \
@@ -2244,7 +2330,45 @@ main.o: main.cpp view/viewController.h \
 		/opt/qt/5.11.0/gcc_64/include/QtQml/qqmlerror.h \
 		/opt/qt/5.11.0/gcc_64/include/QtGui/QGuiApplication \
 		/opt/qt/5.11.0/gcc_64/include/QtQml/QQmlContext \
-		/opt/qt/5.11.0/gcc_64/include/QtQml/qqmlcontext.h
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qqmlcontext.h \
+		view/viewController.h \
+		connection/connectionFactory.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QMultiMap \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QMutex \
+		interfaces/interface.h \
+		interfaces/interfaceBLE.h \
+		interfaces/interfacesAbstract.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QStringList \
+		/opt/qt/5.11.0/gcc_64/include/QtSerialPort/QSerialPort \
+		/opt/qt/5.11.0/gcc_64/include/QtSerialPort/qserialport.h \
+		/opt/qt/5.11.0/gcc_64/include/QtSerialPort/qserialportglobal.h \
+		/opt/qt/5.11.0/gcc_64/include/QtSerialPort/QSerialPortInfo \
+		/opt/qt/5.11.0/gcc_64/include/QtSerialPort/qserialportinfo.h \
+		interfaces/interfaceSerial.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QTimer \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qtimer.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qbasictimer.h \
+		interfaces/interfaceEthernet.h \
+		device/devicesFactory.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QVector \
+		command/commandController.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QQueue \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qqueue.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QPair \
+		device/deviceAbstract.h \
+		device/subDevices/Progress_tmk4UX.h \
+		device/subDevices/Progress_tmk4UXData.h \
+		device/subDevices/Progress_tmk24.h \
+		device/subDevices/Progress_tmk24Data.h \
+		tests/testDevReply.h \
+		view/interfaceListControll/model.h \
+		view/radialbar.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQuick/QQuickPaintedItem \
+		/opt/qt/5.11.0/gcc_64/include/QtQuick/qquickpainteditem.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQuick/qquickitem.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qqmlcomponent.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QList \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qaccessible.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 connectionFactory.o: connection/connectionFactory.cpp connection/connectionFactory.h \
@@ -3673,6 +3797,131 @@ model.o: view/interfaceListControll/model.cpp view/interfaceListControll/model.h
 		view/interfaceListControll/treeitem.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o model.o view/interfaceListControll/model.cpp
 
+radialbar.o: view/radialbar.cpp /opt/qt/5.11.0/gcc_64/include/QtGui/QPainter \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qpainter.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qtguiglobal.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qglobal.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qconfig.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qtcore-config.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qsystemdetection.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qprocessordetection.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qcompilerdetection.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qtypeinfo.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qsysinfo.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qlogging.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qflags.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qatomic.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qbasicatomic.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qgenericatomic.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qglobalstatic.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qmutex.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qnumeric.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qversiontagging.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qtgui-config.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qnamespace.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qrect.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qmargins.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qsize.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qpoint.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qscopedpointer.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qpixmap.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qpaintdevice.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qwindowdefs.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qcolor.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qrgb.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringlist.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qlist.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qalgorithms.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qiterator.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qrefcount.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qarraydata.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qhashfunctions.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstring.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qchar.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qbytearray.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringliteral.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringalgorithms.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringview.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringbuilder.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qpair.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qbytearraylist.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qregexp.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qrgba64.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qshareddata.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qhash.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qcoreevent.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qmetatype.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qvarlengtharray.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontainerfwd.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qobject_impl.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qimage.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qpixelformat.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qtransform.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qmatrix.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qpolygon.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qvector.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qregion.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qdatastream.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qiodevice.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qline.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qpainterpath.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qtextoption.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qpen.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qbrush.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qfontinfo.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qfont.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qfontmetrics.h \
+		view/radialbar.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQuick/QQuickPaintedItem \
+		/opt/qt/5.11.0/gcc_64/include/QtQuick/qquickpainteditem.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQuick/qquickitem.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQuick/qtquickglobal.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qtqmlglobal.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qtqml-config.h \
+		/opt/qt/5.11.0/gcc_64/include/QtNetwork/qtnetworkglobal.h \
+		/opt/qt/5.11.0/gcc_64/include/QtNetwork/qtnetwork-config.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQuick/qtquick-config.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qqml.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qqmlprivate.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qvariant.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qmap.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qdebug.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qtextstream.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qlocale.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qset.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qcontiguouscache.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qurl.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qurlquery.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qqmlparserstatus.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qqmlpropertyvaluesource.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qqmllist.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qmetaobject.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qqmlcomponent.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qqmlerror.h \
+		/opt/qt/5.11.0/gcc_64/include/QtQml/qjsvalue.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QObject \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/QList \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qevent.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qkeysequence.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qfile.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qfiledevice.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qvector2d.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qtouchdevice.h \
+		/opt/qt/5.11.0/gcc_64/include/QtGui/qaccessible.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qcoreapplication.h \
+		/opt/qt/5.11.0/gcc_64/include/QtCore/qeventloop.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o radialbar.o view/radialbar.cpp
+
 qrc_qml.o: qrc_qml.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_qml.o qrc_qml.cpp
 
@@ -3732,6 +3981,9 @@ moc_model.o: moc_model.cpp
 
 moc_treeitem.o: moc_treeitem.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_treeitem.o moc_treeitem.cpp
+
+moc_radialbar.o: moc_radialbar.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_radialbar.o moc_radialbar.cpp
 
 ####### Install
 
