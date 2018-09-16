@@ -40,6 +40,13 @@ void TreeItem::addChildItem(TreeItem *childItem){
         emit hasChildChanged();
 }
 
+void TreeItem::removeChildByIndexChild(int index) {
+    m_childItems.removeAt(index);
+    emit contentChanged();
+    emit childItemsChanged();
+    emit hasChildChanged();
+}
+
 bool TreeItem::isOpen() const{
     return m_isOpen;
 }
@@ -59,15 +66,11 @@ bool TreeItem::isParent() const {
     return m_isParent;
 }
 
-void TreeItem::setIsCurrent(bool isCurrent) {
-//    if(m_isParent) {
-//        for(auto it: m_childItems) {
-//            it->setIsCurrent(false);
-//        }
-//        emit contentChanged();
-//    } else {
+void TreeItem::setIsParent(bool parent) {
+    m_isParent = parent;
+}
 
-//    }
+void TreeItem::setIsCurrent(bool isCurrent) {
     m_isCurrent = isCurrent;
     emit currentIndexIsChanged(m_isParent, this);
     emit isCurrentChanged();

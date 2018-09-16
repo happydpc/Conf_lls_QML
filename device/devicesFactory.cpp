@@ -324,8 +324,6 @@ void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QS
     case DeviceAbstract::Type_DeviceEvent_PasswordError:
         // пароль не совпадает
         emit deviceUpdateTree(DevicesFactory::Type_Update_PasswordIncorrect, findDeviceIndex(devUniqueId));
-        // удаляем устройство
-        removeDeviceByIndex(findDeviceIndex(devUniqueId));
         break;
     case DeviceAbstract::Type_DeviceEvent_TypeError:
         // тип не совпадает с заявленным

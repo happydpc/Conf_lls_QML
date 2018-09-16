@@ -2,13 +2,12 @@ import QtQuick 2.9
 import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.4
 
-Item {
+Rectangle {
     id:projectStartScreen
+    anchors.fill: parent
     Rectangle {
-//        color: "#ffffff"
-                color: "transparent"
+        color: "#ffffff"
         anchors.fill: parent
-
         Image {
             id: logo
             source: "/images/logo/logo_progress.png"
@@ -23,7 +22,3 @@ Item {
         }
     }
 }
-/*##^## Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
- ##^##*/

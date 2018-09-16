@@ -15,14 +15,30 @@ public:
     const QList<TreeItem*> &tree() const;
     const QList<QObject*> treeAsQObjects() const;
 
+
+    void addConnection(QString name);
+    void removeConnection(int index);
+
+    void addDeviceToConnection(QString nameConnection, QString nameDevice, bool deviceStatus);
+    void removeDeviceToConnection(int indexConnection, int indexDevice);
+
 signals:
     void treeChanged();
+
+    void currentIndexIsChangedDevice(int interfaceIndex, int deviceIndex);
+    void currentIndexIsChangedInteface(int index);
+
+
 private slots:
 
-    TreeItem *createTreeSubItem();
-    TreeItem *createTreeItem(QString nameInterface, int subItemCount);
+    TreeItem *createTreeItem(QString nameInterface);
+    TreeItem *createTreeSubItem(QString nameDevice);
 
     void currentIndexIsChanged(bool isParent, TreeItem *pSender);
+
+    void disconnectaFullTree();
+    void connectFullTree();
+
 private:
     QList<TreeItem*> m_tree;
 };

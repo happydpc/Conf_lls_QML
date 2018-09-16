@@ -20,12 +20,20 @@ Rectangle {
     property alias messageReadTarTableOk: messageReadTarTableOk
 
     function setNoReady() {
-        devPropertyProgressTmk24.isReady = true//false
+        devPropertyProgressTmk24.isReady = false
+    }
+    function setReady() {
+        devPropertyProgressTmk24.isReady = true
+    }
+    function setResetState() {
+        stackSubProperty.setCurrentIndex(0)
+        tabProperty.setCurrentIndex(0)
+        setNoReady()
     }
     function setDevProperty(listProperty) {
         typeDeviceText.text = listProperty[2]
         snText.text = listProperty[0]
-        netIdText.text = listProperty[1]
+        //netIdText.text = listProperty[1]
         versionFirmwareText.text = listProperty[3]
         // give settings without request to device (copy allready readed)
         viewController.getCurrentDevSettingsWithoutRequest()
@@ -34,29 +42,32 @@ Rectangle {
         devPropertyProgressTmk24.isReady = true
         var values = viewController.getCurrentDevOtherData()
         if(values.length >0) {
-            levelValue.text = values[0]
+            //levelValue.text = values[0]
             levelProgress.value = values[1]
-            cntValue.text = values[2]
-            freqValue.text = values[3] + "Гц"
-            tempValue.text = values[4] + "°C"
+            levelCnt.value = (80000000 / values[2]) * 100
+            levelFreq.value = values[3]
+            levelTemp.value = values[4]
         }
         //-- chart
         var list = viewController.getCurrentDevChart()
         currentChartLines.clear();
-        graph.graphLength = list.length
-        graph.graphAmplitudeMax = 0
+        chartCurrentValue.graphLength = list.length
+        chartCurrentValue.graphAmplitudeMax = 0
         for(var i=0; i<list.length; i++) {
-            if(graph.graphAmplitudeMax < parseInt(list[i])) {
-                graph.graphAmplitudeMax = parseInt(list[i]);
+            if(chartCurrentValue.graphAmplitudeMax < list[i]) {
+                chartCurrentValue.graphAmplitudeMax = list[i];
             }
         }
         for(i=0; i<list.length; i++) {
-            currentChartLines.append(i, parseInt(list[i]));
+            currentChartLines.append(i, list[i]);
         }
         logListView.positionViewAtEnd()
     }
     function addLogMessage(codeMessage, message) {
-        logListModel.append({"message":message,"status":codeMessage})
+        if(logListView.model.length > 1000) {
+            logListView.model.clear()
+        }
+        logListView.model.append({"message":message,"status":codeMessage})
     }
     function readSettings(devName, key, settings) {
         for(var i=0; i<settings.length; i++) {
@@ -227,7 +238,6 @@ Rectangle {
         id: devPropertyProgressTmk24
         property bool isReady: true
         anchors.fill: parent
-        enabled: isReady
         color: "transparent"
         Rectangle {
             id: barup
@@ -244,7 +254,7 @@ Rectangle {
                 anchors.top: barup.top
                 anchors.topMargin: 20
                 spacing: 5
-                currentIndex: 0
+                currentIndex: devStackParam.currentIndex
                 font.pointSize: 8
 
                 TabButtonUp {
@@ -280,58 +290,96 @@ Rectangle {
             anchors.bottom: parent.bottom
             currentIndex: tabProperty.currentIndex
 
-
             Item {
-                clip: true
-                Column {
-                    id: column
-                    anchors.top: parent.top
-                    anchors.topMargin: 10
-                    anchors.left: parent.left
-                    anchors.leftMargin: 10
-                    anchors.right: parent.right
-                    anchors.rightMargin: 10
-                    spacing: 10
-
-                    Row{
+                ScrollView {
+                    clip: true
+                    anchors.fill: parent
+                    Column {
+                        anchors.left: parent.left
+                        anchors.leftMargin: 15
                         spacing: 10
-                        Rectangle{
-                            width: 200
-                            height: 200
+                        Row {
+                            id:currentDataTexted
                             layer.enabled: true
-                            radius: 15
-                            Label {
-                                id: levelValueLabel
-                                text: qsTr("Уровень/Объем:")
+                            width: 800
+                            height: 50
+                            Row {
+                                id:currentDataTexted_1
+                                clip: true
                                 anchors.left: parent.left
-                                color: "#888d91"
-                                anchors.leftMargin: 30
-                                anchors.right: parent.right
-                                anchors.rightMargin: 0
-                            }
-                            RadialBar {
-                                id:levelProgress
-                                anchors.top: levelValueLabel.bottom
-                                anchors.topMargin: 15
-                                width: 150
-                                height: 150
-                                penStyle: Qt.RoundCap
-                                dialType: RadialBar.FullDial
-                                progressColor: "#05fff0"
-                                foregroundColor: "transparent"
-                                dialWidth: 30
-                                startAngle: 180
-                                spanAngle: 70
-                                minValue: 0
-                                maxValue: 100
-                                value: 58
-                                textFont {
-                                    family: "Halvetica"
-                                    italic: false
-                                    pointSize: 16
+                                anchors.leftMargin: 10
+                                anchors.top: parent.top
+                                anchors.topMargin: 13
+                                width: 250
+                                height: 25
+                                Label {
+                                    id: lSn
+                                    text: qsTr("Завод/ном:")
+                                    anchors.verticalCenter: parent.verticalCenter
                                 }
-                                suffixText: "%"
-                                textColor: "#888d91"
+                                TextField {
+                                    id: snText
+                                    text: qsTr("")
+                                    anchors.left: lSn.right
+                                    anchors.leftMargin: 5
+                                    anchors.right: parent.right
+                                    height: parent.height
+                                    enabled: devPropertyProgressTmk24.isReady
+                                    readOnly: true
+                                }
+                            }
+
+                            Row {
+                                id: currentDataTexted_2
+                                clip: true
+                                anchors.left: currentDataTexted_1.right
+                                anchors.leftMargin: 10
+                                anchors.top: parent.top
+                                anchors.topMargin: 13
+                                width: 250
+                                height: 25
+                                Label {
+                                    id: lTypeDevice
+                                    text: qsTr("Тип датчика:")
+                                    anchors.verticalCenter: parent.verticalCenter
+                                }
+
+                                TextField {
+                                    id: typeDeviceText
+                                    text: qsTr("")
+                                    anchors.left: lTypeDevice.right
+                                    anchors.right: parent.right
+                                    anchors.leftMargin: 5
+                                    readOnly: true
+                                    enabled: devPropertyProgressTmk24.isReady
+                                    height: parent.height
+                                }
+                            }
+
+                            Row {
+                                id: currentDataTexted_3
+                                clip: true
+                                anchors.left: currentDataTexted_2.right
+                                anchors.leftMargin: 10
+                                anchors.top: parent.top
+                                anchors.topMargin: 13
+                                width: 250
+                                height: 25
+                                Label {
+                                    id: lversionFirmwareText
+                                    text: qsTr("Версия ПО:")
+                                    anchors.verticalCenter: parent.verticalCenter
+                                }
+                                TextField {
+                                    id: versionFirmwareText
+                                    text: qsTr("")
+                                    enabled: devPropertyProgressTmk24.isReady
+                                    anchors.left: lversionFirmwareText.right
+                                    anchors.right: parent.right
+                                    anchors.leftMargin: 5
+                                    readOnly: true
+                                    height: parent.height
+                                }
                             }
                             layer.effect: DropShadow {
                                 transparentBorder: true
@@ -343,179 +391,467 @@ Rectangle {
                             }
                         }
 
-                        Rectangle{
-                            width: 200
-                            height: 200
-                            layer.enabled: true
-                            radius: 15
-                            Label {
-                                id: levelCntLabel
-                                text: qsTr("CNT значение:")
-                                anchors.left: parent.left
-                                color: "#888d91"
-                                anchors.leftMargin: 30
-                                anchors.right: parent.right
-                                anchors.rightMargin: 0
-                            }
-                            RadialBar {
-                                id:levelCnt
-                                anchors.top: levelCntLabel.bottom
-                                anchors.topMargin: 15
-                                width: 150
-                                height: 150
-                                penStyle: Qt.RoundCap
-                                dialType: RadialBar.FullDial
-                                progressColor: "#1dc58f"
-                                foregroundColor: "transparent"
-                                dialWidth: 30
-                                startAngle: 180
-                                spanAngle: 70
-                                minValue: 0
-                                maxValue: 100
-                                value: 58
-                                textFont {
-                                    family: "Halvetica"
-                                    italic: false
-                                    pointSize: 16
+                        Column {
+                            id: column
+                            spacing: 5
+                            Row{
+                                spacing: 10
+                                Rectangle{
+                                    width: 200
+                                    height: 200
+                                    layer.enabled: true
+                                    radius: 15
+                                    Label {
+                                        id: levelValueLabel
+                                        text: qsTr("Уровень/Объем:")
+                                        anchors.left: parent.left
+                                        color: "#888d91"
+                                        anchors.leftMargin: 15
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 0
+                                    }
+                                    RadialBar {
+                                        id:levelProgress
+                                        anchors.top: levelValueLabel.bottom
+                                        anchors.topMargin: 15
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 20
+                                        width: 150
+                                        height: 150
+                                        penStyle: Qt.RoundCap
+                                        dialType: RadialBar.FullDial
+                                        progressColor: "#05fff0"
+                                        foregroundColor: "transparent"
+                                        dialWidth: 15
+                                        startAngle: 180
+                                        spanAngle: 70
+                                        minValue: 0
+                                        maxValue: 100
+                                        value: 0
+                                        textFont {
+                                            family: "Halvetica"
+                                            italic: false
+                                            pointSize: 16
+                                        }
+                                        suffixText: "%"
+                                        textColor: "#888d91"
+                                        enabled: devPropertyProgressTmk24.isReady
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 10
+                                    }
                                 }
-                                suffixText: ""
-                                textColor: "#888d91"
+
+                                Rectangle{
+                                    width: 200
+                                    height: 200
+                                    layer.enabled: true
+                                    radius: 15
+                                    Label {
+                                        id: levelCntLabel
+                                        text: qsTr("CNT значение:")
+                                        anchors.left: parent.left
+                                        color: "#888d91"
+                                        anchors.leftMargin: 15
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 0
+                                    }
+                                    RadialBar {
+                                        id:levelCnt
+                                        anchors.top: levelCntLabel.bottom
+                                        anchors.topMargin: 15
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 20
+                                        width: 150
+                                        height: 150
+                                        penStyle: Qt.RoundCap
+                                        dialType: RadialBar.FullDial
+                                        progressColor: "#1dc58f"
+                                        foregroundColor: "transparent"
+                                        dialWidth: 15
+                                        startAngle: 180
+                                        spanAngle: 70
+                                        minValue: 0
+                                        maxValue: 20000
+                                        value: 0
+                                        textFont {
+                                            family: "Halvetica"
+                                            italic: false
+                                            pointSize: 16
+                                        }
+                                        suffixText: ""
+                                        textColor: "#888d91"
+                                        enabled: devPropertyProgressTmk24.isReady
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 10
+                                    }
+                                }
+
+                                Rectangle{
+                                    width: 200
+                                    height: 200
+                                    layer.enabled: true
+                                    radius: 15
+                                    Label {
+                                        id: levelTempLabel
+                                        text: qsTr("Температура:")
+                                        anchors.left: parent.left
+                                        color: "#888d91"
+                                        anchors.leftMargin: 15
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 0
+                                    }
+                                    RadialBar {
+                                        id:levelTemp
+                                        anchors.top: levelTempLabel.bottom
+                                        anchors.topMargin: 15
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 20
+                                        width: 150
+                                        height: 150
+                                        penStyle: Qt.RoundCap
+                                        dialType: RadialBar.FullDial
+                                        progressColor: "#f329b8"
+                                        foregroundColor: "transparent"
+                                        dialWidth: 15
+                                        startAngle: 180
+                                        spanAngle: 70
+                                        minValue: 0
+                                        maxValue: 80
+                                        value: 0
+                                        textFont {
+                                            family: "Halvetica"
+                                            italic: false
+                                            pointSize: 16
+                                        }
+                                        suffixText: "°C"
+                                        textColor: "#888d91"
+                                        enabled: devPropertyProgressTmk24.isReady
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 10
+                                    }
+                                }
+
+                                Rectangle{
+                                    width: 200
+                                    height: 200
+                                    layer.enabled: true
+                                    radius: 15
+                                    Label {
+                                        id: levelFreqLabel
+                                        text: qsTr("Частота:")
+                                        anchors.left: parent.left
+                                        color: "#888d91"
+                                        anchors.leftMargin: 15
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 0
+                                    }
+                                    RadialBar {
+                                        id:levelFreq
+                                        anchors.top: levelFreqLabel.bottom
+                                        anchors.topMargin: 15
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 20
+                                        width: 150
+                                        height: 150
+                                        penStyle: Qt.RoundCap
+                                        dialType: RadialBar.FullDial
+                                        progressColor: "#f3c129"
+                                        foregroundColor: "transparent"
+                                        dialWidth: 15
+                                        startAngle: 180
+                                        spanAngle: 70
+                                        minValue: 0
+                                        maxValue: 15000
+                                        value: 0
+                                        textFont {
+                                            family: "Halvetica"
+                                            italic: false
+                                            pointSize: 16
+                                        }
+                                        suffixText: "Hz"
+                                        textColor: "#888d91"
+                                        enabled: devPropertyProgressTmk24.isReady
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 10
+                                    }
+                                }
                             }
-                            layer.effect: DropShadow {
-                                transparentBorder: true
-                                horizontalOffset: 0
-                                verticalOffset: 1
-                                color: "#e0e5ef"
-                                samples: 10
-                                radius: 10
+                        }
+                        Column {
+                            Rectangle {
+                                height: 300
+                                width: column.width// - 50
+                                color: "#ffffff"
+                                radius: 15
+                                ChartView {
+                                    id: chartCurrentValue
+                                    anchors.fill: parent
+                                    theme: ChartView.ChartThemeLight
+                                    title: "Уровень/Объем"
+                                    antialiasing: true
+                                    property int graphLength: 1
+                                    property int graphAmplitudeMax: 1
+                                    ValueAxis {
+                                        id: currentChartAxisX
+                                        min: 0
+                                        max: chartCurrentValue.graphLength
+                                        tickCount: 5
+                                    }
+                                    ValueAxis {
+                                        id: currentChartAxisY
+                                        min: -0.1
+                                        max: chartCurrentValue.graphAmplitudeMax
+                                        tickCount: 5
+                                    }
+                                    LineSeries {
+                                        id: currentChartLines
+                                        axisX: currentChartAxisX
+                                        axisY: currentChartAxisY
+                                    }
+                                    enabled: devPropertyProgressTmk24.isReady
+                                }
+                                layer.enabled: true
+                                layer.effect: DropShadow {
+                                    transparentBorder: true
+                                    horizontalOffset: 0
+                                    verticalOffset: 1
+                                    color: "#e0e5ef"
+                                    samples: 10
+                                    radius: 10
+                                }
                             }
                         }
 
-                        Rectangle{
-                            width: 200
-                            height: 200
-                            layer.enabled: true
-                            radius: 15
-                            Label {
-                                id: levelTempLabel
-                                text: qsTr("Температура:")
-                                anchors.left: parent.left
-                                color: "#888d91"
-                                anchors.leftMargin: 30
-                                anchors.right: parent.right
-                                anchors.rightMargin: 0
-                            }
-                            RadialBar {
-                                id:levelTemp
-                                anchors.top: levelTempLabel.bottom
-                                anchors.topMargin: 15
-                                width: 150
-                                height: 150
-                                penStyle: Qt.RoundCap
-                                dialType: RadialBar.FullDial
-                                progressColor: "#f329b8"
-                                foregroundColor: "transparent"
-                                dialWidth: 30
-                                startAngle: 180
-                                spanAngle: 70
-                                minValue: 0
-                                maxValue: 100
-                                value: 58
-                                textFont {
-                                    family: "Halvetica"
-                                    italic: false
-                                    pointSize: 16
-                                }
-                                suffixText: "°C"
-                                textColor: "#888d91"
-                            }
-                            layer.effect: DropShadow {
-                                transparentBorder: true
-                                horizontalOffset: 0
-                                verticalOffset: 1
-                                color: "#e0e5ef"
-                                samples: 10
-                                radius: 10
-                            }
-                        }
 
-                        Rectangle{
-                            width: 200
-                            height: 200
-                            layer.enabled: true
-                            radius: 15
-                            Label {
-                                id: levelFreqLabel
-                                text: qsTr("Частота:")
-                                anchors.left: parent.left
-                                color: "#888d91"
-                                anchors.leftMargin: 30
-                                anchors.right: parent.right
-                                anchors.rightMargin: 0
-                            }
-                            RadialBar {
-                                id:levelFreq
-                                anchors.top: levelFreqLabel.bottom
-                                anchors.topMargin: 15
-                                width: 150
-                                height: 150
-                                penStyle: Qt.RoundCap
-                                dialType: RadialBar.FullDial
-                                progressColor: "#f3c129"
-                                foregroundColor: "transparent"
-                                dialWidth: 30
-                                startAngle: 180
-                                spanAngle: 70
-                                minValue: 0
-                                maxValue: 100
-                                value: 58
-                                textFont {
-                                    family: "Halvetica"
-                                    italic: false
-                                    pointSize: 16
+                        Column {
+                            Rectangle {
+                                height: 400
+                                width: column.width
+                                color: "#ffffff"
+                                layer.enabled: true
+                                radius: 15
+                                enabled: devPropertyProgressTmk24.isReady
+                                Column {
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+                                    spacing: 20
+
+                                    Label {
+                                        id: errorsLabel
+                                        text: qsTr("Ошибки:")
+                                        anchors.left: parent.left
+                                        color: "#888d91"
+                                    }
+
+                                    Button {
+                                        text: "Считать ошибки"
+                                        id: readErrors
+                                        onClicked: {
+                                            viewController.getCurrentDevErrors()
+                                        }
+                                    }
+
+                                    Label {
+                                        id:error1Label
+                                        text: "Датчик не откалиброван:"
+                                        property bool error1: false
+                                        Image {
+                                            height: 32
+                                            width: 32
+                                            anchors.left: parent.right
+                                            anchors.rightMargin: 20
+                                            source: error1Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                        }
+                                    }
+                                    Label {
+                                        id:error2Label
+                                        text: "Выход за минимальную границу измерения на 10%:"
+                                        property bool error2: false
+                                        Image {
+                                            height: 32
+                                            width: 32
+                                            anchors.left: parent.right
+                                            anchors.rightMargin: 20
+                                            source: error2Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                        }
+                                    }
+                                    Label {
+                                        id:error3Label
+                                        text: "Выход за максимальную границу измерения на 10%:"
+                                        property bool error3: false
+                                        Image {
+                                            height: 32
+                                            width: 32
+                                            anchors.left: parent.right
+                                            anchors.rightMargin: 20
+                                            source: error3Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                        }
+                                    }
+                                    Label {
+                                        id:error4Label
+                                        text: "Частота измерительного генератора 0 Гц:"
+                                        property bool error4: false
+                                        Image {
+                                            height: 32
+                                            width: 32
+                                            anchors.left: parent.right
+                                            anchors.rightMargin: 20
+                                            source: error4Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                        }
+                                    }
+                                    Label {
+                                        id:error5Label
+                                        text: "Ведомый датчик №1 не отвечает:"
+                                        property bool error5: false
+                                        Image {
+                                            height: 32
+                                            width: 32
+                                            anchors.left: parent.right
+                                            anchors.rightMargin: 20
+                                            source: error5Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                        }
+                                    }
+                                    Label {
+                                        id:error6Label
+                                        text: "Ведомый датчик №2 не отвечает:"
+                                        property bool error6: false
+                                        Image {
+                                            height: 32
+                                            width: 32
+                                            anchors.left: parent.right
+                                            anchors.rightMargin: 20
+                                            source: error6Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                        }
+                                    }
+                                    Label {
+                                        id:error7Label
+                                        text: "Ведомый датчик №3 не отвечает:"
+                                        property bool error7: false
+                                        Image {
+                                            height: 32
+                                            width: 32
+                                            anchors.left: parent.right
+                                            anchors.rightMargin: 20
+                                            source: error7Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                        }
+                                    }
+                                    Label {
+                                        id:error8Label
+                                        text: "Ведомый датчик №4 не отвечает:"
+                                        property bool error8: false
+                                        Image {
+                                            height: 32
+                                            width: 32
+                                            anchors.left: parent.right
+                                            anchors.rightMargin: 20
+                                            source: error8Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                        }
+                                    }
                                 }
-                                suffixText: "Hz"
-                                textColor: "#888d91"
-                            }
-                            layer.effect: DropShadow {
-                                transparentBorder: true
-                                horizontalOffset: 0
-                                verticalOffset: 1
-                                color: "#e0e5ef"
-                                samples: 10
-                                radius: 10
+                                layer.effect: DropShadow {
+                                    transparentBorder: true
+                                    horizontalOffset: 0
+                                    verticalOffset: 1
+                                    color: "#e0e5ef"
+                                    samples: 10
+                                    radius: 10
+                                }
                             }
                         }
-                    }
-                }
-                ChartView {
-                    id: graph
-                    anchors.left: parent.left
-                    anchors.top: column.bottom
-                    anchors.bottom: parent.bottom
-                    width: parentt.width
-                    anchors.right: parent.right
-                    theme: ChartView.ChartThemeLight
-                    title: "Уровень/Объем"
-                    antialiasing: true
-                    property int graphLength: 1
-                    property int graphAmplitudeMax: 1
-                    ValueAxis {
-                        id: currentChartAxisX
-                        min: 0
-                        max: graph.graphLength
-                        tickCount: 5
-                    }
-                    ValueAxis {
-                        id: currentChartAxisY
-                        min: 0
-                        max: graph.graphAmplitudeMax
-                        tickCount: 5
-                    }
-                    LineSeries {
-                        id: currentChartLines
-                        axisX: currentChartAxisX
-                        axisY: currentChartAxisY
+                        Column {
+                            Rectangle {
+                                height: 250
+                                width: column.width
+                                color: "#ffffff"
+                                layer.enabled: true
+                                radius: 15
+                                Column {
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+                                    spacing: 20
+
+                                    Label {
+                                        text: qsTr("Сообщения:")
+                                        anchors.left: parent.left
+                                        color: "#888d91"
+                                    }
+                                    ListView {
+                                        id: logListView
+                                        clip: true
+                                        height: 200
+                                        width: column.width - 50
+
+                                        ScrollBar.vertical: ScrollBar {
+                                            width: 20
+                                        }
+
+                                        delegate: Item {
+                                            id: logItemDelegate
+                                            height: 30
+                                            width: parent.width
+
+                                            Rectangle {
+                                                width: logItemDelegate.width - 2
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 1
+                                                height: logItemDelegate.height
+                                                color: "transparent"//colorCode
+                                                Label {
+                                                    id:logMessageText
+                                                    text: model.message
+                                                    font.bold: false
+                                                    anchors.left: parent.left
+                                                    anchors.leftMargin: 10
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                }
+                                            }
+                                        }
+                                        model: ListModel {
+                                            id: logListModel
+                                        }
+                                    }
+                                }
+                                layer.effect: DropShadow {
+                                    transparentBorder: true
+                                    horizontalOffset: 0
+                                    verticalOffset: 1
+                                    color: "#e0e5ef"
+                                    samples: 10
+                                    radius: 10
+                                }
+                            }
+                        }
+                        Rectangle {
+                            height: 100
+                            width: column.width
+                            color: "#ffffff"
+                            layer.enabled: true
+                            radius: 15
+                        }
                     }
                 }
             }
@@ -539,7 +875,7 @@ Rectangle {
                         anchors.topMargin: 17
                         anchors.leftMargin: 30
                         spacing: 5
-                        currentIndex: 0
+                        currentIndex: stackSubProperty.currentIndex
                         font.pointSize: 8
                         background: Rectangle {
                             color: "transparent"
@@ -563,51 +899,138 @@ Rectangle {
                         TabButtonUp {
                             name: "Температурная\nкомпенсация"
                             textLine:2
-                            widthBody: 125
+                            widthBody: 135
                         }
                         TabButtonUp {
                             name: "Ведущий\nведомый"
                             textLine:2
-                            widthBody: 100
+                            widthBody: 110
                         }
                         TabButtonUp {
                             name: "Тарировка"
                             textLine:1
                             widthBody: 110
                         }
-                        TabButtonUp {
-                            name: "Ведущий\nведомый"
-                            textLine:2
-                            widthBody: 100
-                        }
                     }
+                }
 
-                    SwipeView {
-                        id: stackSubProperty
-                        anchors.top: barup.bottom
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.bottom: parent.bottom
-                        currentIndex: tabSubProperty.currentIndex
-                        clip: true
+                SwipeView {
+                    id: stackSubProperty
+                    currentIndex: tabSubProperty.currentIndex
+                    clip: true
+                    anchors.top: subBarup.bottom
+                    anchors.left: subBarup.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
 
-                        Item {
-                            ScrollView {
-                                anchors.fill: parent
-                                clip: true
-                                Row {
-                                    Button {
-                                        text: "Сменить сетевой адрес"
-                                        id: changeIdAddr
+                    Item {
+                        ScrollView {
+                            clip: true
+                            anchors.fill: parent
+
+                            Column {
+                                spacing: 10
+                                anchors.top: parent.top
+                                anchors.topMargin: 15
+                                Row{
+                                    height: 100
+                                    width: 500
+                                    Rectangle {
+                                        id:changeIdRect
+                                        width: 500
+                                        height: 100
+                                        color: "#fdfdfb"
+                                        layer.enabled: true
                                         anchors.left: parent.left
-                                        anchors.right: parent.right
+                                        anchors.leftMargin: 15
+                                        Label {
+                                            text: "Смена сетевого адреса:"
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                        }
+                                        Button {
+                                            text: "Сменить адрес"
+                                            id: changeIdAddr
+                                            width: 300
+                                            height: 30
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            enabled: devPropertyProgressTmk24.isReady
+                                        }
+                                        layer.effect: DropShadow {
+                                            transparentBorder: true
+                                            horizontalOffset: 0
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            samples: 10
+                                            radius: 20
+                                        }
                                     }
+                                    Button {
+                                        text: "Считать настройки"
+                                        id:readSetingsButton_1
+                                        width: 180
+                                        height: 50
+                                        anchors.left: changeIdRect.right
+                                        anchors.leftMargin: 15
+                                        layer.enabled: true
+                                        layer.effect: DropShadow {
+                                            transparentBorder: true
+                                            horizontalOffset: 0
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            samples: 10
+                                            radius: 20
+                                        }
+                                        enabled: devPropertyProgressTmk24.isReady
+                                        onClicked: {
+                                            viewController.getCurrentDevSettings()
+                                        }
+                                    }
+                                    Button {
+                                        text: "Записать настройки"
+                                        width: 180
+                                        height: 50
+                                        anchors.left: changeIdRect.right
+                                        anchors.leftMargin: 15
+                                        anchors.top: readSetingsButton_1.bottom
+                                        anchors.topMargin: 15
+                                        layer.enabled: true
+                                        layer.effect: DropShadow {
+                                            transparentBorder: true
+                                            horizontalOffset: 0
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            samples: 10
+                                            radius: 20
+                                        }
+                                        enabled: devPropertyProgressTmk24.isReady
+                                        onClicked: {
+                                            writeSettings()
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    width: 500
+                                    height: 100
+                                    color: "#fdfdfb"
+                                    layer.enabled: true
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
                                     Label {
                                         text: "Самостоятельная выдача данных:"
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
                                     }
                                     ComboBox {
                                         id: periodicSendType
                                         height: 25
+                                        width: 300
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.verticalCenter: parent.verticalCenter
                                         model: ListModel {
                                             ListElement {
                                                 text: "Выключена"
@@ -627,18 +1050,1541 @@ Rectangle {
                                             }
                                         }
                                     }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 20
+                                    }
+                                }
+                                Rectangle {
+                                    width: 500
+                                    height: 100
+                                    color: "#fdfdfb"
+                                    layer.enabled: true
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
                                     Label {
                                         text: "Период выдачи данных (0-255), с:"
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
                                     }
                                     SpinBox {
                                         id:periodicSendTime
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.verticalCenter: parent.verticalCenter
                                         height: 25
+                                        width: 300
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 20
+                                    }
+                                }
+                                Rectangle {
+                                    width: 500
+                                    height: 100
+                                    color: "#fdfdfb"
+                                    layer.enabled: true
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+                                    Label {
+                                        text: "Мин. значение уровня (0-1023):"
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                    }
+                                    SpinBox {
+                                        id:minLevelValue
+                                        height: 25
+                                        width: 300
+                                        to: 4095
+                                        from: 0
+                                        value: 0
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 20
+                                    }
+                                }
+                                Rectangle {
+                                    width: 500
+                                    height: 100
+                                    color: "#fdfdfb"
+                                    layer.enabled: true
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+
+                                    Label {
+                                        text: "Макс.значение уровня (0-4095):"
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                    }
+                                    SpinBox {
+                                        id:maxLevelValue
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        height: 25
+                                        width: 300
+                                        to: 4095
+                                        from: 0
+                                        value: 0
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 20
+                                    }
+                                }
+                                Rectangle {
+                                    width: 500
+                                    height: 100
+                                    color: "#fdfdfb"
+                                    layer.enabled: true
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+
+                                    Label {
+                                        text: "Параметр в выходном сообщении датчика:"
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                    }
+                                    ComboBox {
+                                        id: typeOutMessage
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        height: 25
+                                        width: 300
+                                        model: ListModel {
+                                            ListElement {
+                                                text: "Относительный уровень"
+                                            }
+                                            ListElement {
+                                                text: "Объем (по таблице таррировки)"
+                                            }
+                                        }
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 20
+                                    }
+                                }
+
+                                Rectangle {
+                                    width: 500
+                                    height: 100
+                                    color: "#fdfdfb"
+                                    layer.enabled: true
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+
+                                    Label {
+                                        text: "Скорость обмена по RS232:"
+                                        id: baudrateRs232Label
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                    }
+                                    ComboBox {
+                                        id: baudrateRs232Values
+                                        height: 25
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        model: ListModel {
+                                            ListElement {
+                                                text: "2800"
+                                            }
+                                            ListElement {
+                                                text: "4800"
+                                            }
+                                            ListElement {
+                                                text: "9600"
+                                            }
+                                            ListElement {
+                                                text: "19200"
+                                            }
+                                            ListElement {
+                                                text: "28800"
+                                            }
+                                            ListElement {
+                                                text: "38400"
+                                            }
+                                            ListElement {
+                                                text: "57600"
+                                            }
+                                            ListElement {
+                                                text: "115200"
+                                            }
+                                        }
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 20
+                                    }
+                                }
+
+                                Rectangle {
+                                    width: 500
+                                    height: 100
+                                    color: "#fdfdfb"
+                                    layer.enabled: true
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+
+                                    Label {
+                                        text: "Скорость обмена по RS485:"
+                                        id: baudrateRs485Label
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                    }
+                                    ComboBox {
+                                        id: baudrateRs485Values
+                                        height: 25
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        model: ListModel {
+                                            ListElement {
+                                                text: "2800"
+                                            }
+                                            ListElement {
+                                                text: "4800"
+                                            }
+                                            ListElement {
+                                                text: "9600"
+                                            }
+                                            ListElement {
+                                                text: "19200"
+                                            }
+                                            ListElement {
+                                                text: "28800"
+                                            }
+                                            ListElement {
+                                                text: "38400"
+                                            }
+                                            ListElement {
+                                                text: "57600"
+                                            }
+                                            ListElement {
+                                                text: "115200"
+                                            }
+                                        }
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 20
                                     }
                                 }
                             }
                         }
-                        onCurrentIndexChanged: {
+                    }
 
+                    Item {
+                        ScrollView {
+                            clip: true
+                            anchors.fill: parent
+
+                            Column {
+                                spacing: 10
+                                anchors.top: parent.top
+                                anchors.topMargin: 15
+
+                                Row{
+                                    width: 500
+                                    height: 180
+                                    Rectangle {
+                                        id:setScaleFuelLabel
+                                        width: 500
+                                        height: 180
+                                        color: "#fdfdfb"
+                                        layer.enabled: true
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+
+                                        Label {
+                                            id:emptyFullLabel
+                                            text: qsTr("Задание границ измерения:")
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                        }
+                                        Button {
+                                            id: buttonEmpty
+                                            text: "Пустой"
+                                            width: 300
+                                            height: 30
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            anchors.top: emptyFullLabel.bottom
+                                            anchors.topMargin: 10
+                                            onClicked: {
+                                                dialogLevelSetEmpty.open()
+                                            }
+                                            enabled: devPropertyProgressTmk24.isReady
+                                        }
+                                        Button {
+                                            id: buttonFull
+                                            text: "Полный"
+                                            width: 300
+                                            height: 30
+                                            anchors.top: buttonEmpty.bottom
+                                            anchors.topMargin: 10
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            onClicked: {
+                                                dialogLevelSetFull.open()
+                                            }
+                                            enabled: devPropertyProgressTmk24.isReady
+                                        }
+                                        Button {
+                                            id: buttonEdit
+                                            width: 300
+                                            height: 30
+                                            text: "Редактировать"
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            anchors.top: buttonFull.bottom
+                                            anchors.topMargin: 10
+                                            enabled: false //devPropertyProgressTmk24.isReady
+                                        }
+                                        layer.effect: DropShadow {
+                                            transparentBorder: true
+                                            horizontalOffset: 0
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            samples: 10
+                                            radius: 20
+                                        }
+                                    }
+                                    Button {
+                                        text: "Считать настройки"
+                                        id:readSetingsButton_2
+                                        width: 180
+                                        height: 50
+                                        anchors.left: setScaleFuelLabel.right
+                                        anchors.leftMargin: 15
+                                        layer.enabled: true
+                                        layer.effect: DropShadow {
+                                            transparentBorder: true
+                                            horizontalOffset: 0
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            samples: 10
+                                            radius: 20
+                                        }
+                                        enabled: devPropertyProgressTmk24.isReady
+                                        onClicked: {
+                                            viewController.getCurrentDevSettings()
+                                        }
+                                    }
+                                    Button {
+                                        text: "Записать настройки"
+                                        width: 180
+                                        height: 50
+                                        anchors.left: setScaleFuelLabel.right
+                                        anchors.leftMargin: 15
+                                        anchors.top: readSetingsButton_2.bottom
+                                        anchors.topMargin: 15
+                                        layer.enabled: true
+                                        layer.effect: DropShadow {
+                                            transparentBorder: true
+                                            horizontalOffset: 0
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            samples: 10
+                                            radius: 20
+                                        }
+                                        enabled: devPropertyProgressTmk24.isReady
+                                        onClicked: {
+                                            writeSettings()
+                                        }
+                                    }
+                                }
+                                Rectangle {
+                                    width: 500
+                                    height: 100
+                                    color: "#fdfdfb"
+                                    layer.enabled: true
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+
+                                    Label {
+                                        text: "Тип жидкости"
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                    }
+                                    ComboBox {
+                                        id: typeFuel
+                                        height: 25
+                                        width: 300
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        model: ListModel {
+                                            ListElement {
+                                                text: "Топливо"
+                                            }
+                                            ListElement {
+                                                text: "Вода"
+                                            }
+                                        }
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 20
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Item {
+                        ScrollView {
+                            clip: true
+                            anchors.fill: parent
+                            Column {
+                                spacing: 10
+                                anchors.top: parent.top
+                                anchors.topMargin: 15
+                                Row{
+                                    width: 500
+                                    height: 80
+                                    Rectangle {
+                                        id:typeInterpolationRect
+                                        width: 500
+                                        height: 80
+                                        color: "#fdfdfb"
+                                        layer.enabled: true
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+
+                                        Label {
+                                            text: "Тип интерполяции:"
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                        }
+                                        ComboBox {
+                                            id: typeInterpolation
+                                            height: 25
+                                            width: 300
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            model: ListModel {
+                                                ListElement {
+                                                    text: "Линейная"
+                                                }
+                                                ListElement {
+                                                    text: "Квадратичная"
+                                                }
+                                                ListElement {
+                                                    text: "Сплайновая"
+                                                }
+                                            }
+                                        }
+                                        layer.effect: DropShadow {
+                                            transparentBorder: true
+                                            horizontalOffset: 0
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            samples: 10
+                                            radius: 20
+                                        }
+                                    }
+                                    Button {
+                                        text: "Считать настройки"
+                                        id:readSetingsButton_3
+                                        width: 180
+                                        height: 50
+                                        anchors.left: typeInterpolationRect.right
+                                        anchors.leftMargin: 15
+                                        layer.enabled: true
+                                        layer.effect: DropShadow {
+                                            transparentBorder: true
+                                            horizontalOffset: 0
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            samples: 10
+                                            radius: 20
+                                        }
+                                        enabled: devPropertyProgressTmk24.isReady
+                                        onClicked: {
+                                            viewController.getCurrentDevSettings()
+                                        }
+                                    }
+                                    Button {
+                                        text: "Записать настройки"
+                                        width: 180
+                                        height: 50
+                                        anchors.left: typeInterpolationRect.right
+                                        anchors.leftMargin: 15
+                                        anchors.top: readSetingsButton_3.bottom
+                                        anchors.topMargin: 15
+                                        layer.enabled: true
+                                        layer.effect: DropShadow {
+                                            transparentBorder: true
+                                            horizontalOffset: 0
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            samples: 10
+                                            radius: 20
+                                        }
+                                        enabled: devPropertyProgressTmk24.isReady
+                                        onClicked: {
+                                            writeSettings()
+                                        }
+                                    }
+                                }
+                                //1
+                                Rectangle {
+                                    id:typeFiltrationRectangle
+                                    width: 500
+                                    height: 80
+                                    color: "#fdfdfb"
+                                    layer.enabled: true
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+
+                                    Label {
+                                        text: "Тип фильтрации:"
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                    }
+                                    ComboBox {
+                                        id: typeFiltration
+                                        height: 25
+                                        width: 300
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.topMargin: 10
+                                        model: ListModel {
+                                            ListElement {
+                                                text: "Выключена"
+                                            }
+                                            ListElement {
+                                                text: "Усреднение"
+                                            }
+                                            ListElement {
+                                                text: "Медиана"
+                                            }
+                                            ListElement {
+                                                text: "Адаптивный"
+                                            }
+                                        }
+                                        onCurrentIndexChanged: {
+                                            if(typeFiltration.currentIndex == 0) {
+                                                filterAvarageValueSec.enabled = false
+                                                filterLenghtMediana.enabled = false
+                                                filterValueQ.enabled = false
+                                                filterValueR.enabled = false
+                                            } else if(typeFiltration.currentIndex == 1) {
+                                                filterAvarageValueSec.enabled = true
+                                                filterLenghtMediana.enabled = false
+                                                filterValueQ.enabled = false
+                                                filterValueR.enabled = false
+                                            } else if(typeFiltration.currentIndex == 2) {
+                                                filterAvarageValueSec.enabled = true
+                                                filterLenghtMediana.enabled = true
+                                                filterValueQ.enabled = false
+                                                filterValueR.enabled = false
+                                            } else if(typeFiltration.currentIndex == 3) {
+                                                filterAvarageValueSec.enabled = false
+                                                filterLenghtMediana.enabled = false
+                                                filterValueQ.enabled = true
+                                                filterValueR.enabled = true
+                                            }
+                                        }
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 20
+                                    }
+                                }
+                                //2
+                                Rectangle {
+                                    id:typeAvarageRectangle
+                                    width: 500
+                                    height: 80
+                                    color: "#fdfdfb"
+                                    layer.enabled: true
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+
+                                    Label {
+                                        text: "Время усреднения (0-21), с:"
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                    }
+                                    SpinBox {
+                                        id: filterAvarageValueSec
+                                        height: 25
+                                        width: 300
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.topMargin: 10
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 20
+                                    }
+                                }
+                                //3
+                                Rectangle {
+                                    id:lenMedianaRectangle
+                                    width: 500
+                                    height: 80
+                                    color: "#fdfdfb"
+                                    layer.enabled: true
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+
+                                    Label {
+                                        text: "Длина медианы (0-7):"
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                    }
+                                    SpinBox {
+                                        id: filterLenghtMediana
+                                        height: 25
+                                        width: 300
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.verticalCenter: parent.verticalCenter
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 20
+                                    }
+                                }
+                                //4
+                                Rectangle {
+                                    id:covairachiaRectangle
+                                    width: 500
+                                    height: 80
+                                    color: "#fdfdfb"
+                                    layer.enabled: true
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+
+                                    Label {
+                                        text: "Ковариация шума процесса (Q):"
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                    }
+                                    SpinBox {
+                                        id: filterValueQ
+                                        height: 25
+                                        width: 300
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.top: emptyFullLabel.bottom
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.topMargin: 10
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 20
+                                    }
+                                }
+                                //5
+                                Rectangle {
+                                    width: 500
+                                    height: 80
+                                    color: "#fdfdfb"
+                                    layer.enabled: true
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+
+                                    Label {
+                                        text: "Ковариация шума измерения (R):"
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                    }
+                                    SpinBox {
+                                        id: filterValueR
+                                        height: 25
+                                        width: 300
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.topMargin: 10
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 20
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Item {
+                        ScrollView {
+                            clip: true
+                            anchors.fill: parent
+                            Column {
+                                spacing: 10
+                                anchors.top: parent.top
+                                anchors.topMargin: 15
+                                //1
+                                Row {
+                                    width: 500
+                                    height: 100
+                                    Rectangle {
+                                        id:termocomRectangle
+                                        width: 500
+                                        height: 100
+                                        color: "#fdfdfb"
+                                        layer.enabled: true
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+
+                                        Label {
+                                            text: qsTr("Температурная компенсация линейного расширения топлива\nРежим:")
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                        }
+                                        ComboBox {
+                                            id: typeTempCompensation
+                                            width: 300
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            anchors.top: emptyFullLabel.bottom
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            anchors.topMargin: 10
+                                            height: 25
+                                            model: ListModel {
+                                                ListElement {
+                                                    text: "Выключен"
+                                                }
+                                                ListElement {
+                                                    text: "АИ-95"
+                                                }
+                                                ListElement {
+                                                    text: "АИ-92"
+                                                }
+                                                ListElement {
+                                                    text: "АИ-80 (лето)"
+                                                }
+                                                ListElement {
+                                                    text: "АИ-80 (зима)"
+                                                }
+                                                ListElement {
+                                                    text: "ДТ (лето)"
+                                                }
+                                                ListElement {
+                                                    text: "ДТ (зима)"
+                                                }
+                                                ListElement {
+                                                    text: "Пользовательский"
+                                                }
+                                            }
+                                            onCurrentIndexChanged: {
+                                                if(typeTempCompensation.currentIndex == 7) {
+                                                    k1.enabled = true
+                                                    k2.enabled = true
+                                                } else {
+                                                    k1.enabled = false
+                                                    k2.enabled = false
+                                                }
+                                            }
+                                        }
+                                        layer.effect: DropShadow {
+                                            transparentBorder: true
+                                            horizontalOffset: 0
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            samples: 10
+                                            radius: 20
+                                        }
+                                    }
+                                    Button {
+                                        text: "Считать настройки"
+                                        id:readSetingsButton_4
+                                        width: 180
+                                        height: 50
+                                        anchors.left: termocomRectangle.right
+                                        anchors.leftMargin: 15
+                                        layer.enabled: true
+                                        layer.effect: DropShadow {
+                                            transparentBorder: true
+                                            horizontalOffset: 0
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            samples: 10
+                                            radius: 20
+                                        }
+                                        enabled: devPropertyProgressTmk24.isReady
+                                        onClicked: {
+                                            viewController.getCurrentDevSettings()
+                                        }
+                                    }
+                                    Button {
+                                        text: "Записать настройки"
+                                        width: 180
+                                        height: 50
+                                        anchors.left: termocomRectangle.right
+                                        anchors.leftMargin: 15
+                                        anchors.top: readSetingsButton_4.bottom
+                                        anchors.topMargin: 15
+                                        layer.enabled: true
+                                        layer.effect: DropShadow {
+                                            transparentBorder: true
+                                            horizontalOffset: 0
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            samples: 10
+                                            radius: 20
+                                        }
+                                        enabled: devPropertyProgressTmk24.isReady
+                                        onClicked: {
+                                            writeSettings()
+                                        }
+                                    }
+                                }
+                                //2
+                                Rectangle {
+                                    width: 500
+                                    height: 80
+                                    color: "#fdfdfb"
+                                    layer.enabled: true
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+
+                                    Label {
+                                        text: qsTr("K1:")
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                    }
+                                    TextField {
+                                        id: k1
+                                        text: "0.0"
+                                        height: 25
+                                        width: 300
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.top: emptyFullLabel.bottom
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.topMargin: 10
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 20
+                                    }
+                                }
+                                //3
+                                Rectangle {
+                                    width: 500
+                                    height: 80
+                                    color: "#fdfdfb"
+                                    layer.enabled: true
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+
+                                    Label {
+                                        text: qsTr("K2:")
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                    }
+                                    TextField {
+                                        id: k2
+                                        text: "0.0"
+                                        height: 25
+                                        width: 300
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.top: emptyFullLabel.bottom
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.topMargin: 10
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 20
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Item {
+                        ScrollView {
+                            clip: true
+                            anchors.fill: parent
+                            Column {
+                                spacing: 10
+                                anchors.top: parent.top
+                                anchors.topMargin: 15
+                                //1
+                                Row {
+                                    width: 500
+                                    height: 150
+
+                                    Rectangle {
+                                        id:setSlaveMasterModeRectangle
+                                        width: 500
+                                        height: 150
+                                        color: "#fdfdfb"
+                                        layer.enabled: true
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+
+                                        Label {
+                                            text: "Режим ведущий/ведомый:"
+                                            id:labelSlaveModes
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                        }
+                                        ComboBox {
+                                            id: masterSlaveModes
+                                            width: 200
+                                            height: 30
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            anchors.top: labelSlaveModes.bottom
+                                            anchors.topMargin: 15
+                                            model: ListModel {
+                                                ListElement {
+                                                    text: "Выключен"
+                                                }
+                                                ListElement {
+                                                    text: "Ведомый"
+                                                }
+                                                ListElement {
+                                                    text: "Ведущий"
+                                                }
+                                                ListElement {
+                                                    text: "Трансляция"
+                                                }
+                                            }
+                                            onCurrentIndexChanged: {
+                                                if(masterSlaveModes.currentIndex == 2) {
+                                                    masterSlavesAddresRectange.enabled = true
+                                                } else {
+                                                    masterSlavesAddresRectange.enabled = false
+                                                    masterSlaveFullCountes.value = 0
+                                                }
+                                            }
+                                        }
+
+                                        Label {
+                                            id: masterSlaveModeCountAllLabel
+                                            text: "Количество ведомых:"
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            anchors.top: masterSlaveModes.bottom
+                                            anchors.topMargin: 15
+                                        }
+                                        SpinBox {
+                                            id: masterSlaveFullCountes
+                                            width: 200
+                                            height: 25
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            anchors.topMargin: 15
+                                            anchors.top: masterSlaveModeCountAllLabel.bottom
+                                            from: 0
+                                            to: 4
+                                            onValueChanged: {
+                                                if(masterSlaveFullCountes.value >= 1) {
+                                                    masterSlaveSlaveId_1.enabled = true
+                                                } else {
+                                                    masterSlaveFullCountes.value = 0
+                                                    masterSlaveModes.currentIndex = 0
+                                                    masterSlaveSlaveId_1.enabled = false
+                                                    masterSlaveSlaveId_2.enabled = false
+                                                    masterSlaveSlaveId_3.enabled = false
+                                                    masterSlaveSlaveId_4.enabled = false
+                                                }
+                                                if(masterSlaveFullCountes.value >= 2) {
+                                                    masterSlaveSlaveId_2.enabled = true
+                                                } else {
+                                                    masterSlaveSlaveId_2.enabled = false
+                                                }
+                                                if(masterSlaveFullCountes.value >= 3) {
+                                                    masterSlaveSlaveId_3.enabled = true
+                                                } else {
+                                                    masterSlaveSlaveId_3.enabled = false
+                                                }
+                                                if(masterSlaveFullCountes.value >= 4) {
+                                                    masterSlaveSlaveId_4.enabled = true
+                                                } else {
+                                                    masterSlaveSlaveId_4.enabled = false
+                                                }
+                                            }
+                                        }
+                                        layer.effect: DropShadow {
+                                            transparentBorder: true
+                                            horizontalOffset: 0
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            samples: 10
+                                            radius: 20
+                                        }
+                                    }
+                                    Button {
+                                        text: "Считать настройки"
+                                        id:readSetingsButton_5
+                                        width: 180
+                                        height: 50
+                                        anchors.left: setSlaveMasterModeRectangle.right
+                                        anchors.leftMargin: 15
+                                        layer.enabled: true
+                                        layer.effect: DropShadow {
+                                            transparentBorder: true
+                                            horizontalOffset: 0
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            samples: 10
+                                            radius: 20
+                                        }
+                                        enabled: devPropertyProgressTmk24.isReady
+                                        onClicked: {
+                                            viewController.getCurrentDevSettings()
+                                        }
+                                    }
+                                    Button {
+                                        text: "Записать настройки"
+                                        width: 180
+                                        height: 50
+                                        anchors.left: setSlaveMasterModeRectangle.right
+                                        anchors.leftMargin: 15
+                                        anchors.top: readSetingsButton_5.bottom
+                                        anchors.topMargin: 15
+                                        layer.enabled: true
+                                        layer.effect: DropShadow {
+                                            transparentBorder: true
+                                            horizontalOffset: 0
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            samples: 10
+                                            radius: 20
+                                        }
+                                        enabled: devPropertyProgressTmk24.isReady
+                                        onClicked: {
+                                            writeSettings()
+                                        }
+                                    }
+                                }
+                                Rectangle {
+                                    width: 500
+                                    height: 300
+                                    color: "#fdfdfb"
+                                    layer.enabled: true
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+
+                                    Label {
+                                        id: masterSlaveAddress_1
+                                        text: "Адрес ведомого №1"
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                    }
+                                    SpinBox {
+                                        id: masterSlaveSlaveId_1
+                                        from: 1
+                                        to: 254
+                                        height: 25
+                                        width: 200
+                                        anchors.top: masterSlaveAddress_1.bottom
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.topMargin: 15
+                                    }
+                                    Label {
+                                        text: "Адрес ведомого №2"
+                                        id: masterSlaveAddress_2
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.top: masterSlaveSlaveId_1.bottom
+                                        anchors.topMargin: 15
+                                    }
+                                    SpinBox {
+                                        id: masterSlaveSlaveId_2
+                                        height: 25
+                                        from: 1
+                                        to: 254
+                                        width: 200
+                                        anchors.top: masterSlaveAddress_2.bottom
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.topMargin: 15
+                                    }
+                                    Label {
+                                        text: "Адрес ведомого №3"
+                                        id: masterSlaveAddress_3
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.top: masterSlaveSlaveId_2.bottom
+                                        anchors.topMargin: 15
+                                    }
+                                    SpinBox {
+                                        id: masterSlaveSlaveId_3
+                                        height: 25
+                                        from: 1
+                                        to: 254
+                                        width: 200
+                                        anchors.top: masterSlaveAddress_3.bottom
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.topMargin: 15
+                                    }
+                                    Label {
+                                        text: "Адрес ведомого №4"
+                                        id: masterSlaveAddress_4
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.top: masterSlaveSlaveId_3.bottom
+                                        anchors.topMargin: 15
+                                    }
+                                    SpinBox {
+                                        id: masterSlaveSlaveId_4
+                                        height: 25
+                                        from: 1
+                                        width: 200
+                                        to: 254
+                                        anchors.top: masterSlaveAddress_4.bottom
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        anchors.topMargin: 15
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 20
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Item {
+                        ScrollView {
+                            clip: true
+                            anchors.fill: parent
+                            Column {
+                                spacing: 10
+                                anchors.top: parent.top
+                                anchors.topMargin: 15
+                                //1
+                                Rectangle {
+                                    id:calTableChartRect
+                                    width: stackSubProperty.width - 90
+                                    height: stackSubProperty.height - 100
+                                    color: "#fdfdfb"
+                                    layer.enabled: true
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+
+                                    ControlOld.TableView {
+                                        id:tarTabView
+                                        anchors.top: parent.top
+                                        anchors.left: parent.left
+                                        anchors.bottom: parent.bottom
+                                        width: parent.width / 2
+                                        ControlOld.TableViewColumn {
+                                            id: tableDelegateValue
+                                            role: "Value"
+                                            title: "Объем"
+                                            property int value: model.Value
+                                            delegate: Rectangle {
+                                                anchors.fill: parent
+                                                color: valueInputValue.text.length >0 ? "transparent" : "red"
+                                                TextInput {
+                                                    id:valueInputValue
+                                                    anchors.fill: parent
+                                                    selectionColor: "red"
+                                                    text:(model.Value===0) ? "0" : model.Value
+                                                    validator: RegExpValidator { regExp: /[0-9A-F]+/ }
+                                                    onEditingFinished: {
+                                                        model.Value = text
+                                                        remakeTarTableChart()
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        ControlOld.TableViewColumn {
+                                            id: tableDelegateLevel
+                                            role: "Level"
+                                            title: "Уровень"
+                                            property int level: model.Level
+                                            delegate: Rectangle {
+                                                anchors.fill: parent
+                                                color: valueInputLevel.text.length >0 ? "transparent" : "red"
+                                                TextInput {
+                                                    id:valueInputLevel
+                                                    anchors.fill: parent
+                                                    selectionColor: "red"
+                                                    text:(model.Level===0) ? "0" : model.Level
+                                                    validator: RegExpValidator { regExp: /[0-9A-F]+/ }
+                                                    onEditingFinished: {
+                                                        model.Level = text
+                                                        remakeTarTableChart()
+                                                    }
+
+                                                }
+                                            }
+                                        }
+                                        model: ListModel {
+                                            id: tarTableListModel
+                                        }
+                                        onCurrentRowChanged: {
+                                            tarTabView.selection.clear()
+                                            tarTabView.selection.select(tarTabView.currentRow)
+                                        }
+
+                                        rowDelegate: Rectangle {
+                                            SystemPalette {
+                                                id: systemPalette
+                                                colorGroup: SystemPalette.Active
+                                            }
+                                            color: {
+                                                var baseColor = styleData.alternate ? systemPalette.alternateBase : systemPalette.base
+                                                return styleData.selected ? "orange" : baseColor
+                                            }
+                                        }
+                                    }
+
+                                    Rectangle {
+                                        anchors.top: parent.top
+                                        anchors.left: tarTabView.right
+                                        anchors.right: parent.right
+                                        anchors.bottom: tarTabView.bottom
+                                        height: parent.height
+                                        width: tarTabView.width / 2
+                                        ChartView {
+                                            id: chartTarTable
+                                            anchors.fill: parent
+                                            theme: ChartView.ChartThemeBlueCerulean
+                                            clip: true
+                                            antialiasing: true
+                                            title: "Уровень"
+                                            property int chartTarTableLength: 1
+                                            property int chartTarTableAmplitudeMax: 1
+                                            ValueAxis {
+                                                id: chartTarTableAxisX
+                                                min: 0
+                                                max: chartTarTable.chartTarTableLength
+                                                tickCount: 5
+                                            }
+                                            ValueAxis {
+                                                id: chartTarTableAxisY
+                                                min: 0
+                                                max: chartTarTable.chartTarTableAmplitudeMax
+                                                tickCount: 5
+                                            }
+                                            LineSeries {
+                                                id:chartTarTableLine
+                                                color: "red"
+                                                axisX: chartTarTableAxisX
+                                                axisY: chartTarTableAxisY
+                                            }
+                                            layer.enabled: true
+                                            layer.effect: DropShadow {
+                                                verticalOffset: 1
+                                                color: "#e0e5ef"
+                                                radius: 20
+                                            }
+                                        }
+                                    }
+                                }
+                                Row {
+                                    id:tarBatButtons
+                                    anchors.top: calTableChartRect.bottom
+                                    anchors.bottom: parent.bottom
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+                                    anchors.right: parent.right
+                                    spacing: 0
+                                    Button {
+                                        id:tarTabAddStep
+                                        text:"Добавить"
+                                        height: 50
+                                        width: 70
+                                        font.pointSize: 8
+                                        onClicked: {
+                                            tarTableListModel.append({"Value":"0","Level":"0"})
+                                            timerAffterRefrashTarTable.start()
+                                        }
+                                        layer.enabled: true
+                                        layer.effect: DropShadow {
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            radius: 20
+                                        }
+                                    }
+                                    Button {
+                                        id:tarTabRemoveStep
+                                        text:"Удалить"
+                                        font.pointSize: 8
+                                        height: 50
+                                        width: 70
+                                        layer.enabled: true
+                                        layer.effect: DropShadow {
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            radius: 20
+                                        }
+                                        Dialog {
+                                            id: dialogRemoveTarTableRow
+                                            visible: falsecalTableChartRect
+                                            title: "Удаление записи таблицы"
+                                            standardButtons: StandardButton.Apply
+                                            Rectangle {
+                                                color: "transparent"
+                                                implicitWidth: 500
+                                                implicitHeight: 50
+                                                Text {
+                                                    text: "Для удаления сначала кликните по удалялемой строке в таблице"
+                                                    color: "black"
+                                                    anchors.centerIn: parent
+                                                }
+                                            }
+                                            onApply: {
+                                                close()
+                                            }
+                                        }
+                                        onClicked: {
+                                            if(tarTabView.currentRow == -1) {
+                                                dialogRemoveTarTableRow.open()
+                                                close()
+                                            } else {
+                                                tarTabView.model.remove(tarTabView.currentRow)
+                                                timerAffterRefrashTarTable.start()
+                                            }
+                                        }
+                                    }
+                                    Button {
+                                        id:tarTabCleaarFull
+                                        text:"Очистить"
+                                        font.pointSize: 8
+                                        height: 50
+                                        width: 70
+                                        layer.enabled: true
+                                        layer.effect: DropShadow {
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            radius: 20
+                                        }
+                                        Dialog {
+                                            id: dialogClearTarTable
+                                            visible: false
+                                            title: "Очистка записей таблицы"
+                                            standardButtons: StandardButton.Close | StandardButton.Apply
+                                            Rectangle {
+                                                color: "transparent"
+                                                implicitWidth: 500
+                                                implicitHeight: 50
+                                                Text {
+                                                    text: "Очистить таблицу\nВы уверены?"
+                                                    color: "black"
+                                                    anchors.centerIn: parent
+                                                }
+                                            }
+                                            onApply: {
+                                                var size = tarTabView.rowCount
+                                                tarTabView.model.clear()
+                                                timerAffterRefrashTarTable.start()
+                                                close()
+                                            }
+                                        }
+                                        onClicked: {
+                                            dialogClearTarTable.open()
+                                        }
+                                    }
+                                    Button {
+                                        id:tarTabReadTable
+                                        text:"Считать\nтаблицу"
+                                        font.pointSize: 8
+                                        width: 70
+                                        height: 50
+                                        layer.enabled: true
+                                        layer.effect: DropShadow {
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            radius: 20
+                                        }
+                                        enabled: devPropertyProgressTmk24.isReady
+                                        onClicked: {
+                                            dialogReadTarTable.open()
+                                        }
+                                        Dialog {
+                                            id: dialogReadTarTable
+                                            visible: false
+                                            title: "Чтение записей таблицы из устройства"
+                                            standardButtons: StandardButton.Close | StandardButton.Apply
+                                            Rectangle {
+                                                color: "transparent"
+                                                implicitWidth: 500
+                                                implicitHeight: 50
+                                                Text {
+                                                    text: "Считать данные?\nВсе не сохраненные изменения будут утеряны!\nВы уверены?"
+                                                    color: "black"
+                                                    anchors.centerIn: parent
+                                                }
+                                            }
+                                            onApply: {
+                                                viewController.getCurrentDevTarTable()
+                                                close()
+                                            }
+                                        }
+                                    }
+                                    Button {
+                                        id:tarTabWriteTable
+                                        text:"Записать\nтаблицу"
+                                        width: 70
+                                        height: 50
+                                        font.pointSize: 8
+                                        layer.enabled: true
+                                        layer.effect: DropShadow {
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            radius: 20
+                                        }
+                                        enabled: devPropertyProgressTmk24.isReady
+                                        Dialog {
+                                            id: dialogWriteTarTable
+                                            visible: false
+                                            title: "Запись таблицы"
+                                            standardButtons: StandardButton.Close | StandardButton.Apply
+                                            Rectangle {
+                                                color: "transparent"
+                                                implicitWidth: 500
+                                                implicitHeight: 50
+                                                Text {
+                                                    text: "Записать таблицу в устройство!\nВы уверены?"
+                                                    color: "black"
+                                                    anchors.centerIn: parent
+                                                }
+                                            }
+                                            onApply: {
+                                                writeTarTable()
+                                                close()
+                                            }
+                                        }
+                                        onClicked: {
+                                            if(tarTabView.rowCount >0) {
+                                                dialogWriteTarTable.open()
+                                            }
+                                        }
+                                    }
+                                    Button {
+                                        id:tarTabTableExport
+                                        text:"Выгрузить\n.csv"
+                                        width: 80
+                                        font.pointSize: 8
+                                        height: 50
+                                        layer.enabled: true
+                                        layer.effect: DropShadow {
+                                            verticalOffset: 1
+                                            color: "#e0e5ef"
+                                            radius: 20
+                                        }
+                                        FileDialog {
+                                            id: dialogExportTarTable
+                                            folder: shortcuts.home
+                                            selectMultiple: false
+                                            selectFolder: false
+                                            title: "Save to file"
+                                            nameFilters: [ "All files (*)" ]
+                                            selectExisting: false
+                                            onAccepted: {
+                                                if(dialogExportTarTable.selectExisting == true) {
+                                                    console.log(dialogExportTarTable.fileUrl)
+                                                }
+                                                else {
+                                                    console.log(dialogExportTarTable.fileUrl)
+                                                    console.log("You chose: " + dialogExportTarTable.fileUrls)
+                                                    var tarArrayLevel = [];
+                                                    var tarArrayValue = [];
+                                                    for(var i=0; i<tarTabView.rowCount; i++) {
+                                                        var item = tarTabView.model.get(i)
+                                                        tarArrayLevel.push(item.Level)
+                                                        tarArrayValue.push(item.Value)
+                                                    }
+                                                    viewController.setCurrentDevExportTarTable(dialogExportTarTable.fileUrls, tarArrayLevel,tarArrayValue)
+                                                }
+                                            }
+                                        }
+                                        onClicked: {
+                                            dialogExportTarTable.open()
+                                        }
+                                    }
+                                }
+                                layer.effect: DropShadow {
+                                    transparentBorder: true
+                                    horizontalOffset: 0
+                                    verticalOffset: 1
+                                    color: "#e0e5ef"
+                                    samples: 10
+                                    radius: 20
+                                }
+                            }
                         }
                     }
                 }
@@ -646,1891 +2592,10 @@ Rectangle {
         }
     }
 
-    //        // 1- base parameters
-    //        Item {
-    //            id: basePropertiesItem
-    //            ScrollView {
-    //                anchors.fill: parent
-    //                clip: true
-
-    //                Row {
-    //                    id: row2
-    //                    height: 25
-    //                    spacing: 5
-    //                    clip: true
-    //                    anchors.right: rightTabBarRect.left
-    //                    anchors.rightMargin: 10
-    //                    anchors.left: parent.left
-    //                    anchors.leftMargin: 10
-    //                    anchors.top: parent.top
-    //                    anchors.topMargin: 10
-    //                    Row {
-    //                        id: row1
-    //                        clip: true
-    //                        anchors.right: row.left
-    //                        anchors.rightMargin: 0
-    //                        anchors.left: parent.left
-    //                        anchors.leftMargin: 0
-    //                        width: row2.width / 2
-    //                        height: parent.height
-    //                        Label {
-    //                            id: lSn
-    //                            text: qsTr("Зав/ном:")
-    //                            anchors.left: parent.left
-    //                            anchors.leftMargin: 0
-    //                        }
-
-    //                        TextField {
-    //                            id: snText
-    //                            text: qsTr("")
-    //                            anchors.right: parent.right
-    //                            anchors.rightMargin: 0
-    //                            anchors.left: lSn.right
-    //                            anchors.leftMargin: 10
-    //                            height: parent.height
-    //                            readOnly: true
-    //                        }
-    //                    }
-
-    //                    Row {
-    //                        id: row
-    //                        clip: true
-    //                        anchors.right: parent.right
-    //                        anchors.rightMargin: 0
-    //                        width: row2.width / 2
-    //                        height: parent.height
-    //                        Label {
-    //                            id: lTypeDevice
-    //                            text: qsTr("Тип датчика")
-    //                            anchors.left: parent.left
-    //                            anchors.leftMargin: 10
-    //                        }
-
-    //                        TextField {
-    //                            id: typeDeviceText
-    //                            text: qsTr("")
-    //                            anchors.right: parent.right
-    //                            anchors.rightMargin: 0
-    //                            anchors.left: lTypeDevice.right
-    //                            anchors.leftMargin: 10
-    //                            font.underline: false
-    //                            readOnly: true
-    //                            height: parent.height
-    //                        }
-    //                    }
-    //                }
-
-    //                Row {
-    //                    id: row5
-    //                    height: 25
-    //                    spacing: 5
-    //                    clip: true
-    //                    anchors.right: rightTabBarRect.left
-    //                    anchors.rightMargin: 10
-    //                    anchors.left: parent.left
-    //                    anchors.leftMargin: 10
-    //                    anchors.top: row2.bottom
-    //                    anchors.topMargin: 10
-    //                    z: 2
-
-    //                    Row {
-    //                        id: row4
-    //                        height: parent.height
-    //                        clip: true
-    //                        anchors.right: row.left
-    //                        anchors.rightMargin: 0
-    //                        anchors.left: parent.left
-    //                        anchors.leftMargin: 0
-    //                        width: row2.width / 2
-
-    //                        Label {
-    //                            id: lNetId
-    //                            text: qsTr("Сетевой адрес:")
-    //                            anchors.left: parent.left
-    //                            anchors.leftMargin: 0
-    //                        }
-
-    //                        TextField {
-    //                            id: netIdText
-    //                            text: qsTr("")
-    //                            width: 50
-    //                            anchors.left: lNetId.right
-    //                            anchors.leftMargin: 10
-    //                            height: parent.height
-    //                            readOnly: true
-    //                        }
-    //                        Button {
-    //                            id: netIdChange
-    //                            text: qsTr("Сменить")
-    //                            anchors.right: parent.right
-    //                            anchors.rightMargin: 0
-    //                            anchors.left: netIdText.right
-    //                            anchors.leftMargin: 10
-    //                            height: parent.height
-    //                            ChangeId {
-    //                                id:changeId
-    //                                visible: false
-    //                                onAccept: {
-    //                                    viewController.setCurrentDevChangeId(password, idNew)
-    //                                    close()
-    //                                }
-    //                                onExit: {
-    //                                    close()
-    //                                }
-    //                            }
-    //                            onClicked: {
-    //                                changeId.open()
-    //                            }
-    //                        }
-    //                    }
-
-    //                    Row {
-    //                        id: row6
-    //                        clip: true
-    //                        anchors.right: parent.right
-    //                        anchors.rightMargin: 0
-    //                        width: row2.width / 2
-    //                        height: parent.height
-    //                        Label {
-    //                            id: lversionFirmwareText
-    //                            text: qsTr("Версия ПО")
-    //                            anchors.left: parent.left
-    //                            anchors.leftMargin: 10
-    //                        }
-
-    //                        TextField {
-    //                            id: versionFirmwareText
-    //                            text: qsTr("")
-    //                            anchors.right: parent.right
-    //                            anchors.rightMargin: 0
-    //                            anchors.left: lversionFirmwareText.right
-    //                            anchors.leftMargin: 10
-    //                            font.underline: false
-    //                            height: parent.height
-    //                            readOnly: true
-    //                        }
-    //                    }
-    //                }
-    //                Column {
-    //                    spacing: 10
-
-    //
-    //                    Label {
-    //                        text: "Мин. значение уровня (0-1023):"
-    //                    }
-    //                    SpinBox {
-    //                        id:minLevelValue
-    //                        height: 25
-    //                        to: 4095
-    //                        from: 0
-    //                        value: 0
-    //                    }
-    //                    Label {
-    //                        text: "Макс.значение уровня (0-4095):"
-    //                    }
-    //                    SpinBox {
-    //                        id:maxLevelValue
-    //                        height: 25
-    //                        to: 4095
-    //                        from: 0
-    //                        value: 0
-    //                    }
-    //                    Label {
-    //                        text: "Параметр в выходном сообщении датчика:"
-    //                    }
-    //                    ComboBox {
-    //                        id: typeOutMessage
-    //                        width: 250
-    //                        height: 25
-    //                        model: ListModel {
-    //                            ListElement {
-    //                                text: "Относительный уровень"
-    //                            }
-    //                            ListElement {
-    //                                text: "Объем (по таблице таррировки)"
-    //                            }
-    //                        }
-    //                    }
-    //                    Label {
-    //                        text: "Тип интерполяции:"
-    //                    }
-    //                    ComboBox {
-    //                        id: typeInterpolation
-    //                        height: 25
-    //                        model: ListModel {
-    //                            ListElement {
-    //                                text: "Линейная"
-    //                            }
-    //                            ListElement {
-    //                                text: "Квадратичная"
-    //                            }
-    //                            ListElement {
-    //                                text: "Сплайновая"
-    //                            }
-    //                        }
-    //                    }
-    //                    Label {
-    //                        text: "Скорость обмена:"
-    //                        id: baudrateLabel
-    //                    }
-    //                    Label {
-    //                        text: "По RS232:"
-    //                        id: baudrateRs232Label
-    //                    }
-    //                    ComboBox {
-    //                        id: baudrateRs232Values
-    //                        height: 25
-    //                        model: ListModel {
-    //                            ListElement {
-    //                                text: "2800"
-    //                            }
-    //                            ListElement {
-    //                                text: "4800"
-    //                            }
-    //                            ListElement {
-    //                                text: "9600"
-    //                            }
-    //                            ListElement {
-    //                                text: "19200"
-    //                            }
-    //                            ListElement {
-    //                                text: "28800"
-    //                            }
-    //                            ListElement {
-    //                                text: "38400"
-    //                            }
-    //                            ListElement {
-    //                                text: "57600"
-    //                            }
-    //                            ListElement {
-    //                                text: "115200"
-    //                            }
-    //                        }
-    //                    }
-    //                    Label {
-    //                        text: "По RS485:"
-    //                        id: baudrateRs485Label
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-
-
-    //        TabBar {
-    //            id: propertiesTabBar
-    //            anchors.leftMargin: 10
-    //            anchors.rightMargin: 10
-    //            anchors.top: row7.bottom
-    //            anchors.right: rightTabBarRect.left
-    //            anchors.left: parent.left
-    //            width: 1000
-    //            currentIndex: propertiesView.currentIndex
-    //            font.pointSize: 8
-
-    //            TabButton {
-    //                id: basePropertiesTab
-    //                text: qsTr("Общие\nпараметры")
-    //                focusPolicy: Qt.TabFocus
-    //                background: Rectangle {
-    //                    gradient: Gradient {
-    //                        GradientStop {
-    //                            position: 1
-    //                            color: "#4D75E0"
-    //                        }
-    //                        GradientStop {
-    //                            position: 0
-    //                            color: "#EEF0F6"
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //            TabButton {
-    //                id: calibrationTab
-    //                text: qsTr("Калибровка\nMinMax")
-    //                background: Rectangle {
-    //                    gradient: Gradient {
-    //                        GradientStop {
-    //                            position: 1
-    //                            color: "#4D75E0"
-    //                        }
-    //                        GradientStop {
-    //                            position: 0
-    //                            color: "#EEF0F6"
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //            TabButton {
-    //                id: filtrationTab
-    //                text: qsTr("Фильтрация")
-    //                background: Rectangle {
-    //                    gradient: Gradient {
-    //                        GradientStop {
-    //                            position: 1
-    //                            color: "#4D75E0"
-    //                        }
-    //                        GradientStop {
-    //                            position: 0
-    //                            color: "#EEF0F6"
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //            TabButton {
-    //                id: tempCompensationTab
-    //                text: qsTr("Тем-ная\nкомпенсация")
-    //                background: Rectangle {
-    //                    gradient: Gradient {
-    //                        GradientStop {
-    //                            position: 1
-    //                            color: "#4D75E0"
-    //                        }
-    //                        GradientStop {
-    //                            position: 0
-    //                            color: "#EEF0F6"
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //            TabButton {
-    //                id: erorrsTab
-    //                text: qsTr("Ошибки")
-    //                focusPolicy: Qt.TabFocus
-    //                background: Rectangle {
-    //                    gradient: Gradient {
-    //                        GradientStop {
-    //                            position: 1
-    //                            color: "#4D75E0"
-    //                        }
-    //                        GradientStop {
-    //                            position: 0
-    //                            color: "#EEF0F6"
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //            TabButton {
-    //                id: masterSlaveTab
-    //                text: qsTr("Ведущий\nведомый")
-    //                focusPolicy: Qt.TabFocus
-    //                background: Rectangle {
-    //                    gradient: Gradient {
-    //                        GradientStop {
-    //                            position: 1
-    //                            color: "#4D75E0"
-    //                        }
-    //                        GradientStop {
-    //                            position: 0
-    //                            color: "#EEF0F6"
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //            TabButton {
-    //                id: tarTab
-    //                text: qsTr("Тарировка")
-    //                focusPolicy: Qt.TabFocus
-    //                background: Rectangle {
-    //                    gradient: Gradient {
-    //                        GradientStop {
-    //                            position: 1
-    //                            color: "#4D75E0"
-    //                        }
-    //                        GradientStop {
-    //                            position: 0
-    //                            color: "#EEF0F6"
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-
-    //        Rectangle {
-    //            id:properiesViewRect
-    //            anchors.top: propertiesTabBar.bottom
-    //            anchors.topMargin: 10
-    //            anchors.right: parent.right
-    //            anchors.rightMargin: (rightPanelView.width + 10)
-    //            anchors.left: parent.left
-    //            anchors.leftMargin: 10
-    //            anchors.bottom: parent.bottom
-    //            anchors.bottomMargin: 10
-    //            color: "transparent"
-    //            SwipeView {
-    //                id: propertiesView
-    //                anchors.fill: properiesViewRect
-    //                currentIndex: propertiesTabBar.currentIndex
-    //                clip: true
-
-    //                onCurrentIndexChanged: {
-    //                    if(propertiesView.currentItem == errorsItem) {
-    //                        viewController.getCurrentDevErrors()
-    //                    }
-    //                    if(propertiesView.currentItem == tarItem) {
-    //                        //                        viewController.getCurrentDevTarTable()
-    //                    }
-    //                }
-
-    //                // 1- base parameters
-    //                Item {
-    //                    id: basePropertiesItem
-    //                    ScrollView {
-    //                        anchors.fill: parent
-    //                        clip: true
-
-    //                        Row {
-    //                            id: row2
-    //                            height: 25
-    //                            spacing: 5
-    //                            clip: true
-    //                            anchors.right: rightTabBarRect.left
-    //                            anchors.rightMargin: 10
-    //                            anchors.left: parent.left
-    //                            anchors.leftMargin: 10
-    //                            anchors.top: parent.top
-    //                            anchors.topMargin: 10
-    //                            Row {
-    //                                id: row1
-    //                                clip: true
-    //                                anchors.right: row.left
-    //                                anchors.rightMargin: 0
-    //                                anchors.left: parent.left
-    //                                anchors.leftMargin: 0
-    //                                width: row2.width / 2
-    //                                height: parent.height
-    //                                Label {
-    //                                    id: lSn
-    //                                    text: qsTr("Зав/ном:")
-    //                                    anchors.left: parent.left
-    //                                    anchors.leftMargin: 0
-    //                                }
-
-    //                                TextField {
-    //                                    id: snText
-    //                                    text: qsTr("")
-    //                                    anchors.right: parent.right
-    //                                    anchors.rightMargin: 0
-    //                                    anchors.left: lSn.right
-    //                                    anchors.leftMargin: 10
-    //                                    height: parent.height
-    //                                    readOnly: true
-    //                                }
-    //                            }
-
-    //                            Row {
-    //                                id: row
-    //                                clip: true
-    //                                anchors.right: parent.right
-    //                                anchors.rightMargin: 0
-    //                                width: row2.width / 2
-    //                                height: parent.height
-    //                                Label {
-    //                                    id: lTypeDevice
-    //                                    text: qsTr("Тип датчика")
-    //                                    anchors.left: parent.left
-    //                                    anchors.leftMargin: 10
-    //                                }
-
-    //                                TextField {
-    //                                    id: typeDeviceText
-    //                                    text: qsTr("")
-    //                                    anchors.right: parent.right
-    //                                    anchors.rightMargin: 0
-    //                                    anchors.left: lTypeDevice.right
-    //                                    anchors.leftMargin: 10
-    //                                    font.underline: false
-    //                                    readOnly: true
-    //                                    height: parent.height
-    //                                }
-    //                            }
-    //                        }
-
-    //                        Row {
-    //                            id: row5
-    //                            height: 25
-    //                            spacing: 5
-    //                            clip: true
-    //                            anchors.right: rightTabBarRect.left
-    //                            anchors.rightMargin: 10
-    //                            anchors.left: parent.left
-    //                            anchors.leftMargin: 10
-    //                            anchors.top: row2.bottom
-    //                            anchors.topMargin: 10
-    //                            z: 2
-
-    //                            Row {
-    //                                id: row4
-    //                                height: parent.height
-    //                                clip: true
-    //                                anchors.right: row.left
-    //                                anchors.rightMargin: 0
-    //                                anchors.left: parent.left
-    //                                anchors.leftMargin: 0
-    //                                width: row2.width / 2
-
-    //                                Label {
-    //                                    id: lNetId
-    //                                    text: qsTr("Сетевой адрес:")
-    //                                    anchors.left: parent.left
-    //                                    anchors.leftMargin: 0
-    //                                }
-
-    //                                TextField {
-    //                                    id: netIdText
-    //                                    text: qsTr("")
-    //                                    width: 50
-    //                                    anchors.left: lNetId.right
-    //                                    anchors.leftMargin: 10
-    //                                    height: parent.height
-    //                                    readOnly: true
-    //                                }
-    //                                Button {
-    //                                    id: netIdChange
-    //                                    text: qsTr("Сменить")
-    //                                    anchors.right: parent.right
-    //                                    anchors.rightMargin: 0
-    //                                    anchors.left: netIdText.right
-    //                                    anchors.leftMargin: 10
-    //                                    height: parent.height
-    //                                    ChangeId {
-    //                                        id:changeId
-    //                                        visible: false
-    //                                        onAccept: {
-    //                                            viewController.setCurrentDevChangeId(password, idNew)
-    //                                            close()
-    //                                        }
-    //                                        onExit: {
-    //                                            close()
-    //                                        }
-    //                                    }
-    //                                    onClicked: {
-    //                                        changeId.open()
-    //                                    }
-    //                                }
-    //                            }
-
-    //                            Row {
-    //                                id: row6
-    //                                clip: true
-    //                                anchors.right: parent.right
-    //                                anchors.rightMargin: 0
-    //                                width: row2.width / 2
-    //                                height: parent.height
-    //                                Label {
-    //                                    id: lversionFirmwareText
-    //                                    text: qsTr("Версия ПО")
-    //                                    anchors.left: parent.left
-    //                                    anchors.leftMargin: 10
-    //                                }
-
-    //                                TextField {
-    //                                    id: versionFirmwareText
-    //                                    text: qsTr("")
-    //                                    anchors.right: parent.right
-    //                                    anchors.rightMargin: 0
-    //                                    anchors.left: lversionFirmwareText.right
-    //                                    anchors.leftMargin: 10
-    //                                    font.underline: false
-    //                                    height: parent.height
-    //                                    readOnly: true
-    //                                }
-    //                            }
-    //                        }
-    //                        Column {
-    //                            spacing: 10
-
-    //                            Button {
-    //                                text: "Сменить сетевой адрес"
-    //                                id: changeIdAddr
-    //                                anchors.left: parent.left
-    //                                anchors.right: parent.right
-    //                            }
-    //                            Label {
-    //                                text: "Самостоятельная выдача данных:"
-    //                            }
-    //                            ComboBox {
-    //                                id: periodicSendType
-    //                                height: 25
-    //                                model: ListModel {
-    //                                    ListElement {
-    //                                        text: "Выключена"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "Бинарная"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "Символьная"
-    //                                    }
-    //                                }
-    //                                onCurrentIndexChanged: {
-    //                                    if(periodicSendType.currentIndex != 0) {
-    //                                        periodicSendTime.enabled = true
-    //                                    } else {
-    //                                        periodicSendTime.enabled = false
-    //                                    }
-    //                                }
-    //                            }
-    //                            Label {
-    //                                text: "Период выдачи данных (0-255), с:"
-    //                            }
-    //                            SpinBox {
-    //                                id:periodicSendTime
-    //                                height: 25
-    //                            }
-    //                            Label {
-    //                                text: "Мин. значение уровня (0-1023):"
-    //                            }
-    //                            SpinBox {
-    //                                id:minLevelValue
-    //                                height: 25
-    //                                to: 4095
-    //                                from: 0
-    //                                value: 0
-    //                            }
-    //                            Label {
-    //                                text: "Макс.значение уровня (0-4095):"
-    //                            }
-    //                            SpinBox {
-    //                                id:maxLevelValue
-    //                                height: 25
-    //                                to: 4095
-    //                                from: 0
-    //                                value: 0
-    //                            }
-    //                            Label {
-    //                                text: "Параметр в выходном сообщении датчика:"
-    //                            }
-    //                            ComboBox {
-    //                                id: typeOutMessage
-    //                                width: 250
-    //                                height: 25
-    //                                model: ListModel {
-    //                                    ListElement {
-    //                                        text: "Относительный уровень"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "Объем (по таблице таррировки)"
-    //                                    }
-    //                                }
-    //                            }
-    //                            Label {
-    //                                text: "Тип интерполяции:"
-    //                            }
-    //                            ComboBox {
-    //                                id: typeInterpolation
-    //                                height: 25
-    //                                model: ListModel {
-    //                                    ListElement {
-    //                                        text: "Линейная"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "Квадратичная"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "Сплайновая"
-    //                                    }
-    //                                }
-    //                            }
-    //                            Label {
-    //                                text: "Скорость обмена:"
-    //                                id: baudrateLabel
-    //                            }
-    //                            Label {
-    //                                text: "По RS232:"
-    //                                id: baudrateRs232Label
-    //                            }
-    //                            ComboBox {
-    //                                id: baudrateRs232Values
-    //                                height: 25
-    //                                model: ListModel {
-    //                                    ListElement {
-    //                                        text: "2800"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "4800"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "9600"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "19200"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "28800"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "38400"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "57600"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "115200"
-    //                                    }
-    //                                }
-    //                            }
-    //                            Label {
-    //                                text: "По RS485:"
-    //                                id: baudrateRs485Label
-    //                            }
-
-    //                            ComboBox {
-    //                                id: baudrateRs485Values
-    //                                height: 25
-    //                                model: ListModel {
-    //                                    ListElement {
-    //                                        text: "2800"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "4800"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "9600"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "19200"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "28800"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "38400"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "57600"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "115200"
-    //                                    }
-    //                                }
-    //                            }
-    //                        }
-    //                    }
-    //                }
-    //                // 2- calibration
-    //                Item {
-    //                    id: calibrationItem
-    //                    ScrollView {
-    //                        anchors.fill: parent
-    //                        clip: true
-    //                        Column {
-    //                            spacing: 10
-    //                            Label {
-    //                                text: qsTr("Задание границ измерения:")
-    //                            }
-    //                            Button {
-    //                                id: buttonEmpty
-    //                                text: "Пустой"
-    //                                onClicked: {
-    //                                    dialogLevelSetEmpty.open()
-    //                                }
-    //                            }
-    //                            Button {
-    //                                id: buttonFull
-    //                                text: "Полный"
-    //                                onClicked: {
-    //                                    dialogLevelSetFull.open()
-    //                                }
-    //                            }
-    //                            Button {
-    //                                id: buttonEdit
-    //                                text: "Редактировать"
-    //                                enabled: false
-    //                            }
-    //                            Label {
-    //                                text: "Тип жидкости"
-    //                            }
-    //                            ComboBox {
-    //                                id: typeFuel
-    //                                height: 25
-    //                                model: ListModel {
-    //                                    ListElement {
-    //                                        text: "Топливо"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "Вода"
-    //                                    }
-    //                                }
-    //                            }
-    //                        }
-    //                    }
-    //                }
-    //                // 2- filtration
-    //                Item {
-    //                    id: filtrationItem
-    //                    ScrollView {
-    //                        anchors.fill: parent
-    //                        clip: true
-    //                        Column {
-    //                            spacing: 10
-    //                            Label {
-    //                                text: "Тип фильтрации:"
-    //                            }
-    //                            ComboBox {
-    //                                id: typeFiltration
-    //                                height: 25
-    //                                model: ListModel {
-    //                                    ListElement {
-    //                                        text: "Выключена"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "Усреднение"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "Медиана"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "Адаптивный"
-    //                                    }
-    //                                }
-    //                                onCurrentIndexChanged: {
-    //                                    if(typeFiltration.currentIndex == 0) {
-    //                                        filterAvarageValueSec.enabled = false
-    //                                        filterLenghtMediana.enabled = false
-    //                                        filterValueQ.enabled = false
-    //                                        filterValueR.enabled = false
-    //                                    } else if(typeFiltration.currentIndex == 1) {
-    //                                        filterAvarageValueSec.enabled = true
-    //                                        filterLenghtMediana.enabled = false
-    //                                        filterValueQ.enabled = false
-    //                                        filterValueR.enabled = false
-    //                                    } else if(typeFiltration.currentIndex == 2) {
-    //                                        filterAvarageValueSec.enabled = true
-    //                                        filterLenghtMediana.enabled = true
-    //                                        filterValueQ.enabled = false
-    //                                        filterValueR.enabled = false
-    //                                    } else if(typeFiltration.currentIndex == 3) {
-    //                                        filterAvarageValueSec.enabled = false
-    //                                        filterLenghtMediana.enabled = false
-    //                                        filterValueQ.enabled = true
-    //                                        filterValueR.enabled = true
-    //                                    }
-    //                                }
-    //                            }
-    //                            Label {
-    //                                text: "Время усреднения (0-21), с:"
-    //                            }
-    //                            SpinBox {
-    //                                id: filterAvarageValueSec
-    //                                height: 25
-    //                            }
-    //                            Label {
-    //                                text: "Длина медианы (0-7):"
-    //                            }
-    //                            SpinBox {
-    //                                id: filterLenghtMediana
-    //                                height: 25
-    //                            }
-    //                            Label {
-    //                                text: "Ковариация шума процесса (Q):"
-    //                            }
-    //                            SpinBox {
-    //                                id: filterValueQ
-    //                                height: 25
-    //                            }
-    //                            Label {
-    //                                text: "Ковариация шума измерения (R):"
-    //                            }
-    //                            SpinBox {
-    //                                id: filterValueR
-    //                                height: 25
-    //                            }
-    //                        }
-    //                    }
-    //                }
-    //                // 3- temperature
-    //                Item {
-    //                    id: tempCompensationItem
-    //                    ScrollView {
-    //                        anchors.fill: parent
-    //                        clip: true
-    //                        Column {
-    //                            spacing: 10
-    //                            Label {
-    //                                text: qsTr("Температурная компенсация линейного расширения топлива")
-    //                                anchors.left: parent.left
-    //                                anchors.right: parent.right
-    //                            }
-    //                            Label {
-    //                                text: qsTr("Режим:")
-    //                                anchors.left: parent.left
-    //                                anchors.leftMargin: 0
-    //                                anchors.right: parent.right
-    //                                anchors.rightMargin: 0
-    //                            }
-    //                            ComboBox {
-    //                                id: typeTempCompensation
-    //                                height: 25
-    //                                model: ListModel {
-    //                                    ListElement {
-    //                                        text: "Выключен"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "АИ-95"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "АИ-92"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "АИ-80 (лето)"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "АИ-80 (зима)"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "ДТ (лето)"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "ДТ (зима)"
-    //                                    }
-    //                                    ListElement {
-    //                                        text: "Пользовательский"
-    //                                    }
-    //                                }
-    //                                onCurrentIndexChanged: {
-    //                                    if(typeTempCompensation.currentIndex == 7) {
-    //                                        k1.enabled = true
-    //                                        k2.enabled = true
-    //                                    } else {
-    //                                        k1.enabled = false
-    //                                        k2.enabled = false
-    //                                    }
-    //                                }
-    //                            }
-    //                            Label {
-    //                                text: qsTr("K1:")
-    //                                anchors.left: parent.left
-    //                                anchors.leftMargin: 0
-    //                                anchors.right: parent.right
-    //                                anchors.rightMargin: 0
-    //                            }
-    //                            TextField {
-    //                                id: k1
-    //                                text: "0.0"
-    //                                height: 25
-    //                            }
-    //                            Label {
-    //                                text: qsTr("K2:")
-    //                                anchors.left: parent.left
-    //                                anchors.leftMargin: 0
-    //                                anchors.right: parent.right
-    //                                anchors.rightMargin: 0
-    //                            }
-    //                            TextField {
-    //                                id: k2
-    //                                text: "0.0"
-    //                                height: 25
-    //                            }
-    //                        }
-    //                    }
-    //                }
-    //                // errors
-    //                Item {
-    //                    id: errorsItem
-    //                    ScrollView {
-    //                        anchors.fill: parent
-    //                        clip: true
-    //                        Column {
-    //                            spacing: 20
-    //                            Button {
-    //                                text: "Считать ошибки"
-    //                                id: readErrors
-    //                                onClicked: {
-    //                                    viewController.getCurrentDevErrors()
-    //                                }
-    //                            }
-
-    //                            Label {
-    //                                id:error1Label
-    //                                text: "Датчик не откалиброван:"
-    //                                property bool error1: false
-    //                                Image {
-    //                                    height: 32
-    //                                    width: 32
-    //                                    anchors.left: parent.right
-    //                                    anchors.rightMargin: 20
-    //                                    source: error1Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
-    //                                }
-    //                            }
-    //                            Label {
-    //                                id:error2Label
-    //                                text: "Выход за минимальную границу измерения на 10%:"
-    //                                property bool error2: false
-    //                                Image {
-    //                                    height: 32
-    //                                    width: 32
-    //                                    anchors.left: parent.right
-    //                                    anchors.rightMargin: 20
-    //                                    source: error2Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
-    //                                }
-    //                            }
-    //                            Label {
-    //                                id:error3Label
-    //                                text: "Выход за максимальную границу измерения на 10%:"
-    //                                property bool error3: false
-    //                                Image {
-    //                                    height: 32
-    //                                    width: 32
-    //                                    anchors.left: parent.right
-    //                                    anchors.rightMargin: 20
-    //                                    source: error3Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
-    //                                }
-    //                            }
-    //                            Label {
-    //                                id:error4Label
-    //                                text: "Частота измерительного генератора 0 Гц:"
-    //                                property bool error4: false
-    //                                Image {
-    //                                    height: 32
-    //                                    width: 32
-    //                                    anchors.left: parent.right
-    //                                    anchors.rightMargin: 20
-    //                                    source: error4Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
-    //                                }
-    //                            }
-    //                            Label {
-    //                                id:error5Label
-    //                                text: "Ведомый датчик №1 не отвечает:"
-    //                                property bool error5: false
-    //                                Image {
-    //                                    height: 32
-    //                                    width: 32
-    //                                    anchors.left: parent.right
-    //                                    anchors.rightMargin: 20
-    //                                    source: error5Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
-    //                                }
-    //                            }
-    //                            Label {
-    //                                id:error6Label
-    //                                text: "Ведомый датчик №2 не отвечает:"
-    //                                property bool error6: false
-    //                                Image {
-    //                                    height: 32
-    //                                    width: 32
-    //                                    anchors.left: parent.right
-    //                                    anchors.rightMargin: 20
-    //                                    source: error6Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
-    //                                }
-    //                            }
-    //                            Label {
-    //                                id:error7Label
-    //                                text: "Ведомый датчик №3 не отвечает:"
-    //                                property bool error7: false
-    //                                Image {
-    //                                    height: 32
-    //                                    width: 32
-    //                                    anchors.left: parent.right
-    //                                    anchors.rightMargin: 20
-    //                                    source: error7Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
-    //                                }
-    //                            }
-    //                            Label {
-    //                                id:error8Label
-    //                                text: "Ведомый датчик №4 не отвечает:"
-    //                                property bool error8: false
-    //                                Image {
-    //                                    height: 32
-    //                                    width: 32
-    //                                    anchors.left: parent.right
-    //                                    anchors.rightMargin: 20
-    //                                    source: error8Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
-    //                                }
-    //                            }
-    //                        }
-    //                    }
-    //                }
-    //                // masterSlave
-    //                Item {
-    //                    id: masterSlaveItem
-    //                    ScrollView {
-    //                        anchors.fill: parent
-    //                        clip: true
-    //                        Rectangle{
-    //                            id:masterSlaveRect
-    //                            width: propertiesView.width
-    //                            height: properiesViewRect.height
-    //                            color: "transparent"
-
-    //                            Row {
-    //                                id: masterSlaveRow
-    //                                anchors.fill: masterSlaveRect
-    //                                Rectangle {
-    //                                    id: rectangle1
-    //                                    width: masterSlaveRect.width / 2
-    //                                    color: "transparent"
-    //                                    anchors.bottom: parent.bottom
-    //                                    anchors.top: parent.top
-    //                                    Label {
-    //                                        id: masterSlaveModeLabel
-    //                                        text: "Режим ведущий/ведомый:"
-    //                                    }
-    //                                    ComboBox {
-    //                                        id: masterSlaveModes
-    //                                        anchors.top: masterSlaveModeLabel.bottom
-    //                                        anchors.topMargin: 5
-    //                                        height: 25
-    //                                        model: ListModel {
-    //                                            ListElement {
-    //                                                text: "Выключен"
-    //                                            }
-    //                                            ListElement {
-    //                                                text: "Ведомый"
-    //                                            }
-    //                                            ListElement {
-    //                                                text: "Ведущий"
-    //                                            }
-    //                                            ListElement {
-    //                                                text: "Трансляция"
-    //                                            }
-    //                                        }
-    //                                        onCurrentIndexChanged: {
-    //                                            if(masterSlaveModes.currentIndex == 2) {
-    //                                                masterSlavesAddresRectange.enabled = true
-    //                                            } else {
-    //                                                masterSlavesAddresRectange.enabled = false
-    //                                                masterSlaveFullCountes.value = 0
-    //                                            }
-    //                                        }
-    //                                    }
-    //                                }
-    //                                Rectangle {
-    //                                    id: masterSlavesAddresRectange
-    //                                    width: masterSlaveRect.width / 2
-    //                                    color: "transparent"
-    //                                    anchors.bottom: parent.bottom
-    //                                    anchors.top: parent.top
-    //                                    Label {
-    //                                        id: masterSlaveModeCountAllLabel
-    //                                        text: "Количество ведомых:"
-    //                                        anchors.topMargin: 20
-    //                                    }
-    //                                    SpinBox {
-    //                                        id: masterSlaveFullCountes
-    //                                        height: 25
-    //                                        anchors.top: masterSlaveModeCountAllLabel.bottom
-    //                                        from: 0
-    //                                        to: 4
-    //                                        onValueChanged: {
-    //                                            if(masterSlaveFullCountes.value >= 1) {
-    //                                                masterSlaveSlaveId_1.enabled = true
-    //                                            } else {
-    //                                                masterSlaveFullCountes.value = 0
-    //                                                masterSlaveModes.currentIndex = 0
-    //                                                masterSlaveSlaveId_1.enabled = false
-    //                                                masterSlaveSlaveId_2.enabled = false
-    //                                                masterSlaveSlaveId_3.enabled = false
-    //                                                masterSlaveSlaveId_4.enabled = false
-    //                                            }
-    //                                            if(masterSlaveFullCountes.value >= 2) {
-    //                                                masterSlaveSlaveId_2.enabled = true
-    //                                            } else {
-    //                                                masterSlaveSlaveId_2.enabled = false
-    //                                            }
-    //                                            if(masterSlaveFullCountes.value >= 3) {
-    //                                                masterSlaveSlaveId_3.enabled = true
-    //                                            } else {
-    //                                                masterSlaveSlaveId_3.enabled = false
-    //                                            }
-    //                                            if(masterSlaveFullCountes.value >= 4) {
-    //                                                masterSlaveSlaveId_4.enabled = true
-    //                                            } else {
-    //                                                masterSlaveSlaveId_4.enabled = false
-    //                                            }
-    //                                        }
-    //                                    }
-    //                                    Label {
-    //                                        text: "Адрес ведомого №1"
-    //                                        id: masterSlaveAddress_1
-    //                                        anchors.top: masterSlaveFullCountes.bottom
-    //                                        anchors.topMargin: 15
-    //                                    }
-    //                                    SpinBox {
-    //                                        id: masterSlaveSlaveId_1
-    //                                        from: 1
-    //                                        to: 254
-    //                                        height: 25
-    //                                        anchors.top: masterSlaveAddress_1.bottom
-    //                                    }
-    //                                    Label {
-    //                                        text: "Адрес ведомого №2"
-    //                                        id: masterSlaveAddress_2
-    //                                        anchors.top: masterSlaveSlaveId_1.bottom
-    //                                        anchors.topMargin: 5
-    //                                    }
-    //                                    SpinBox {
-    //                                        id: masterSlaveSlaveId_2
-    //                                        height: 25
-    //                                        from: 1
-    //                                        to: 254
-    //                                        anchors.top: masterSlaveAddress_2.bottom
-    //                                    }
-    //                                    Label {
-    //                                        text: "Адрес ведомого №3"
-    //                                        id: masterSlaveAddress_3
-    //                                        anchors.top: masterSlaveSlaveId_2.bottom
-    //                                        anchors.topMargin: 5
-    //                                    }
-    //                                    SpinBox {
-    //                                        id: masterSlaveSlaveId_3
-    //                                        height: 25
-    //                                        from: 1
-    //                                        to: 254
-    //                                        anchors.top: masterSlaveAddress_3.bottom
-    //                                    }
-    //                                    Label {
-    //                                        text: "Адрес ведомого №4"
-    //                                        id: masterSlaveAddress_4
-    //                                        anchors.top: masterSlaveSlaveId_3.bottom
-    //                                        anchors.topMargin: 5
-    //                                    }
-    //                                    SpinBox {
-    //                                        id: masterSlaveSlaveId_4
-    //                                        height: 25
-    //                                        from: 1
-    //                                        to: 254
-    //                                        anchors.top: masterSlaveAddress_4.bottom
-    //                                    }
-    //                                }
-    //                            }
-    //                        }
-    //                    }
-    //                }
-    //                // calibration
-    //                Item {
-    //                    id: tarItem
-    //                    ScrollView {
-    //                        anchors.fill: parent
-    //                        clip: true
-    //                        Rectangle{
-    //                            id:tarTabRect
-    //                            width: propertiesView.width
-    //                            height: parent.height - tarBatButtons.height
-
-    //                            ControlOld.TableView {
-    //                                id:tarTabView
-    //                                anchors.top: tarTabRect.top
-    //                                anchors.left: tarTabRect.left
-    //                                anchors.bottom: tarTabRect.bottom
-    //                                width: tarTabRect.width / 2
-    //                                ControlOld.TableViewColumn {
-    //                                    id: tableDelegateValue
-    //                                    role: "Value"
-    //                                    title: "Объем"
-    //                                    property int value: model.Value
-    //                                    delegate: Rectangle {
-    //                                        anchors.fill: parent
-    //                                        color: valueInputValue.text.length >0 ? "transparent" : "red"
-    //                                        TextInput {
-    //                                            id:valueInputValue
-    //                                            anchors.fill: parent
-    //                                            selectionColor: "red"
-    //                                            text:(model.Value===0) ? "0" : model.Value
-    //                                            validator: RegExpValidator { regExp: /[0-9A-F]+/ }
-    //                                            onEditingFinished: {
-    //                                                model.Value = text
-    //                                                remakeTarTableChart()
-    //                                            }
-    //                                        }
-    //                                    }
-    //                                }
-    //                                ControlOld.TableViewColumn {
-    //                                    id: tableDelegateLevel
-    //                                    role: "Level"
-    //                                    title: "Уровень"
-    //                                    property int level: model.Level
-    //                                    delegate: Rectangle {
-    //                                        anchors.fill: parent
-    //                                        color: valueInputLevel.text.length >0 ? "transparent" : "red"
-    //                                        TextInput {
-    //                                            id:valueInputLevel
-    //                                            anchors.fill: parent
-    //                                            selectionColor: "red"
-    //                                            text:(model.Level===0) ? "0" : model.Level
-    //                                            validator: RegExpValidator { regExp: /[0-9A-F]+/ }
-    //                                            onEditingFinished: {
-    //                                                model.Level = text
-    //                                                remakeTarTableChart()
-    //                                            }
-
-    //                                        }
-    //                                    }
-    //                                }
-    //                                model: ListModel {
-    //                                    id: tarTableListModel
-    //                                }
-    //                                onCurrentRowChanged: {
-    //                                    tarTabView.selection.clear()
-    //                                    tarTabView.selection.select(tarTabView.currentRow)
-    //                                }
-
-    //                                rowDelegate: Rectangle {
-    //                                    SystemPalette {
-    //                                        id: systemPalette
-    //                                        colorGroup: SystemPalette.Active
-    //                                    }
-    //                                    color: {
-    //                                        var baseColor = styleData.alternate ? systemPalette.alternateBase : systemPalette.base
-    //                                        return styleData.selected ? "orange" : baseColor
-    //                                    }
-    //                                }
-
-    //                            }
-    //                            Rectangle {
-    //                                anchors.top: tarTabRect.top
-    //                                anchors.right: tarTabRect.right
-    //                                anchors.bottom: tarTabRect.bottom
-    //                                height: parent.height
-    //                                width: tarTabRect.width / 2
-    //                                ChartView {
-    //                                    id: chartTarTable
-    //                                    anchors.fill: parent
-    //                                    theme: ChartView.ChartThemeBlueCerulean
-    //                                    clip: true
-    //                                    antialiasing: true
-    //                                    title: "Уровень"
-    //                                    property int chartTarTableLength: 1
-    //                                    property int chartTarTableAmplitudeMax: 1
-    //                                    ValueAxis {
-    //                                        id: chartTarTableAxisX
-    //                                        min: 0
-    //                                        max: chartTarTable.chartTarTableLength
-    //                                        tickCount: 5
-    //                                    }
-    //                                    ValueAxis {
-    //                                        id: chartTarTableAxisY
-    //                                        min: 0
-    //                                        max: chartTarTable.chartTarTableAmplitudeMax
-    //                                        tickCount: 5
-    //                                    }
-    //                                    LineSeries {
-    //                                        id:chartTarTableLine
-    //                                        color: "red"
-    //                                        axisX: chartTarTableAxisX
-    //                                        axisY: chartTarTableAxisY
-    //                                    }
-    //                                }
-    //                            }
-    //                        }
-    //                        Row {
-    //                            id:tarBatButtons
-    //                            anchors.bottom: parent.bottom
-    //                            anchors.left: parent.left
-    //                            anchors.right: parent.right
-    //                            spacing: 0
-    //                            Button {
-    //                                id:tarTabAddStep
-    //                                text:"Добавить"
-    //                                height: 50
-    //                                width: 70
-    //                                font.pointSize: 8
-    //                                onClicked: {
-    //                                    tarTableListModel.append({"Value":"0","Level":"0"})
-    //                                    timerAffterRefrashTarTable.start()
-    //                                }
-    //                            }
-    //                            Button {
-    //                                id:tarTabRemoveStep
-    //                                text:"Удалить"
-    //                                font.pointSize: 8
-    //                                height: 50
-    //                                width: 70
-    //                                Dialog {
-    //                                    id: dialogRemoveTarTableRow
-    //                                    visible: false
-    //                                    title: "Удаление записи таблицы"
-    //                                    standardButtons: StandardButton.Apply
-    //                                    Rectangle {
-    //                                        color: "transparent"
-    //                                        implicitWidth: 500
-    //                                        implicitHeight: 50
-    //                                        Text {
-    //                                            text: "Для удаления сначала кликните по удалялемой строке в таблице"
-    //                                            color: "black"
-    //                                            anchors.centerIn: parent
-    //                                        }
-    //                                    }
-    //                                    onApply: {
-    //                                        close()
-    //                                    }
-    //                                }
-    //                                onClicked: {
-    //                                    if(tarTabView.currentRow == -1) {
-    //                                        dialogRemoveTarTableRow.open()
-    //                                        close()
-    //                                    } else {
-    //                                        tarTabView.model.remove(tarTabView.currentRow)
-    //                                        timerAffterRefrashTarTable.start()
-    //                                    }
-    //                                }
-    //                            }
-    //                            Button {
-    //                                id:tarTabCleaarFull
-    //                                text:"Очистить"
-    //                                font.pointSize: 8
-    //                                height: 50
-    //                                width: 70
-    //                                Dialog {
-    //                                    id: dialogClearTarTable
-    //                                    visible: false
-    //                                    title: "Очистка записей таблицы"
-    //                                    standardButtons: StandardButton.Close | StandardButton.Apply
-    //                                    Rectangle {
-    //                                        color: "transparent"
-    //                                        implicitWidth: 500
-    //                                        implicitHeight: 50
-    //                                        Text {
-    //                                            text: "Очистить таблицу\nВы уверены?"
-    //                                            color: "black"
-    //                                            anchors.centerIn: parent
-    //                                        }
-    //                                    }
-    //                                    onApply: {
-    //                                        var size = tarTabView.rowCount
-    //                                        tarTabView.model.clear()
-    //                                        timerAffterRefrashTarTable.start()
-    //                                        close()
-    //                                    }
-    //                                }
-    //                                onClicked: {
-    //                                    dialogClearTarTable.open()
-    //                                }
-    //                            }
-    //                            Button {
-    //                                id:tarTabReadTable
-    //                                text:"Считать\nтаблицу"
-    //                                font.pointSize: 8
-    //                                width: 70
-    //                                height: 50
-    //                                onClicked: {
-    //                                    dialogReadTarTable.open()
-    //                                }
-    //                                Dialog {
-    //                                    id: dialogReadTarTable
-    //                                    visible: false
-    //                                    title: "Чтение записей таблицы из устройства"
-    //                                    standardButtons: StandardButton.Close | StandardButton.Apply
-    //                                    Rectangle {
-    //                                        color: "transparent"
-    //                                        implicitWidth: 500
-    //                                        implicitHeight: 50
-    //                                        Text {
-    //                                            text: "Считать данные?\nВсе не сохраненные изменения будут утеряны!\nВы уверены?"
-    //                                            color: "black"
-    //                                            anchors.centerIn: parent
-    //                                        }
-    //                                    }
-    //                                    onApply: {
-    //                                        viewController.getCurrentDevTarTable()
-    //                                        close()
-    //                                    }
-    //                                }
-    //                            }
-    //                            Button {
-    //                                id:tarTabWriteTable
-    //                                text:"Записать\nтаблицу"
-    //                                width: 70
-    //                                height: 50
-    //                                font.pointSize: 8
-    //                                Dialog {
-    //                                    id: dialogWriteTarTable
-    //                                    visible: false
-    //                                    title: "Запись таблицы"
-    //                                    standardButtons: StandardButton.Close | StandardButton.Apply
-    //                                    Rectangle {
-    //                                        color: "transparent"
-    //                                        implicitWidth: 500
-    //                                        implicitHeight: 50
-    //                                        Text {
-    //                                            text: "Записать таблицу в устройство!\nВы уверены?"
-    //                                            color: "black"
-    //                                            anchors.centerIn: parent
-    //                                        }
-    //                                    }
-    //                                    onApply: {
-    //                                        writeTarTable()
-    //                                        close()
-    //                                    }
-    //                                }
-    //                                onClicked: {
-    //                                    if(tarTabView.rowCount >0) {
-    //                                        dialogWriteTarTable.open()
-    //                                    }
-    //                                }
-    //                            }
-    //                            Button {
-    //                                id:tarTabTableExport
-    //                                text:"Выгрузить\n.csv"
-    //                                width: 80
-    //                                font.pointSize: 8
-    //                                height: 50
-
-    //                                FileDialog {
-    //                                    id: dialogExportTarTable
-    //                                    folder: shortcuts.home
-    //                                    selectMultiple: false
-    //                                    selectFolder: false
-    //                                    title: "Save to file"
-    //                                    nameFilters: [ "All files (*)" ]
-    //                                    selectExisting: false
-    //                                    onAccepted: {
-    //                                        if(dialogExportTarTable.selectExisting == true) {
-    //                                            console.log(dialogExportTarTable.fileUrl)
-    //                                        }
-    //                                        else {
-    //                                            console.log(dialogExportTarTable.fileUrl)
-    //                                            console.log("You chose: " + dialogExportTarTable.fileUrls)
-    //                                            var tarArrayLevel = [];
-    //                                            var tarArrayValue = [];
-    //                                            for(var i=0; i<tarTabView.rowCount; i++) {
-    //                                                var item = tarTabView.model.get(i)
-    //                                                tarArrayLevel.push(item.Level)
-    //                                                tarArrayValue.push(item.Value)
-    //                                            }
-    //                                            viewController.setCurrentDevExportTarTable(dialogExportTarTable.fileUrls, tarArrayLevel,tarArrayValue)
-    //                                        }
-    //                                    }
-    //                                }
-    //                                onClicked: {
-    //                                    dialogExportTarTable.open()
-    //                                }
-    //                            }
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-
-    //        Rectangle {
-    //            id:rightTabBarRect
-    //            width: 300
-    //            anchors.right: parent.right
-    //            anchors.bottom: parent.bottom
-    //            anchors.top: parent.top
-
-    //            TabBar {
-    //                id: rightTabBar
-    //                width: 300
-    //                anchors.right: parent.right
-    //                anchors.bottom: parent.bottom
-    //                anchors.top: parent.top
-    //                currentIndex: rightPanelView.index
-    //                font.pointSize: 8
-
-    //                TabButton {
-    //                    id: currentData
-    //                    text: qsTr("Текущие\nданные")
-    //                    focusPolicy: Qt.TabFocus
-    //                    background: Rectangle {
-    //                        gradient: Gradient {
-    //                            GradientStop {
-    //                                position: 1
-    //                                color: "#4D75E0"
-    //                            }
-    //                            GradientStop {
-    //                                position: 0
-    //                                color: "#EEF0F6"
-    //                            }
-    //                        }
-    //                    }
-    //                }
-
-    //                TabButton {
-    //                    id: slaves
-    //                    text: qsTr("Ведомые")
-    //                    enabled: false
-    //                    background: Rectangle {
-    //                        gradient: Gradient {
-    //                            GradientStop {
-    //                                position: 1
-    //                                color: "#4D75E0"
-    //                            }
-    //                            GradientStop {
-    //                                position: 0
-    //                                color: "#EEF0F6"
-    //                            }
-    //                        }
-    //                    }
-    //                }
-
-    //                TabButton {
-    //                    id: log
-    //                    text: qsTr("Журнал")
-    //                    background: Rectangle {
-    //                        gradient: Gradient {
-    //                            GradientStop {
-    //                                position: 1
-    //                                color: "#4D75E0"
-    //                            }
-    //                            GradientStop {
-    //                                position: 0
-    //                                color: "#EEF0F6"
-    //                            }
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //            Rectangle {
-    //                id: currnetDataRect
-    //                width: rightTabBarRect.width
-    //                height: rightTabBarRect.height - currentData.height
-    //                color: "#ffffff"
-    //                anchors.topMargin: currentData.height
-    //                anchors.top: parent.top
-    //                anchors.left: parent.left
-    //                clip: true
-
-    //                SwipeView {
-    //                    id: rightPanelView
-    //                    anchors.fill: parent
-    //                    currentIndex: rightTabBar.currentIndex
-
-    //                    Item {
-    //                        Column {
-    //                            id: column
-    //                            anchors.top: parent.top
-    //                            anchors.topMargin: 10
-    //                            anchors.bottom: parent.bottom
-    //                            anchors.bottomMargin: 10
-    //                            anchors.left: parent.left
-    //                            anchors.leftMargin: 10
-    //                            anchors.right: parent.right
-    //                            anchors.rightMargin: 10
-    //                            spacing: 10
-
-    //                            Label {
-    //                                id: levelValue
-    //                                text: qsTr("Level/value:")
-    //                                anchors.left: parent.left
-    //                                anchors.leftMargin: 0
-    //                                anchors.right: parent.right
-    //                                anchors.rightMargin: 0
-    //                            }
-
-    //                            ProgressBar {
-    //                                id: levelProgress
-    //                                anchors.left: parent.left
-    //                                anchors.leftMargin: 0
-    //                                anchors.right: parent.right
-    //                                anchors.rightMargin: 0
-    //                                to: 100
-    //                                value: 30
-
-    //                                contentItem: Item {
-    //                                    implicitWidth: levelProgress.width
-    //                                    implicitHeight: 4
-
-    //                                    Rectangle {
-    //                                        id: bar
-    //                                        width: levelProgress.visualPosition * levelProgress.width
-    //                                        height: levelProgress.height
-    //                                        radius: 5
-    //                                        color: "#416FE1"
-    //                                    }
-    //                                }
-    //                            }
-
-    //                            Label {
-    //                                id: label
-    //                                text: qsTr("CNT:")
-    //                                anchors.right: parent.right
-    //                                anchors.rightMargin: 0
-    //                                anchors.left: parent.left
-    //                                anchors.leftMargin: 0
-    //                            }
-
-    //                            TextField {
-    //                                id: cntValue
-    //                                height: 30
-    //                                text: qsTr("0")
-    //                                readOnly: true
-    //                                anchors.left: parent.left
-    //                                anchors.leftMargin: 0
-    //                                anchors.right: parent.right
-    //                                anchors.rightMargin: 0
-    //                            }
-
-    //                            Label {
-    //                                id: label1
-    //                                text: qsTr("Temperature:")
-    //                                anchors.left: parent.left
-    //                                anchors.leftMargin: 0
-    //                                anchors.right: parent.right
-    //                                anchors.rightMargin: 0
-    //                            }
-
-    //                            TextField {
-    //                                id: tempValue
-    //                                height: 30
-    //                                text: qsTr("0")
-    //                                anchors.left: parent.left
-    //                                anchors.leftMargin: 0
-    //                                anchors.right: parent.right
-    //                                anchors.rightMargin: 0
-    //                            }
-
-    //                            Label {
-    //                                id: label2
-    //                                text: qsTr("Frequency:")
-    //                            }
-
-    //                            TextField {
-    //                                id: freqValue
-    //                                height: 30
-    //                                text: qsTr("0")
-    //                                anchors.left: parent.left
-    //                                anchors.leftMargin: 0
-    //                                anchors.right: parent.right
-    //                                anchors.rightMargin: 0
-    //                            }
-
-    //                            ChartView {
-    //                                id: graph
-    //                                height: parent.height - 300
-    //                                width: parent.width + 100
-    //                                anchors.left: parent.left
-    //                                anchors.leftMargin: -20
-    //                                anchors.right: parent.right
-    //                                anchors.rightMargin: -20
-    //                                theme: ChartView.ChartThemeLight
-    //                                title: "Уровень/Объем"
-    //                                antialiasing: true
-    //                                visible: devPropertyProgressTmk24.isReady
-    //                                property int graphLength: 1
-    //                                property int graphAmplitudeMax: 1
-    //                                ValueAxis {
-    //                                    id: currentChartAxisX
-    //                                    min: 0
-    //                                    max: graph.graphLength
-    //                                    tickCount: 5
-    //                                }
-    //                                ValueAxis {
-    //                                    id: currentChartAxisY
-    //                                    min: 0
-    //                                    max: graph.graphAmplitudeMax
-    //                                    tickCount: 5
-    //                                }
-    //                                LineSeries {
-    //                                    id: currentChartLines
-    //                                    axisX: currentChartAxisX
-    //                                    axisY: currentChartAxisY
-    //                                }
-    //                            }
-    //                        }
-    //                    }
-    //                    Item {
-    //                        id: slavesItem
-    //                        Column {
-    //                            spacing: 10
-    //                            anchors.topMargin: 20
-    //                            anchors.bottomMargin: 20
-    //                            anchors.rightMargin: 20
-    //                            anchors.leftMargin: 20
-    //                            anchors.fill: parent
-    //                            Label {
-    //                                text: "Отсутствует в этой версии"
-    //                            }
-    //                        }
-    //                    }
-    //                    Item {
-    //                        id: logsItem
-    //                        Column {
-    //                            spacing: 20
-    //                            anchors.topMargin: 2
-    //                            anchors.bottomMargin: 2
-    //                            anchors.rightMargin: 2
-    //                            anchors.leftMargin: 2
-    //                            anchors.fill: parent
-
-    //                            ListView {
-    //                                id: logListView
-    //                                anchors.fill: parent
-    //                                clip: true
-
-    //                                ScrollBar.vertical: ScrollBar {
-    //                                    width: 20
-    //                                }
-
-    //                                delegate: Item {
-    //                                    id: logItemDelegate
-    //                                    height: 30
-    //                                    width: parent.width
-
-    //                                    Rectangle {
-    //                                        width: logItemDelegate.width - 2
-    //                                        anchors.left: parent.left
-    //                                        anchors.leftMargin: 1
-    //                                        height: logItemDelegate.height
-    //                                        color: colorCode
-    //                                        gradient: Gradient {
-    //                                            GradientStop {
-    //                                                position: 0
-    //                                                color: (model.status === 0 ? ("#BFFfff") : (model.status === 1 ? ("#BFEfff") : (model.status === 2 ? ("#F3Bfff") : ("#F3Bfff"))))
-    //                                            }
-    //                                            GradientStop {
-    //                                                position: 1
-    //                                                color: (model.status === 0 ? ("#BFF3C2") : (model.status === 1 ? ("#BFEFF3") : (model.status === 2 ? ("#F3BFC5") : ("#F3BFC5"))))
-    //                                            }
-    //                                        }
-    //                                        Rectangle {
-    //                                            width: parent.width
-    //                                            anchors.top: logMessageText.bottom
-    //                                            anchors.topMargin: 5
-    //                                            anchors.left: parent.left
-    //                                            anchors.leftMargin: 1
-    //                                            height: 1
-    //                                            color: "black"
-    //                                        }
-    //                                        Label {
-    //                                            id:logMessageText
-    //                                            text: model.message
-    //                                            font.bold: false
-    //                                            anchors.left: parent.left
-    //                                            anchors.leftMargin: 10
-    //                                            anchors.verticalCenter: parent.verticalCenter
-    //                                        }
-    //                                    }
-    //                                }
-    //                                model: ListModel {
-    //                                    id: logListModel
-    //                                }
-    //                            }
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-
-    //        Row {
-    //            id:row7
-    //            clip: true
-    //            anchors.right: row.left
-    //            anchors.rightMargin: 0
-    //            width: 300
-    //            height: 50
-    //            anchors.top: row5.bottom
-    //            anchors.topMargin: 10
-    //            Button {
-    //                id: lButtonSettingsRead
-    //                text: qsTr("Считать настройки")
-    //                anchors.left: parent.left
-    //                anchors.leftMargin: 20
-    //                onClicked: {
-    //                    viewController.getCurrentDevSettings(true) // true - need ack message read ok
-    //                }
-    //            }
-    //            Button {
-    //                id: lButtonWriteRead
-    //                text: qsTr("Записать настройки")
-    //                anchors.left: lButtonSettingsRead.right
-    //                anchors.leftMargin: 10
-    //                onClicked: {
-    //                    writeSettings()
-    //                }
-    //            }
-    //        }
     BusyIndicator {
         id:waitReadyIndicator
+        width: 96
+        height: 96
         visible: devPropertyProgressTmk24.isReady ? false : true
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter

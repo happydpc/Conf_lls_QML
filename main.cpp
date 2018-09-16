@@ -19,12 +19,14 @@ int main(int argc, char *argv[])
 #endif
     QObject::connect(viewer.engine(), &QQmlEngine::quit, &viewer, &QWindow::close);
 
-    Model interfaceListModel;
+    Model *interfaceListModel = new Model();
+    ViewController *viewController = new ViewController(interfaceListModel);
 
-    qmlRegisterType<ViewController>("viewController", 0, 0, "ViewController");
+    viewer.rootContext()->setContextProperty("viewController", viewController);
     qmlRegisterType<RadialBar>("CustomControls", 1, 0, "RadialBar");
-    viewer.rootContext()->setContextProperty("programmModel", &interfaceListModel);
-//    viewer.set "programmModel", &m);
+
+    viewer.rootContext()->setContextProperty("programmModel", interfaceListModel);
+
     viewer.setSource(QUrl("qrc:/qml/app.qml"));
 
     return app.exec();

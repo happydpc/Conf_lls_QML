@@ -8,8 +8,7 @@ Item {
 
     Rectangle {
         id: rootViewPanel
-//        color: "#ffffff"
-                color: "transparent"
+        color: "transparent"
         anchors.fill: parent
 
         // stack for switch mode - device/SerialPort/startScreen
@@ -22,7 +21,6 @@ Item {
                 id: logoPanel
                 anchors.fill: parent
             }
-
             DevicePanel {
                 id: devicePanel
                 anchors.fill: parent

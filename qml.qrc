@@ -35,6 +35,14 @@
         <file>images/icon/battery-level.png</file>
         <file>images/icon/calibration.png</file>
         <file>images/icon/tunes-connect.png</file>
+        <file>images/icon/list.png</file>
+        <file>images/icon/server.png</file>
+        <file>images/logo/ico.png</file>
+        <file>images/logo/icon_gls.ico</file>
+        <file>images/logo/icon_prg.ico</file>
+        <file>images/logo/logo_gls.png</file>
+        <file>images/logo/logo_progress.png</file>
+        <file>images/icon/user.png</file>
     </qresource>
     <qresource prefix="/controls"/>
 </RCC>

@@ -9,21 +9,17 @@ class ViewController : public QObject
 {
     Q_OBJECT
 public:
-    explicit ViewController(QObject *parent = nullptr);
-
-//    Model interfaceListModel;
+    explicit ViewController(Model *pInterfaceListModel, QObject *parent = nullptr);
 
     Q_INVOKABLE bool addConnectionSerialPort(QString name, QString baudrate);
-    Q_INVOKABLE bool removeActiveConnectionSerialPort();
+
+    Q_INVOKABLE void removeActiveInterface();
+    Q_INVOKABLE void removeActiveDevice();
 
     Q_INVOKABLE QStringList getAvailableNameToSerialPort();
     Q_INVOKABLE QStringList getAvailableDeviceNameToSerialPort();
 
     Q_INVOKABLE bool addDeviceToConnection(QString devTypeName, QString idNum, QString password);
-    Q_INVOKABLE void removeActiveDevice();
-
-    Q_INVOKABLE void setChangedIndexDevice(int index);
-    Q_INVOKABLE void setChangedIndexInteface(int index);
 
     Q_INVOKABLE QList<int> getCurrentDevChart();
     Q_INVOKABLE QList<QString> getCurrentDevOtherData();
@@ -50,11 +46,11 @@ public:
     Q_INVOKABLE void setCurrentDevChangeId(QString passwordCheck, QString idNew);
 
 signals:
-    void remakeInterfaceTree(QStringList list, QList<int>status);
-    void changeInterfaceTreeStatus(int index, int status);
 
-    void remakeDeviceTree(QStringList list, QList<int>status);
-    void changeDeviceTreeStatus(int index, int status);
+    void setActivePropertySerialPort();
+    void setActivePropertyProgressTmk24(bool status);
+
+    void interfaceAndDeviceListIsEmpty();
 
     void updatePropertiesSerialPort(QStringList properties);
 
@@ -93,6 +89,10 @@ signals:
 
     void devUpdateTree(QStringList devNames, QList<int>status);
 
+public slots:
+    void setChangedIndexDevice(int interfaceIndex,int deviceIndex);
+    void setChangedIndexInteface(int index);
+
 private slots:
     void deviceConnected(DevicesFactory::E_DeviceType, QString uniqNameId);
     void deviceDisconnected(DevicesFactory::E_DeviceType, QString uniqNameId);
@@ -115,6 +115,7 @@ private slots:
 
 private:
     ConnectionFactory *connFactory;
+    Model *interfaceListModel;
 
     typedef struct {
         int interfaceIndex;

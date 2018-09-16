@@ -393,11 +393,12 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
         if(crcCalcResult == (0xff & commandArrayReplyData.at(
                                  commandArrayReplyData.length()-1))) {
             //-- byte is command
-            switch(commandArrayReplyData.at(2)) {
+            switch((uint8_t)commandArrayReplyData.at(2)) {
             case Progress_tmk24Data::lls_read_lvl_once: {
                 if(lls_data.typeIsValid) {
                     lls_data.temp.value.value_i = (int8_t)(0xFF & commandArrayReplyData.at(3));
                     lls_data.temp.isValid = true;
+                    value = 0;
                     value = 0xFF & commandArrayReplyData.at(5);
                     value = value << 8;
                     value |= 0xFF & commandArrayReplyData.at(4);
@@ -652,7 +653,7 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
 
             if(getState() == STATE_START_INIT) {
                 if((lls_data.settings.get.isValid) && (lls_data.errors.isValid)
-                        && (lls_data.password.get.isValid) && (lls_data.calibrateTable.get.isValid)
+                        /*&& (lls_data.password.get.isValid)*/ && (lls_data.calibrateTable.get.isValid)
                         && (lls_data.llssValues.isValid)) {
                     setState(DeviceAbstract::STATE_NORMAL_READY);
                     emit eventDevice(DeviceAbstract::Type_DeviceEvent_Inited, getUniqIdent(), QString("Inited"), QStringList(""));
@@ -807,6 +808,8 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandListToCurrentDa
     command.commandOptionData.clear();
     command.deviceIdent = getUniqIdent();
     command.devCommand = (int)Progress_tmk24Data::lls_read_lvl_once;
+    listCommand.push_back(command);
+    command.devCommand = (int)Progress_tmk24Data::lls_read_cnt;
     listCommand.push_back(command);
     command.devCommand = (int)Progress_tmk24Data::lls_read_lvl_all;
     listCommand.push_back(command);

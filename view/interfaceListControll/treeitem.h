@@ -29,7 +29,10 @@ public:
     Q_PROPERTY(bool hasChild READ hasChild NOTIFY hasChildChanged)
     bool hasChild() const;
 
+    void setIsParent(bool parent);
     bool isParent() const;
+
+    void removeChildByIndexChild(int index);
 
 signals:
     void contentChanged();

@@ -1,88 +1,83 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.4
 
-import viewController 0.0
+//import viewController 0.0
 
 Item {
     id: root
 
-    ViewController {
-        id: viewController
+    Connections {
+        target: viewController
 
-        onRemakeInterfaceTree: {
-//            projectPanel.devicePanel.remakeInterfaceList(list, status)
+        onSetActivePropertySerialPort: {
+            projectPanel.devicePanel.devicePropertyPanel.setActivePanelType("SerialPort")
         }
-        onRemakeDeviceTree: {
-//            projectPanel.devicePanel.remakeDeviceList(list, status)
+        onSetActivePropertyProgressTmk24: {
+            projectPanel.devicePanel.devicePropertyPanel.setActivePanelType("Progress TMK24")
         }
-        onChangeDeviceTreeStatus: {
-//            projectPanel.devicePanel.updateDeviceListStatus(index, status)
-        }
-        onChangeInterfaceTreeStatus: {
-//            projectPanel.devicePanel.updateIntefaceListStatus(index, status)
-        }
-
         onUpdatePropertiesSerialPort: {
             projectPanel.devicePanel.devicePropertyPanel.setActivePanelType("SerialPort")
-//            projectPanel.devicePanel.setPropertyToSerialPort(properties)
+            projectPanel.devicePanel.devicePropertyPanel.setPropertyToSerialPort(properties)
+        }
+        onInterfaceAndDeviceListIsEmpty: {
+            projectPanel.devicePanel.devicePropertyPanel.setActivePanelType("Empty")
         }
         onDevReadyPropertiesTmk4ux: {
-//            projectPanel.devicePanel.devPropertyProgressTmk4ux.setDevProperty(data)
         }
         onDevReadyPropertiesTmk24: {
-//            projectPanel.devicePanel.devPropertyProgressTmk24.setDevProperty(data)
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setDevProperty(data)
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setReady()
         }
         onDevReadyOtherDataTmk4ux: {
-//            projectPanel.devicePanel.devPropertyProgressTmk4ux.setUpdateCurrentValues(data)
         }
         onDevReadyOtherDataTmk24: {
-//            projectPanel.devicePanel.devPropertyProgressTmk24.setUpdateCurrentValues(data)
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setUpdateCurrentValues(data)
         }
         onDevFullReadyTmk4ux: {}
         onDevFullReadyTmk24: {}
         onDevDisconnectedTmk4ux: {
-//            projectPanel.devicePanel.devPropertyProgressTmk4ux.setNoReady()
+            //            projectPanel.devicePanel.devPropertyProgressTmk4ux.setNoReady()
         }
         onDevDisconnectedTmk24: {
-//            projectPanel.devicePanel.devPropertyProgressTmk24.setNoReady()
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setNoReady()
         }
         onDevUpdatePasswordIncorrect: {
-//            projectPanel.devicePanel.devShowPasswordIncorrect(devNameId)
+            projectPanel.devicePanel.devicePropertyPanel.devShowPasswordIncorrect(devNameId)
         }
         onDevUpdateTypeDevIncorrect: {
-//            projectPanel.devicePanel.devShowTypeIncorrect(devNameId)
+            projectPanel.devicePanel.devicePropertyPanel.devShowTypeIncorrect(devNameId)
         }
         onAddConnectionFail: {
-//            projectPanel.devicePanel.dialogAddInterfaceFail.open()
+            projectPanel.devicePanel.devicePropertyPanel.dialogAddInterfaceFail.open()
         }
         onAddDeviceFail: {
-//            projectPanel.devicePanel.dialogAddDeviceFail.open()
+            projectPanel.devicePanel.devicePropertyPanel.dialogAddDeviceFail.open()
         }
         onDevUpdateWriteScaleMeasureExecuted: {
-//            projectPanel.devicePanel.devPropertyProgressTmk24.messageMinMaxWriteOk.open()
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageMinMaxWriteOk.open()
         }
         onDevUpdateWriteSettingExecuted: {
-//            projectPanel.devicePanel.devPropertyProgressTmk24.messageWriteSettingsOk.open()
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageWriteSettingsOk.open()
         }
         onDevUpdateReadSettingExecuted: {
-//            projectPanel.devicePanel.devPropertyProgressTmk24.readSettings(devNameId, key, settings)
-//            projectPanel.devicePanel.devPropertyProgressTmk24.messageReadSettingsOk.open()
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readSettings(devNameId, key, settings)
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadSettingsOk.open()
         }
         onDevUpdateReadSettingWithoutRequest: {
-//            projectPanel.devicePanel.devPropertyProgressTmk24.readSettings(devNameId, key, settings)
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readSettings(devNameId, key, settings)
         }
         onDevUpdateReadErrorsExecuted: {
-//            projectPanel.devicePanel.devPropertyProgressTmk24.readErrors(devNameId, errors)
-//            projectPanel.devicePanel.devPropertyProgressTmk24.messageReadErrorsOk.open()
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readErrors(devNameId, errors)
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadErrorsOk.open()
         }
         onDevUpdateLogMessage: {
-//            projectPanel.devicePanel.devPropertyProgressTmk24.addLogMessage(codeMessage, message)
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.addLogMessage(codeMessage, message)
         }
         onDevUpdateReadTarTable: {
-//            projectPanel.devicePanel.devPropertyProgressTmk24.readTarTable(table)
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readTarTable(table)
         }
         onDevUpdateWriteTarTableExecuted: {
-//            projectPanel.devicePanel.devPropertyProgressTmk24.messageReadTarTableOk.open()
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadTarTableOk.open()
         }
         onDevErrorOperation: {
             projectPanel.devicePanel.messageOperationError.message = message
@@ -98,6 +93,22 @@ Item {
         anchors.right: parent.right
         height: 50
         width: parent.width
+        Image {
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.topMargin: -65
+            source: "/new/icons/images/logo/ico.png"
+            width: 256
+            height: 160
+        }
+//        Image {
+//            anchors.right: parent.right
+//            anchors.rightMargin: 10
+//            anchors.top: parent.top
+//            source: "/new/icons/images/icon/user.png"
+//            width: 48
+//            height: 48
+//        }
     }
 
     StartPanel {
@@ -106,6 +117,13 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
+
+        devicePanel.onAddNewConnection: {
+            var list = viewController.getAvailableNameToSerialPort()
+            console.log("Available interface-" + list)
+            serialPort.setListInterfaces(list)
+            serialPort.open()
+        }
     }
 
     SerialPort {
@@ -115,7 +133,6 @@ Item {
             console.log("addConnectionSerialPort=" + res)
             if(res) {
                 close()
-                projectPanel.openDeviceProject()
             }
         }
         onAbortConnectButton: {
@@ -123,23 +140,3 @@ Item {
         }
     }
 }
-
-//    MainMenuBar {
-//        id:mainMenuBar
-//        onAddNewConnection: {
-//            var list = viewController.getAvailableNameToSerialPort()
-//            console.log("Available interface-" + list)
-//            serialPort.setListInterfaces(list)
-//            serialPort.open()
-//        }
-//        onCloseProject: {
-//        }
-//        onExitFull: {
-//            Qt.quit()
-//        }
-//    }
-
-/*##^## Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
- ##^##*/

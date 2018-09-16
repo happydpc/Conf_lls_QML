@@ -9,7 +9,7 @@ Row{
     Rectangle {
         id: itemRectRoot
         width: 10
-        height: 10
+        height: 20
 
         Image {
             id:itemRectIcon
@@ -22,16 +22,17 @@ Row{
         MouseArea{
             id:aread
             height: 20
-            width: 100
+            width: 120
+            acceptedButtons: Qt.LeftButton | Qt.RightButton
             onClicked: {
-                if(modelData.hasChild) {
-                    modelData.isOpen = !modelData.isOpen;
-                }
                 modelData.isCurrent = true
                 if (mouse.button === Qt.LeftButton) {
+                    if(modelData.hasChild) {
+                        modelData.isOpen = !modelData.isOpen;
+                    }
                     eventClickLeft()
                 } else {
-                    eventClickRight
+                    eventClickRight()
                 }
             }
         }

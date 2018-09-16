@@ -1,6 +1,7 @@
 import QtQuick 2.4
 import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.1
+import QtGraphicalEffects 1.0
 
 Popup {
     id: addDeviceDialog
@@ -92,6 +93,15 @@ Popup {
                     close()
                 }
             }
+        }
+        layer.enabled: true
+        layer.effect: DropShadow {
+            transparentBorder: true
+            horizontalOffset: 0
+            verticalOffset: 1
+            color: "#e0e5ef"
+            samples: 10
+            radius: 20
         }
     }
 

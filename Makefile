@@ -821,12 +821,20 @@ qrc_qml.cpp: qml.qrc \
 		qml/ChangeId.qml \
 		qml/DevicePanel.qml \
 		images/logo/logo_progress.png \
+		images/logo/ico.png \
+		images/logo/logo_progress.png \
+		images/logo/icon_prg.ico \
+		images/logo/icon_gls.ico \
+		images/logo/logo_gls.png \
 		images/icon/4372.png \
 		images/icon/battery-level.png \
 		images/icon/cables_no_selected.png \
 		images/icon/tunes-connect.png \
 		images/icon/calibration.png \
+		images/icon/list.png \
 		images/icon/4149.png \
+		images/icon/server.png \
+		images/icon/user.png \
 		images/icon/normal.png \
 		images/icon/no_normal.png \
 		images/icon/cables_selected.png

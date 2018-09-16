@@ -1,38 +1,52 @@
 #include "model.h"
 #include "treeitem.h"
 
-const int number = 100;
+Model::Model(QObject *parent) :
+    QObject(parent),
+    m_tree(QList<TreeItem*>()) {
+}
 
-TreeItem * Model::createTreeSubItem(){
-    auto res = new TreeItem(QString("PROGRESS TMK24s") +  QString::number(qrand() % number), false);
+TreeItem * Model::createTreeItem(QString nameInterface){
+    auto res = new TreeItem(nameInterface, true);
+    return res;
+}
+
+TreeItem * Model::createTreeSubItem(QString nameDevice) {
+    auto res = new TreeItem(nameDevice, false);
     connect(res, SIGNAL(currentIndexIsChanged(bool, TreeItem*)), this, SLOT(currentIndexIsChanged(bool, TreeItem*)));
     return res;
 }
 
-TreeItem * Model::createTreeItem(QString nameInterface, int subItemCount){
-    auto res = new TreeItem(nameInterface, true);
-    while(subItemCount) {
-        res->addChildItem(createTreeSubItem());
-        subItemCount--;
-    }
-    return res;
+void Model::addConnection(QString connectionName) {
+    TreeItem * titem = createTreeItem(connectionName);
+    m_tree.append(std::move(titem));
+    connect(titem, SIGNAL(currentIndexIsChanged(bool, TreeItem*)), this, SLOT(currentIndexIsChanged(bool, TreeItem*)));
+    treeChanged();
 }
 
-Model::Model(QObject *parent) :
-    QObject(parent),
-    m_tree(QList<TreeItem*>()) {
-    m_tree.append(createTreeItem("ttyS0", 0));
-    m_tree.append(createTreeItem("ttyS1", 0));
-    m_tree.append(createTreeItem("ttyS2", 3));
-    m_tree.append(createTreeItem("ttyS3", 5));
-    m_tree.append(createTreeItem("ttyS4", 0));
-    m_tree.append(createTreeItem("ttyS5", 0));
-    m_tree.append(createTreeItem("ttyS6", 0));
-    m_tree.append(createTreeItem("ttyS7", 7));
+void Model::removeConnection(int indexConnection) {
+    disconnectaFullTree();
+    m_tree.removeAt(indexConnection);
+    connectFullTree();
+    treeChanged();
+}
 
+void Model::addDeviceToConnection(QString nameConnection, QString nameDevice, bool deviceStatus) {
     for(auto it: m_tree) {
-        connect(it, SIGNAL(currentIndexIsChanged(bool, TreeItem*)), this, SLOT(currentIndexIsChanged(bool, TreeItem*)));
+        if(it->content() == nameConnection) {
+            TreeItem * tDevItem = createTreeSubItem(nameDevice);
+            it->addChildItem(std::move(tDevItem));
+            it->setIsParent(true);
+            treeChanged();
+        }
     }
+}
+
+void Model::removeDeviceToConnection(int indexConnection, int indexDevice) {
+    disconnectaFullTree();
+    m_tree.at(indexConnection)->removeChildByIndexChild(indexDevice);
+    connectFullTree();
+    treeChanged();
 }
 
 const QList<TreeItem *> &Model::tree() const{
@@ -47,33 +61,59 @@ const QList<QObject *> Model::treeAsQObjects() const{
     return res;
 }
 
-void Model::currentIndexIsChanged(bool, TreeItem *pSender) {
+void Model::disconnectaFullTree() {
     for(auto it: m_tree) {
         disconnect(it, SIGNAL(currentIndexIsChanged(bool, TreeItem*)), this, SLOT(currentIndexIsChanged(bool, TreeItem*)));
         for(auto it2:it->childItems()) {
             disconnect(it2, SIGNAL(currentIndexIsChanged(bool, TreeItem*)), this, SLOT(currentIndexIsChanged(bool, TreeItem*)));
         }
     }
+}
 
-    if(pSender->isParent()) {
-        for(auto it: m_tree) {
-            if(it != pSender) {
-                it->setIsCurrent(false);
-            }
-        }
-    } else {
-        for(auto it: m_tree) {
-            for(auto it2: it->childItems()) {
-                if(it2 != pSender) {
-                    it2->setIsCurrent(false);
-                }
-            }
-        }
-    }
+void Model::connectFullTree() {
     for(auto it: m_tree) {
         connect(it, SIGNAL(currentIndexIsChanged(bool, TreeItem*)), this, SLOT(currentIndexIsChanged(bool, TreeItem*)));
         for(auto it2:it->childItems()) {
             connect(it2, SIGNAL(currentIndexIsChanged(bool, TreeItem*)), this, SLOT(currentIndexIsChanged(bool, TreeItem*)));
         }
     }
+}
+
+void Model::currentIndexIsChanged(bool, TreeItem *pSender) {
+    disconnectaFullTree();
+    if(pSender->isParent()) {
+        int index = 0;
+        for(auto it: m_tree) {
+            for(auto ch = it->childItems().begin(); ch!= it->childItems().end(); ch++) {
+                (*ch)->setIsCurrent(false);
+            }
+        }
+        for(auto it: m_tree) {
+            if(it == pSender) {
+                it->setIsCurrent(true);
+                emit currentIndexIsChangedInteface(index);
+            } else {
+                it->setIsCurrent(false);
+            }
+            index++;
+        }
+    } else {
+        int indexParent = 0;
+        for(auto it: m_tree) {
+            it->setIsCurrent(false);
+            int indexChild = 0;
+            // находим своего родителя и делаем его активным
+            for(auto it2: it->childItems()) {
+                if(it2 == pSender) {
+                    it2->setIsCurrent(true);
+                    emit currentIndexIsChangedDevice(indexParent, indexChild);
+                } else {
+                    it2->setIsCurrent(false);
+                }
+                indexChild++;
+            }
+            indexParent++;
+        }
+    }
+    connectFullTree();
 }

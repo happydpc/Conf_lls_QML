@@ -1,6 +1,7 @@
 import QtQuick 2.4
 import Qt.labs.platform 1.0
 import QtQuick.Controls 2.3
+import QtGraphicalEffects 1.0
 
 Popup {
     id: popup
@@ -16,95 +17,117 @@ Popup {
 
     modal: true
 
-    GroupBox {
-        id: groupBoxSerialPort
-        x: 9
-        y: 8
-        width: 382
-        height: 171
-        title: qsTr("Последовательный порт:")
+    Rectangle {
+        width: 400
+        height: 200
+        GroupBox {
+            id: groupBoxSerialPort
+            x: 9
+            y: 8
+            width: 382
+            height: 171
+            title: qsTr("Последовательный порт:")
 
-        Row {
-            id: row_1
-            x: -12
-            y: -171
-            height: 46
-            anchors.top: parent.top
-            anchors.topMargin: 6
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-
-            ComboBox {
-                id: portList
-                editable: true
-                model: ListModel {
-                    id: modelPortList
-                }
-            }
-
-            Button {
-                id: buttonAccept
-                width: 110
-                height: 40
-                text: qsTr("Подсоединить")
+            Row {
+                id: row_1
+                x: -12
+                y: -171
+                height: 46
+                anchors.top: parent.top
+                anchors.topMargin: 6
                 anchors.right: parent.right
                 anchors.rightMargin: 0
-            }
-            Button {
-                id: buttonUpdate
-                width: 80
-                height: 40
-                text: qsTr("Обновить")
-                enabled: false
-                anchors.top: parent.top
-                anchors.topMargin: 0
-                anchors.left: portList.left
-                anchors.leftMargin: 150
-            }
-        }
+                anchors.left: parent.left
+                anchors.leftMargin: 10
 
-        Row {
-            id: row_2
-            x: -12
-            y: -115
-            height: 43
-            anchors.top: row_1.bottom
-            anchors.topMargin: 6
-            anchors.right: parent.right
-            anchors.rightMargin: 10
-            anchors.left: parent.left
-            anchors.leftMargin: 10
+                ComboBox {
+                    id: portList
+                    editable: true
+                    model: ListModel {
+                        id: modelPortList
+                    }
+                }
 
-            ComboBox {
-                id: baudRateList
-                editable: true
-                model: ListModel {
-                    id: modelBaudrateList
+                Button {
+                    id: buttonAccept
+                    width: 110
+                    height: 40
+                    text: qsTr("Подсоединить")
+                    anchors.right: parent.right
+                    anchors.rightMargin: 0
+                }
+                Button {
+                    id: buttonUpdate
+                    width: 80
+                    height: 40
+                    text: qsTr("Обновить")
+                    enabled: false
+                    anchors.top: parent.top
+                    anchors.topMargin: 0
+                    anchors.left: portList.left
+                    anchors.leftMargin: 150
                 }
             }
 
-            Label {
-                id: baudLabel
-                text: qsTr("Скорость обмена данными")
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: baudRateList.right
-                anchors.leftMargin: 10
+            Row {
+                id: row_2
+                x: -12
+                y: -115
+                height: 43
+                anchors.top: row_1.bottom
+                anchors.topMargin: 6
                 anchors.right: parent.right
                 anchors.rightMargin: 10
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+
+                ComboBox {
+                    id: baudRateList
+                    editable: true
+                    model: ListModel {
+                        id: modelBaudrateList
+                    }
+                }
+
+                Label {
+                    id: baudLabel
+                    text: qsTr("Скорость обмена данными")
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: baudRateList.right
+                    anchors.leftMargin: 10
+                    anchors.right: parent.right
+                    anchors.rightMargin: 10
+                }
+            }
+            layer.enabled: true
+            layer.effect: DropShadow {
+                transparentBorder: true
+                horizontalOffset: 0
+                verticalOffset: 1
+                color: "#e0e5ef"
+                samples: 10
+                radius: 20
             }
         }
-    }
 
-    Button {
-        id: buttonClose
-        x: 44
-        y: 195
-        width: 140
-        height: 50
-        text: qsTr("Закрыть")
-        anchors.right: parent.right
-        anchors.rightMargin: 266
+        Button {
+            id: buttonClose
+            x: 8
+            y: 193
+            width: 140
+            height: 50
+            text: qsTr("Закрыть")
+            anchors.right: parent.right
+            anchors.rightMargin: 252
+            layer.enabled: true
+            layer.effect: DropShadow {
+                transparentBorder: true
+                horizontalOffset: 0
+                verticalOffset: 1
+                color: "#e0e5ef"
+                samples: 10
+                radius: 20
+            }
+        }
     }
 }
