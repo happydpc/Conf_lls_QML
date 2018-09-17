@@ -21,10 +21,29 @@ Rectangle {
 
     function setNoReady() {
         devPropertyProgressTmk24.isReady = false
+
+//        if(chartTarCurrentValues.backgroundColor != "black") {
+            timerIndicateNoiseMeasure.start()
+//        }
     }
     function setReady() {
         devPropertyProgressTmk24.isReady = true
     }
+
+    Timer {
+        id: timerIndicateNoiseMeasure
+        property int color: 0xffffff
+        interval: 10
+        running: false
+        repeat: true
+        onTriggered: {
+            chartTarCurrentValues.isNoiseIndication = true//qsTr("#%1").arg(timerIndicateNoiseMeasure.color)
+//            timerIndicateNoiseMeasure.color =  timerIndicateNoiseMeasure.color - 10000
+//            console.log("color = " + qsTr("#%1").arg(timerIndicateNoiseMeasure.color))
+        }
+        ColorAnimation on color { to: "yellow"; duration: 1000 }
+    }
+
     function setResetState() {
         tabProperty.setCurrentIndex(1)
         stackSubProperty.setCurrentIndex(5)
@@ -2377,7 +2396,7 @@ Rectangle {
                                                         theme: ChartView.ChartThemeBlueCerulean
                                                         clip: true
                                                         antialiasing: true
-                                                        title: "Уровень"
+                                                        title: "Отношение уровня к объему"
                                                         property int chartTarTableLength: 1
                                                         property int chartTarTableAmplitudeMax: 1
                                                         ValueAxis {
@@ -2461,6 +2480,15 @@ Rectangle {
                                                             textColor: "#888d91"
                                                             enabled: devPropertyProgressTmk24.isReady
                                                         }
+                                                        layer.enabled: true
+                                                        layer.effect: DropShadow {
+                                                            transparentBorder: true
+                                                            horizontalOffset: 0
+                                                            verticalOffset: 1
+                                                            color: "#e0e5ef"
+                                                            samples: 10
+                                                            radius: 10
+                                                        }
                                                     }
                                                     Rectangle {
                                                         anchors.left: tarTabRectangleCurrLevel.right
@@ -2506,11 +2534,21 @@ Rectangle {
                                                             textColor: "#888d91"
                                                             enabled: devPropertyProgressTmk24.isReady
                                                         }
+                                                        layer.enabled: true
+                                                        layer.effect: DropShadow {
+                                                            transparentBorder: true
+                                                            horizontalOffset: 0
+                                                            verticalOffset: 1
+                                                            color: "#e0e5ef"
+                                                            samples: 10
+                                                            radius: 10
+                                                        }
                                                     }
                                                 }
                                                 Rectangle {
                                                     color: "#ffffff"
                                                     anchors.top: tarTabRectangleCurrentValues.bottom
+                                                    anchors.topMargin: 5
                                                     anchors.left: tarTabRectangle.right
                                                     anchors.leftMargin: 10
                                                     radius: 20
@@ -2524,6 +2562,14 @@ Rectangle {
                                                         antialiasing: true
                                                         property int graphLength: 1
                                                         property int graphAmplitudeMax: 1
+                                                        property bool isNoiseIndication: false
+                                                        ColorAnimation {
+                                                            id:colorAnimation
+
+                                                            to: "green"
+                                                            duration: 10000
+                                                        }
+//                                                        backgroundColor: chartTarCurrentValues.isNoiseIndication == true ? chartTarCurrentValues.colorAnimation : "white"
                                                         ValueAxis {
                                                             id: currentTarChartAxisX
                                                             min: 0
@@ -2542,15 +2588,6 @@ Rectangle {
                                                             axisY: currentTarChartAxisY
                                                         }
                                                         enabled: devPropertyProgressTmk24.isReady
-                                                    }
-                                                    layer.enabled: true
-                                                    layer.effect: DropShadow {
-                                                        transparentBorder: true
-                                                        horizontalOffset: 0
-                                                        verticalOffset: 1
-                                                        color: "#e0e5ef"
-                                                        samples: 10
-                                                        radius: 10
                                                     }
                                                 }
                                             }
