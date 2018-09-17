@@ -9,7 +9,6 @@
         <file>qml/ProjectStartScreen.qml</file>
         <file>qml/SerialPort.qml</file>
         <file>qml/SerialPortForm.ui.qml</file>
-        <file>qml/TestFormForm.ui.qml</file>
         <file>qml/View.qml</file>
         <file>qml/AddDeviceDialog.qml</file>
         <file>qml/DevPropertyProgressTmk4ux.qml</file>
@@ -24,6 +23,7 @@
         <file>qml/DevicePropertyPanel.qml</file>
         <file>qml/DevicePanel.qml</file>
         <file>qml/TabButtonUp.qml</file>
+        <file>qml/ButtonRound.qml</file>
     </qresource>
     <qresource prefix="/new/icons">
         <file>images/icon/normal.png</file>

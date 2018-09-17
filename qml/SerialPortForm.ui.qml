@@ -48,25 +48,47 @@ Popup {
                     }
                 }
 
-                Button {
+                ButtonRound {
                     id: buttonAccept
-                    width: 110
-                    height: 40
-                    text: qsTr("Подсоединить")
-                    anchors.right: parent.right
-                    anchors.rightMargin: 0
+                    x: 250
+                    y: 0
+                    textLine: 2
+                    widthBody: 100
+                    name: qsTr("Подкл.")
                 }
-                Button {
+
+                ButtonRound {
                     id: buttonUpdate
-                    width: 80
-                    height: 40
-                    text: qsTr("Обновить")
+                    x: 8
+                    y: 193
+                    textLine: 2
+                    widthBody: 100
                     enabled: false
                     anchors.top: parent.top
                     anchors.topMargin: 0
                     anchors.left: portList.left
                     anchors.leftMargin: 150
+                    name: qsTr("Обновить")
                 }
+                //                Button {
+                //                    id: buttonAccept
+                //                    width: 110
+                //                    height: 40
+                //                    text: qsTr("Подсоединить")
+                //                    anchors.right: parent.right
+                //                    anchors.rightMargin: 0
+                //                }
+                //                Button {
+                //                    id: buttonUpdate
+                //                    width: 80
+                //                    height: 40
+                //                    text: qsTr("Обновить")
+                //                    enabled: false
+                //                    anchors.top: parent.top
+                //                    anchors.topMargin: 0
+                //                    anchors.left: portList.left
+                //                    anchors.leftMargin: 150
+                //                }
             }
 
             Row {
@@ -110,24 +132,14 @@ Popup {
             }
         }
 
-        Button {
+        ButtonRound {
             id: buttonClose
             x: 8
             y: 193
-            width: 140
-            height: 50
-            text: qsTr("Закрыть")
-            anchors.right: parent.right
-            anchors.rightMargin: 252
-            layer.enabled: true
-            layer.effect: DropShadow {
-                transparentBorder: true
-                horizontalOffset: 0
-                verticalOffset: 1
-                color: "#e0e5ef"
-                samples: 10
-                radius: 20
-            }
+            textLine: 2
+            widthBody: 140
+
+            name: qsTr("Закрыть")
         }
     }
 }

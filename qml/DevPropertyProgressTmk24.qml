@@ -885,7 +885,7 @@ Rectangle {
                         id:tabSubProperty
                         height: 25
                         anchors.left: parent.left
-                        anchors.right: parent.right
+//                        anchors.right: parent.right
                         anchors.top: parent.top
                         anchors.topMargin: 17
                         anchors.leftMargin: 30
@@ -925,6 +925,31 @@ Rectangle {
                             name: "Тарировка"
                             textLine:1
                             widthBody: 110
+                        }
+                    }
+                    TabBar {
+                        id:tabTarProperty
+                        height: 25
+                        anchors.left: tabSubProperty.right
+                        anchors.right: parent.right
+                        anchors.top: tabSubProperty.bottom
+                        anchors.topMargin: 17
+                        anchors.leftMargin: -110
+                        spacing: 5
+                        currentIndex: 0//stackSubProperty.currentIndex
+                        font.pointSize: 8
+                        background: Rectangle {
+                            color: "transparent"
+                        }
+                        TabButtonUp {
+                            name: "Одиночная"
+                            textLine:1
+                            widthBody: 100
+                        }
+                        TabButtonUp {
+                            name: "Множественная"
+                            textLine:2
+                            widthBody: 120
                         }
                     }
                 }
@@ -1194,7 +1219,7 @@ Rectangle {
                                                 text: "Относительный уровень"
                                             }
                                             ListElement {
-                                                text: "Объем (по таблице таррировки)"
+                                                text: "Объем (по таблице тарировки)"
                                             }
                                         }
                                     }
@@ -2040,9 +2065,9 @@ Rectangle {
                                             }
                                             onCurrentIndexChanged: {
                                                 if(masterSlaveModes.currentIndex == 2) {
-                                                    masterSlavesAddresRectange.enabled = true
+                                                    //masterSlavesAddresRectange.enabled = true
                                                 } else {
-                                                    masterSlavesAddresRectange.enabled = false
+                                                    //masterSlavesAddresRectange.enabled = false
                                                     masterSlaveFullCountes.value = 0
                                                 }
                                             }
@@ -2412,7 +2437,6 @@ Rectangle {
                                         }
                                         Dialog {
                                             id: dialogRemoveTarTableRow
-                                            visible: falsecalTableChartRect
                                             title: "Удаление записи таблицы"
                                             standardButtons: StandardButton.Apply
                                             Rectangle {

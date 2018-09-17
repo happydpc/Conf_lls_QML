@@ -17,7 +17,7 @@ Rectangle {
         id: gridLayout
         width: parent.width
         columnSpacing: 5
-        anchors.right: tabBar.left
+        anchors.right: parent.right
         anchors.rightMargin: 10
         anchors.left: parent.left
         anchors.leftMargin: 10

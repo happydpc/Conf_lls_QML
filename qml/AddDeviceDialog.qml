@@ -21,7 +21,6 @@ Popup {
         id: gridLayout
         anchors.fill: parent
         columnSpacing: 5
-        anchors.right: tabBar.left
         rowSpacing: 5
         rows: 4
         columns: 2

@@ -2,6 +2,19 @@ import QtQuick 2.9
 import QtQuick.Controls 2.4
 import QtQuick.Dialogs 1.2
 
+import QtQuick 2.4
+import QtQuick.Controls 2.2
+import QtQuick.Layouts 1.1
+import QtQuick.Window 2.10
+import Qt.labs.platform 1.0
+import QtCharts 2.2
+import QtQuick.Dialogs 1.2
+import QtQuick.Controls 1.4 as ControlOld
+import QtQuick.Controls.Styles 1.4
+import CustomControls 1.0
+import QtGraphicalEffects 1.0
+
+
 Rectangle {
     id: devicePanel
     anchors.fill: parent
@@ -83,128 +96,44 @@ Rectangle {
         height: parent.height
         color: "#f0f3f6"
     }
-
-    Button {
+    ButtonRound {
         id:addInterfaceButton
+        textLine:2
+        widthBody: interfaceTree.width - 40
         anchors.top: spacerList.bottom
-        anchors.topMargin: 10
+        anchors.topMargin: 15
         anchors.left: parent.left
         anchors.leftMargin: 20
         anchors.rightMargin: 20
         anchors.right: interfaceTree.right
-        width: interfaceTree.width
-        height: 50
-        background: Rectangle {
-            height: 50
-            width: widthBody
-            radius: 25
-            color: addInterfaceButton.pressed ? "#a3ff7b" : "#ffffff"
-            border.color: "#e9eff4"
-            border.width: 2
-            Rectangle {
-                anchors.left: parent.left
-                anchors.leftMargin: 16
-                anchors.top: parent.top
-                anchors.topMargin: 17
-                color: "#3598fa"
-                width: 16
-                height: 16
-            }
-            Text {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.topMargin: 17
-                anchors.leftMargin: 40
-                font.pointSize: 8
-                color: addInterfaceButton.pressed ? "black" : "#3598fa"
-                text: qsTr("Добавить интерфейс")
-            }
-        }
+        name: qsTr("Добавить интерфейс")
         onClicked: {
             addNewConnection();
         }
     }
-    Button {
+    ButtonRound {
         id:settingsButton
+        textLine:2
+        widthBody: interfaceTree.width - 40
         anchors.top: addInterfaceButton.bottom
-        anchors.topMargin: 10
+        anchors.topMargin: 5
         anchors.left: parent.left
         anchors.leftMargin: 20
         anchors.rightMargin: 20
         anchors.right: interfaceTree.right
-        width: interfaceTree.width
-        height: 50
-        enabled: false
-        background: Rectangle {
-            height: 50
-            width: widthBody
-            radius: 25
-            color: settingsButton.pressed ? "#a3ff7b" : "#ffffff"
-            border.color: "#e9eff4"
-            border.width: 2
-            Rectangle {
-                anchors.left: parent.left
-                anchors.leftMargin: 16
-                anchors.top: parent.top
-                anchors.topMargin: 17
-                color: "#3598fa"
-                width: 16
-                height: 16
-            }
-            Text {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.topMargin: 17
-                anchors.leftMargin: 40
-                font.pointSize: 8
-                color: settingsButton.pressed ? "black" : "#3598fa"
-                text: qsTr("Настройки")
-            }
-        }
+        name: qsTr("Настройки")
     }
-    Button {
+    ButtonRound {
         id:supportButton
+        textLine:2
+        widthBody: interfaceTree.width - 40
         anchors.top: settingsButton.bottom
-        anchors.topMargin: 10
+        anchors.topMargin: 5
         anchors.left: parent.left
         anchors.leftMargin: 20
         anchors.rightMargin: 20
         anchors.right: interfaceTree.right
-        width: interfaceTree.width
-        height: 50
-        enabled: false
-        background: Rectangle {
-            height: 50
-            width: widthBody
-            radius: 25
-            color: supportButton.pressed ? "#a3ff7b" : "#ffffff"
-            border.color: "#e9eff4"
-            border.width: 2
-            Rectangle {
-                anchors.left: parent.left
-                anchors.leftMargin: 16
-                anchors.top: parent.top
-                anchors.topMargin: 17
-                color: "#3598fa"
-                width: 16
-                height: 16
-            }
-            Text {
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                anchors.topMargin: 17
-                anchors.leftMargin: 40
-                font.pointSize: 8
-                color: supportButton.pressed ? "black" : "#3598fa"
-                text: qsTr("Поддержка")
-            }
-        }
+        name: qsTr("Поддержка")
     }
 
     DevicePropertyPanel {

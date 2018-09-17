@@ -6,6 +6,8 @@ SerialPortForm {
     x: width
     y: height
 
+    property int anyPrope: 0
+
     signal acceptConnectReady(var name, var baudrate)
     signal abortConnectButton()
 

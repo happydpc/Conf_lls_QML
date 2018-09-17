@@ -799,21 +799,21 @@ qrc_qml.cpp: qml.qrc \
 		qml/app.qml \
 		qml/StartPanel.qml \
 		qml/DevicePropertyPanel.qml \
+		qml/DeviceItemEmpty.qml \
 		qml/View.qml \
 		qml/MainMenuBar.qml \
-		qml/DeviceItemEmpty.qml \
 		qml/DevPropertySerialPort.qml \
 		qml/DevPropertyProgressTmk4ux.qml \
 		qml/ProjectStartScreen.qml \
 		qml/DevPropertyProgressTmk24.qml \
 		qml/SearchDevice.qml \
+		qml/ButtonRound.qml \
 		qml/SerialPortForm.ui.qml \
 		qml/LogoPanel.qml \
 		qml/TabButtonUp.qml \
 		qml/DeviceTree.qml \
 		qml/SerialPort.qml \
 		qml/ProjectMainStack.qml \
-		qml/TestFormForm.ui.qml \
 		qml/AddDeviceDialog.qml \
 		qml/ChangeId.qml \
 		qml/DevicePanel.qml \
