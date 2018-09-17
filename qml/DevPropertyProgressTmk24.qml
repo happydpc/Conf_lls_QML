@@ -26,8 +26,8 @@ Rectangle {
         devPropertyProgressTmk24.isReady = true
     }
     function setResetState() {
-        stackSubProperty.setCurrentIndex(0)
-        tabProperty.setCurrentIndex(0)
+        tabProperty.setCurrentIndex(1)
+        stackSubProperty.setCurrentIndex(5)
         setNoReady()
         setWriteSettingsIsAvailable()
     }
@@ -59,22 +59,32 @@ Rectangle {
         if(values.length >0) {
             //levelValue.text = values[0]
             levelProgress.value = values[1]
+            levelTarCurrValues.value = values[1]
             levelCnt.value = (80000000 / values[2]) * 100
+            levelTarCurrCntValues.value = (80000000 / values[2]) * 100
             levelFreq.value = values[3]
             levelTemp.value = values[4]
         }
         //-- chart
         var list = viewController.getCurrentDevChart()
+        currentTarChartLines.clear();
+        chartTarCurrentValues.graphLength = list.length
+        chartTarCurrentValues.graphAmplitudeMax = 0
+
         currentChartLines.clear();
         chartCurrentValue.graphLength = list.length
         chartCurrentValue.graphAmplitudeMax = 0
+
         for(var i=0; i<list.length; i++) {
             if(chartCurrentValue.graphAmplitudeMax < list[i]) {
                 chartCurrentValue.graphAmplitudeMax = list[i];
             }
         }
+        chartTarCurrentValues.graphLength = chartCurrentValue.graphLength
+        chartTarCurrentValues.graphAmplitudeMax = chartCurrentValue.graphAmplitudeMax
         for(i=0; i<list.length; i++) {
             currentChartLines.append(i, list[i]);
+            currentTarChartLines.append(i, list[i])
         }
         logListView.positionViewAtEnd()
     }
@@ -885,7 +895,7 @@ Rectangle {
                         id:tabSubProperty
                         height: 25
                         anchors.left: parent.left
-//                        anchors.right: parent.right
+                        //                        anchors.right: parent.right
                         anchors.top: parent.top
                         anchors.topMargin: 17
                         anchors.leftMargin: 30
@@ -927,29 +937,17 @@ Rectangle {
                             widthBody: 110
                         }
                     }
-                    TabBar {
-                        id:tabTarProperty
+                    ColumnLayout {
                         height: 25
                         anchors.left: tabSubProperty.right
                         anchors.right: parent.right
-                        anchors.top: tabSubProperty.bottom
-                        anchors.topMargin: 17
-                        anchors.leftMargin: -110
-                        spacing: 5
-                        currentIndex: 0//stackSubProperty.currentIndex
-                        font.pointSize: 8
-                        background: Rectangle {
-                            color: "transparent"
-                        }
-                        TabButtonUp {
-                            name: "Одиночная"
-                            textLine:1
-                            widthBody: 100
-                        }
-                        TabButtonUp {
-                            name: "Множественная"
-                            textLine:2
-                            widthBody: 120
+                        anchors.top: parent.top
+                        anchors.topMargin: 5//17
+                        anchors.leftMargin: 5
+                        visible: tabSubProperty.currentIndex === 5 ? true : false
+                        Switch {
+                            id:tarSwitcher
+                            text: checked == false ? "Одиночная" : "Множественная"
                         }
                     }
                 }
@@ -2269,364 +2267,509 @@ Rectangle {
                     }
 
                     Item {
-                        ScrollView {
-                            clip: true
+                        SwipeView {
+                            id:tarSwipeSelect
+                            currentIndex: (tarSwitcher.checked == false) ? (0) : (1)
                             anchors.fill: parent
-                            Column {
-                                spacing: 10
-                                anchors.top: parent.top
-                                anchors.topMargin: 15
-                                //1
-                                Rectangle {
-                                    id:calTableChartRect
-                                    width: stackSubProperty.width - 90
-                                    height: stackSubProperty.height - 100
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-
-                                    ControlOld.TableView {
-                                        id:tarTabView
+                            Item {
+                                ScrollView {
+                                    clip: true
+                                    anchors.fill: parent
+                                    Column {
+                                        spacing: 10
                                         anchors.top: parent.top
+                                        anchors.topMargin: 15
                                         anchors.left: parent.left
-                                        anchors.bottom: parent.bottom
-                                        width: parent.width / 2
-                                        ControlOld.TableViewColumn {
-                                            id: tableDelegateValue
-                                            role: "Value"
-                                            title: "Объем"
-                                            property int value: model.Value
-                                            delegate: Rectangle {
-                                                anchors.fill: parent
-                                                color: valueInputValue.text.length >0 ? "transparent" : "red"
-                                                TextInput {
-                                                    id:valueInputValue
-                                                    anchors.fill: parent
-                                                    selectionColor: "red"
-                                                    text:(model.Value===0) ? "0" : model.Value
-                                                    validator: RegExpValidator { regExp: /[0-9A-F]+/ }
-                                                    onEditingFinished: {
-                                                        model.Value = text
-                                                        remakeTarTableChart()
+                                        anchors.leftMargin: 15
+                                        Row {
+                                            id:tarRowRoot1
+                                            spacing: 10
+                                            Rectangle {
+                                                radius: 20
+                                                width: stackSubProperty.width - 30
+                                                height: stackSubProperty.height - 80
+                                                color: "#ffffff"
+                                                layer.enabled: true
+                                                layer.effect: DropShadow {
+                                                    verticalOffset: 1
+                                                    color: "#e0e5ef"
+                                                    radius: 20
+                                                }
+                                                Rectangle {
+                                                    id:tarTabRectangle
+                                                    anchors.left: parent.left
+                                                    anchors.top: parent.top
+                                                    height: parent.height
+                                                    width: parent.width / 2
+                                                    ControlOld.TableView {
+                                                        id:tarTabView
+                                                        anchors.left: parent.left
+                                                        anchors.top: parent.top
+                                                        height: parent.height / 2
+                                                        width: parent.width
+                                                        ControlOld.TableViewColumn {
+                                                            id: tableDelegateValue
+                                                            role: "Value"
+                                                            title: "Объем"
+                                                            property int value: model.Value
+                                                            delegate: Rectangle {
+                                                                //                                                                anchors.fill: parent
+                                                                color: valueInputValue.text.length >0 ? "transparent" : "red"
+                                                                TextInput {
+                                                                    id:valueInputValue
+                                                                    anchors.fill: parent
+                                                                    selectionColor: "red"
+                                                                    text:(model.Value===0) ? "0" : model.Value
+                                                                    validator: RegExpValidator { regExp: /[0-9A-F]+/ }
+                                                                    onEditingFinished: {
+                                                                        model.Value = text
+                                                                        remakeTarTableChart()
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        ControlOld.TableViewColumn {
+                                                            id: tableDelegateLevel
+                                                            role: "Level"
+                                                            title: "Уровень"
+                                                            property int level: model.Level
+                                                            delegate: Rectangle {
+                                                                color: valueInputLevel.text.length >0 ? "transparent" : "red"
+                                                                TextInput {
+                                                                    id:valueInputLevel
+                                                                    selectionColor: "red"
+                                                                    text:(model.Level===0) ? "0" : model.Level
+                                                                    validator: RegExpValidator { regExp: /[0-9A-F]+/ }
+                                                                    onEditingFinished: {
+                                                                        model.Level = text
+                                                                        remakeTarTableChart()
+                                                                    }
+
+                                                                }
+                                                            }
+                                                        }
+                                                        model: ListModel {
+                                                            id: tarTableListModel
+                                                        }
+                                                        onCurrentRowChanged: {
+                                                            tarTabView.selection.clear()
+                                                            tarTabView.selection.select(tarTabView.currentRow)
+                                                        }
+
+                                                        rowDelegate: Rectangle {
+                                                            SystemPalette {
+                                                                id: systemPalette
+                                                                colorGroup: SystemPalette.Active
+                                                            }
+                                                            color: {
+                                                                var baseColor = styleData.alternate ? systemPalette.alternateBase : systemPalette.base
+                                                                return styleData.selected ? "orange" : baseColor
+                                                            }
+                                                        }
+                                                    }
+                                                    ChartView {
+                                                        id: chartTarTable
+                                                        anchors.top: tarTabView.bottom
+                                                        anchors.topMargin: 5
+                                                        anchors.left: parent.left
+                                                        height: parent.height / 2
+                                                        width: parent.width
+                                                        theme: ChartView.ChartThemeBlueCerulean
+                                                        clip: true
+                                                        antialiasing: true
+                                                        title: "Уровень"
+                                                        property int chartTarTableLength: 1
+                                                        property int chartTarTableAmplitudeMax: 1
+                                                        ValueAxis {
+                                                            id: chartTarTableAxisX
+                                                            min: 0
+                                                            max: chartTarTable.chartTarTableLength
+                                                            tickCount: 5
+                                                        }
+                                                        ValueAxis {
+                                                            id: chartTarTableAxisY
+                                                            min: 0
+                                                            max: chartTarTable.chartTarTableAmplitudeMax
+                                                            tickCount: 5
+                                                        }
+                                                        LineSeries {
+                                                            id:chartTarTableLine
+                                                            color: "red"
+                                                            axisX: chartTarTableAxisX
+                                                            axisY: chartTarTableAxisY
+                                                        }
+                                                    }
+                                                    color: "#ffffff"
+                                                    layer.enabled: true
+                                                    layer.effect: DropShadow {
+                                                        verticalOffset: 1
+                                                        color: "#e0e5ef"
+                                                        radius: 20
+                                                    }
+                                                }
+                                                Rectangle {
+                                                    id:tarTabRectangleCurrentValues
+                                                    anchors.left: tarTabRectangle.right
+                                                    anchors.leftMargin: 10
+                                                    anchors.top: parent.top
+                                                    radius: 20
+                                                    width: parent.width / 2 - 15
+                                                    height: parent.height /3
+                                                    color: "#ffffff"
+                                                    Rectangle {
+                                                        id:tarTabRectangleCurrLevel
+                                                        anchors.left: parent.left
+                                                        anchors.leftMargin: 10
+                                                        anchors.top: parent.top
+                                                        radius: 20
+                                                        width: parent.width / 2 - 15
+                                                        height: parent.height
+                                                        color: "#ffffff"
+                                                        Label {
+                                                            id: levelTarCurrValuesLabel
+                                                            text: qsTr("Уровень/Объем:")
+                                                            anchors.left: parent.left
+                                                            color: "#888d91"
+                                                            anchors.leftMargin: 50
+                                                            anchors.right: parent.right
+                                                            anchors.rightMargin: 0
+                                                        }
+                                                        RadialBar {
+                                                            id:levelTarCurrValues
+                                                            anchors.top: levelTarCurrValuesLabel.bottom
+                                                            anchors.topMargin: 10
+                                                            anchors.left: parent.left
+                                                            anchors.leftMargin: 55
+                                                            width: 120
+                                                            height: parent.height
+                                                            penStyle: Qt.RoundCap
+                                                            dialType: RadialBar.FullDial
+                                                            progressColor: "#05fF00"
+                                                            foregroundColor: "transparent"
+                                                            dialWidth: 15
+                                                            startAngle: 180
+                                                            spanAngle: 70
+                                                            minValue: 0
+                                                            maxValue: 100
+                                                            value: 100
+                                                            textFont {
+                                                                family: "Halvetica"
+                                                                italic: false
+                                                                pointSize: 10
+                                                            }
+                                                            suffixText: "%"
+                                                            textColor: "#888d91"
+                                                            enabled: devPropertyProgressTmk24.isReady
+                                                        }
+                                                    }
+                                                    Rectangle {
+                                                        anchors.left: tarTabRectangleCurrLevel.right
+                                                        anchors.leftMargin: 10
+                                                        anchors.top: parent.top
+                                                        radius: 20
+                                                        width: parent.width / 2 - 15
+                                                        height: parent.height
+                                                        color: "#ffffff"
+                                                        Label {
+                                                            id: levelTarCurrCntLabel
+                                                            text: qsTr("Значение CNT:")
+                                                            anchors.left: parent.left
+                                                            color: "#888d91"
+                                                            anchors.leftMargin: 50
+                                                            anchors.right: parent.right
+                                                            anchors.rightMargin: 0
+                                                        }
+                                                        RadialBar {
+                                                            id:levelTarCurrCntValues
+                                                            anchors.top: levelTarCurrCntLabel.bottom
+                                                            anchors.topMargin: 10
+                                                            anchors.left: parent.left
+                                                            anchors.leftMargin: 55
+                                                            width: 120
+                                                            height: parent.height
+                                                            penStyle: Qt.RoundCap
+                                                            dialType: RadialBar.FullDial
+                                                            progressColor: "#080ff0"
+                                                            foregroundColor: "transparent"
+                                                            dialWidth: 15
+                                                            startAngle: 180
+                                                            spanAngle: 70
+                                                            minValue: 0
+                                                            maxValue: 20000
+                                                            value: 0
+                                                            textFont {
+                                                                family: "Halvetica"
+                                                                italic: false
+                                                                pointSize: 10
+                                                            }
+                                                            suffixText: ""
+                                                            textColor: "#888d91"
+                                                            enabled: devPropertyProgressTmk24.isReady
+                                                        }
+                                                    }
+                                                }
+                                                Rectangle {
+                                                    color: "#ffffff"
+                                                    anchors.top: tarTabRectangleCurrentValues.bottom
+                                                    anchors.left: tarTabRectangle.right
+                                                    anchors.leftMargin: 10
+                                                    radius: 20
+                                                    width: parent.width / 2 - 5
+                                                    height: parent.height - tarTabRectangleCurrentValues.height
+                                                    ChartView {
+                                                        id: chartTarCurrentValues
+                                                        anchors.fill: parent
+                                                        theme: ChartView.ChartThemeLight
+                                                        title: "Уровень/Объем"
+                                                        antialiasing: true
+                                                        property int graphLength: 1
+                                                        property int graphAmplitudeMax: 1
+                                                        ValueAxis {
+                                                            id: currentTarChartAxisX
+                                                            min: 0
+                                                            max: chartCurrentValue.graphLength
+                                                            tickCount: 5
+                                                        }
+                                                        ValueAxis {
+                                                            id: currentTarChartAxisY
+                                                            min: -0.1
+                                                            max: chartCurrentValue.graphAmplitudeMax
+                                                            tickCount: 5
+                                                        }
+                                                        LineSeries {
+                                                            id: currentTarChartLines
+                                                            axisX: currentTarChartAxisX
+                                                            axisY: currentTarChartAxisY
+                                                        }
+                                                        enabled: devPropertyProgressTmk24.isReady
+                                                    }
+                                                    layer.enabled: true
+                                                    layer.effect: DropShadow {
+                                                        transparentBorder: true
+                                                        horizontalOffset: 0
+                                                        verticalOffset: 1
+                                                        color: "#e0e5ef"
+                                                        samples: 10
+                                                        radius: 10
                                                     }
                                                 }
                                             }
                                         }
-                                        ControlOld.TableViewColumn {
-                                            id: tableDelegateLevel
-                                            role: "Level"
-                                            title: "Уровень"
-                                            property int level: model.Level
-                                            delegate: Rectangle {
-                                                anchors.fill: parent
-                                                color: valueInputLevel.text.length >0 ? "transparent" : "red"
-                                                TextInput {
-                                                    id:valueInputLevel
-                                                    anchors.fill: parent
-                                                    selectionColor: "red"
-                                                    text:(model.Level===0) ? "0" : model.Level
-                                                    validator: RegExpValidator { regExp: /[0-9A-F]+/ }
-                                                    onEditingFinished: {
-                                                        model.Level = text
-                                                        remakeTarTableChart()
-                                                    }
-
-                                                }
-                                            }
-                                        }
-                                        model: ListModel {
-                                            id: tarTableListModel
-                                        }
-                                        onCurrentRowChanged: {
-                                            tarTabView.selection.clear()
-                                            tarTabView.selection.select(tarTabView.currentRow)
-                                        }
-
-                                        rowDelegate: Rectangle {
-                                            SystemPalette {
-                                                id: systemPalette
-                                                colorGroup: SystemPalette.Active
-                                            }
-                                            color: {
-                                                var baseColor = styleData.alternate ? systemPalette.alternateBase : systemPalette.base
-                                                return styleData.selected ? "orange" : baseColor
-                                            }
-                                        }
-                                    }
-
-                                    Rectangle {
-                                        anchors.top: parent.top
-                                        anchors.left: tarTabView.right
-                                        anchors.right: parent.right
-                                        anchors.bottom: tarTabView.bottom
-                                        height: parent.height
-                                        width: tarTabView.width / 2
-                                        ChartView {
-                                            id: chartTarTable
-                                            anchors.fill: parent
-                                            theme: ChartView.ChartThemeBlueCerulean
-                                            clip: true
-                                            antialiasing: true
-                                            title: "Уровень"
-                                            property int chartTarTableLength: 1
-                                            property int chartTarTableAmplitudeMax: 1
-                                            ValueAxis {
-                                                id: chartTarTableAxisX
-                                                min: 0
-                                                max: chartTarTable.chartTarTableLength
-                                                tickCount: 5
-                                            }
-                                            ValueAxis {
-                                                id: chartTarTableAxisY
-                                                min: 0
-                                                max: chartTarTable.chartTarTableAmplitudeMax
-                                                tickCount: 5
-                                            }
-                                            LineSeries {
-                                                id:chartTarTableLine
-                                                color: "red"
-                                                axisX: chartTarTableAxisX
-                                                axisY: chartTarTableAxisY
-                                            }
+                                        Rectangle {
+                                            radius: 5
+                                            anchors.top: parent.top
+                                            anchors.topMargin: tarRowRoot1.height + 10
+                                            width: stackSubProperty.width - 30
+                                            height: 50
+                                            color: "transparent"
                                             layer.enabled: true
                                             layer.effect: DropShadow {
                                                 verticalOffset: 1
                                                 color: "#e0e5ef"
                                                 radius: 20
                                             }
-                                        }
-                                    }
-                                }
-                                Row {
-                                    id:tarBatButtons
-                                    anchors.top: calTableChartRect.bottom
-                                    anchors.bottom: parent.bottom
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-                                    anchors.right: parent.right
-                                    spacing: 0
-                                    Button {
-                                        id:tarTabAddStep
-                                        text:"Добавить"
-                                        height: 50
-                                        width: 70
-                                        font.pointSize: 8
-                                        onClicked: {
-                                            tarTableListModel.append({"Value":"0","Level":"0"})
-                                            timerAffterRefrashTarTable.start()
-                                        }
-                                        layer.enabled: true
-                                        layer.effect: DropShadow {
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            radius: 20
-                                        }
-                                    }
-                                    Button {
-                                        id:tarTabRemoveStep
-                                        text:"Удалить"
-                                        font.pointSize: 8
-                                        height: 50
-                                        width: 70
-                                        layer.enabled: true
-                                        layer.effect: DropShadow {
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            radius: 20
-                                        }
-                                        Dialog {
-                                            id: dialogRemoveTarTableRow
-                                            title: "Удаление записи таблицы"
-                                            standardButtons: StandardButton.Apply
-                                            Rectangle {
-                                                color: "transparent"
-                                                implicitWidth: 500
-                                                implicitHeight: 50
-                                                Text {
-                                                    text: "Для удаления сначала кликните по удалялемой строке в таблице"
-                                                    color: "black"
-                                                    anchors.centerIn: parent
-                                                }
-                                            }
-                                            onApply: {
-                                                close()
-                                            }
-                                        }
-                                        onClicked: {
-                                            if(tarTabView.currentRow == -1) {
-                                                dialogRemoveTarTableRow.open()
-                                                close()
-                                            } else {
-                                                tarTabView.model.remove(tarTabView.currentRow)
-                                                timerAffterRefrashTarTable.start()
-                                            }
-                                        }
-                                    }
-                                    Button {
-                                        id:tarTabCleaarFull
-                                        text:"Очистить"
-                                        font.pointSize: 8
-                                        height: 50
-                                        width: 70
-                                        layer.enabled: true
-                                        layer.effect: DropShadow {
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            radius: 20
-                                        }
-                                        Dialog {
-                                            id: dialogClearTarTable
-                                            visible: false
-                                            title: "Очистка записей таблицы"
-                                            standardButtons: StandardButton.Close | StandardButton.Apply
-                                            Rectangle {
-                                                color: "transparent"
-                                                implicitWidth: 500
-                                                implicitHeight: 50
-                                                Text {
-                                                    text: "Очистить таблицу\nВы уверены?"
-                                                    color: "black"
-                                                    anchors.centerIn: parent
-                                                }
-                                            }
-                                            onApply: {
-                                                var size = tarTabView.rowCount
-                                                tarTabView.model.clear()
-                                                timerAffterRefrashTarTable.start()
-                                                close()
-                                            }
-                                        }
-                                        onClicked: {
-                                            dialogClearTarTable.open()
-                                        }
-                                    }
-                                    Button {
-                                        id:tarTabReadTable
-                                        text:"Считать\nтаблицу"
-                                        font.pointSize: 8
-                                        width: 70
-                                        height: 50
-                                        layer.enabled: true
-                                        layer.effect: DropShadow {
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            radius: 20
-                                        }
-                                        enabled: devPropertyProgressTmk24.isReady
-                                        onClicked: {
-                                            dialogReadTarTable.open()
-                                        }
-                                        Dialog {
-                                            id: dialogReadTarTable
-                                            visible: false
-                                            title: "Чтение записей таблицы из устройства"
-                                            standardButtons: StandardButton.Close | StandardButton.Apply
-                                            Rectangle {
-                                                color: "transparent"
-                                                implicitWidth: 500
-                                                implicitHeight: 50
-                                                Text {
-                                                    text: "Считать данные?\nВсе не сохраненные изменения будут утеряны!\nВы уверены?"
-                                                    color: "black"
-                                                    anchors.centerIn: parent
-                                                }
-                                            }
-                                            onApply: {
-                                                viewController.getCurrentDevTarTable()
-                                                close()
-                                            }
-                                        }
-                                    }
-                                    Button {
-                                        id:tarTabWriteTable
-                                        text:"Записать\nтаблицу"
-                                        width: 70
-                                        height: 50
-                                        font.pointSize: 8
-                                        layer.enabled: true
-                                        layer.effect: DropShadow {
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            radius: 20
-                                        }
-                                        enabled: devPropertyProgressTmk24.isReady
-                                        Dialog {
-                                            id: dialogWriteTarTable
-                                            visible: false
-                                            title: "Запись таблицы"
-                                            standardButtons: StandardButton.Close | StandardButton.Apply
-                                            Rectangle {
-                                                color: "transparent"
-                                                implicitWidth: 500
-                                                implicitHeight: 50
-                                                Text {
-                                                    text: "Записать таблицу в устройство!\nВы уверены?"
-                                                    color: "black"
-                                                    anchors.centerIn: parent
-                                                }
-                                            }
-                                            onApply: {
-                                                writeTarTable()
-                                                close()
-                                            }
-                                        }
-                                        onClicked: {
-                                            if(tarTabView.rowCount >0) {
-                                                dialogWriteTarTable.open()
-                                            }
-                                        }
-                                    }
-                                    Button {
-                                        id:tarTabTableExport
-                                        text:"Выгрузить\n.csv"
-                                        width: 80
-                                        font.pointSize: 8
-                                        height: 50
-                                        layer.enabled: true
-                                        layer.effect: DropShadow {
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            radius: 20
-                                        }
-                                        FileDialog {
-                                            id: dialogExportTarTable
-                                            folder: shortcuts.home
-                                            selectMultiple: false
-                                            selectFolder: false
-                                            title: "Save to file"
-                                            nameFilters: [ "All files (*)" ]
-                                            selectExisting: false
-                                            onAccepted: {
-                                                if(dialogExportTarTable.selectExisting == true) {
-                                                    console.log(dialogExportTarTable.fileUrl)
-                                                }
-                                                else {
-                                                    console.log(dialogExportTarTable.fileUrl)
-                                                    console.log("You chose: " + dialogExportTarTable.fileUrls)
-                                                    var tarArrayLevel = [];
-                                                    var tarArrayValue = [];
-                                                    for(var i=0; i<tarTabView.rowCount; i++) {
-                                                        var item = tarTabView.model.get(i)
-                                                        tarArrayLevel.push(item.Level)
-                                                        tarArrayValue.push(item.Value)
+                                            Row {
+                                                ButtonRound {
+                                                    id:tarBatButtons
+                                                    textLine:2
+                                                    widthBody: 200
+                                                    name: qsTr("Добавить текущее значение")
+                                                    onClicked: {
+                                                        tarTableListModel.append({"Value":"0","Level":"0"})
+                                                        timerAffterRefrashTarTable.start()
                                                     }
-                                                    viewController.setCurrentDevExportTarTable(dialogExportTarTable.fileUrls, tarArrayLevel,tarArrayValue)
+                                                }
+                                                ButtonRound {
+                                                    id:tarTabRemoveStep
+                                                    textLine:2
+                                                    widthBody: 100
+                                                    name: qsTr("Удалить")
+                                                    Dialog {
+                                                        id: dialogRemoveTarTableRow
+                                                        title: "Удаление записи таблицы"
+                                                        standardButtons: StandardButton.Apply
+                                                        Rectangle {
+                                                            color: "transparent"
+                                                            implicitWidth: 500
+                                                            implicitHeight: 50
+                                                            Text {
+                                                                text: "Для удаления сначала кликните по удалялемой строке в таблице"
+                                                                color: "black"
+                                                                anchors.centerIn: parent
+                                                            }
+                                                        }
+                                                        onApply: {
+                                                            close()
+                                                        }
+                                                    }
+                                                    onClicked: {
+                                                        if(tarTabView.currentRow == -1) {
+                                                            dialogRemoveTarTableRow.open()
+                                                            close()
+                                                        } else {
+                                                            tarTabView.model.remove(tarTabView.currentRow)
+                                                            timerAffterRefrashTarTable.start()
+                                                        }
+                                                    }
+                                                }
+                                                ButtonRound {
+                                                    id:tarTabCleaarFull
+                                                    textLine: 2
+                                                    name: "Очистить"
+                                                    Dialog {
+                                                        id: dialogClearTarTable
+                                                        visible: false
+                                                        title: "Очистка записей таблицы"
+                                                        standardButtons: StandardButton.Close | StandardButton.Apply
+                                                        Rectangle {
+                                                            color: "transparent"
+                                                            implicitWidth: 500
+                                                            implicitHeight: 50
+                                                            Text {
+                                                                text: "Очистить таблицу\nВы уверены?"
+                                                                color: "black"
+                                                                anchors.centerIn: parent
+                                                            }
+                                                        }
+                                                        onApply: {
+                                                            var size = tarTabView.rowCount
+                                                            tarTabView.model.clear()
+                                                            timerAffterRefrashTarTable.start()
+                                                            close()
+                                                        }
+                                                    }
+                                                    onClicked: {
+                                                        dialogClearTarTable.open()
+                                                    }
+                                                }
+                                                ButtonRound {
+                                                    id:tarTabReadTable
+                                                    textLine: 2
+                                                    name:"Считать\nтаблицу"
+                                                    enabled: devPropertyProgressTmk24.isReady
+                                                    onClicked: {
+                                                        dialogReadTarTable.open()
+                                                    }
+                                                    Dialog {
+                                                        id: dialogReadTarTable
+                                                        visible: false
+                                                        title: "Чтение записей таблицы из устройства"
+                                                        standardButtons: StandardButton.Close | StandardButton.Apply
+                                                        Rectangle {
+                                                            color: "transparent"
+                                                            implicitWidth: 500
+                                                            implicitHeight: 50
+                                                            Text {
+                                                                text: "Считать данные?\nВсе не сохраненные изменения будут утеряны!\nВы уверены?"
+                                                                color: "black"
+                                                                anchors.centerIn: parent
+                                                            }
+                                                        }
+                                                        onApply: {
+                                                            viewController.getCurrentDevTarTable()
+                                                            close()
+                                                        }
+                                                    }
+                                                }
+                                                ButtonRound {
+                                                    id:tarTabWriteTable
+                                                    textLine: 2
+                                                    name:"Записать\nтаблицу"
+                                                    enabled: devPropertyProgressTmk24.isReady
+                                                    Dialog {
+                                                        id: dialogWriteTarTable
+                                                        visible: false
+                                                        title: "Запись таблицы"
+                                                        standardButtons: StandardButton.Close | StandardButton.Apply
+                                                        Rectangle {
+                                                            color: "transparent"
+                                                            implicitWidth: 500
+                                                            implicitHeight: 50
+                                                            Text {
+                                                                text: "Записать таблицу в устройство!\nВы уверены?"
+                                                                color: "black"
+                                                                anchors.centerIn: parent
+                                                            }
+                                                        }
+                                                        onApply: {
+                                                            writeTarTable()
+                                                            close()
+                                                        }
+                                                    }
+                                                    onClicked: {
+                                                        if(tarTabView.rowCount >0) {
+                                                            dialogWriteTarTable.open()
+                                                        }
+                                                    }
+                                                }
+                                                ButtonRound {
+                                                    id:tarTabTableExport
+                                                    textLine: 2
+                                                    name:"Выгрузить\n.csv"
+                                                    widthBody: 110
+                                                    FileDialog {
+                                                        id: dialogExportTarTable
+                                                        folder: shortcuts.home
+                                                        selectMultiple: false
+                                                        selectFolder: false
+                                                        title: "Save to file"
+                                                        nameFilters: [ "All files (*)" ]
+                                                        selectExisting: false
+                                                        onAccepted: {
+                                                            if(dialogExportTarTable.selectExisting == true) {
+                                                                console.log(dialogExportTarTable.fileUrl)
+                                                            }
+                                                            else {
+                                                                console.log(dialogExportTarTable.fileUrl)
+                                                                console.log("You chose: " + dialogExportTarTable.fileUrls)
+                                                                var tarArrayLevel = [];
+                                                                var tarArrayValue = [];
+                                                                for(var i=0; i<tarTabView.rowCount; i++) {
+                                                                    var item = tarTabView.model.get(i)
+                                                                    tarArrayLevel.push(item.Level)
+                                                                    tarArrayValue.push(item.Value)
+                                                                }
+                                                                viewController.setCurrentDevExportTarTable(dialogExportTarTable.fileUrls, tarArrayLevel,tarArrayValue)
+                                                            }
+                                                        }
+                                                    }
+                                                    onClicked: {
+                                                        dialogExportTarTable.open()
+                                                    }
                                                 }
                                             }
                                         }
-                                        onClicked: {
-                                            dialogExportTarTable.open()
-                                        }
                                     }
                                 }
-                                layer.effect: DropShadow {
-                                    transparentBorder: true
-                                    horizontalOffset: 0
-                                    verticalOffset: 1
-                                    color: "#e0e5ef"
-                                    samples: 10
-                                    radius: 20
+                            }
+                            Item {
+                                ScrollView {
+                                    clip: true
+                                    anchors.fill: parent
+                                    Column {
+                                        spacing: 10
+                                        anchors.top: parent.top
+                                        anchors.topMargin: 15
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        Row {
+                                            width: 500
+                                            height: 150
+                                            spacing: 10
+                                            Rectangle {
+                                                radius: 20
+                                                width: stackSubProperty.width - 30
+                                                height: stackSubProperty.height - 50
+                                                color: "#ffff00"
+                                                layer.enabled: true
+                                                layer.effect: DropShadow {
+                                                    verticalOffset: 1
+                                                    color: "#e0e5ef"
+                                                    radius: 20
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }

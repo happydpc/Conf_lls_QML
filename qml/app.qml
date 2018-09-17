@@ -9,14 +9,12 @@ import QtQml.Models 2.11
 
 ApplicationWindow {
     visible: true
-    width: 1100
+    width: 1200
     height: 700
-    title: qsTr("Конфигуратор ДУТ (Beta 0.0)")
-
-
-        View {
-            id: view
-            height: parent.height
-            width: parent.width
-        }
+    title: qsTr("Конфигуратор ДУТ (Beta 0.1)")
+    View {
+        id: view
+        height: parent.height
+        width: parent.width
+    }
 }

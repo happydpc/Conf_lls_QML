@@ -63,7 +63,11 @@ QList<int> Progress_tmk24::getChart() {
 // TODO: is valid handler!
 QStringList Progress_tmk24::getPropertyData() {
     QStringList res;
-    res << lls_data.serialNum.value;
+    if(lls_data.serialNum.value.at(0) > 0x255) {
+        res << "Не присвоен";
+    } else {
+        res << lls_data.serialNum.value;
+    }
     res << QString::number(settings.netAddress);
     res << getDevTypeName();
     res << lls_data.firmware.value;
@@ -466,10 +470,10 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                 if(commandArrayReplyData.size() > 22) {
                     char *pbuf = (commandArrayReplyData.data() + 4);
                     lls_data.serialNum.value = QString::fromUtf8(pbuf, SERIALNUMBER_STRING_SIZE);
-
+                    lls_data.serialNum.isValid = true;
                     pbuf = (commandArrayReplyData.data() + 4 + SERIALNUMBER_STRING_SIZE);
                     lls_data.firmware.value = QString::fromUtf8(pbuf,  FIRMWARE_VERSION_STRING_SIZE);
-
+                    lls_data.firmware.isValid = true;
                     // проверка типа
                     if(commandArrayReplyData.at(3) != Progress_tmk24Data::type_lls_tmk24) {
                         lls_data.typeIsValid = false;
