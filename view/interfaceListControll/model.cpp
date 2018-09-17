@@ -79,6 +79,30 @@ void Model::connectFullTree() {
     }
 }
 
+int Model::getDevIndex() {
+    return curIndex.devIndex;
+}
+
+int Model::getIoIndex() {
+    return curIndex.ioIndex;
+}
+
+void Model::setDevIndex(int index) {
+    curIndex.devIndex = index;
+}
+
+void Model::setIoIndex(int index) {
+    curIndex.ioIndex = index;
+}
+
+void Model::setDevStatusByIndex(int devIndex, int status) {
+    TreeItem *pDev = nullptr;
+    pDev = m_tree.at(curIndex.ioIndex);
+    if(pDev != nullptr) {
+         pDev->childItems().at(devIndex)->setConnected((bool)status);
+    }
+}
+
 void Model::currentIndexIsChanged(bool, TreeItem *pSender) {
     disconnectaFullTree();
     if(pSender->isParent()) {

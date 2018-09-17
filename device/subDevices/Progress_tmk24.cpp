@@ -67,8 +67,8 @@ QStringList Progress_tmk24::getPropertyData() {
     res << QString::number(settings.netAddress);
     res << getDevTypeName();
     res << lls_data.firmware.value;
-    res << QString::number(lls_data.password.get.isValid);
-    res << lls_data.password.get.value;
+    res << QString::number(lls_data.password.get.authIsNormal);
+    res << lls_data.password.get.value.value;
     return res;
 }
 
@@ -383,7 +383,7 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
     // if gived reply with data - device CONNECTED
     if(!commandArrayReplyData.isEmpty()) {
         if(getState() == STATE_DISCONNECTED) {
-            setState(DeviceAbstract::STATE_START_INIT); // после этой команды настройки уже считаны
+            setState(DeviceAbstract::STATE_GET_TYPE);
             emit eventDevice(DeviceAbstract::Type_DeviceEvent_Connected, getUniqIdent(), QString("Connected"), QStringList(""));
         }
         //-- caculate crc
@@ -485,6 +485,10 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                             emit eventDevice(DeviceAbstract::Type_DeviceEvent_ExectCustomCommandNorlal, getUniqIdent(), QString("lls_read_settings"), QStringList(""));
                         }
                         emit eventDevice(DeviceAbstract::Type_DeviceEvent_ReadyReadProperties, getUniqIdent(), QString("Ready read properties"), QStringList(""));
+
+                        if(getState() == STATE_GET_TYPE) {
+                            setState(DeviceAbstract::STATE_CHECK_PASSWORD);
+                        }
                     }
                     res = true;
                 }
@@ -618,10 +622,15 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
             case Progress_tmk24Data::lls_check_address_and_pass:
                 if(commandArrayReplyData.size() > 4) {
                     if(commandArrayReplyData.at(3) == 0) {
-                        lls_data.password.get.isValid = true; // TOOD: обработка ошибок
+                        lls_data.password.get.value.isValid = true; // TOOD: обработка ошибок
+                        lls_data.password.get.authIsNormal = true;
                     } else {
-                        lls_data.password.get.isValid = false;
+                        lls_data.password.get.value.isValid = true;
+                        lls_data.password.get.authIsNormal = false;
                         emit eventDevice(DeviceAbstract::Type_DeviceEvent_PasswordError, getUniqIdent(), QString("Password error"), QStringList(""));
+                    }
+                    if(getState() == STATE_CHECK_PASSWORD) {
+                      setState(STATE_START_INIT);
                     }
                     res = true;
                 }
@@ -653,7 +662,7 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
 
             if(getState() == STATE_START_INIT) {
                 if((lls_data.settings.get.isValid) && (lls_data.errors.isValid)
-                        /*&& (lls_data.password.get.isValid)*/ && (lls_data.calibrateTable.get.isValid)
+                        && (lls_data.password.get.value.isValid) && (lls_data.calibrateTable.get.isValid)
                         && (lls_data.llssValues.isValid)) {
                     setState(DeviceAbstract::STATE_NORMAL_READY);
                     emit eventDevice(DeviceAbstract::Type_DeviceEvent_Inited, getUniqIdent(), QString("Inited"), QStringList(""));
@@ -687,13 +696,13 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandListToInit() {
     QList<CommandController::sCommandData> listCommand;
     CommandController::sCommandData command;
     command.deviceIdent = getUniqIdent();
+    command.devCommand = (int)Progress_tmk24Data::lls_read_settings;
+    listCommand.push_back(command);
     command.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
     listCommand.push_back(command);
     command.devCommand = (int)Progress_tmk24Data::lls_check_address_and_pass;
     listCommand.push_back(command);
     command.devCommand = (int)Progress_tmk24Data::lls_read_errors;
-    listCommand.push_back(command);
-    command.devCommand = (int)Progress_tmk24Data::lls_read_settings;
     listCommand.push_back(command);
     command.devCommand = (int)Progress_tmk24Data::lls_read_lvl_all;
     listCommand.push_back(command);

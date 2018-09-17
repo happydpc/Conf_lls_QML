@@ -29,6 +29,21 @@ Rectangle {
         stackSubProperty.setCurrentIndex(0)
         tabProperty.setCurrentIndex(0)
         setNoReady()
+        setWriteSettingsIsAvailable()
+    }
+    function setWriteSettingsIsAvailable() {
+        writeSettingsButton_1.enabled = true
+        writeSettingsButton_2.enabled = true
+        writeSettingsButton_3.enabled = true
+        writeSettingsButton_4.enabled = true
+        writeSettingsButton_5.enabled = true
+    }
+    function setWriteSettingsIsNoAvailable() {
+        writeSettingsButton_1.enabled = false
+        writeSettingsButton_2.enabled = false
+        writeSettingsButton_3.enabled = false
+        writeSettingsButton_4.enabled = false
+        writeSettingsButton_5.enabled = false
     }
     function setDevProperty(listProperty) {
         typeDeviceText.text = listProperty[2]
@@ -989,6 +1004,7 @@ Rectangle {
                                         }
                                     }
                                     Button {
+                                        id:writeSettingsButton_1
                                         text: "Записать настройки"
                                         width: 180
                                         height: 50
@@ -1077,7 +1093,7 @@ Rectangle {
                                         anchors.leftMargin: 15
                                         anchors.verticalCenter: parent.verticalCenter
                                         height: 25
-                                        width: 300
+                                        width: 200
                                     }
                                     layer.effect: DropShadow {
                                         transparentBorder: true
@@ -1103,7 +1119,7 @@ Rectangle {
                                     SpinBox {
                                         id:minLevelValue
                                         height: 25
-                                        width: 300
+                                        width: 200
                                         to: 4095
                                         from: 0
                                         value: 0
@@ -1139,7 +1155,7 @@ Rectangle {
                                         anchors.leftMargin: 15
                                         anchors.verticalCenter: parent.verticalCenter
                                         height: 25
-                                        width: 300
+                                        width: 200
                                         to: 4095
                                         from: 0
                                         value: 0
@@ -1407,6 +1423,7 @@ Rectangle {
                                         }
                                     }
                                     Button {
+                                        id:writeSettingsButton_2
                                         text: "Записать настройки"
                                         width: 180
                                         height: 50
@@ -1546,6 +1563,7 @@ Rectangle {
                                         }
                                     }
                                     Button {
+                                        id:writeSettingsButton_3
                                         text: "Записать настройки"
                                         width: 180
                                         height: 50
@@ -1656,7 +1674,7 @@ Rectangle {
                                     SpinBox {
                                         id: filterAvarageValueSec
                                         height: 25
-                                        width: 300
+                                        width: 200
                                         anchors.left: parent.left
                                         anchors.leftMargin: 15
                                         anchors.verticalCenter: parent.verticalCenter
@@ -1689,7 +1707,7 @@ Rectangle {
                                     SpinBox {
                                         id: filterLenghtMediana
                                         height: 25
-                                        width: 300
+                                        width: 200
                                         anchors.left: parent.left
                                         anchors.leftMargin: 15
                                         anchors.verticalCenter: parent.verticalCenter
@@ -1721,7 +1739,7 @@ Rectangle {
                                     SpinBox {
                                         id: filterValueQ
                                         height: 25
-                                        width: 300
+                                        width: 200
                                         anchors.left: parent.left
                                         anchors.leftMargin: 15
                                         anchors.top: emptyFullLabel.bottom
@@ -1754,7 +1772,7 @@ Rectangle {
                                     SpinBox {
                                         id: filterValueR
                                         height: 25
-                                        width: 300
+                                        width: 200
                                         anchors.left: parent.left
                                         anchors.leftMargin: 15
                                         anchors.verticalCenter: parent.verticalCenter
@@ -1875,6 +1893,7 @@ Rectangle {
                                         }
                                     }
                                     Button {
+                                        id:writeSettingsButton_4
                                         text: "Записать настройки"
                                         width: 180
                                         height: 50
@@ -2106,6 +2125,7 @@ Rectangle {
                                         }
                                     }
                                     Button {
+                                        id:writeSettingsButton_5
                                         text: "Записать настройки"
                                         width: 180
                                         height: 50

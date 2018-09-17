@@ -155,11 +155,15 @@ int DevicesFactory::getDeviceStatusByIndex(int index) {
     DeviceAbstract::E_State state = findDeviceByIndex(index)->second->getState();
     int ret = 0;
     switch(state) {
-    case DeviceAbstract::STATE_DISCONNECTED : ret = 0; break;
-    case DeviceAbstract::STATE_GET_TYPE : ret = 0; break;
-    case DeviceAbstract::STATE_CHECK_PASSWORD : ret = 0; break;
-    case DeviceAbstract::STATE_START_INIT : ret = 1; break;
-    case DeviceAbstract::STATE_NORMAL_READY : ret = 1; break;
+    case DeviceAbstract::STATE_DISCONNECTED :
+        ret = 0;
+        break;
+    case DeviceAbstract::STATE_GET_TYPE :
+    case DeviceAbstract::STATE_CHECK_PASSWORD :
+    case DeviceAbstract::STATE_START_INIT :
+    case DeviceAbstract::STATE_NORMAL_READY :
+        ret = 1;
+        break;
     }
     return ret;
 }
@@ -212,22 +216,22 @@ void DevicesFactory::devShedullerSlot() {
                         commandList.push_back(command);
                     }
                     break;
+                case DeviceAbstract::STATE_GET_TYPE:
+                    if(dev.second->getPriority() == 0) { // TODO: loop need priority
+                        if(dev.second->getPriority() == 0) { // TODO: loop need priority
+                            command = dev.second->getCommandToGetType();
+                            command.isNeedAckMessage = false;
+                            dev.second->makeDataToCommand(command);
+                            commandList.push_back(command);
+                        }
+                    }
+                    break;
                 case DeviceAbstract::STATE_CHECK_PASSWORD:
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         command = dev.second->getCommandtoCheckPassword();
                         command.isNeedAckMessage = false;
                         dev.second->makeDataToCommand(command);
                         commandList.push_back(command);
-                    }
-                    break;
-                case DeviceAbstract::STATE_GET_TYPE:
-                    if(dev.second->getPriority() == 0) { // TODO: loop need priority
-                        for(sizeCommand=0; sizeCommand!= dev.second->getCommandListToInit().size(); sizeCommand++) {
-                            command = dev.second->getCommandListToInit().at(sizeCommand);
-                            command.isNeedAckMessage = false;
-                            dev.second->makeDataToCommand(command);
-                            commandList.push_back(command);
-                        }
                     }
                     break;
                 case DeviceAbstract::STATE_START_INIT:

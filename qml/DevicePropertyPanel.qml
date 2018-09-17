@@ -18,7 +18,7 @@ Rectangle {
         case "Empty":
             devicePropertieslistModel1.currentIndex = 0
             break;
-        case "Progress TMK24":
+        case "PROGRESS TMK24":
             devicePropertieslistModel1.currentIndex = 2
             devPropertyProgressTmk24.setResetState()
             break;
@@ -34,9 +34,18 @@ Rectangle {
     function setPropertyToSerialPort(listData) {
         devPropertySerialPort.setPropertyValues(listData)
     }
-    function devShowPasswordIncorrect(devNameId) {
+    function devShowPasswordIncorrect(devType, devNameId) {
         dialogPasswordError.messageArg = devNameId
         dialogPasswordError.open()
+        switch(devType) {
+        case "PROGRESS TMK24":
+            devicePropertieslistModel1.currentIndex = 2
+            devPropertyProgressTmk24.setWriteSettingsIsNoAvailable()
+            break;
+        default:
+            console.log("devShowPasswordIncorrect -unrecognise type dev")
+            break;
+        }
     }
     function devShowTypeIncorrect(devNameId) {
         dialogTypeError.messageArg = devNameId

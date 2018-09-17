@@ -15,12 +15,18 @@ public:
     const QList<TreeItem*> &tree() const;
     const QList<QObject*> treeAsQObjects() const;
 
-
     void addConnection(QString name);
     void removeConnection(int index);
 
     void addDeviceToConnection(QString nameConnection, QString nameDevice, bool deviceStatus);
     void removeDeviceToConnection(int indexConnection, int indexDevice);
+
+    int getDevIndex();
+    int getIoIndex();
+    void setDevIndex(int);
+    void setIoIndex(int);
+
+    void setDevStatusByIndex(int devIndex, int status);
 
 signals:
     void treeChanged();
@@ -41,6 +47,13 @@ private slots:
 
 private:
     QList<TreeItem*> m_tree;
+
+    typedef struct {
+        int ioIndex;
+        int devIndex;
+    }sIndex;
+
+    sIndex curIndex = {0, 0};
 };
 
 #endif // MODEL_H

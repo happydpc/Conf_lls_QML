@@ -9,7 +9,7 @@ class ViewController : public QObject
 {
     Q_OBJECT
 public:
-    explicit ViewController(Model *pInterfaceListModel, QObject *parent = nullptr);
+    explicit ViewController(Model *pInterfaceModel, QObject *parent = nullptr);
 
     Q_INVOKABLE bool addConnectionSerialPort(QString name, QString baudrate);
 
@@ -73,7 +73,7 @@ signals:
 
     void devErrorOperation(QString message);
 
-    void devUpdatePasswordIncorrect(QString devNameId);
+    void devUpdatePasswordIncorrect(QString devType, QString devNameId);
 
     void devUpdateTypeDevIncorrect(QString devNameId);
 
@@ -115,13 +115,7 @@ private slots:
 
 private:
     ConnectionFactory *connFactory;
-    Model *interfaceListModel;
-
-    typedef struct {
-        int interfaceIndex;
-        int deviceIndex;
-    }sCurrentIndex;
-    sCurrentIndex index = {0, 0};
+    Model *interfaceTree;
 };
 
 #endif // VIEWCONTROLLER_H

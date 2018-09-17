@@ -148,7 +148,10 @@ public:
         sValueText firmware;
 
         struct {
-            sValueText get;
+            struct {
+                sValueText value;
+                bool authIsNormal;
+            }get;
             sValueText set;
             sValueText session;
         }password;

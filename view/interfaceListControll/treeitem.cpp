@@ -5,7 +5,8 @@ TreeItem::TreeItem(QString content, bool isParent, QObject *parent) :
     m_content(content),
     m_childItems(QList<TreeItem*>()),
     m_isOpen(false),
-    m_isCurrent(false)
+    m_isCurrent(false),
+    m_isConnected(false)
 {
     this->m_isParent = isParent;
 }
@@ -78,4 +79,13 @@ void TreeItem::setIsCurrent(bool isCurrent) {
 
 bool TreeItem::hasChild() const{
     return !m_childItems.isEmpty();
+}
+
+bool TreeItem::isConnected() {
+    return m_isConnected;
+}
+
+void TreeItem::setConnected(bool isConnected) {
+    m_isConnected = isConnected;
+    emit isConnectedChanged();
 }

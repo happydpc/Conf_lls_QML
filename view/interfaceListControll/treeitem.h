@@ -22,6 +22,10 @@ public:
     bool isOpen() const;
     void setIsOpen(bool isOpen);
 
+    Q_PROPERTY(bool isConnected READ isConnected WRITE setConnected NOTIFY isConnectedChanged)
+    bool isConnected();
+    void setConnected(bool isConnected);
+
     Q_PROPERTY(bool isCurrent READ isCurrent WRITE setIsCurrent NOTIFY isCurrentChanged)
     bool isCurrent() const;
     void setIsCurrent(bool isCurrent);
@@ -42,6 +46,7 @@ signals:
 
     void isOpenChanged();
     void isCurrentChanged();
+    void isConnectedChanged();
 
     void hasChildChanged();
 public slots:
@@ -52,6 +57,7 @@ private:
     bool m_isParent;
     bool m_isOpen;
     bool m_isCurrent;
+    bool m_isConnected;
 };
 
 #endif // TREEITEM_H

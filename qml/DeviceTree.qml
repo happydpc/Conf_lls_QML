@@ -58,7 +58,7 @@ Column{
                     anchors.leftMargin: 20
                     width: 16
                     height: 16
-                    color: "#58fce4"
+                    color: modelData.isConnected === true ? "#58fce4" : "#dbd9d9"
                 }
                 Text {
                     anchors.left: iconRect.right

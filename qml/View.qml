@@ -1,8 +1,6 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.4
 
-//import viewController 0.0
-
 Item {
     id: root
 
@@ -13,7 +11,7 @@ Item {
             projectPanel.devicePanel.devicePropertyPanel.setActivePanelType("SerialPort")
         }
         onSetActivePropertyProgressTmk24: {
-            projectPanel.devicePanel.devicePropertyPanel.setActivePanelType("Progress TMK24")
+            projectPanel.devicePanel.devicePropertyPanel.setActivePanelType("PROGRESS TMK24")
         }
         onUpdatePropertiesSerialPort: {
             projectPanel.devicePanel.devicePropertyPanel.setActivePanelType("SerialPort")
@@ -35,14 +33,12 @@ Item {
         }
         onDevFullReadyTmk4ux: {}
         onDevFullReadyTmk24: {}
-        onDevDisconnectedTmk4ux: {
-            //            projectPanel.devicePanel.devPropertyProgressTmk4ux.setNoReady()
-        }
+        onDevDisconnectedTmk4ux: {}
         onDevDisconnectedTmk24: {
             projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setNoReady()
         }
         onDevUpdatePasswordIncorrect: {
-            projectPanel.devicePanel.devicePropertyPanel.devShowPasswordIncorrect(devNameId)
+            projectPanel.devicePanel.devicePropertyPanel.devShowPasswordIncorrect(devType, devNameId)
         }
         onDevUpdateTypeDevIncorrect: {
             projectPanel.devicePanel.devicePropertyPanel.devShowTypeIncorrect(devNameId)
