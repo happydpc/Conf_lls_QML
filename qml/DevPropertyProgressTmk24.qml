@@ -2811,19 +2811,549 @@ Rectangle {
                                         anchors.left: parent.left
                                         anchors.leftMargin: 15
                                         Row {
-                                            width: 500
-                                            height: 150
+                                            id:tarRowRootMultiple
                                             spacing: 10
                                             Rectangle {
+                                                id:tarMultipleRootRectangle
                                                 radius: 20
                                                 width: stackSubProperty.width - 30
-                                                height: stackSubProperty.height - 50
-                                                color: "#ffff00"
+                                                height: stackSubProperty.height - 20
+                                                color: "transparent"
                                                 layer.enabled: true
                                                 layer.effect: DropShadow {
                                                     verticalOffset: 1
                                                     color: "#e0e5ef"
                                                     radius: 20
+                                                }
+                                                Rectangle {
+                                                    id:tarTabRectangleMultiple
+                                                    anchors.left: parent.left
+                                                    anchors.top: parent.top
+                                                    height: parent.height - 60
+                                                    width: parent.width / 2
+                                                    ControlOld.TableView {
+                                                        id:tarTabViewMultiple
+                                                        anchors.left: parent.left
+                                                        anchors.top: parent.top
+                                                        height: parent.height / 2
+                                                        width: parent.width
+                                                        ControlOld.TableViewColumn {
+                                                            id: tableDelegateValueMultiple
+                                                            role: "ValueLitrs"
+                                                            title: "Объем (литры)"
+                                                            property int valueLitrs: model.valueLitrs
+                                                            delegate: Rectangle {
+                                                                anchors.fill: parent
+                                                                color: valueInputValue.text.length >0 ? "transparent" : "red"
+                                                                TextInput {
+                                                                    id:valueInputValueMultiple
+                                                                    anchors.fill: parent
+                                                                    selectionColor: "red"
+                                                                    text:(model.valueLitrs===0) ? "0" : model.valueLitrs
+                                                                    validator: RegExpValidator { regExp: /[0-9A-F]+/ }
+                                                                    onEditingFinished: {
+                                                                        model.valueLitrs = text
+                                                                        remakeTarTableChart()
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        ControlOld.TableViewColumn {
+                                                            id: tableDelegateValueCNTMultiple
+                                                            role: "ValueCNT"
+                                                            title: "Уровень (CNT)"
+                                                            property int valueCNT: model.valueCNT
+                                                            delegate: Rectangle {
+                                                                anchors.fill: parent
+                                                                color: valueInputValueCNT.text.length >0 ? "transparent" : "red"
+                                                                TextInput {
+                                                                    id:valueInputValueCNTMultiple
+                                                                    anchors.fill: parent
+                                                                    selectionColor: "red"
+                                                                    text:(model.valueCNT===0) ? "0" : model.valueCNT
+                                                                    validator: RegExpValidator { regExp: /[0-9A-F]+/ }
+                                                                    onEditingFinished: {
+                                                                        model.valueCNT = text
+                                                                        remakeTarTableChart()
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        model: ListModel {
+                                                            id: tarTableListModelMultiple
+                                                        }
+                                                        onCurrentRowChanged: {
+                                                            tarTabView.selection.clear()
+                                                            tarTabView.selection.select(tarTabView.currentRow)
+                                                        }
+
+                                                        rowDelegate: Rectangle {
+                                                            SystemPalette {
+                                                                id: systemPaletteMultiple
+                                                                colorGroup: SystemPalette.Active
+                                                            }
+                                                            color: {
+                                                                var baseColor = styleData.alternate ? systemPaletteMultiple.alternateBase : systemPaletteMultiple.base
+                                                                return styleData.selected ? "orange" : baseColor
+                                                            }
+                                                        }
+                                                    }
+                                                    ChartView {
+                                                        id: chartTarTableMultiple
+                                                        anchors.top: tarTabViewMultiple.bottom
+                                                        anchors.topMargin: 5
+                                                        anchors.left: parent.left
+                                                        height: parent.height / 2
+                                                        width: parent.width
+                                                        theme: ChartView.ChartThemeBlueCerulean
+                                                        clip: true
+                                                        antialiasing: true
+                                                        title: "Отношение уровня к объему"
+                                                        property int chartTarTableLength: 1
+                                                        property int chartTarTableAmplitudeMax: 1
+                                                        ValueAxis {
+                                                            id: chartTarTableAxisXMultiple
+                                                            min: 0
+                                                            max: chartTarTableMultiple.chartTarTableLength
+                                                            tickCount: 5
+                                                        }
+                                                        ValueAxis {
+                                                            id: chartTarTableAxisYMultiple
+                                                            min: 0
+                                                            max: chartTarTableMultiple.chartTarTableAmplitudeMax
+                                                            tickCount: 5
+                                                        }
+                                                        LineSeries {
+                                                            id:chartTarTableLineMultiple
+                                                            color: "red"
+                                                            axisX: chartTarTableAxisXMultiple
+                                                            axisY: chartTarTableAxisYMultiple
+                                                        }
+                                                    }
+                                                    Rectangle {
+                                                        id:tarTabRectangleCurrentValuesMultiple
+                                                        anchors.left: tarTabRectangleMultiple.right
+                                                        anchors.leftMargin: 10
+                                                        anchors.top: parent.top
+                                                        radius: 20
+                                                        width: parent.width - 5
+                                                        height: parent.height / 2 + 40
+                                                        color: "#ffffff"
+
+                                                        ListView {
+                                                            id: tarListDevice
+                                                            clip: true
+                                                            height: parent.height
+                                                            width: parent.width - 10
+                                                            ScrollBar.vertical: ScrollBar {
+                                                                width: 20
+                                                            }
+                                                            delegate: Item {
+                                                                id: tarListDeviceDelegate
+                                                                height: 70
+                                                                width: parent.width
+
+                                                                Rectangle {
+                                                                    id:tarTabRectangleCurrLevelMultiple
+                                                                    anchors.left: parent.left
+                                                                    anchors.leftMargin: 2
+                                                                    anchors.top: parent.top
+                                                                    radius: 20
+                                                                    width: parent.width / 2 - 15
+                                                                    height: parent.height
+                                                                    color: "transparent"
+
+                                                                    Label {
+                                                                        id: levelTarCurrCntLabelMultiple
+                                                                        text: qsTr("PROGRESS TMK24\nSN[556566565233223]\nID[2]:")
+                                                                        anchors.left: parent.left
+                                                                        color: "#888d91"
+                                                                        anchors.leftMargin: 15
+                                                                        anchors.right: parent.right
+                                                                        anchors.rightMargin: 0
+                                                                    }
+                                                                    RadialBar {
+                                                                        id:levelTarCurrValuesMultiple
+                                                                        anchors.top: parent.top
+                                                                        anchors.topMargin: 0//10
+                                                                        anchors.left: levelTarCurrCntLabelMultiple.right
+                                                                        width: 120
+                                                                        height: parent.height
+                                                                        penStyle: Qt.RoundCap
+                                                                        dialType: RadialBar.FullDial
+                                                                        progressColor: "#05fF00"
+                                                                        foregroundColor: "transparent"
+                                                                        dialWidth: 15
+                                                                        startAngle: 180
+                                                                        spanAngle: 70
+                                                                        minValue: 0
+                                                                        maxValue: 100
+                                                                        value: 100
+                                                                        textFont {
+                                                                            family: "Halvetica"
+                                                                            italic: false
+                                                                            pointSize: 10
+                                                                        }
+                                                                        suffixText: "%"
+                                                                        textColor: "#888d91"
+                                                                        enabled: devPropertyProgressTmk24.isReady
+                                                                    }
+                                                                    RadialBar {
+                                                                        id:levelTarCurrCntValuesMultiple
+                                                                        anchors.top: parent.top
+                                                                        anchors.topMargin: 0//10
+                                                                        anchors.left: levelTarCurrValuesMultiple.right
+                                                                        anchors.leftMargin: 25
+                                                                        width: 120
+                                                                        height: parent.height
+                                                                        penStyle: Qt.RoundCap
+                                                                        dialType: RadialBar.FullDial
+                                                                        progressColor: "#080ff0"
+                                                                        foregroundColor: "transparent"
+                                                                        dialWidth: 15
+                                                                        startAngle: 180
+                                                                        spanAngle: 70
+                                                                        minValue: 0
+                                                                        maxValue: 5000000
+                                                                        value: 50000
+                                                                        textFont {
+                                                                            family: "Halvetica"
+                                                                            italic: false
+                                                                            pointSize: 10
+                                                                        }
+                                                                        suffixText: ""
+                                                                        textColor: "#888d91"
+                                                                        enabled: devPropertyProgressTmk24.isReady
+                                                                    }
+                                                                }
+                                                            }
+                                                            model: ListModel {
+                                                                id: logItemModel
+                                                            }
+                                                        }
+                                                        Component.onCompleted: {
+                                                            tarListDevice.model.append({"message":"message","status":0})
+                                                            tarListDevice.model.append({"message":"message","status":0})
+                                                            tarListDevice.model.append({"message":"message","status":0})
+                                                            tarListDevice.model.append({"message":"message","status":0})
+                                                        }
+                                                    }
+                                                    Rectangle {
+                                                        color: "#ffffff"
+                                                        anchors.top: tarTabRectangleCurrentValuesMultiple.bottom
+                                                        anchors.topMargin: 5
+                                                        anchors.left: tarTabRectangleMultiple.right
+                                                        anchors.leftMargin: 10
+                                                        radius: 20
+                                                        width: parent.width - 5
+                                                        height: parent.height / 2 - 45
+                                                        ChartView {
+                                                            id: chartTarCurrentValuesMultiple
+                                                            anchors.fill: parent
+                                                            theme: ChartView.ChartThemeLight
+                                                            title: "Уровень/Объем"
+                                                            antialiasing: true
+                                                            property int graphLength: 1
+                                                            property int graphAmplitudeMax: 1
+                                                            backgroundColor: "transparent"
+                                                            property alias animateColorUp: animateColorUpMultiple
+                                                            property alias animateColorDown: animateColorDownMultiple
+                                                            PropertyAnimation {id: animateColorUpMultiple; target: chartTarCurrentValuesMultiple; properties: "backgroundColor"; to: "#d9d9d9"; duration: 1000
+                                                                onStopped: {
+                                                                    chartTarCurrentValuesMultiple.animateColorDown.start()
+                                                                }
+                                                                onStarted: {
+                                                                    isNoiseDetected = true
+                                                                }
+                                                            }
+                                                            PropertyAnimation {id: animateColorDownMultiple; target: chartTarCurrentValuesMultiple; properties: "backgroundColor"; to: "transparent"; duration: 1000
+                                                                onStopped: {
+                                                                    isNoiseDetected = false
+                                                                }
+                                                            }
+
+                                                            ValueAxis {
+                                                                id: currentTarChartAxisXMultiple
+                                                                min: 0
+                                                                max: chartCurrentValue.graphLength
+                                                                tickCount: 5
+                                                            }
+                                                            ValueAxis {
+                                                                id: currentTarChartAxisYMultiple
+                                                                min: -0.1
+                                                                max: chartCurrentValue.graphAmplitudeMax
+                                                                tickCount: 5
+                                                            }
+                                                            LineSeries {
+                                                                id: currentTarChartLinesMultiple
+                                                                axisX: currentTarChartAxisXMultiple
+                                                                axisY: currentTarChartAxisYMultiple
+                                                            }
+                                                            enabled: devPropertyProgressTmk24.isReady
+                                                        }
+                                                    }
+                                                }
+                                                Rectangle {
+                                                    anchors.top: tarTabRectangleMultiple.bottom
+                                                    anchors.topMargin: 10
+                                                    radius: 20
+                                                    width: stackSubProperty.width -15
+                                                    height: 50//stackSubProperty.height - 80
+                                                    color: "transparent"
+                                                    layer.enabled: true
+                                                    layer.effect: DropShadow {
+                                                        transparentBorder: true
+                                                        horizontalOffset: 0
+                                                        verticalOffset: 1
+                                                        color: "#e0e5ef"
+                                                        samples: 10
+                                                        radius: 10
+                                                    }
+                                                    Row{
+                                                    ButtonRound {
+                                                        id:tarBatButtonsMultiple
+                                                        textLine:2
+                                                        widthBody: 200
+                                                        name: qsTr("Добавить текущее значение")
+                                                        enabled: devPropertyProgressTmk24.isReady
+                                                        onClicked: {
+                                                            if(!isNoiseDetected) {
+                                                                var values = viewController.getCurrentDevOtherData()
+                                                                if(values.length >0) {
+                                                                    var currValueCNT  = values[1]
+                                                                    var lastValueLitrs = 0
+                                                                    if(tarTableListModel.rowCount() > 0) {
+                                                                        var value = tarTableListModel.get(tarTableListModel.rowCount()-1)
+                                                                        lastValueLitrs = value.valueLitrs
+                                                                    }
+                                                                }
+                                                                tarTableListModel.append({"valueLitrs":parseInt(lastValueLitrs),"valueCNT":parseInt(currValueCNT)})
+                                                            } else {
+                                                                dialogAddTarValueWhenNoiseDetected.open()
+                                                            }
+                                                            timerAffterRefrashTarTable.start()
+                                                        }
+                                                        Dialog {
+                                                            id: dialogAddTarValueWhenNoiseDetectedMultiple
+                                                            title: "Добавление значения в таблицу"
+                                                            standardButtons: StandardButton.Close | StandardButton.Apply
+                                                            Rectangle {
+                                                                color: "transparent"
+                                                                implicitWidth: 500
+                                                                implicitHeight: 50
+                                                                Text {
+                                                                    text: "Обнаружен шум показаний\nДействительно добавить это значение?"
+                                                                    color: "black"
+                                                                    anchors.centerIn: parent
+                                                                }
+                                                            }
+                                                            onApply: {
+                                                                var values = viewController.getCurrentDevOtherData()
+                                                                if(values.length >0) {
+                                                                    var currValueCNT  = values[1]
+                                                                    var lastValueLitrs = 0
+                                                                    if(tarTableListModel.rowCount() > 0) {
+                                                                        var value = tarTableListModel.get(tarTableListModel.rowCount()-1)
+                                                                        lastValueLitrs = value.valueLitrs
+                                                                    }
+                                                                    tarTableListModel.append({"valueLitrs":parseInt(lastValueLitrs),"valueCNT":parseInt(currValueCNT)})
+                                                                }
+                                                                close()
+                                                            }
+                                                        }
+                                                    }
+                                                    ButtonRound {
+                                                        id:tarTabRemoveAddDeviceMultiple
+                                                        textLine:2
+                                                        widthBody: 165
+                                                        name: qsTr("Добавить устройство")
+                                                        //                                                    Dialog {
+                                                        //                                                        id: dialogRemoveTarTableRowMultiple
+                                                        //                                                        title: "Удаление записи таблицы"
+                                                        //                                                        standardButtons: StandardButton.Apply
+                                                        //                                                        Rectangle {
+                                                        //                                                            color: "transparent"
+                                                        //                                                            implicitWidth: 500
+                                                        //                                                            implicitHeight: 50
+                                                        //                                                            Text {
+                                                        //                                                                text: "Для удаления сначала кликните по удалялемой строке в таблице"
+                                                        //                                                                color: "black"
+                                                        //                                                                anchors.centerIn: parent
+                                                        //                                                            }
+                                                        //                                                        }
+                                                        //                                                        onApply: {
+                                                        //                                                            close()
+                                                        //                                                        }
+                                                        //                                                    }
+                                                        onClicked: {
+                                                            //                                                        if(tarTabView.currentRow == -1) {
+                                                            //                                                            dialogRemoveTarTableRowMultiple.open()
+                                                            //                                                            close()
+                                                            //                                                        } else {
+                                                            //                                                            tarTabView.model.remove(tarTabView.currentRow)
+                                                            //                                                            timerAffterRefrashTarTable.start()
+                                                            //                                                        }
+                                                        }
+                                                    }
+                                                    ButtonRound {
+                                                        id:tarTabRemoveStepMultiple
+                                                        textLine:2
+                                                        widthBody: 100
+                                                        name: qsTr("Удалить")
+                                                        Dialog {
+                                                            id: dialogRemoveTarTableRowMultiple
+                                                            title: "Удаление записи таблицы"
+                                                            standardButtons: StandardButton.Apply
+                                                            Rectangle {
+                                                                color: "transparent"
+                                                                implicitWidth: 500
+                                                                implicitHeight: 50
+                                                                Text {
+                                                                    text: "Для удаления сначала кликните по удалялемой строке в таблице"
+                                                                    color: "black"
+                                                                    anchors.centerIn: parent
+                                                                }
+                                                            }
+                                                            onApply: {
+                                                                close()
+                                                            }
+                                                        }
+                                                        onClicked: {
+                                                            if(tarTabView.currentRow == -1) {
+                                                                dialogRemoveTarTableRowMultiple.open()
+                                                                close()
+                                                            } else {
+                                                                tarTabView.model.remove(tarTabView.currentRow)
+                                                                timerAffterRefrashTarTable.start()
+                                                            }
+                                                        }
+                                                    }
+                                                    ButtonRound {
+                                                        id:tarTabCleaarFullMultiple
+                                                        textLine: 2
+                                                        name: "Очистить"
+                                                        Dialog {
+                                                            id: dialogClearTarTableMultiple
+                                                            visible: false
+                                                            title: "Очистка записей таблицы"
+                                                            standardButtons: StandardButton.Close | StandardButton.Apply
+                                                            Rectangle {
+                                                                color: "transparent"
+                                                                implicitWidth: 500
+                                                                implicitHeight: 50
+                                                                Text {
+                                                                    text: "Очистить таблицу\nВы уверены?"
+                                                                    color: "black"
+                                                                    anchors.centerIn: parent
+                                                                }
+                                                            }
+                                                            onApply: {
+                                                                var size = tarTabView.rowCount
+                                                                tarTabView.model.clear()
+                                                                timerAffterRefrashTarTable.start()
+                                                                close()
+                                                            }
+                                                        }
+                                                        onClicked: {
+                                                            dialogClearTarTableMultiple.open()
+                                                        }
+                                                    }
+                                                    ButtonRound {
+                                                        id:tarTabReadTableMultiple
+                                                        textLine: 2
+                                                        name:"Считать\nтаблицу"
+                                                        enabled: devPropertyProgressTmk24.isReady
+                                                        onClicked: {
+                                                            dialogReadTarTableMultiple.open()
+                                                        }
+                                                        Dialog {
+                                                            id: dialogReadTarTableMultiple
+                                                            visible: false
+                                                            title: "Чтение записей таблицы из устройства"
+                                                            standardButtons: StandardButton.Close | StandardButton.Apply
+                                                            Rectangle {
+                                                                color: "transparent"
+                                                                implicitWidth: 500
+                                                                implicitHeight: 50
+                                                                Text {
+                                                                    text: "Считать данные?\nВсе не сохраненные изменения будут утеряны!\nВы уверены?"
+                                                                    color: "black"
+                                                                    anchors.centerIn: parent
+                                                                }
+                                                            }
+                                                            onApply: {
+                                                                viewController.getCurrentDevTarTable()
+                                                                close()
+                                                            }
+                                                        }
+                                                    }
+                                                    ButtonRound {
+                                                        id:tarTabWriteTableMultiple
+                                                        textLine: 2
+                                                        name:"Записать\nтаблицу"
+                                                        enabled: devPropertyProgressTmk24.isReady
+                                                        Dialog {
+                                                            id: dialogWriteTarTableMultiple
+                                                            visible: false
+                                                            title: "Запись таблицы"
+                                                            standardButtons: StandardButton.Close | StandardButton.Apply
+                                                            Rectangle {
+                                                                color: "transparent"
+                                                                implicitWidth: 500
+                                                                implicitHeight: 50
+                                                                Text {
+                                                                    text: "Записать таблицу в устройство!\nВы уверены?"
+                                                                    color: "black"
+                                                                    anchors.centerIn: parent
+                                                                }
+                                                            }
+                                                            onApply: {
+                                                                writeTarTable()
+                                                                close()
+                                                            }
+                                                        }
+                                                        onClicked: {
+                                                            if(tarTabView.rowCount >0) {
+                                                                dialogWriteTarTableMultiple.open()
+                                                            }
+                                                        }
+                                                    }
+                                                    ButtonRound {
+                                                        id:tarTabTableExportMultiple
+                                                        textLine: 2
+                                                        name:"Выгрузить\n.csv"
+                                                        widthBody: 110
+                                                        FileDialog {
+                                                            id: dialogExportTarTableMultiple
+                                                            folder: shortcuts.home
+                                                            selectMultiple: false
+                                                            selectFolder: false
+                                                            title: "Save to file"
+                                                            nameFilters: [ "All files (*)" ]
+                                                            selectExisting: false
+                                                            onAccepted: {
+                                                                if(dialogExportTarTableMultiple.selectExisting == true) {
+                                                                    console.log(dialogExportTarTableMultiple.fileUrl)
+                                                                }
+                                                                else {
+                                                                    console.log(dialogExportTarTableMultiple.fileUrl)
+                                                                    console.log("You chose: " + dialogExportTarTableMultiple.fileUrls)
+                                                                    var tarArrayLiters = [];
+                                                                    var tarArrayCNT = [];
+                                                                    for(var i=0; i<tarTabView.rowCount; i++) {
+                                                                        var item = tarTabView.model.get(i)
+                                                                        tarArrayLiters.push(item.Level)
+                                                                        tarArrayCNT.push(item.Value)
+                                                                    }
+                                                                    viewController.setCurrentDevExportTarTable(dialogExportTarTableMultiple.fileUrls, tarArrayLiters,tarArrayCNT)
+                                                                }
+                                                            }
+                                                        }
+                                                        onClicked: {
+                                                            dialogExportTarTableMultiple.open()
+                                                        }
+                                                    }
+                                                    }
                                                 }
                                             }
                                         }

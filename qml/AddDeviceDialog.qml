@@ -39,7 +39,6 @@ Popup {
                 id: modelTypeDeviceText
             }
         }
-
         Label {
             id: lTypeDeviceId
             text: qsTr("ID")
@@ -54,7 +53,6 @@ Popup {
             to: 255
             value: 1
         }
-
         Label {
             id: lPassword
             height: typeDeviceIdText.height
@@ -63,7 +61,6 @@ Popup {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
-
         TextField {
             id: passwordText
             anchors.right: parent.right
