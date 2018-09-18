@@ -6,6 +6,7 @@
 #include "device/deviceAbstract.h"
 #include "command/commandController.h"
 #include "Progress_tmk24Data.h"
+#include "calibrate/calibrate.h"
 
 class Progress_tmk24 : public DeviceAbstract
 {
@@ -44,8 +45,8 @@ Progress_tmk24_H
 private slots:
     void setDefaultValues();
 
-private:
-    Progress_tmk24Data tmk24Data;
+private:   
+    Calibrate *calibrateTmk24;
     Progress_tmk24Data::T_calibrationTable calibrationTable;
     Progress_tmk24Data::T_settings newSettings;
     Progress_tmk24Data::T_settings settings;

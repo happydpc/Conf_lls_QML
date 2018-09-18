@@ -7,8 +7,8 @@
 #include <QMutex>
 #include "command/commandController.h"
 #include "device/deviceAbstract.h"
-#include "device/subDevices/Progress_tmk4UX.h"
-#include "device/subDevices/Progress_tmk24.h"
+#include "device/Progress_TMK4UX/Progress_tmk4UX.h"
+#include "device/Progress_TMK24/Progress_tmk24.h"
 
 class DevicesFactory : public QObject
 {
