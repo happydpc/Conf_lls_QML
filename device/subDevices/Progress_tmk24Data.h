@@ -2,6 +2,7 @@
 #define PROGRESS_TMK24DATA_H
 
 #include <QObject>
+#include <QList>
 
 #define SERIALNUMBER_STRING_SIZE            12
 #define PERSONAL_DATA_SIZE                  176
@@ -10,7 +11,7 @@
 #define DUT_TYPE                            13
 #define PASSWORD_SIZE                       8
 #define TAR_TABLE_SIZE                      30
-
+#define MAX_SIZE_HISTORY_CNT_LIST           10
 class Progress_tmk24Data : public QObject
 {
     Q_OBJECT
@@ -131,6 +132,7 @@ public:
             uint32_t value_u32;
             uint16_t value_u16;
         }value;
+        QList<uint32_t>history;
     }sValue;
 
     typedef struct {
@@ -181,6 +183,8 @@ public:
         }llssValues;
 
         bool typeIsValid;
+
+        bool noiseDetected;
 
     }S_lls_data;
 };

@@ -1,6 +1,7 @@
 #include <QDebug>
 #include "Progress_tmk24.h"
 #include "other/crc.h"
+#include <QList>
 
 Progress_tmk24::Progress_tmk24(QString uniqIdentId, QString passwordSession) {
     this->chartData = new QList<int>();
@@ -78,11 +79,12 @@ QStringList Progress_tmk24::getPropertyData() {
 
 QStringList Progress_tmk24::getCurrentData() {
     QList<QString> res;
-    res << QString::number(lls_data.fuelLevel.value.value_u32);
-    res << QString::number(lls_data.fuelProcent.value.value_u16);
-    res << QString::number(lls_data.cnt.value.value_u32);
-    res << QString::number(lls_data.freq.value.value_u16);
-    res << QString::number(lls_data.temp.value.value_i);
+    res.push_back(lls_data.fuelLevel.isValid == true ? QString::number(lls_data.fuelLevel.value.value_u32) : QString::number(0));
+    res.push_back(lls_data.fuelProcent.isValid ? QString::number(lls_data.fuelProcent.value.value_u16) : QString::number(0));
+    res.push_back(lls_data.cnt.isValid ? QString::number(lls_data.cnt.value.value_u32) : QString::number(0));
+    res.push_back(lls_data.freq.isValid ? QString::number(lls_data.freq.value.value_u16) : QString::number(0));
+    res.push_back(lls_data.temp.isValid ? QString::number(lls_data.temp.value.value_i) : QString::number(0));
+    res.push_back(QString::number(lls_data.noiseDetected));
     return res;
 }
 
@@ -412,6 +414,7 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                     lls_data.fuelLevel.value.value_u32 = value;
                     if(lls_data.settings.get.isValid) {
                         lls_data.fuelProcent.value.value_u32 = ((float)((float)value/lls_data.settings.get.value.maxLevel)*100);
+                        lls_data.fuelProcent.isValid = true;
                     } else {
                         lls_data.fuelProcent.value.value_u32 = 0;
                     }
@@ -634,7 +637,7 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                         emit eventDevice(DeviceAbstract::Type_DeviceEvent_PasswordError, getUniqIdent(), QString("Password error"), QStringList(""));
                     }
                     if(getState() == STATE_CHECK_PASSWORD) {
-                      setState(STATE_START_INIT);
+                        setState(STATE_START_INIT);
                     }
                     res = true;
                 }
@@ -655,10 +658,30 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                     cnt |= 0xFF & commandArrayReplyData.at(5);
                     cnt = cnt << 8;
                     cnt |= 0xFF & commandArrayReplyData.at(4);
-                    lls_data.cnt.value.value_u32 = cnt;
-                    lls_data.cnt.isValid = true;
-                    res = true;
+
+                    uint32_t maxProcentTollerance = lls_data.cnt.value.value_u32 / 100 * 5;
+                    if(lls_data.cnt.isValid) {
+                        lls_data.cnt.value.value_u32 = cnt;
+                        lls_data.cnt.history.push_back(lls_data.cnt.value.value_u32);
+                        if(lls_data.cnt.history.size() > MAX_SIZE_HISTORY_CNT_LIST) {
+                            lls_data.cnt.history.pop_front();
+                        }
+                    }
+                    if(lls_data.cnt.value.value_u32 != 0) {
+                        if(!lls_data.cnt.history.empty()) {
+                            lls_data.noiseDetected = false;
+                            for(auto i : lls_data.cnt.history) {
+                                if(cnt >= (i - maxProcentTollerance)
+                                        && cnt <= (i + maxProcentTollerance)) {
+                                } else {
+                                    lls_data.noiseDetected = true;
+                                }
+                            }
+                        }
+                    }
                 }
+                lls_data.cnt.value.value_u32 = cnt;
+                lls_data.cnt.isValid = true;
             }
                 break;
             default : break;

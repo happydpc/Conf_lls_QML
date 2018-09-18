@@ -19,31 +19,14 @@ Rectangle {
     property alias messageReadErrorsOk: messageReadErrorsOk
     property alias messageReadTarTableOk: messageReadTarTableOk
 
+    property bool isNoiseDetected: false
+
     function setNoReady() {
         devPropertyProgressTmk24.isReady = false
-
-//        if(chartTarCurrentValues.backgroundColor != "black") {
-            timerIndicateNoiseMeasure.start()
-//        }
     }
     function setReady() {
         devPropertyProgressTmk24.isReady = true
     }
-
-    Timer {
-        id: timerIndicateNoiseMeasure
-        property int color: 0xffffff
-        interval: 10
-        running: false
-        repeat: true
-        onTriggered: {
-            chartTarCurrentValues.isNoiseIndication = true//qsTr("#%1").arg(timerIndicateNoiseMeasure.color)
-//            timerIndicateNoiseMeasure.color =  timerIndicateNoiseMeasure.color - 10000
-//            console.log("color = " + qsTr("#%1").arg(timerIndicateNoiseMeasure.color))
-        }
-        ColorAnimation on color { to: "yellow"; duration: 1000 }
-    }
-
     function setResetState() {
         tabProperty.setCurrentIndex(1)
         stackSubProperty.setCurrentIndex(5)
@@ -79,8 +62,8 @@ Rectangle {
             //levelValue.text = values[0]
             levelProgress.value = values[1]
             levelTarCurrValues.value = values[1]
-            levelCnt.value = (80000000 / values[2]) * 100
-            levelTarCurrCntValues.value = (80000000 / values[2]) * 100
+            levelCnt.value = values[2]
+            levelTarCurrCntValues.value = values[2]
             levelFreq.value = values[3]
             levelTemp.value = values[4]
         }
@@ -106,6 +89,14 @@ Rectangle {
             currentTarChartLines.append(i, list[i])
         }
         logListView.positionViewAtEnd()
+
+        // noise detect
+        if(values[5] == true) {
+            if(chartTarCurrentValues.animateColorUp.running == false
+                    & chartTarCurrentValues.animateColorDown.running == false) {
+                chartTarCurrentValues.animateColorUp.start()
+            }
+        }
     }
     function addLogMessage(codeMessage, message) {
         if(logListView.model.length > 1000) {
@@ -226,39 +217,42 @@ Rectangle {
     }
     function remakeTarTableChart() {
         chartTarTableLine.clear()
-        var tarArrayLevel = [];
-        var tarArrayValue = [];
-        var maxLevel = 0;
-        var maxValue = 0;
+        var tarArrayLitrs = [];
+        var tarArrayCNT = [];
+        var maxValueCnt = 0;
+        var maxValueLitrs = 0;
         for(var i=0; i<tarTabView.rowCount; i++) {
+
             var item = tarTabView.model.get(i)
-            tarArrayLevel.push(item.Level)
-            tarArrayValue.push(item.Value)
-            if(maxLevel < item.Level) {
-                maxLevel = item.Level
+
+            tarArrayLitrs.push(item.valueLitrs)
+            tarArrayCNT.push(item.valueCNT)
+
+            if(maxValueCnt < item.valueCNT) {
+                maxValueCnt = item.valueCNT
             }
-            if(maxValue < item.Value) {
-                maxValue = item.Value
+            if(maxValueLitrs < item.valueLitrs) {
+                maxValueLitrs = item.valueLitrs
             }
-            console.log("Value =" + item.Value + "\nLevel=" + item.Level)
+            console.log("ValueCNT =" + item.valueCNT + "\nValue Litrs=" + item.valueLitrs)
         }
-        chartTarTable.chartTarTableAmplitudeMax = parseInt(maxLevel)
-        chartTarTable.chartTarTableLength = parseInt(maxValue)
+        chartTarTable.chartTarTableAmplitudeMax = parseInt(maxValueCnt)
+        chartTarTable.chartTarTableLength = parseInt(maxValueLitrs)
         console.log("MaxLevel =" + chartTarTable.chartTarTableAmplitudeMax)
         for(i=0; i<chartTarTable.chartTarTableLength; i++) {
-            chartTarTableLine.append(parseInt(tarArrayValue[i]), parseInt(tarArrayLevel[i]));
-            console.log("Add=" + i + " " + tarArrayLevel[i])
+            chartTarTableLine.append(parseInt(tarArrayLitrs[i]), parseInt(tarArrayCNT[i]));
+            console.log("Add=" + i + " " + tarArrayLitrs[i])
         }
     }
     function writeTarTable() {
-        var tarArrayLevel = [];
-        var tarArrayValue = [];
+        var tarArrayLiters = [];
+        var tarArrayCNT = [];
         for(var i=0; i<tarTabView.rowCount; i++) {
             var item = tarTabView.model.get(i)
-            tarArrayLevel.push(item.Level)
-            tarArrayValue.push(item.Value)
+            tarArrayLiters.push(item.valueLitrs)
+            tarArrayCNT.push(item.valueCNT)
         }
-        viewController.setCurrentDevTarTable(tarArrayLevel,tarArrayValue)
+        viewController.setCurrentDevTarTable(tarArrayCNT,tarArrayLiters)
     }
     function readTarTable(table) {
         tarTabView.model.clear()
@@ -272,7 +266,7 @@ Rectangle {
             } else {
                 level = table[i]
                 stepCounter = 0;
-                tarTableListModel.append({"Value":parseInt(value),"Level":parseInt(level)})
+                tarTableListModel.append({"valueLitrs":parseInt(value),"valueCNT":parseInt(level)})
             }
         }
         timerAffterRefrashTarTable.start()
@@ -521,7 +515,7 @@ Rectangle {
                                         startAngle: 180
                                         spanAngle: 70
                                         minValue: 0
-                                        maxValue: 20000
+                                        maxValue: 5000000
                                         value: 0
                                         textFont {
                                             family: "Halvetica"
@@ -2307,7 +2301,7 @@ Rectangle {
                                                 radius: 20
                                                 width: stackSubProperty.width - 30
                                                 height: stackSubProperty.height - 80
-                                                color: "#ffffff"
+                                                color: "transparent"
                                                 layer.enabled: true
                                                 layer.effect: DropShadow {
                                                     verticalOffset: 1
@@ -2328,42 +2322,43 @@ Rectangle {
                                                         width: parent.width
                                                         ControlOld.TableViewColumn {
                                                             id: tableDelegateValue
-                                                            role: "Value"
-                                                            title: "Объем"
-                                                            property int value: model.Value
+                                                            role: "ValueLitrs"
+                                                            title: "Объем (литры)"
+                                                            property int valueLitrs: model.valueLitrs
                                                             delegate: Rectangle {
-                                                                //                                                                anchors.fill: parent
+                                                                anchors.fill: parent
                                                                 color: valueInputValue.text.length >0 ? "transparent" : "red"
                                                                 TextInput {
                                                                     id:valueInputValue
                                                                     anchors.fill: parent
                                                                     selectionColor: "red"
-                                                                    text:(model.Value===0) ? "0" : model.Value
+                                                                    text:(model.valueLitrs===0) ? "0" : model.valueLitrs
                                                                     validator: RegExpValidator { regExp: /[0-9A-F]+/ }
                                                                     onEditingFinished: {
-                                                                        model.Value = text
+                                                                        model.valueLitrs = text
                                                                         remakeTarTableChart()
                                                                     }
                                                                 }
                                                             }
                                                         }
                                                         ControlOld.TableViewColumn {
-                                                            id: tableDelegateLevel
-                                                            role: "Level"
-                                                            title: "Уровень"
-                                                            property int level: model.Level
+                                                            id: tableDelegateValueCNT
+                                                            role: "ValueCNT"
+                                                            title: "Уровень (CNT)"
+                                                            property int valueCNT: model.valueCNT
                                                             delegate: Rectangle {
-                                                                color: valueInputLevel.text.length >0 ? "transparent" : "red"
+                                                                anchors.fill: parent
+                                                                color: valueInputValueCNT.text.length >0 ? "transparent" : "red"
                                                                 TextInput {
-                                                                    id:valueInputLevel
+                                                                    id:valueInputValueCNT
+                                                                    anchors.fill: parent
                                                                     selectionColor: "red"
-                                                                    text:(model.Level===0) ? "0" : model.Level
+                                                                    text:(model.valueCNT===0) ? "0" : model.valueCNT
                                                                     validator: RegExpValidator { regExp: /[0-9A-F]+/ }
                                                                     onEditingFinished: {
-                                                                        model.Level = text
+                                                                        model.valueCNT = text
                                                                         remakeTarTableChart()
                                                                     }
-
                                                                 }
                                                             }
                                                         }
@@ -2418,13 +2413,6 @@ Rectangle {
                                                             axisY: chartTarTableAxisY
                                                         }
                                                     }
-                                                    color: "#ffffff"
-                                                    layer.enabled: true
-                                                    layer.effect: DropShadow {
-                                                        verticalOffset: 1
-                                                        color: "#e0e5ef"
-                                                        radius: 20
-                                                    }
                                                 }
                                                 Rectangle {
                                                     id:tarTabRectangleCurrentValues
@@ -2432,7 +2420,7 @@ Rectangle {
                                                     anchors.leftMargin: 10
                                                     anchors.top: parent.top
                                                     radius: 20
-                                                    width: parent.width / 2 - 15
+                                                    width: parent.width / 2 - 5
                                                     height: parent.height /3
                                                     color: "#ffffff"
                                                     Rectangle {
@@ -2443,7 +2431,7 @@ Rectangle {
                                                         radius: 20
                                                         width: parent.width / 2 - 15
                                                         height: parent.height
-                                                        color: "#ffffff"
+                                                        color: "transparent"
                                                         Label {
                                                             id: levelTarCurrValuesLabel
                                                             text: qsTr("Уровень/Объем:")
@@ -2470,7 +2458,7 @@ Rectangle {
                                                             spanAngle: 70
                                                             minValue: 0
                                                             maxValue: 100
-                                                            value: 100
+                                                            value: 0
                                                             textFont {
                                                                 family: "Halvetica"
                                                                 italic: false
@@ -2480,24 +2468,15 @@ Rectangle {
                                                             textColor: "#888d91"
                                                             enabled: devPropertyProgressTmk24.isReady
                                                         }
-                                                        layer.enabled: true
-                                                        layer.effect: DropShadow {
-                                                            transparentBorder: true
-                                                            horizontalOffset: 0
-                                                            verticalOffset: 1
-                                                            color: "#e0e5ef"
-                                                            samples: 10
-                                                            radius: 10
-                                                        }
                                                     }
                                                     Rectangle {
                                                         anchors.left: tarTabRectangleCurrLevel.right
                                                         anchors.leftMargin: 10
                                                         anchors.top: parent.top
                                                         radius: 20
-                                                        width: parent.width / 2 - 15
+                                                        width: parent.width / 2 - 5
                                                         height: parent.height
-                                                        color: "#ffffff"
+                                                        color: "transparent"
                                                         Label {
                                                             id: levelTarCurrCntLabel
                                                             text: qsTr("Значение CNT:")
@@ -2523,7 +2502,7 @@ Rectangle {
                                                             startAngle: 180
                                                             spanAngle: 70
                                                             minValue: 0
-                                                            maxValue: 20000
+                                                            maxValue: 5000000
                                                             value: 0
                                                             textFont {
                                                                 family: "Halvetica"
@@ -2533,15 +2512,6 @@ Rectangle {
                                                             suffixText: ""
                                                             textColor: "#888d91"
                                                             enabled: devPropertyProgressTmk24.isReady
-                                                        }
-                                                        layer.enabled: true
-                                                        layer.effect: DropShadow {
-                                                            transparentBorder: true
-                                                            horizontalOffset: 0
-                                                            verticalOffset: 1
-                                                            color: "#e0e5ef"
-                                                            samples: 10
-                                                            radius: 10
                                                         }
                                                     }
                                                 }
@@ -2562,14 +2532,23 @@ Rectangle {
                                                         antialiasing: true
                                                         property int graphLength: 1
                                                         property int graphAmplitudeMax: 1
-                                                        property bool isNoiseIndication: false
-                                                        ColorAnimation {
-                                                            id:colorAnimation
-
-                                                            to: "green"
-                                                            duration: 10000
+                                                        backgroundColor: "transparent"
+                                                        property alias animateColorUp: animateColorUp
+                                                        property alias animateColorDown: animateColorDown
+                                                        PropertyAnimation {id: animateColorUp; target: chartTarCurrentValues; properties: "backgroundColor"; to: "#d9d9d9"; duration: 1000
+                                                            onStopped: {
+                                                                chartTarCurrentValues.animateColorDown.start()
+                                                            }
+                                                            onStarted: {
+                                                                isNoiseDetected = true
+                                                            }
                                                         }
-//                                                        backgroundColor: chartTarCurrentValues.isNoiseIndication == true ? chartTarCurrentValues.colorAnimation : "white"
+                                                        PropertyAnimation {id: animateColorDown; target: chartTarCurrentValues; properties: "backgroundColor"; to: "transparent"; duration: 1000
+                                                            onStopped: {
+                                                                isNoiseDetected = false
+                                                            }
+                                                        }
+
                                                         ValueAxis {
                                                             id: currentTarChartAxisX
                                                             min: 0
@@ -2611,9 +2590,51 @@ Rectangle {
                                                     textLine:2
                                                     widthBody: 200
                                                     name: qsTr("Добавить текущее значение")
+                                                    enabled: devPropertyProgressTmk24.isReady
                                                     onClicked: {
-                                                        tarTableListModel.append({"Value":"0","Level":"0"})
+                                                        if(!isNoiseDetected) {
+                                                            var values = viewController.getCurrentDevOtherData()
+                                                            if(values.length >0) {
+                                                                var currValueCNT  = values[1]
+                                                                var lastValueLitrs = 0
+                                                                if(tarTableListModel.rowCount() > 0) {
+                                                                    var value = tarTableListModel.get(tarTableListModel.rowCount()-1)
+                                                                    lastValueLitrs = value.valueLitrs
+                                                                }
+                                                            }
+                                                            tarTableListModel.append({"valueLitrs":parseInt(lastValueLitrs),"valueCNT":parseInt(currValueCNT)})
+                                                        } else {
+                                                            dialogAddTarValueWhenNoiseDetected.open()
+                                                        }
                                                         timerAffterRefrashTarTable.start()
+                                                    }
+                                                    Dialog {
+                                                        id: dialogAddTarValueWhenNoiseDetected
+                                                        title: "Добавление значения в таблицу"
+                                                        standardButtons: StandardButton.Close | StandardButton.Apply
+                                                        Rectangle {
+                                                            color: "transparent"
+                                                            implicitWidth: 500
+                                                            implicitHeight: 50
+                                                            Text {
+                                                                text: "Обнаружен шум показаний\nДействительно добавить это значение?"
+                                                                color: "black"
+                                                                anchors.centerIn: parent
+                                                            }
+                                                        }
+                                                        onApply: {
+                                                            var values = viewController.getCurrentDevOtherData()
+                                                            if(values.length >0) {
+                                                                var currValueCNT  = values[1]
+                                                                var lastValueLitrs = 0
+                                                                if(tarTableListModel.rowCount() > 0) {
+                                                                    var value = tarTableListModel.get(tarTableListModel.rowCount()-1)
+                                                                    lastValueLitrs = value.valueLitrs
+                                                                }
+                                                                tarTableListModel.append({"valueLitrs":parseInt(lastValueLitrs),"valueCNT":parseInt(currValueCNT)})
+                                                            }
+                                                            close()
+                                                        }
                                                     }
                                                 }
                                                 ButtonRound {
@@ -2759,14 +2780,14 @@ Rectangle {
                                                             else {
                                                                 console.log(dialogExportTarTable.fileUrl)
                                                                 console.log("You chose: " + dialogExportTarTable.fileUrls)
-                                                                var tarArrayLevel = [];
-                                                                var tarArrayValue = [];
+                                                                var tarArrayLiters = [];
+                                                                var tarArrayCNT = [];
                                                                 for(var i=0; i<tarTabView.rowCount; i++) {
                                                                     var item = tarTabView.model.get(i)
-                                                                    tarArrayLevel.push(item.Level)
-                                                                    tarArrayValue.push(item.Value)
+                                                                    tarArrayLiters.push(item.Level)
+                                                                    tarArrayCNT.push(item.Value)
                                                                 }
-                                                                viewController.setCurrentDevExportTarTable(dialogExportTarTable.fileUrls, tarArrayLevel,tarArrayValue)
+                                                                viewController.setCurrentDevExportTarTable(dialogExportTarTable.fileUrls, tarArrayLiters,tarArrayCNT)
                                                             }
                                                         }
                                                     }
