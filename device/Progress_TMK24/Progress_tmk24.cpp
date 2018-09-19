@@ -9,6 +9,11 @@ Progress_tmk24::Progress_tmk24(QString uniqIdentId, QString passwordSession) {
     this->state = STATE_DISCONNECTED;
     this->lls_data.password.session.value = passwordSession;
     this->lls_data.password.session.isValid = true;
+
+    this->calibrateTmk24 = new Calibrate();
+    // add self
+    calibrateTmk24->addDevice(getDevTypeName(), uniqIdentId, lls_data.serialNum.value);
+
     setDefaultValues();
 }
 
@@ -61,13 +66,22 @@ QList<int> Progress_tmk24::getChart() {
     return *chartData;
 }
 
+Calibrate* Progress_tmk24::getCalibrate() {
+    return calibrateTmk24;
+}
+
+
 // TODO: is valid handler!
 QStringList Progress_tmk24::getPropertyData() {
     QStringList res;
-    if(lls_data.serialNum.value.at(0) > 0x255) {
-        res << "Не присвоен";
+    if(!lls_data.serialNum.value.isEmpty()) {
+        if(lls_data.serialNum.value.at(0) > 0x255) {
+            res << "Не присвоен";
+        } else {
+            res << lls_data.serialNum.value;
+        }
     } else {
-        res << lls_data.serialNum.value;
+        res << "Не присвоен";
     }
     res << QString::number(settings.netAddress);
     res << getDevTypeName();

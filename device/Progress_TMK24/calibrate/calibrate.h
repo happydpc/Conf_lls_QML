@@ -13,10 +13,16 @@ public:
     explicit Calibrate(QObject *parent = nullptr);
 
 public slots:
-    void reset();
 
-    bool addDevice(QString caption, QString uniqNameId);
+    bool addDevice(QString devTypeName, QString devId, QString devSn);
     void removeDevice(int index);
+
+    int getDeviceCount();
+    QStringList getDeviceProperty(int index);
+
+    QList<QStringList> getCalibrateList();
+
+    void reset();
 
     bool addStep(uint32_t valueLiters, QList<uint32_t>valueCntDevs);
     bool changeStep(int index, uint32_t valueLiters, QList<uint32_t>valueCntDevs);
@@ -31,12 +37,17 @@ private:
     typedef struct {
         uint32_t valueCnt;
         uint32_t valueLiters;
-    }sValues;
+    }sDevValues;
 
-    QList<QPair<QString, sValues>>devList;
+    typedef struct {
+        QString devTypeName;
+        QString devId;
+        QString devSn;
+    }sDevIdentBlock;
+
+    QList<QPair<sDevIdentBlock, sDevValues>>devList;
 
     QString lastError;
-
 };
 
 #endif // CALIBRATE_H

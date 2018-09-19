@@ -26,7 +26,7 @@ public:
     QString getUniqIdent() override;
     bool makeDataToCommand(CommandController::sCommandData &commandData) override;
     bool placeDataReplyToCommand(QByteArray &commandArrayReplyData, bool isNeedMessageAboutExecuted) override;
-Progress_tmk24_H
+
     CommandController::sCommandData getCommandToCheckConnected() override;
     CommandController::sCommandData getCommandToGetType() override;
     CommandController::sCommandData getCommandtoCheckPassword() override;
@@ -34,6 +34,8 @@ Progress_tmk24_H
     QList<CommandController::sCommandData> getCommandListToCurrentData() override;
     QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList> data) override;
     QList<CommandController::sCommandData> getCommandCustom(QString operation) override;
+
+    Calibrate* getCalibrate();
 
     QList<int> getChart() override;
 

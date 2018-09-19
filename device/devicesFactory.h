@@ -38,37 +38,28 @@ public slots:
     bool removeDevice(QString uniqDevName);
     bool removeDeviceByIndex(int index);
     bool removeDeviceAll();
-
     QString getDeviceName(int index);
     QString getDeviceNameByType(DevicesFactory::E_DeviceType type);
-
     E_DeviceType getDeviceType(QString typeText);
     E_DeviceType getDeviceType(int index);
-
     void setDeviceInitCommandByIndex(int index);
-
     int getDeviceCount();
     QStringList getAvailableDeviceTypes();
     QStringList getDeviceHeaderByIndex(int index);
     QString getDeviceIdTextByIndex(int index);
-
     QPair<QStringList,QStringList> getDeviceSettigns(int indexDev);
-
     QStringList getDeviceErrrors(int indexDev);
-
     int getDeviceStatusByIndex(int index);
-
     QList<int> getDeviceChartByIndex(int index);
     QList<QString> getDeviceCurrentDataByIndex(int index);
     QStringList getDevicePropertyByIndex(int index);
     QStringList getDeviceProperty(int indexDev);
-
     DeviceAbstract::E_State getDevStateByIndex(int index);
 
+    DeviceAbstract* getDeviceToDeviceAbstract(int index);
+
     void placeReplyDataFromInterface(QByteArray data);
-
     void setDeviceReInitByIndex(int index);
-
     void sendCustomCommadToDev(int indexDev, QString operation, QPair<QStringList, QStringList> arguments);
     void sendCustomCommadToDev(int indexDev, QString operation);
 

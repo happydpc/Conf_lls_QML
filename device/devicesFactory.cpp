@@ -184,6 +184,10 @@ QStringList DevicesFactory::getAvailableDeviceTypes() {
     return types;
 }
 
+DeviceAbstract * DevicesFactory::getDeviceToDeviceAbstract(int index) {
+    return deviceMap.at(index).second;
+}
+
 void DevicesFactory::devShedullerSlot() {
     int sizeCommand = 0;
     if(!deviceMap.empty()) {

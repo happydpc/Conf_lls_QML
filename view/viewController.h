@@ -40,10 +40,34 @@ public:
     Q_INVOKABLE void getCurrentDevErrors();
 
     Q_INVOKABLE void getCurrentDevTarTable();
+    Q_INVOKABLE void getDevTarTableFromListId(QStringList devsId);
+
     Q_INVOKABLE void setCurrentDevTarTable(QStringList values, QStringList levels);
     Q_INVOKABLE void setCurrentDevExportTarTable(QString pathFile, QStringList values, QStringList levels);
 
     Q_INVOKABLE void setCurrentDevChangeId(QString passwordCheck, QString idNew);
+
+
+    //********************* TARING *********************//
+    //
+    // какие устройства доступны для добавления в множественную таррировку
+    // устройство с вкладки которого это начинают
+    // уже должно быть туда добавленно, type, id, sn
+    Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevType();
+    Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevId();
+    Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevSerialNumber();
+    //
+    // возвразщает кол-во уже добавленных уст-в
+    Q_INVOKABLE int getStayedDevTarrirCount();
+    // возвращает устройства добавленные в структуру тарировки (но без значений), type, id, sn
+    Q_INVOKABLE QStringList getStayedDevTarrir_DevType();
+    Q_INVOKABLE QStringList getStayedDevTarrir_DevId();
+    Q_INVOKABLE QStringList getStayedDevTarrir_DevSerialNumber();
+
+    // добавляем датчики в таблицу тарировки
+    Q_INVOKABLE bool addTarrirDev(QString devTypeName, QString devId);
+    Q_INVOKABLE void removeTarrirDev(QString devTypeName, QString devId);
+
 
 signals:
 

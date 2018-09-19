@@ -24,6 +24,9 @@
         <file>qml/DevicePanel.qml</file>
         <file>qml/TabButtonUp.qml</file>
         <file>qml/ButtonRound.qml</file>
+        <file>qml/AddDeviceTarirDialog.qml</file>
+        <file>qml/TestUi.qml</file>
+        <file>qml/TestUiForm.ui.qml</file>
     </qresource>
     <qresource prefix="/new/icons">
         <file>images/icon/normal.png</file>

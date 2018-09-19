@@ -16,8 +16,8 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
 
         addConnectionSerialPort(strLis.first(), QString("19200"));
 
-        for(int i=0; i<1; i++) { // 15
-            addDeviceToConnection("PROGRESS TMK24", QString::number(i+1), "1234");
+        for(int i=1; i<15; i++) { // 15
+            addDeviceToConnection("PROGRESS TMK24", QString::number(i+1), "");
         }
     });
 }
@@ -112,7 +112,9 @@ int ViewController::getInterfaceCount() {
 QList<int> ViewController::getCurrentDevChart() {
     QList<int> res;
     QString name = connFactory->getInteraceNameFromIndex(interfaceTree->getIoIndex());
-    res = connFactory->getInterace(name)->getDeviceFactory()->getDeviceChartByIndex(interfaceTree->getDevIndex());
+    if(!name.isEmpty()) {
+        res = connFactory->getInterace(name)->getDeviceFactory()->getDeviceChartByIndex(interfaceTree->getDevIndex());
+    }
     return res;
 }
 
@@ -192,9 +194,19 @@ void ViewController::getCurrentDevErrors() {
     getDeviceFactoryByIndex(interfaceTree->getIoIndex())->sendCustomCommadToDev(interfaceTree->getDevIndex(), "read current dev errors");
 }
 
+
+
+
+//************************************************************************/
+//**                        TARIR                                       **/
+//************************************************************************/
 void ViewController::getCurrentDevTarTable() {
     getDeviceFactoryByIndex(interfaceTree->getIoIndex())->sendCustomCommadToDev(interfaceTree->getDevIndex(), "read current dev tar table");
 }
+void ViewController::getDevTarTableFromListId(QStringList devsId) {
+//getDeviceFactoryByIndex()
+}
+
 
 void ViewController::setCurrentDevTarTable(QStringList values, QStringList levels) {
     QPair<QStringList,QStringList> table;
@@ -254,12 +266,106 @@ void ViewController::setCurrentDevChangeId(QString passwordCheck, QString idNew)
     id.first.push_back("netAddress_value");
     id.second.push_back(idNew);
     if((getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceProperty(interfaceTree->getDevIndex()).at(5) == passwordCheck)
-    && (idNew.toInt() > 0)) {
+            && (idNew.toInt() > 0)) {
         getDeviceFactoryByIndex(interfaceTree->getIoIndex())->sendCustomCommadToDev(interfaceTree->getDevIndex(), "change current dev id", id);
     } else {
         emit devErrorOperation(tr("Ошибка операции!\nНе правильные параметры или ошибка в действиях оператора"));
     }
 }
+
+QStringList ViewController::getAvailableDevTarrirAdd_DevType() {
+    QStringList resList;
+    int devCount = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
+    for(int i=0; i<devCount; i++) {
+        resList << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(i);
+    }
+    return resList;
+}
+QStringList ViewController::getAvailableDevTarrirAdd_DevId() {
+    QStringList resList;
+    int devCount = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
+    for(int i=0; i<devCount; i++) {
+        resList << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceIdTextByIndex(i);
+    }
+    return resList;
+}
+QStringList ViewController::getAvailableDevTarrirAdd_DevSerialNumber() {
+    QStringList resList;
+    int devCount = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
+    for(int i=0; i<devCount; i++) {
+        resList << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(i).at(0); // sn
+    }
+    return resList;
+}
+
+int ViewController::getStayedDevTarrirCount() {
+    DeviceAbstract *pAbstract = nullptr;
+    pAbstract = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
+    if(pAbstract != nullptr) {
+        if(pAbstract->getDevTypeName() == "PROGRESS TMK24") {
+            return dynamic_cast<Progress_tmk24*>(pAbstract)->getCalibrate()->getDeviceCount();
+        }
+    }
+    return 0;
+}
+QStringList ViewController::getStayedDevTarrir_DevType() {
+    QStringList res;
+    DeviceAbstract *pAbstract = nullptr;
+    pAbstract = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
+    if(pAbstract != nullptr) {
+        if(pAbstract->getDevTypeName() == "PROGRESS TMK24") {
+            Progress_tmk24 *pTmk24 = dynamic_cast<Progress_tmk24*>(pAbstract);
+            for(int i=0; i<pTmk24->getCalibrate()->getDeviceCount(); i++) {
+                res << pTmk24->getCalibrate()->getDeviceProperty(i).at(0); // type
+            }
+        }
+    }
+    return res;
+}
+QStringList ViewController::getStayedDevTarrir_DevId() {
+    QStringList res;
+    DeviceAbstract *pAbstract = nullptr;
+    pAbstract = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
+    if(pAbstract != nullptr) {
+        if(pAbstract->getDevTypeName() == "PROGRESS TMK24") {
+            Progress_tmk24 *pTmk24 = dynamic_cast<Progress_tmk24*>(pAbstract);
+            for(int i=0; i<pTmk24->getCalibrate()->getDeviceCount(); i++) {
+                res << pTmk24->getCalibrate()->getDeviceProperty(i).at(1); // id
+            }
+        }
+    }
+    return res;
+}
+QStringList ViewController::getStayedDevTarrir_DevSerialNumber() {
+    QStringList res;
+    DeviceAbstract *pAbstract = nullptr;
+    pAbstract = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
+    if(pAbstract != nullptr) {
+        if(pAbstract->getDevTypeName() == "PROGRESS TMK24") {
+            Progress_tmk24 *pTmk24 = dynamic_cast<Progress_tmk24*>(pAbstract);
+            for(int i=0; i<pTmk24->getCalibrate()->getDeviceCount(); i++) {
+                res << pTmk24->getCalibrate()->getDeviceProperty(i).at(1); // 2
+            }
+        }
+    }
+    return res;
+}
+bool ViewController::addTarrirDev(QString devTypeName, QString devId) {
+    bool res = false;
+    DeviceAbstract *pAbstract = nullptr;
+    pAbstract = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
+    if(pAbstract != nullptr) {
+        if(pAbstract->getDevTypeName() == "PROGRESS TMK24") {
+            Progress_tmk24 *pTmk24 = dynamic_cast<Progress_tmk24*>(pAbstract);
+            res = pTmk24->getCalibrate()->addDevice(devTypeName, devId,"-----");
+        }
+    }
+    return res;
+}
+void ViewController::removeTarrirDev(QString devTypeName, QString devId) {
+
+}
+
 
 void ViewController::deviceConnected(DevicesFactory::E_DeviceType type, QString uniqNameId) {
     if(isCurrentDevice(uniqNameId)) {
@@ -345,7 +451,7 @@ void ViewController::interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateT
 
     switch(type) {
     case ConnectionFactory::Type_Update_ChangedIndex:
-//        emit changeInterfaceTreeStatus(interfaceTree->getIoIndex(), 1);
+        //        emit changeInterfaceTreeStatus(interfaceTree->getIoIndex(), 1);
         break;
     case ConnectionFactory::Type_Update_Add:
     case ConnectionFactory::Type_Update_Removed:
@@ -357,8 +463,8 @@ void ViewController::interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateT
             // TODO: status interface
             status.push_back(1);
         }
-//        interfaceListModel->
-//        emit remakeInterfaceTree(list, status);
+        //        interfaceListModel->
+        //        emit remakeInterfaceTree(list, status);
         break;
     }
     if(connFactory->getCountConnection() >0) {
