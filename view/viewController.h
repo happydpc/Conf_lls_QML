@@ -56,9 +56,10 @@ public:
     Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevType();
     Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevId();
     Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevSerialNumber();
-    //
+
     // возвразщает кол-во уже добавленных уст-в
     Q_INVOKABLE int getStayedDevTarrirCount();
+
     // возвращает устройства добавленные в структуру тарировки (но без значений), type, id, sn
     Q_INVOKABLE QStringList getStayedDevTarrir_DevType();
     Q_INVOKABLE QStringList getStayedDevTarrir_DevId();
@@ -74,6 +75,8 @@ public:
             // ожидаем ответа по очереди
             // когда последний опрошен, отсылаем результат в qml
             // если ответа небыло, значение выделить красным и вывести message
+    Q_INVOKABLE void getTarrirAllDev();
+    Q_INVOKABLE QStringList getTableAtDevice(int index);
 
     //2) записать таблицу в добавленные устройства
             // как 1
@@ -151,7 +154,8 @@ signals:
     void devUpdateWriteSettingExecuted(QString devNameId);
     void devUpdateWriteTarTableExecuted(QString devNameId);
     void devUpdateWriteScaleMeasureExecuted(QString devNameId);
-    void devUpdateReadTarTable(QString devNameId, QStringList table);
+
+    void devUpdateReadTarTable(int devCount);
 
     void devUpdateLogMessage(int codeMessage, QString message);
 
@@ -170,7 +174,7 @@ private slots:
 
     void interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateType type);
     void deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, int index);
-    void deviceReadyCustomCommand(int index, QString message, QStringList customData);
+    void deviceReadyCustomCommand(int index, QString message, QStringList customData, CommandController::sCommandData commmandData);
 
     bool isCurrentDevice(QString uniqNameId);
 
@@ -184,6 +188,8 @@ private slots:
 private:
     ConnectionFactory *connFactory;
     Model *interfaceTree;
+
+    Progress_tmk24Service *tmk24Service;
 };
 
 #endif // VIEWCONTROLLER_H

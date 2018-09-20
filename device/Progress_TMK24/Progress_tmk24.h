@@ -3,10 +3,11 @@
 
 #include <QObject>
 #include <QVector>
+#include "Progress_tmk24Data.h"
+#include "Progress_tmk24Service.h"
+#include "../service/serviceDevicesAbstract.h"
 #include "device/deviceAbstract.h"
 #include "command/commandController.h"
-#include "Progress_tmk24Data.h"
-#include "calibrate/calibrate.h"
 
 class Progress_tmk24 : public DeviceAbstract
 {
@@ -25,7 +26,7 @@ public:
     QStringList getErrors() override;
     QString getUniqIdent() override;
     bool makeDataToCommand(CommandController::sCommandData &commandData) override;
-    bool placeDataReplyToCommand(QByteArray &commandArrayReplyData, bool isNeedMessageAboutExecuted) override;
+    bool placeDataReplyToCommand(QByteArray &commandArrayReplyData, CommandController::sCommandData commandReqData) override;
 
     CommandController::sCommandData getCommandToCheckConnected() override;
     CommandController::sCommandData getCommandToGetType() override;
@@ -34,9 +35,6 @@ public:
     QList<CommandController::sCommandData> getCommandListToCurrentData() override;
     QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList> data) override;
     QList<CommandController::sCommandData> getCommandCustom(QString operation) override;
-
-    Calibrate* getCalibrate();
-
     QList<int> getChart() override;
 
     QList<QString>getCurrentOtherData();
@@ -47,8 +45,7 @@ public:
 private slots:
     void setDefaultValues();
 
-private:   
-    Calibrate *calibrateTmk24;
+private:
     Progress_tmk24Data::T_calibrationTable calibrationTable;
     Progress_tmk24Data::T_settings newSettings;
     Progress_tmk24Data::T_settings settings;

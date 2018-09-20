@@ -34,8 +34,9 @@ bool DevicesFactory::addNewDevice(E_DeviceType type, QString uniqDevName, QStrin
     }
 
     // TODO: может быть лучше как-то подругому перехватывать указатаель?
-    connect(findDeviceByUnicIdent(uniqDevName)->second, SIGNAL(eventDevice(DeviceAbstract::E_DeviceEvent,QString,QString,QStringList)),
-            this, SLOT(deviceEventSlot(DeviceAbstract::E_DeviceEvent,QString,QString,QStringList)));
+    connect(findDeviceByUnicIdent(uniqDevName)->second,
+            SIGNAL(eventDeviceUpdateState(DeviceAbstract::E_DeviceEvent,QString,int,QString,QStringList, CommandController::sCommandData)),
+            this, SLOT(deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEvent,QString,int,QString,QStringList, CommandController::sCommandData)));
     return res;
 }
 
@@ -268,8 +269,7 @@ void DevicesFactory::devShedullerSlot() {
 void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
     for(auto dev: deviceMap) {
         if(dev.second->getUniqIdent() == commandList.first().deviceIdent) {
-            //qDebug() << "placeDataReplyToCommand -len=" << data.length();
-            dev.second->placeDataReplyToCommand(data, commandList.first().isNeedAckMessage);
+            dev.second->placeDataReplyToCommand(data, commandList.first());
             break;
         }
     }
@@ -278,9 +278,10 @@ void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
     devShedullerTimer->start(devShedullerControlInterval);
 }
 
-// сюда приходят все сигналы от девайсов
-void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QString devUniqueId, QString message, QStringList customData) {
-    //qDebug() << "deviceEventSlot -" << message << "uniqId=" << devUniqueId;
+// сюда приходят все сигналы от девайсов (смена состояние и рез кастомных команд)
+void DevicesFactory::deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEvent eventType, QString devUniqueId,
+                                                    int command, QString operationResult, QStringList customData,
+                                                    CommandController::sCommandData commandData) {
     switch (eventType) {
     case DeviceAbstract::Type_DeviceEvent_Connected:
         //
@@ -341,7 +342,7 @@ void DevicesFactory::deviceEventSlot(DeviceAbstract::E_DeviceEvent eventType, QS
         break;
 
     case DeviceAbstract::Type_DeviceEvent_ExectCustomCommandNorlal:
-        emit deviceReadyCustomCommand(findDeviceIndex(devUniqueId), message, customData);
+        emit deviceReadyCustomCommand(findDeviceIndex(devUniqueId), operationResult, customData, commandData);
         break;
     case DeviceAbstract::Type_DeviceEvent_ExectCustomCommandError:
         // TODO: --
@@ -406,7 +407,7 @@ int DevicesFactory::findDeviceIndex(QString uniqNameId) {
         }
         index++;
     }
-    return 0;
+    return -1;
 }
 
 void DevicesFactory::setDeviceReInitByIndex(int index) {

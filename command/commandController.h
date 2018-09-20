@@ -25,6 +25,8 @@ public:
             QList<QString>key;
             QList<double>value;
         }args;
+
+        QString operationHeader;
     }sCommandData;
 
     bool addCommandToStack(sCommandData commandData);

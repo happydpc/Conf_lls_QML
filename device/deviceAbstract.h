@@ -40,7 +40,7 @@ public:
     virtual void setState(DeviceAbstract::E_State) = 0;
     virtual bool makeDataToCommand(CommandController::sCommandData &commandData) = 0;
 
-    virtual bool placeDataReplyToCommand(QByteArray &commandArrayReplyData, bool isNeedMessageAboutExecuted) = 0;
+    virtual bool placeDataReplyToCommand(QByteArray &commandArrayReplyData, CommandController::sCommandData commandReqData) = 0;
     virtual CommandController::sCommandData getCommandToCheckConnected() = 0;
     virtual CommandController::sCommandData getCommandToGetType() = 0;
     virtual CommandController::sCommandData getCommandtoCheckPassword() = 0;
@@ -57,7 +57,8 @@ public:
 
 signals:
 
-    void eventDevice(DeviceAbstract::E_DeviceEvent typeEvent, QString deviceUniqueId, QString message, QStringList customData);
+    void eventDeviceUpdateState(DeviceAbstract::E_DeviceEvent typeEvent, QString deviceUniqueId,
+                                int operation, QString operationResult, QStringList customData, CommandController::sCommandData commandData);
 
 private:
     int priority = 0;

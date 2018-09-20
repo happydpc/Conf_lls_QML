@@ -70,7 +70,7 @@ Item {
             projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.addLogMessage(codeMessage, message)
         }
         onDevUpdateReadTarTable: {
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readTarTable(table)
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readTarTable(devCount)
         }
         onDevUpdateWriteTarTableExecuted: {
             projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadTarTableOk.open()

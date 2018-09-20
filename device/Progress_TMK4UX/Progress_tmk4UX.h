@@ -24,7 +24,7 @@ public:
     QStringList getErrors() override;
     QString getUniqIdent() override;
     bool makeDataToCommand(CommandController::sCommandData &commandData) override;
-    bool placeDataReplyToCommand(QByteArray &commandArrayReplyData, bool isNeedMessageAboutExecuted) override;
+    bool placeDataReplyToCommand(QByteArray &commandArrayReplyData, CommandController::sCommandData commandReqData) override;
 
     CommandController::sCommandData getCommandToCheckConnected() override;
     CommandController::sCommandData getCommandToGetType() override;

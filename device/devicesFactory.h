@@ -58,6 +58,10 @@ public slots:
 
     DeviceAbstract* getDeviceToDeviceAbstract(int index);
 
+    QPair<QString,DeviceAbstract*>* findDeviceByIndex(int index);
+    QPair<QString,DeviceAbstract*>* findDeviceByUnicIdent(QString name);
+    int findDeviceIndex(QString uniqNameId);
+
     void placeReplyDataFromInterface(QByteArray data);
     void setDeviceReInitByIndex(int index);
     void sendCustomCommadToDev(int indexDev, QString operation, QPair<QStringList, QStringList> arguments);
@@ -74,16 +78,13 @@ signals:
     void deviceReadyInitSignal(DevicesFactory::E_DeviceType, QString uniqNameId);
 
     void deviceUpdateTree(DevicesFactory::E_DeviceUpdateType status, int index);
-    void deviceReadyCustomCommand(int index, QString message, QStringList customData);
+    void deviceReadyCustomCommand(int index, QString message, QStringList customData, CommandController::sCommandData);
 
 private slots:
-    //-- find device by index
-    QPair<QString,DeviceAbstract*>* findDeviceByIndex(int index);
-    QPair<QString,DeviceAbstract*>* findDeviceByUnicIdent(QString name);
-    int findDeviceIndex(QString uniqNameId);
     void devShedullerSlot();
 
-    void deviceEventSlot(DeviceAbstract::E_DeviceEvent type, QString devUniqueId, QString message, QStringList customData);
+    void deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEvent type, QString devUniqueId,
+                                        int commandType, QString,QStringList, CommandController::sCommandData commandData);
 
     void lockMutextDevMap();
     void unlockMutextDevMap();

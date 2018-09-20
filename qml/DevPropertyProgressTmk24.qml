@@ -261,19 +261,21 @@ Rectangle {
         }
         viewController.setCurrentDevTarTable(tarArrayCNT,tarArrayLiters)
     }
-    function readTarTable(table) {
+    function readTarTable(devCount) {
         tarTabView.model.clear()
-        var stepCounter = 0;
-        var level = 0;
-        var value = 0;
-        for(var i=0; i<table.length; i++) {
-            if(stepCounter == 0) {
-                stepCounter++;
-                value = table[i]
-            } else {
-                level = table[i]
-                stepCounter = 0;
-                tarTableListModel.append({"valueLitrs":parseInt(value),"valueCNT":parseInt(level)})
+        var size = viewController.getTarrirAllDev()
+        for(var devIndex=0; devIndex<size; devIndex++) {
+            var table = viewController.getTableAtDevice(devIndex)
+            var parity = 0
+            for(var devTableRow=0; devTableRow<table.length; devTableRow++) {
+                if(parity == 0) {
+                    parity = 1;
+                    value = table[i]
+                } else {
+                    level = table[i]
+                    parity = 0;
+//                    tarTableListModel.append({"valueLitrs":parseInt(value),"valueCNT":parseInt(level)})
+                }
             }
         }
         timerAffterRefrashTarTable.start()
@@ -2697,7 +2699,7 @@ Rectangle {
                                                             }
                                                         }
                                                         onApply: {
-//                                                            viewController.getCurrentDevTarTable()
+                                                            viewController.getTarrirAllDev()
                                                             close()
                                                         }
                                                     }
