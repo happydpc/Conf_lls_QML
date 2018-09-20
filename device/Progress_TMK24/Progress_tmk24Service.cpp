@@ -1,19 +1,14 @@
 #include "Progress_tmk24Service.h"
 
-Progress_tmk24Service::Progress_tmk24Service() {
-    
-}
-
-void Progress_tmk24Service::reset() {
-    
-}
+Progress_tmk24Service::Progress_tmk24Service() {}
+void Progress_tmk24Service::reset() {}
 
 bool Progress_tmk24Service::addDevice(QString devTypeName, QString devId, QString devSn) {
     bool isDuplicate = false;
     bool res = false;
     // поиск дубликата id
     for(auto it: devList) {
-        if(it.first.devId == devId) {
+        if(it->first.devId == devId) {
             isDuplicate = true;
             break;
         }
@@ -23,7 +18,8 @@ bool Progress_tmk24Service::addDevice(QString devTypeName, QString devId, QStrin
         idBlock.devTypeName = devTypeName;
         idBlock.devId = devId;
         idBlock.devSn = devSn;
-        devList.push_back(QPair<sDevIdentBlock, QList<sDevValues>*>(idBlock, new QList<sDevValues>()));
+        idBlock.isWhitedResult = 0;
+        devList.push_back(new QPair<sDevIdentBlock, QList<sDevValues>*>(idBlock, new QList<sDevValues>()));
         res = true;
     } else {
         lastError = "Не удалось добавить т.к. такой номер уже есть в списке!";
@@ -41,9 +37,9 @@ int Progress_tmk24Service::getDeviceCount() {
 
 QStringList Progress_tmk24Service::getDeviceProperty(int index) {
     QStringList res;
-    res << devList.at(index).first.devTypeName;
-    res << devList.at(index).first.devId;
-    res << devList.at(index).first.devSn;
+    res << devList.at(index)->first.devTypeName;
+    res << devList.at(index)->first.devId;
+    res << devList.at(index)->first.devSn;
     return res;
 }
 
@@ -55,9 +51,9 @@ QList<QStringList> Progress_tmk24Service::getCalibrateList() {
     // 4 isChecked
     for(auto it: devList) {
         QStringList dev;
-        dev.push_back(it.first.devTypeName);
-        dev.push_back(it.first.devId);
-        dev.push_back(it.first.devSn);
+        dev.push_back(it->first.devTypeName);
+        dev.push_back(it->first.devId);
+        dev.push_back(it->first.devSn);
         res.push_back(dev);
     }
     return res;
@@ -76,30 +72,31 @@ void Progress_tmk24Service::removeStep(int index) {
 QList<QString> Progress_tmk24Service::requestGetTableFromAllDevice() {
     QList<QString>list;
     for(auto it: devList) {
-        list.push_back(it.first.devId);
-        it.first.isWhitedResult = true;
+        list.push_back(it->first.devId);
+        it->first.isWhitedResult = 1;
     }
     return list;
 }
 
 
 void Progress_tmk24Service::placeTableFromDevice(QString deviceIdentName, QStringList table) {
-    for(int i=0; i<devList.size(); i++) {
-        if(devList.at(i).first.devId == deviceIdentName) {
+    for(auto it: devList) {
+        if(it->first.devId == deviceIdentName) {
             bool paritybit = false;
-            devList.at(i).second->clear();
+            it->second->clear();
             sDevValues tDevValues;
             for(int i=0; i<table.size(); i++) {
                 if(!paritybit) {
                     paritybit = true;
-                    tDevValues.valueLiters = QString(table.at(i)).toInt();
+                    tDevValues.valueLiters = QString(table.at(i)).toUInt();
                 } else {
-                    tDevValues.valueCnt = QString(table.at(i)).toInt();
+                    tDevValues.valueCnt = QString(table.at(i)).toUInt();
                     paritybit = false;
-                    devList.at(i).second->push_back(tDevValues);
+                    it->second->push_back(tDevValues);
                 }
             }
-            devList[i].first.isWhitedResult = false;
+            it->first.isWhitedResult = 0;
+            break;
         }
     }
 }
@@ -107,7 +104,7 @@ void Progress_tmk24Service::placeTableFromDevice(QString deviceIdentName, QStrin
 bool Progress_tmk24Service::readTableAllDeviceIsReady() {
     bool isAllReplyReady = true;
     for(auto it: devList) {
-        if(it.first.isWhitedResult == true) {
+        if(it->first.isWhitedResult == true) {
             isAllReplyReady = false;
         }
     }
@@ -117,7 +114,7 @@ bool Progress_tmk24Service::readTableAllDeviceIsReady() {
 QStringList Progress_tmk24Service::getTableAtDevice(int index) {
     QStringList res;
     bool paritybit = false;
-    QList<sDevValues>*tList = devList.at(index).second;
+    QList<sDevValues>*tList = devList.at(index)->second;
     for(int i=0; i<tList->size(); i++ ) {
         if(!paritybit) {
             paritybit = true;

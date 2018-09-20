@@ -39,7 +39,8 @@ SOURCES += \
     device/Progress_Base/Progress_BaseData.cpp \
     device/Progress_Base/progress_base_data.cpp \
     device/Progress_Base/Progress_Base.cpp \
-    device/Progress_TMK24/calibrate/calibrate.cpp
+    device/service/serviceDevicesAbstract.cpp \
+    device/Progress_TMK24/Progress_tmk24Service.cpp
 
 RESOURCES += \
     qml.qrc
@@ -79,6 +80,9 @@ HEADERS += \
     device/Progress_Base/Progress_Base_Data.h \
     device/Progress_Base/Progress_BaseData.h \
     device/Progress_Base/Progress_Base.h \
-    device/Progress_TMK24/calibrate/calibrate.h
+    device/service/serviceDevicesAbstract.h \
+    device/Progress_TMK24/Progress_tmk24Service.h
 
-DISTFILES +=
+DISTFILES += \
+    device/service/serviceDevicesAbstract. \
+    device/service/serviceDevicesAbstract.

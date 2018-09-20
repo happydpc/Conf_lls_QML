@@ -393,15 +393,23 @@ void ViewController::getTarrirAllDev() {
 }
 QStringList ViewController::getTableAtDevice(int index) {
     DeviceAbstract *pAbstract = nullptr;
-    pAbstract = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(index);
+    pAbstract = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
     if(pAbstract != nullptr) {
         if(pAbstract->getDevTypeName() == "PROGRESS TMK24") {
-            Progress_tmk24 *pTmk24 = dynamic_cast<Progress_tmk24*>(pAbstract);
-            for(int i=0; i<tmk24Service->getDeviceCount(); i++) {
-                return tmk24Service->getTableAtDevice(i);
-            }
+            return tmk24Service->getTableAtDevice(index);
         }
     }
+}
+int ViewController::getTableCountReady() {
+    int res = 0;
+    DeviceAbstract *pAbstract = nullptr;
+    pAbstract = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
+    if(pAbstract != nullptr) {
+        if(pAbstract->getDevTypeName() == "PROGRESS TMK24") {
+            res = tmk24Service->requestGetTableFromAllDevice().size();
+        }
+    }
+    return res;
 }
 
 //void ViewController::tarirDevEventsSlot(Calibrate::eTypeEvents eventsType) {

@@ -77,6 +77,7 @@ public:
             // если ответа небыло, значение выделить красным и вывести message
     Q_INVOKABLE void getTarrirAllDev();
     Q_INVOKABLE QStringList getTableAtDevice(int index);
+    Q_INVOKABLE int getTableCountReady();
 
     //2) записать таблицу в добавленные устройства
             // как 1

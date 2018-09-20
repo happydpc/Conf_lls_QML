@@ -243,10 +243,15 @@ Rectangle {
             }
             // добавляем в таблицу как столблец для девайса
             for(var i2=0; i2<tarSize; i2++) {
-                var title = qsTr("ValueCNT[ID-%1]").arg(devId[i2])
-                var role = qsTr("role%1").arg(i)
-                var column = columnComponent.createObject(tarTabViewMultiple, { "role":role, "title":title,"width":100})
+                var roleLiters = qsTr("roleLiters%1").arg(i2)
+                var titleLiters = qsTr("Объем[ID-%1]").arg(devId[i2])
+                var titleCnt = qsTr("CNT[ID-%1]").arg(devId[i2])
+                var roleCnt = qsTr("roleCnt%1").arg(i2)
+                var column = columnComponent.createObject(tarTabViewMultiple, {"role":roleLiters, "title":titleLiters, "width":100})
                 tarTabViewMultiple.addColumn(column)
+                column = columnComponent.createObject(tarTabViewMultiple, {"role":roleCnt, "title":titleCnt, "width":100})
+                tarTabViewMultiple.addColumn(column)
+                console.log("tarTableListModelMultiple.append - roles " + roleLiters + " " + roleCnt)
             }
         }
     }
@@ -262,19 +267,29 @@ Rectangle {
         viewController.setCurrentDevTarTable(tarArrayCNT,tarArrayLiters)
     }
     function readTarTable(devCount) {
-        tarTabView.model.clear()
-        var size = viewController.getTarrirAllDev()
+        tarTableListModelMultiple.clear()
+        var size = viewController.getTableCountReady()
         for(var devIndex=0; devIndex<size; devIndex++) {
             var table = viewController.getTableAtDevice(devIndex)
             var parity = 0
+            var value = 0
+            var level = 0
+
+            var roleLiters = qsTr("roleLiters%1").arg(devIndex)
+            var roleCnt = qsTr("roleCnt%1").arg(devIndex)
+
             for(var devTableRow=0; devTableRow<table.length; devTableRow++) {
                 if(parity == 0) {
                     parity = 1;
-                    value = table[i]
+                    value = table[devTableRow]
+                    console.log("var1 " + value)
                 } else {
-                    level = table[i]
                     parity = 0;
-//                    tarTableListModel.append({"valueLitrs":parseInt(value),"valueCNT":parseInt(level)})
+                    level = table[devTableRow]
+                    console.log("var2 " + level)
+
+                    console.log("tarTableListModelMultiple.append - roles " + roleLiters + " " + roleCnt)
+                    tarTableListModelMultiple.append({roleLiters:parseInt(value),roleCnt:parseInt(level)})
                 }
             }
         }
@@ -2321,28 +2336,7 @@ Rectangle {
                                                 anchors.top: parent.top
                                                 height: parent.height / 2
                                                 width: parent.width
-                                                Controls_1_4.TableViewColumn {
-                                                    id: tableDelegateValueMultiple
-                                                    role: "ValueLitrs"
-                                                    title: "Объем (литры)"
-                                                    width: 100
-                                                    property int valueLitrs: model.valueLitrs
-                                                    delegate: Rectangle {
-                                                        anchors.fill: parent
-                                                        color: valueInputValue.text.length >0 ? "transparent" : "red"
-                                                        TextInput {
-                                                            id:valueInputValueMultiple
-                                                            anchors.fill: parent
-                                                            selectionColor: "red"
-                                                            text:(model.valueLitrs===0) ? "0" : model.valueLitrs
-                                                            validator: RegExpValidator { regExp: /[0-9A-F]+/ }
-                                                            onEditingFinished: {
-                                                                model.valueLitrs = text
-                                                                remakeTarTableChart()
-                                                            }
-                                                        }
-                                                    }
-                                                }
+
                                                 model: ListModel {
                                                     id: tarTableListModelMultiple
                                                 }

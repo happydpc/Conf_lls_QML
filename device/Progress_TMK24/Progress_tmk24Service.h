@@ -51,7 +51,7 @@ private:
         bool isWhitedResult;
     }sDevIdentBlock;
 
-    QList<QPair<sDevIdentBlock, QList<sDevValues>*>>devList;
+    QList<QPair<sDevIdentBlock, QList<sDevValues>*>*>devList;
 
     QString lastError;
 
