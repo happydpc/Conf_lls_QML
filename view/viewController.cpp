@@ -568,11 +568,9 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
             }
             if(commmandData.devCommand == Progress_tmk24Data::lls_read_cal_table) {
                 if(commmandData.isNeedAckMessage) {
-                    if (message == "Normal") {
-                        tmk24Service->placeTableFromDevice(commmandData.deviceIdent, customData);
-                        if(tmk24Service->readTableAllDeviceIsReady()) {
-                            emit devUpdateReadTarTable(tmk24Service->getDeviceCount());
-                        }
+                    tmk24Service->placeTableFromDevice(commmandData.deviceIdent, customData);
+                    if(tmk24Service->readTableAllDeviceIsReady()) {
+                        emit devUpdateReadTarTable(tmk24Service->getDeviceCount());
                     }
                 }
             }

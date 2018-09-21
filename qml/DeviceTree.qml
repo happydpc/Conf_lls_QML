@@ -18,10 +18,6 @@ Column{
                 MouseArea {
                     id:area
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
-                    Rectangle {
-                        anchors.fill: rectBase
-                        color: "orange"
-                    }
                     anchors.fill: parent
                     onClicked: {
                         console.log("MouseArea deviceTree clicked")

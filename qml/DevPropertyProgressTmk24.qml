@@ -198,33 +198,33 @@ Rectangle {
         error8Label.error8 = errors[7]
     }
     function remakeTarTableChart() {
-        chartTarTableLine.clear()
-        var tarArrayLitrs = [];
-        var tarArrayCNT = [];
-        var maxValueCnt = 0;
-        var maxValueLitrs = 0;
-        for(var i=0; i<tarTabView.rowCount; i++) {
+//        chartTarTableLine.clear()
+//        var tarArrayLitrs = [];
+//        var tarArrayCNT = [];
+//        var maxValueCnt = 0;
+//        var maxValueLitrs = 0;
+//        for(var i=0; i<tarTabView.rowCount; i++) {
 
-            var item = tarTabView.model.get(i)
+//            var item = tarTabView.model.get(i)
 
-            tarArrayLitrs.push(item.valueLitrs)
-            tarArrayCNT.push(item.valueCNT)
+//            tarArrayLitrs.push(item.valueLitrs)
+//            tarArrayCNT.push(item.valueCNT)
 
-            if(maxValueCnt < item.valueCNT) {
-                maxValueCnt = item.valueCNT
-            }
-            if(maxValueLitrs < item.valueLitrs) {
-                maxValueLitrs = item.valueLitrs
-            }
-            console.log("ValueCNT =" + item.valueCNT + "\nValue Litrs=" + item.valueLitrs)
-        }
-        chartTarTable.chartTarTableAmplitudeMax = parseInt(maxValueCnt)
-        chartTarTable.chartTarTableLength = parseInt(maxValueLitrs)
-        console.log("MaxLevel =" + chartTarTable.chartTarTableAmplitudeMax)
-        for(i=0; i<chartTarTable.chartTarTableLength; i++) {
-            chartTarTableLine.append(parseInt(tarArrayLitrs[i]), parseInt(tarArrayCNT[i]));
-            console.log("Add=" + i + " " + tarArrayLitrs[i])
-        }
+//            if(maxValueCnt < item.valueCNT) {
+//                maxValueCnt = item.valueCNT
+//            }
+//            if(maxValueLitrs < item.valueLitrs) {
+//                maxValueLitrs = item.valueLitrs
+//            }
+//            console.log("ValueCNT =" + item.valueCNT + "\nValue Litrs=" + item.valueLitrs)
+//        }
+//        chartTarTable.chartTarTableAmplitudeMax = parseInt(maxValueCnt)
+//        chartTarTable.chartTarTableLength = parseInt(maxValueLitrs)
+//        console.log("MaxLevel =" + chartTarTable.chartTarTableAmplitudeMax)
+//        for(i=0; i<chartTarTable.chartTarTableLength; i++) {
+//            chartTarTableLine.append(parseInt(tarArrayLitrs[i]), parseInt(tarArrayCNT[i]));
+//            console.log("Add=" + i + " " + tarArrayLitrs[i])
+//        }
     }
 
     function remakeTarTable() {
@@ -242,16 +242,19 @@ Rectangle {
                 tarListDevice.model.append({"devTyp":devType[i],"devId":devId[i],"devSn":devSn[i]})
             }
             // добавляем в таблицу как столблец для девайса
+            var component = Qt.createComponent("DevPropertyProgressTmk24TarTableDelegate.qml");
+            var tableViewColumn
+
             for(var i2=0; i2<tarSize; i2++) {
-                var roleLiters = qsTr("roleLiters%1").arg(i2)
-                var titleLiters = qsTr("Объем[ID-%1]").arg(devId[i2])
-                var titleCnt = qsTr("CNT[ID-%1]").arg(devId[i2])
-                var roleCnt = qsTr("roleCnt%1").arg(i2)
-                var column = columnComponent.createObject(tarTabViewMultiple, {"role":roleLiters, "title":titleLiters, "width":100})
-                tarTabViewMultiple.addColumn(column)
-                column = columnComponent.createObject(tarTabViewMultiple, {"role":roleCnt, "title":titleCnt, "width":100})
-                tarTabViewMultiple.addColumn(column)
-                console.log("tarTableListModelMultiple.append - roles " + roleLiters + " " + roleCnt)
+                tableViewColumn  = component.createObject(tarTabViewMultiple);
+                tableViewColumn.title = qsTr("Объем[ID-%1]").arg(devId[i2])
+                tableViewColumn.role = qsTr("roleLiters%1").arg(i2)
+                tarTabViewMultiple.addColumn(tableViewColumn)
+
+                tableViewColumn  = component.createObject(tarTabViewMultiple);
+                tableViewColumn.title = qsTr("CNT[ID-%1]").arg(devId[i2])
+                tableViewColumn.role = qsTr("roleCnt%1").arg(i2)
+                tarTabViewMultiple.addColumn(tableViewColumn)
             }
         }
     }
@@ -268,28 +271,33 @@ Rectangle {
     }
     function readTarTable(devCount) {
         tarTableListModelMultiple.clear()
+        var strResultAppend = ""
         var size = viewController.getTableCountReady()
+
+        var valuesArray = []
+
+        // пока не переберем все уст-ва
         for(var devIndex=0; devIndex<size; devIndex++) {
             var table = viewController.getTableAtDevice(devIndex)
-            var parity = 0
-            var value = 0
-            var level = 0
-
             var roleLiters = qsTr("roleLiters%1").arg(devIndex)
             var roleCnt = qsTr("roleCnt%1").arg(devIndex)
-
+            var parity = 0
+            var rowIndex = 0
+            // перебираем таблицу уст-ва
+            var valueCnt = 0
+            var valueLiters = 0
             for(var devTableRow=0; devTableRow<table.length; devTableRow++) {
                 if(parity == 0) {
                     parity = 1;
-                    value = table[devTableRow]
-                    console.log("var1 " + value)
+                    valueLiters = table[devTableRow]
                 } else {
                     parity = 0;
-                    level = table[devTableRow]
-                    console.log("var2 " + level)
-
-                    console.log("tarTableListModelMultiple.append - roles " + roleLiters + " " + roleCnt)
-                    tarTableListModelMultiple.append({roleLiters:parseInt(value),roleCnt:parseInt(level)})
+                    valueCnt = table[devTableRow]
+                    var json = { };
+                    json[roleLiters] = valueLiters;
+                    json[roleCnt] = valueCnt;
+                    tarTableListModelMultiple.set(rowIndex, json)
+                    rowIndex ++
                 }
             }
         }
@@ -2024,8 +2032,8 @@ Rectangle {
                                         text: "0.0"
                                         height: 25
                                         width: 300
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
+//                                        anchors.left: parent.left
+//                                        anchors.leftMargin: 15
                                         anchors.top: emptyFullLabel.bottom
                                         anchors.verticalCenter: parent.verticalCenter
                                         anchors.topMargin: 10
@@ -2049,8 +2057,6 @@ Rectangle {
                             anchors.fill: parent
                             Column {
                                 spacing: 10
-                                anchors.top: parent.top
-                                anchors.topMargin: 15
                                 //1
                                 Row {
                                     width: 500
@@ -2341,8 +2347,8 @@ Rectangle {
                                                     id: tarTableListModelMultiple
                                                 }
                                                 onCurrentRowChanged: {
-                                                    tarTabView.selection.clear()
-                                                    tarTabView.selection.select(tarTabView.currentRow)
+                                                    tarTabViewMultiple.selection.clear()
+                                                    tarTabViewMultiple.selection.select(tarTabViewMultiple.currentRow)
                                                 }
 
                                                 rowDelegate: Rectangle {
@@ -2471,50 +2477,50 @@ Rectangle {
                                                 width: parent.width - 5
                                                 anchors.topMargin: 10
                                                 height: parent.height / 2 - 10
-                                                ChartView {
-                                                    id: chartTarCurrentValuesMultiple
-                                                    anchors.fill: parent
-                                                    theme: ChartView.ChartThemeLight
-                                                    title: "Уровень/Объем"
-                                                    antialiasing: true
-                                                    property int graphLength: 1
-                                                    property int graphAmplitudeMax: 1
-                                                    backgroundColor: "transparent"
-                                                    property alias animateColorUp: animateColorUpMultiple
-                                                    property alias animateColorDown: animateColorDownMultiple
-                                                    PropertyAnimation {id: animateColorUpMultiple; target: chartTarCurrentValuesMultiple; properties: "backgroundColor"; to: "#d9d9d9"; duration: 1000
-                                                        onStopped: {
-                                                            chartTarCurrentValuesMultiple.animateColorDown.start()
-                                                        }
-                                                        onStarted: {
-                                                            isNoiseDetected = true
-                                                        }
-                                                    }
-                                                    PropertyAnimation {id: animateColorDownMultiple; target: chartTarCurrentValuesMultiple; properties: "backgroundColor"; to: "transparent"; duration: 1000
-                                                        onStopped: {
-                                                            isNoiseDetected = false
-                                                        }
-                                                    }
+//                                                ChartView {
+//                                                    id: chartTarCurrentValuesMultiple
+//                                                    anchors.fill: parent
+//                                                    theme: ChartView.ChartThemeLight
+//                                                    title: "Уровень/Объем"
+//                                                    antialiasing: true
+//                                                    property int graphLength: 1
+//                                                    property int graphAmplitudeMax: 1
+//                                                    backgroundColor: "transparent"
+//                                                    property alias animateColorUp: animateColorUpMultiple
+//                                                    property alias animateColorDown: animateColorDownMultiple
+//                                                    PropertyAnimation {id: animateColorUpMultiple; target: chartTarCurrentValuesMultiple; properties: "backgroundColor"; to: "#d9d9d9"; duration: 1000
+//                                                        onStopped: {
+//                                                            chartTarCurrentValuesMultiple.animateColorDown.start()
+//                                                        }
+//                                                        onStarted: {
+//                                                            isNoiseDetected = true
+//                                                        }
+//                                                    }
+//                                                    PropertyAnimation {id: animateColorDownMultiple; target: chartTarCurrentValuesMultiple; properties: "backgroundColor"; to: "transparent"; duration: 1000
+//                                                        onStopped: {
+//                                                            isNoiseDetected = false
+//                                                        }
+//                                                    }
 
-                                                    ValueAxis {
-                                                        id: currentTarChartAxisXMultiple
-                                                        min: 0
-                                                        max: chartCurrentValue.graphLength
-                                                        tickCount: 5
-                                                    }
-                                                    ValueAxis {
-                                                        id: currentTarChartAxisYMultiple
-                                                        min: -0.1
-                                                        max: chartCurrentValue.graphAmplitudeMax
-                                                        tickCount: 5
-                                                    }
-                                                    LineSeries {
-                                                        id: currentTarChartLinesMultiple
-                                                        axisX: currentTarChartAxisXMultiple
-                                                        axisY: currentTarChartAxisYMultiple
-                                                    }
-                                                    enabled: devPropertyProgressTmk24.isReady
-                                                }
+//                                                    ValueAxis {
+//                                                        id: currentTarChartAxisXMultiple
+//                                                        min: 0
+//                                                        max: chartCurrentValue.graphLength
+//                                                        tickCount: 5
+//                                                    }
+//                                                    ValueAxis {
+//                                                        id: currentTarChartAxisYMultiple
+//                                                        min: -0.1
+//                                                        max: chartCurrentValue.graphAmplitudeMax
+//                                                        tickCount: 5
+//                                                    }
+//                                                    LineSeries {
+//                                                        id: currentTarChartLinesMultiple
+//                                                        axisX: currentTarChartAxisXMultiple
+//                                                        axisY: currentTarChartAxisYMultiple
+//                                                    }
+//                                                    enabled: devPropertyProgressTmk24.isReady
+//                                                }
                                             }
                                         }
                                         Rectangle {
@@ -2541,21 +2547,21 @@ Rectangle {
                                                     name: qsTr("Добавить\nтекущее значение")
                                                     enabled: devPropertyProgressTmk24.isReady
                                                     onClicked: {
-                                                        if(!isNoiseDetected) {
-                                                            var values = viewController.getCurrentDevOtherData()
-                                                            if(values.length >0) {
-                                                                var currValueCNT  = values[1]
-                                                                var lastValueLitrs = 0
-                                                                if(tarTableListModel.rowCount() > 0) {
-                                                                    var value = tarTableListModel.get(tarTableListModel.rowCount()-1)
-                                                                    lastValueLitrs = value.valueLitrs
-                                                                }
-                                                            }
-                                                            tarTableListModel.append({"valueLitrs":parseInt(lastValueLitrs),"valueCNT":parseInt(currValueCNT)})
-                                                        } else {
-                                                            dialogAddTarValueWhenNoiseDetected.open()
-                                                        }
-                                                        timerAffterRefrashTarTable.start()
+//                                                        if(!isNoiseDetected) {
+//                                                            var values = viewController.getCurrentDevOtherData()
+//                                                            if(values.length >0) {
+//                                                                var currValueCNT  = values[1]
+//                                                                var lastValueLitrs = 0
+//                                                                if(tarTableListModel.rowCount() > 0) {
+//                                                                    var value = tarTableListModel.get(tarTableListModel.rowCount()-1)
+//                                                                    lastValueLitrs = value.valueLitrs
+//                                                                }
+//                                                            }
+//                                                            tarTableListModel.append({"valueLitrs":parseInt(lastValueLitrs),"valueCNT":parseInt(currValueCNT)})
+//                                                        } else {
+//                                                            dialogAddTarValueWhenNoiseDetected.open()
+//                                                        }
+//                                                        timerAffterRefrashTarTable.start()
                                                     }
                                                     Dialog {
                                                         id: dialogAddTarValueWhenNoiseDetectedMultiple
@@ -2610,13 +2616,13 @@ Rectangle {
                                                         }
                                                     }
                                                     onClicked: {
-                                                        if(tarTabView.currentRow == -1) {
-                                                            dialogRemoveTarTableRowMultiple.open()
-                                                            close()
-                                                        } else {
-                                                            tarTabView.model.remove(tarTabView.currentRow)
-                                                            timerAffterRefrashTarTable.start()
-                                                        }
+//                                                        if(tarTabView.currentRow == -1) {
+//                                                            dialogRemoveTarTableRowMultiple.open()
+//                                                            close()
+//                                                        } else {
+//                                                            tarTabView.model.remove(tarTabView.currentRow)
+//                                                            timerAffterRefrashTarTable.start()
+//                                                        }
                                                     }
                                                 }
                                                 ButtonRound {

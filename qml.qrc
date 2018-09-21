@@ -27,6 +27,7 @@
         <file>qml/AddDeviceTarirDialog.qml</file>
         <file>qml/TestUi.qml</file>
         <file>qml/TestUiForm.ui.qml</file>
+        <file>qml/DevPropertyProgressTmk24TarTableDelegate.qml</file>
     </qresource>
     <qresource prefix="/new/icons">
         <file>images/icon/normal.png</file>

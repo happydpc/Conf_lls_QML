@@ -17,8 +17,6 @@ import QtGraphicalEffects 1.0
 
 Rectangle {
     id: devicePanel
-    anchors.fill: parent
-
     signal addNewConnection()
 
     property alias  devicePropertyPanel: devicePropertyPanel

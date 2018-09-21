@@ -63,10 +63,8 @@ Popup {
         }
         TextField {
             id: passwordText
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: typeDeviceText.left
             maximumLength: 8
+            Layout.fillWidth: true
             echoMode: TextInput.Password
         }
 
