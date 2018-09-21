@@ -4,7 +4,7 @@ import QtQuick.Controls 2.4
 
 Rectangle {
     id:projectStartScreen
-    anchors.fill: parent
+//    anchors.fill: parent
     Rectangle {
         color: "#ffffff"
         anchors.fill: parent

@@ -6,35 +6,44 @@ import QtQml.Models 2.11
 
 Rectangle {
     id: projectDevicePanel
-
+    property alias dialogAddDeviceFail : dialogAddDeviceFail
+    property alias dialogAddInterfaceFail: dialogAddInterfaceFail
+    property alias messageOperationError: messageOperationError
     property DevPropertyProgressTmk24 devPropertyProgressTmk24: devPropertyProgressTmk24
 
     function setActivePanelType(typeDev) {
-        console.log("setActivePanelType -" + typeDev)
         switch(typeDev) {
         case "SerialPort":
-            devicePropertieslistModel1.currentIndex = 1
+            if(devicePropertieslistModel1.currentIndex != 1) {
+                console.log("setActivePanelType -" + typeDev)
+//                devPropertyProgressTmk24.setResetState()
+                devicePropertieslistModel1.currentIndex = 1
+            }
             break;
         case "Empty":
-            devicePropertieslistModel1.currentIndex = 0
+            if(devicePropertieslistModel1.currentIndex != 0) {
+                console.log("setActivePanelType -" + typeDev)
+                devicePropertieslistModel1.currentIndex = 0
+            }
             break;
         case "PROGRESS TMK24":
-            devicePropertieslistModel1.currentIndex = 2
-            devPropertyProgressTmk24.setResetState()
+            if(devicePropertieslistModel1.currentIndex != 2) {
+                console.log("setActivePanelType -" + typeDev)
+                devicePropertieslistModel1.currentIndex = 2
+                devPropertyProgressTmk24.setResetState()
+            }
             break;
         default:
             console.log("setActivePanelType -unrecognise type dev")
             break;
         }
     }
-    property alias dialogAddDeviceFail : dialogAddDeviceFail
-    property alias dialogAddInterfaceFail: dialogAddInterfaceFail
-    property alias messageOperationError: messageOperationError
-
     function setPropertyToSerialPort(listData) {
+        console.log("setPropertyToSerialPort")
         devPropertySerialPort.setPropertyValues(listData)
     }
     function devShowPasswordIncorrect(devType, devNameId) {
+        console.log("devShowPasswordIncorrect -unrecognise type dev")
         dialogPasswordError.messageArg = devNameId
         dialogPasswordError.open()
         switch(devType) {
@@ -64,7 +73,7 @@ Rectangle {
 
             Rectangle {
                 id: currentStateRectangle
-                color: "transparent"
+                color: "#ffffff"
                 anchors.fill: parent
                 border.width: 1
                 border.color: "#9899a7"

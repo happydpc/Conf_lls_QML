@@ -29,6 +29,8 @@ Rectangle {
     }
     function setResetState() {
         stackSubProperty.setCurrentIndex(5)
+//        tabProperty.setCurrentIndex(0)
+//        stackSubProperty.setCurrentIndex(0)
         setNoReady()
         setWriteSettingsIsAvailable()
     }
@@ -2032,8 +2034,8 @@ Rectangle {
                                         text: "0.0"
                                         height: 25
                                         width: 300
-//                                        anchors.left: parent.left
-//                                        anchors.leftMargin: 15
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
                                         anchors.top: emptyFullLabel.bottom
                                         anchors.verticalCenter: parent.verticalCenter
                                         anchors.topMargin: 10
@@ -2057,6 +2059,8 @@ Rectangle {
                             anchors.fill: parent
                             Column {
                                 spacing: 10
+                                anchors.top: parent.top
+                                anchors.topMargin: 15
                                 //1
                                 Row {
                                     width: 500
@@ -2477,50 +2481,50 @@ Rectangle {
                                                 width: parent.width - 5
                                                 anchors.topMargin: 10
                                                 height: parent.height / 2 - 10
-//                                                ChartView {
-//                                                    id: chartTarCurrentValuesMultiple
-//                                                    anchors.fill: parent
-//                                                    theme: ChartView.ChartThemeLight
-//                                                    title: "Уровень/Объем"
-//                                                    antialiasing: true
-//                                                    property int graphLength: 1
-//                                                    property int graphAmplitudeMax: 1
-//                                                    backgroundColor: "transparent"
-//                                                    property alias animateColorUp: animateColorUpMultiple
-//                                                    property alias animateColorDown: animateColorDownMultiple
-//                                                    PropertyAnimation {id: animateColorUpMultiple; target: chartTarCurrentValuesMultiple; properties: "backgroundColor"; to: "#d9d9d9"; duration: 1000
-//                                                        onStopped: {
-//                                                            chartTarCurrentValuesMultiple.animateColorDown.start()
-//                                                        }
-//                                                        onStarted: {
-//                                                            isNoiseDetected = true
-//                                                        }
-//                                                    }
-//                                                    PropertyAnimation {id: animateColorDownMultiple; target: chartTarCurrentValuesMultiple; properties: "backgroundColor"; to: "transparent"; duration: 1000
-//                                                        onStopped: {
-//                                                            isNoiseDetected = false
-//                                                        }
-//                                                    }
+                                                ChartView {
+                                                    id: chartTarCurrentValuesMultiple
+                                                    anchors.fill: parent
+                                                    theme: ChartView.ChartThemeLight
+                                                    title: "Уровень/Объем"
+                                                    antialiasing: true
+                                                    property int graphLength: 1
+                                                    property int graphAmplitudeMax: 1
+                                                    backgroundColor: "transparent"
+                                                    property alias animateColorUp: animateColorUpMultiple
+                                                    property alias animateColorDown: animateColorDownMultiple
+                                                    PropertyAnimation {id: animateColorUpMultiple; target: chartTarCurrentValuesMultiple; properties: "backgroundColor"; to: "#d9d9d9"; duration: 1000
+                                                        onStopped: {
+                                                            chartTarCurrentValuesMultiple.animateColorDown.start()
+                                                        }
+                                                        onStarted: {
+                                                            isNoiseDetected = true
+                                                        }
+                                                    }
+                                                    PropertyAnimation {id: animateColorDownMultiple; target: chartTarCurrentValuesMultiple; properties: "backgroundColor"; to: "transparent"; duration: 1000
+                                                        onStopped: {
+                                                            isNoiseDetected = false
+                                                        }
+                                                    }
 
-//                                                    ValueAxis {
-//                                                        id: currentTarChartAxisXMultiple
-//                                                        min: 0
-//                                                        max: chartCurrentValue.graphLength
-//                                                        tickCount: 5
-//                                                    }
-//                                                    ValueAxis {
-//                                                        id: currentTarChartAxisYMultiple
-//                                                        min: -0.1
-//                                                        max: chartCurrentValue.graphAmplitudeMax
-//                                                        tickCount: 5
-//                                                    }
-//                                                    LineSeries {
-//                                                        id: currentTarChartLinesMultiple
-//                                                        axisX: currentTarChartAxisXMultiple
-//                                                        axisY: currentTarChartAxisYMultiple
-//                                                    }
-//                                                    enabled: devPropertyProgressTmk24.isReady
-//                                                }
+                                                    ValueAxis {
+                                                        id: currentTarChartAxisXMultiple
+                                                        min: 0
+                                                        max: chartCurrentValue.graphLength
+                                                        tickCount: 5
+                                                    }
+                                                    ValueAxis {
+                                                        id: currentTarChartAxisYMultiple
+                                                        min: -0.1
+                                                        max: chartCurrentValue.graphAmplitudeMax
+                                                        tickCount: 5
+                                                    }
+                                                    LineSeries {
+                                                        id: currentTarChartLinesMultiple
+                                                        axisX: currentTarChartAxisXMultiple
+                                                        axisY: currentTarChartAxisYMultiple
+                                                    }
+                                                    enabled: devPropertyProgressTmk24.isReady
+                                                }
                                             }
                                         }
                                         Rectangle {
@@ -2547,21 +2551,21 @@ Rectangle {
                                                     name: qsTr("Добавить\nтекущее значение")
                                                     enabled: devPropertyProgressTmk24.isReady
                                                     onClicked: {
-//                                                        if(!isNoiseDetected) {
-//                                                            var values = viewController.getCurrentDevOtherData()
-//                                                            if(values.length >0) {
-//                                                                var currValueCNT  = values[1]
-//                                                                var lastValueLitrs = 0
-//                                                                if(tarTableListModel.rowCount() > 0) {
-//                                                                    var value = tarTableListModel.get(tarTableListModel.rowCount()-1)
-//                                                                    lastValueLitrs = value.valueLitrs
-//                                                                }
-//                                                            }
-//                                                            tarTableListModel.append({"valueLitrs":parseInt(lastValueLitrs),"valueCNT":parseInt(currValueCNT)})
-//                                                        } else {
-//                                                            dialogAddTarValueWhenNoiseDetected.open()
-//                                                        }
-//                                                        timerAffterRefrashTarTable.start()
+                                                        if(!isNoiseDetected) {
+                                                            var values = viewController.getCurrentDevOtherData()
+                                                            if(values.length >0) {
+                                                                var currValueCNT  = values[1]
+                                                                var lastValueLitrs = 0
+                                                                if(tarTableListModel.rowCount() > 0) {
+                                                                    var value = tarTableListModel.get(tarTableListModel.rowCount()-1)
+                                                                    lastValueLitrs = value.valueLitrs
+                                                                }
+                                                            }
+                                                            tarTableListModel.append({"valueLitrs":parseInt(lastValueLitrs),"valueCNT":parseInt(currValueCNT)})
+                                                        } else {
+                                                            dialogAddTarValueWhenNoiseDetected.open()
+                                                        }
+                                                        timerAffterRefrashTarTable.start()
                                                     }
                                                     Dialog {
                                                         id: dialogAddTarValueWhenNoiseDetectedMultiple
@@ -2616,13 +2620,13 @@ Rectangle {
                                                         }
                                                     }
                                                     onClicked: {
-//                                                        if(tarTabView.currentRow == -1) {
-//                                                            dialogRemoveTarTableRowMultiple.open()
-//                                                            close()
-//                                                        } else {
-//                                                            tarTabView.model.remove(tarTabView.currentRow)
-//                                                            timerAffterRefrashTarTable.start()
-//                                                        }
+                                                        if(tarTabView.currentRow == -1) {
+                                                            dialogRemoveTarTableRowMultiple.open()
+                                                            close()
+                                                        } else {
+                                                            tarTabView.model.remove(tarTabView.currentRow)
+                                                            timerAffterRefrashTarTable.start()
+                                                        }
                                                     }
                                                 }
                                                 ButtonRound {

@@ -19,11 +19,9 @@ Item {
 
             LogoPanel {
                 id: logoPanel
-                anchors.fill: parent
             }
             DevicePanel {
                 id: devicePanel
-                anchors.fill: parent
                 visible: false
             }
         }
