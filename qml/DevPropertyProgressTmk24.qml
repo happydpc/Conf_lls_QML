@@ -198,33 +198,48 @@ Rectangle {
         error8Label.error8 = errors[7]
     }
     function remakeTarTableChart() {
-        //        chartTarTableLine.clear()
-        //        var tarArrayLitrs = [];
-        //        var tarArrayCNT = [];
-        //        var maxValueCnt = 0;
-        //        var maxValueLitrs = 0;
-        //        for(var i=0; i<tarTabView.rowCount; i++) {
+        chartTarTableLineMultiple.clear()
+        var tarArrayLitrs = [];
+        var tarArrayCNT = [];
+        var maxValueCnt = 0;
+        var maxValueLitrs = 0;
+        var colorArray = []
+        colorArray.push("#f34b4b")
+        colorArray.push("#4bd5f3")
+        colorArray.push("#f34be1")
+        colorArray.push("#4bf3c6")
+        colorArray.push("#4b4bf3")
+        colorArray.push("#be4bf3")
+        colorArray.push("#0d8741")
 
-        //            var item = tarTabView.model.get(i)
+//        var tarSize = viewController.getStayedDevTarrirCount()
+//        for(var i2=0; i2<tarSize; i2++) {
+//            tableViewColumn.role = "roleLiters" + i2
+//            tableViewColumn.role = "roleCnt" + i2
+//        }
+        var roleLiters = "roleLiters" + 0
+        var roleCnt = "roleCnt" + 0
 
-        //            tarArrayLitrs.push(item.valueLitrs)
-        //            tarArrayCNT.push(item.valueCNT)
+        for(var i=0; i<tarTabViewMultiple.rowCount; i++) {
+            var item = tarTabViewMultiple.model.get(i)
+            tarArrayLitrs.push(item[roleLiters])
+            tarArrayCNT.push(item[roleCnt])
 
-        //            if(maxValueCnt < item.valueCNT) {
-        //                maxValueCnt = item.valueCNT
-        //            }
-        //            if(maxValueLitrs < item.valueLitrs) {
-        //                maxValueLitrs = item.valueLitrs
-        //            }
-        //            console.log("ValueCNT =" + item.valueCNT + "\nValue Litrs=" + item.valueLitrs)
-        //        }
-        //        chartTarTable.chartTarTableAmplitudeMax = parseInt(maxValueCnt)
-        //        chartTarTable.chartTarTableLength = parseInt(maxValueLitrs)
-        //        console.log("MaxLevel =" + chartTarTable.chartTarTableAmplitudeMax)
-        //        for(i=0; i<chartTarTable.chartTarTableLength; i++) {
-        //            chartTarTableLine.append(parseInt(tarArrayLitrs[i]), parseInt(tarArrayCNT[i]));
-        //            console.log("Add=" + i + " " + tarArrayLitrs[i])
-        //        }
+            if(maxValueCnt < item[roleCnt]) {
+                maxValueCnt = item[roleCnt]
+            }
+            if(maxValueLitrs < item[roleLiters]) {
+                maxValueLitrs = item[roleLiters]
+            }
+            console.log("ValueCNT =" + item[roleCnt] + "\nValue Litrs=" + item[roleLiters])
+        }
+        chartTarTableMultiple.chartTarTableAmplitudeMax = parseInt(maxValueCnt)
+        chartTarTableMultiple.chartTarTableLength = parseInt(maxValueLitrs)
+        console.log("MaxLevel =" + chartTarTableMultiple.chartTarTableAmplitudeMax)
+        for(i=0; i<tarArrayCNT.length; i++) {
+            chartTarTableLineMultiple.append(parseInt(tarArrayLitrs[i]), parseInt(tarArrayCNT[i]));
+            console.log("Add=" + i + " " + tarArrayLitrs[i])
+        }
     }
 
     function remakeTarTable() {
@@ -250,20 +265,23 @@ Rectangle {
             devId =  viewController.getStayedDevTarrir_DevProperty("id")
             devSn = viewController.getStayedDevTarrir_DevProperty("sn")
             for(var i=0; i<tarSize; i++) { // добавляем на list with current data
-                tarListDevice.model.append({"devTyp":devType[i],"devId":devId[i],"devSn":devSn[i]})
+                tarListDevice.model.append({"devTyp":devType[i],"devId":devId[i],"devSn":devSn[i],"valueLiters":"0","valueCnt":"0"})
             }
+            var ttt = tarListDevice.model.get(0)
             // добавляем в таблицу как столблец для девайса
             var component = Qt.createComponent("DevPropertyProgressTmk24TarTableDelegate.qml");
             for(var i2=0; i2<tarSize; i2++) {
                 var tableViewColumn  = component.createObject(tarTabViewMultiple);
                 tableViewColumn.title = qsTr("Объем[ID-%1]").arg(devId[i2])
                 tableViewColumn.role = "roleLiters" + i2
+                tableViewColumn.width = 100
                 tarTabViewMultiple.addColumn(tableViewColumn)
                 console.log("addeted1 =" + tableViewColumn.role)
 
                 tableViewColumn  = component.createObject(tarTabViewMultiple);
                 tableViewColumn.title = qsTr("CNT[ID-%1]").arg(devId[i2])
                 tableViewColumn.role = "roleCnt" + i2
+                tableViewColumn.width = 100
                 tarTabViewMultiple.addColumn(tableViewColumn)
                 console.log("addeted2 =" + tableViewColumn.role)
             }
@@ -284,15 +302,11 @@ Rectangle {
         console.log("readTarTable = " + devCount)
 
         var jsonArray = []
-
-        jsonArray.push({});
-        jsonArray.push({});
-        jsonArray.push({});
-//        jsonArray[0] = {}
-//        jsonArray[1] = {}
-//        jsonArray[2] = {}
-
-        var testArray = new Object
+        var tarStepMax = viewController.getTarMaxCountStep()
+        while(tarStepMax >0) {
+            jsonArray.push({});
+            tarStepMax--
+        }
         // пока не переберем все уст-ва
         for(var devIndex=0; devIndex<devCount; devIndex++) {
             var table = viewController.getTableAtDevice(devIndex)
@@ -307,47 +321,36 @@ Rectangle {
                 if(parity == 0) {
                     parity = 1;
                     valueLiters = table[devTableRow]
-//                    console.log("step0 = " + valueLiters + " index=" + rowIndex)
                 } else {
                     parity = 0;
                     valueCnt = table[devTableRow]
                     var roleLiters = "roleLiters" + devIndex
                     var roleCnt = "roleCnt" + devIndex
-//                    console.log("geting1 =" + roleLiters)
-//                    console.log("geting2 =" + roleCnt)
-//                    var item = {}
-                    testArray[roleLiters] = valueLiters;
-                    testArray[roleCnt] = valueCnt;
-//                    jsonArray[rowIndex] = item
 
-//                    testArray["roleLiters0"] = 0
-//                    testArray["roleCnt0"] = 1
-//                    testArray["roleLiters1"] = 2
-//                    testArray["roleCnt1"] = 3
-//                    testArray[roleLiters] = 0
-//                    testArray[roleCnt] = 1
-//                    testArray["roleLiters1"] = 2
-//                    testArray["roleCnt1"] = 3
-                    jsonArray[rowIndex] = testArray
-//                    console.log("step1 = " + valueCnt + " index = " + rowIndex)
+                    var itemArray = jsonArray[rowIndex]
+                    itemArray[roleLiters] = valueLiters;
+                    itemArray[roleCnt] = valueCnt;
+                    jsonArray[rowIndex] = itemArray
                     rowIndex ++
                 }
             }
         }
         for(var len=0; len<jsonArray.length; len++) {
-////            item = jsonArray[len]
             tarTableListModelMultiple.set(len, jsonArray[len])
-////            tarTableListModelMultiple.set(len, ({"roleLiters0":0,"roleCnt0":1,"roleLiters1":2,"roleCnt1":3}))
-////            var testArray = {}
-////            testArray["roleLiters0"] = 0
-////            testArray["roleCnt0"] = 1
-////            testArray["roleLiters1"] = 2
-////            testArray["roleCnt1"] = 3
-////            tarTableListModelMultiple.set(len, testArray)
-////            console.log("step3 = " + " data=" + item)
         }
         timerAffterRefrashTarTable.start()
     }
+
+    //    Timer {
+    //        id: timerTestRepeat
+    //        interval: 1000
+    //        running: true
+    //        repeat: true
+    //        onTriggered: {
+    //            remakeTarTable()
+    //            viewController.sendReqGetTarrirAllDev()
+    //        }
+    //    }
 
     Timer {
         id: timerTestRepeat
@@ -355,10 +358,19 @@ Rectangle {
         running: true
         repeat: true
         onTriggered: {
-            remakeTarTable()
-            viewController.getTarrirAllDev()
+            var devCount = viewController.getStayedDevTarrirCount()
+            for(var i=0; i<devCount; i++) {
+                var res = viewController.getTarCurrentDeviceData(i)
+                var dataArray = tarListDevice.model.get(i)
+                if(dataArray !== undefined) {
+                        dataArray["valueCnt"] = res[0]
+                        dataArray["valueLiters"] = res[1]
+                    tarListDevice.model.set(i, dataArray)
+                }
+            }
         }
     }
+
 
     Rectangle {
         id: devPropertyProgressTmk24
@@ -2487,7 +2499,7 @@ Rectangle {
 
                                                             Label {
                                                                 id: levelTarCurrCntLabelMultiple
-                                                                text: qsTr("%1\n%2\nID[%3]").arg(model.devTyp).arg(model.devId).arg(model.devSn)
+                                                                text: qsTr("%1\nSN[%2]\nID[%3]").arg(model.devTyp).arg(model.devSn).arg(model.devId)
                                                                 anchors.left: parent.left
                                                                 color: "#888d91"
                                                                 anchors.leftMargin: 15
@@ -2503,7 +2515,7 @@ Rectangle {
                                                                     color: "#05fF00"
                                                                     height: parent.height
                                                                 }
-                                                                text: "0"
+                                                                text: model.valueCnt
                                                                 readOnly: true
                                                             }
                                                             TextField {
@@ -2515,7 +2527,7 @@ Rectangle {
                                                                     color: "#080ff0"
                                                                     height: parent.height
                                                                 }
-                                                                text: "0"
+                                                                text: model.valueLiters
                                                                 color: "white"
                                                                 readOnly: true
                                                             }
@@ -2757,7 +2769,7 @@ Rectangle {
                                                             }
                                                         }
                                                         onApply: {
-                                                            viewController.getTarrirAllDev()
+                                                            viewController.sendReqGetTarrirAllDev()
                                                             tarTabViewMultiple.model.clear()
                                                             close()
                                                         }

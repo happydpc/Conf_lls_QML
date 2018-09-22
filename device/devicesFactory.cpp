@@ -22,13 +22,6 @@ bool DevicesFactory::addNewDevice(E_DeviceType type, QString uniqDevName, QStrin
             res = true;
         }
     } else if(type == Type_Progress_tmk4UX) {
-//        if(findDeviceByUnicIdent(uniqDevName) == nullptr) {
-//            lockMutextDevMap();
-//            deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk4UX(uniqDevName, parameters.at(0), pDevService)));
-//            unlockMutextDevMap();
-//            emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
-//            res = true;
-//        }
     } else {
         throw QString("undefined class");
     }

@@ -21,6 +21,7 @@ bool Progress_tmk24Service::addDevice(QString devTypeName, QString devId, QStrin
         idBlock.devId = devId;
         idBlock.devSn = devSn;
         idBlock.isWhitedResult = 0;
+        idBlock.currData.isValid = false;
         devList.push_back(new QPair<sDevIdentBlock, QList<sDevValues>*>(idBlock, new QList<sDevValues>()));
         res = true;
     } else {
@@ -47,10 +48,6 @@ QStringList Progress_tmk24Service::getDeviceProperty(int index) {
 
 QList<QStringList> Progress_tmk24Service::getCalibrateList() {
     QList<QStringList>res;
-    // 1 devTypeName
-    // 2 devId
-    // 3 devSn
-    // 4 isChecked
     for(auto it: devList) {
         QStringList dev;
         dev.push_back(it->first.devTypeName);
@@ -120,15 +117,43 @@ bool Progress_tmk24Service::readTableAllDeviceIsReady() {
 
 QStringList Progress_tmk24Service::getTableAtDevice(int index) {
     QStringList res;
-    bool paritybit = false;
     int devsLen = devList.at(index)->second->size();
     for(int i=0; i<devsLen; i++ ) {
-        if(!paritybit) {
-            paritybit = true;
-            res << QString::number(devList.at(index)->second->at(i).valueLiters);
-        } else {
-            res << QString::number(devList.at(index)->second->at(i).valueCnt);
-            paritybit = false;
+        res << QString::number(devList.at(index)->second->at(i).valueLiters);
+        res << QString::number(devList.at(index)->second->at(i).valueCnt);
+    }
+    return res;
+}
+
+void Progress_tmk24Service::placeCurrentataFromDevice(QString deviceIdentName, QList<QString> currentData) {
+    for(auto it: devList) {
+        if(it->first.devId == deviceIdentName) {
+            if(currentData.length() >= 2) {
+                it->first.currData.cnt = currentData.at(2).toUInt();
+                it->first.currData.liters = currentData.at(0).toUInt();
+                it->first.currData.isValid = true;
+            }
+        }
+    }
+}
+
+QStringList Progress_tmk24Service::getCurrentDataDevice(int index) {
+    QStringList res;
+    if(devList.at(index)->first.currData.isValid) {
+        res << QString::number(devList.at(index)->first.currData.cnt);
+        res << QString::number(devList.at(index)->first.currData.liters);
+    } else {
+        res << "0";
+        res << "0";
+    }
+    return res;
+}
+
+int Progress_tmk24Service::getMaxCountStep() {
+    int res = 0;
+    for(auto itDev: devList) {
+        if(res < itDev->second->size()) {
+            res = itDev->second->size();
         }
     }
     return res;

@@ -26,14 +26,14 @@ public:
     void placeTableFromDevice(QString deviceIdentName, QStringList table);
     bool readTableAllDeviceIsReady();
 
+    void placeCurrentataFromDevice(QString deviceIdentName, QList<QString> currentData);
+    QStringList getCurrentDataDevice(int index);
+
     QStringList getTableAtDevice(int index);
 
-    //    QList<CommandController::sCommandData> getCommandList();
-    //    void placeDeviceDataAtCurrentData(QString uniqNameId, uint32_t cntValue, uint32_t freq, uint32_t fuelLevel);
-    //    void placeDeviceDataAtTableData(QString unqNameId, QStringList tarListValueLiters, QStringList tarListValueCnt);
-
-    //    eStatus getStatus();
-    //    void setStatus(Calibrate::eStatus status);
+    // сколько самое больше кол-во ячеек в тарировки
+    // для резервирования array в qml
+    int getMaxCountStep();
 
     QString getLastError();
 
@@ -54,6 +54,11 @@ private:
         QString devId;
         QString devSn;
         bool isWhitedResult;
+        struct {
+            uint32_t cnt;
+            uint32_t liters;
+            bool isValid;
+        }currData;
     }sDevIdentBlock;
 
     QList<QPair<sDevIdentBlock, QList<sDevValues>*>*>devList;

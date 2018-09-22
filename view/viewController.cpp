@@ -212,10 +212,6 @@ void ViewController::getCurrentDevErrors() {
 void ViewController::getCurrentDevTarTable() {
     getDeviceFactoryByIndex(interfaceTree->getIoIndex())->sendCustomCommadToDev(interfaceTree->getDevIndex(), "read current dev tar table");
 }
-void ViewController::getDevTarTableFromListId(QStringList devsId) {
-
-}
-
 void ViewController::setCurrentDevTarTable(QStringList values, QStringList levels) {
     QPair<QStringList,QStringList> table;
     int size = values.size();
@@ -281,6 +277,14 @@ void ViewController::setCurrentDevChangeId(QString passwordCheck, QString idNew)
     }
 }
 
+int ViewController::getTarMaxCountStep() {
+    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+        return pService->getMaxCountStep();
+    }
+    return 0;
+}
+
 QStringList ViewController::getAvailableDevTarrirAdd_DevType() {
     QStringList resList;
     int devCount = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
@@ -304,6 +308,15 @@ QStringList ViewController::getAvailableDevTarrirAdd_DevSerialNumber() {
         resList << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(i).at(0); // sn
     }
     return resList;
+}
+
+QStringList ViewController::getTarCurrentDeviceData(int index) {
+    QStringList res;
+    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+        res = pService->getCurrentDataDevice(index);
+    }
+    return res;
 }
 
 DeviceAbstract* ViewController::getCurrentDeviceToAbstract() {
@@ -356,7 +369,7 @@ void ViewController::removeTarrirDev(QString devTypeName, QString devId) {
 // ожидаем ответа по очереди
 // когда последний опрошен, отсылаем результат в qml
 // если ответа небыло, значение выделить красным и вывести message
-void ViewController::getTarrirAllDev() {
+void ViewController::sendReqGetTarrirAllDev() {
     if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
         Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
         for(auto i:pService->requestGetTableFromAllDevice()) {
@@ -429,8 +442,15 @@ void ViewController::deviceReadyCurrentData(DevicesFactory::E_DeviceType type, Q
             break;
         case DevicesFactory::Type_Undefined: break;
         }
+        emit devUpdateLogMessage(1, QString("Получение данных с устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
     }
-    emit devUpdateLogMessage(1, QString("Получение данных с устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+
+    int devIndex = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId);
+    if(devIndex >= 0) {
+        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(
+                    getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(devIndex)->getServiceAbstract());
+        pService->placeCurrentataFromDevice(uniqNameId, getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(devIndex));
+    }
 }
 void ViewController::deviceReadyProperties(DevicesFactory::E_DeviceType type, QString uniqNameId) {
     if(isCurrentDevice(uniqNameId)) {

@@ -40,7 +40,6 @@ public:
     Q_INVOKABLE void getCurrentDevErrors();
 
     Q_INVOKABLE void getCurrentDevTarTable();
-    Q_INVOKABLE void getDevTarTableFromListId(QStringList devsId);
 
     Q_INVOKABLE void setCurrentDevTarTable(QStringList values, QStringList levels);
     Q_INVOKABLE void setCurrentDevExportTarTable(QString pathFile, QStringList values, QStringList levels);
@@ -51,12 +50,16 @@ public:
     DeviceAbstract *getCurrentDeviceToAbstract();
 
     //********************* TARING *********************//
+    //
+    Q_INVOKABLE int getTarMaxCountStep();
     // какие устройства доступны для добавления в множественную таррировку
     // устройство с вкладки которого это начинают
     // уже должно быть туда добавленно, type, id, sn
     Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevType();
     Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevId();
     Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevSerialNumber();
+
+    Q_INVOKABLE QStringList getTarCurrentDeviceData(int index);
 
     // возвразщает кол-во уже добавленных уст-в
     Q_INVOKABLE int getStayedDevTarrirCount();
@@ -74,7 +77,7 @@ public:
             // ожидаем ответа по очереди
             // когда последний опрошен, отсылаем результат в qml
             // если ответа небыло, значение выделить красным и вывести message
-    Q_INVOKABLE void getTarrirAllDev();
+    Q_INVOKABLE void sendReqGetTarrirAllDev();
     Q_INVOKABLE QStringList getTableAtDevice(int index);
     Q_INVOKABLE int getTableCountReady();
 
