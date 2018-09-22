@@ -1,6 +1,8 @@
 #include "Progress_tmk24Service.h"
 
-Progress_tmk24Service::Progress_tmk24Service() {}
+Progress_tmk24Service::Progress_tmk24Service(QString owDeviceName) {
+    this->ownDeviceName = owDeviceName;
+}
 void Progress_tmk24Service::reset() {}
 
 bool Progress_tmk24Service::addDevice(QString devTypeName, QString devId, QString devSn) {
@@ -71,9 +73,12 @@ void Progress_tmk24Service::removeStep(int index) {
 
 QList<QString> Progress_tmk24Service::requestGetTableFromAllDevice() {
     QList<QString>list;
-    for(auto it: devList) {
-        list.push_back(it->first.devId);
-        it->first.isWhitedResult = 1;
+    if(operation == OPERATION_IDLE){
+        for(auto it: devList) {
+            list.push_back(it->first.devId);
+            it->first.isWhitedResult = true;
+            operation = OPERATION_WHITE_GET;
+        }
     }
     return list;
 }
@@ -95,9 +100,11 @@ void Progress_tmk24Service::placeTableFromDevice(QString deviceIdentName, QStrin
                     it->second->push_back(tDevValues);
                 }
             }
-            it->first.isWhitedResult = 0;
-            break;
+            it->first.isWhitedResult = false;
         }
+    }
+    if(readTableAllDeviceIsReady()) {
+        operation = OPERATION_IDLE;
     }
 }
 
@@ -114,13 +121,13 @@ bool Progress_tmk24Service::readTableAllDeviceIsReady() {
 QStringList Progress_tmk24Service::getTableAtDevice(int index) {
     QStringList res;
     bool paritybit = false;
-    QList<sDevValues>*tList = devList.at(index)->second;
-    for(int i=0; i<tList->size(); i++ ) {
+    int devsLen = devList.at(index)->second->size();
+    for(int i=0; i<devsLen; i++ ) {
         if(!paritybit) {
             paritybit = true;
-            res << QString::number(tList->at(i).valueLiters);
+            res << QString::number(devList.at(index)->second->at(i).valueLiters);
         } else {
-            res << QString::number(tList->at(i).valueCnt);
+            res << QString::number(devList.at(index)->second->at(i).valueCnt);
             paritybit = false;
         }
     }

@@ -1,5 +1,7 @@
 #include "./serviceDevicesAbstract.h"
 
-ServiceDevicesAbstract::ServiceDevicesAbstract() {
+ServiceDevicesAbstract::ServiceDevicesAbstract() {}
 
+QString ServiceDevicesAbstract::getTypeOwnDeviceName() {
+    return ownDeviceName;
 }

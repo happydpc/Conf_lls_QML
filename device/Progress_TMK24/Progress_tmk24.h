@@ -12,7 +12,8 @@
 class Progress_tmk24 : public DeviceAbstract
 {
 public:
-    Progress_tmk24(QString uniqIdentId, QString passwordSession);
+    Progress_tmk24(QString uniqIdentId, QString passwordSession,
+                   ServiceDevicesAbstract *pServiceAbstract);
     ~Progress_tmk24();
 
     static constexpr char* name = "PROGRESS TMK24";
@@ -36,6 +37,7 @@ public:
     QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList> data) override;
     QList<CommandController::sCommandData> getCommandCustom(QString operation) override;
     QList<int> getChart() override;
+    ServiceDevicesAbstract* getServiceAbstract() override;
 
     QList<QString>getCurrentOtherData();
 

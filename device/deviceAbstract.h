@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "command/commandController.h"
+#include "service/serviceDevicesAbstract.h"
 
 class DeviceAbstract : public QObject
 {
@@ -50,10 +51,13 @@ public:
     virtual QList<CommandController::sCommandData> getCommandCustom(QString operation) = 0;
     virtual QList<int> getChart() = 0;
 
+    virtual ServiceDevicesAbstract* getServiceAbstract() = 0;
+
     int getPriority();
     void setPriority(int value);
 
     DeviceAbstract::E_State state;
+    ServiceDevicesAbstract* serviceAbstact;
 
 signals:
 

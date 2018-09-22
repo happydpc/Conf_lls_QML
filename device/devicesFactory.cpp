@@ -11,24 +11,24 @@ DevicesFactory::DevicesFactory() {
 
 DevicesFactory::~DevicesFactory() {}
 
-bool DevicesFactory::addNewDevice(E_DeviceType type, QString uniqDevName, QStringList parameters) {
+bool DevicesFactory::addNewDevice(E_DeviceType type, QString uniqDevName, QStringList parameters, ServiceDevicesAbstract *pDevService) {
     bool res = false;
     if(type == Type_Progress_Tmk24) {
         if(findDeviceByUnicIdent(uniqDevName) == nullptr) {
             lockMutextDevMap();
-            deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk24(uniqDevName, parameters.at(0))));
+            deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk24(uniqDevName, parameters.at(0), pDevService)));
             unlockMutextDevMap();
             emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
             res = true;
         }
     } else if(type == Type_Progress_tmk4UX) {
-        if(findDeviceByUnicIdent(uniqDevName) == nullptr) {
-            lockMutextDevMap();
-            deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk4UX(uniqDevName, parameters.at(0))));
-            unlockMutextDevMap();
-            emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
-            res = true;
-        }
+//        if(findDeviceByUnicIdent(uniqDevName) == nullptr) {
+//            lockMutextDevMap();
+//            deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk4UX(uniqDevName, parameters.at(0), pDevService)));
+//            unlockMutextDevMap();
+//            emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
+//            res = true;
+//        }
     } else {
         throw QString("undefined class");
     }
@@ -217,6 +217,7 @@ void DevicesFactory::devShedullerSlot() {
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         command = dev.second->getCommandToCheckConnected();
                         command.isNeedAckMessage = false;
+                        command.operationHeader = "check dev is connected";
                         dev.second->makeDataToCommand(command);
                         commandList.push_back(command);
                     }
@@ -226,6 +227,7 @@ void DevicesFactory::devShedullerSlot() {
                         if(dev.second->getPriority() == 0) { // TODO: loop need priority
                             command = dev.second->getCommandToGetType();
                             command.isNeedAckMessage = false;
+                            command.operationHeader = "get dev type";
                             dev.second->makeDataToCommand(command);
                             commandList.push_back(command);
                         }
@@ -235,6 +237,7 @@ void DevicesFactory::devShedullerSlot() {
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         command = dev.second->getCommandtoCheckPassword();
                         command.isNeedAckMessage = false;
+                        command.operationHeader = "check dev password";
                         dev.second->makeDataToCommand(command);
                         commandList.push_back(command);
                     }
@@ -243,6 +246,7 @@ void DevicesFactory::devShedullerSlot() {
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         for(sizeCommand=0; sizeCommand!= dev.second->getCommandListToInit().size(); sizeCommand++) {
                             command = dev.second->getCommandListToInit().at(sizeCommand);
+                            command.operationHeader = "init dev after connecting";
                             command.isNeedAckMessage = false;
                             dev.second->makeDataToCommand(command);
                             commandList.push_back(command);
@@ -253,6 +257,7 @@ void DevicesFactory::devShedullerSlot() {
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         for(sizeCommand=0; sizeCommand != dev.second->getCommandListToCurrentData().size(); sizeCommand++) {
                             command = dev.second->getCommandListToCurrentData().at(sizeCommand);
+                            command.operationHeader = "typical command get current data";
                             command.isNeedAckMessage = false;
                             dev.second->makeDataToCommand(command);
                             commandList.push_back(command);

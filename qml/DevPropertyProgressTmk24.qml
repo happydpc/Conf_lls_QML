@@ -29,8 +29,8 @@ Rectangle {
     }
     function setResetState() {
         stackSubProperty.setCurrentIndex(5)
-//        tabProperty.setCurrentIndex(0)
-//        stackSubProperty.setCurrentIndex(0)
+        //        tabProperty.setCurrentIndex(0)
+        //        stackSubProperty.setCurrentIndex(0)
         setNoReady()
         setWriteSettingsIsAvailable()
     }
@@ -134,8 +134,6 @@ Rectangle {
                 masterSlaveSlaveId_3.value = settings[i]
             } else if(key[i] === "masterSlaveSlaveId_4_value") {
                 masterSlaveSlaveId_4.value = settings[i]
-            } else {
-                console.log("settings -Bad Parameters")
             }
         }
     }
@@ -200,63 +198,74 @@ Rectangle {
         error8Label.error8 = errors[7]
     }
     function remakeTarTableChart() {
-//        chartTarTableLine.clear()
-//        var tarArrayLitrs = [];
-//        var tarArrayCNT = [];
-//        var maxValueCnt = 0;
-//        var maxValueLitrs = 0;
-//        for(var i=0; i<tarTabView.rowCount; i++) {
+        //        chartTarTableLine.clear()
+        //        var tarArrayLitrs = [];
+        //        var tarArrayCNT = [];
+        //        var maxValueCnt = 0;
+        //        var maxValueLitrs = 0;
+        //        for(var i=0; i<tarTabView.rowCount; i++) {
 
-//            var item = tarTabView.model.get(i)
+        //            var item = tarTabView.model.get(i)
 
-//            tarArrayLitrs.push(item.valueLitrs)
-//            tarArrayCNT.push(item.valueCNT)
+        //            tarArrayLitrs.push(item.valueLitrs)
+        //            tarArrayCNT.push(item.valueCNT)
 
-//            if(maxValueCnt < item.valueCNT) {
-//                maxValueCnt = item.valueCNT
-//            }
-//            if(maxValueLitrs < item.valueLitrs) {
-//                maxValueLitrs = item.valueLitrs
-//            }
-//            console.log("ValueCNT =" + item.valueCNT + "\nValue Litrs=" + item.valueLitrs)
-//        }
-//        chartTarTable.chartTarTableAmplitudeMax = parseInt(maxValueCnt)
-//        chartTarTable.chartTarTableLength = parseInt(maxValueLitrs)
-//        console.log("MaxLevel =" + chartTarTable.chartTarTableAmplitudeMax)
-//        for(i=0; i<chartTarTable.chartTarTableLength; i++) {
-//            chartTarTableLine.append(parseInt(tarArrayLitrs[i]), parseInt(tarArrayCNT[i]));
-//            console.log("Add=" + i + " " + tarArrayLitrs[i])
-//        }
+        //            if(maxValueCnt < item.valueCNT) {
+        //                maxValueCnt = item.valueCNT
+        //            }
+        //            if(maxValueLitrs < item.valueLitrs) {
+        //                maxValueLitrs = item.valueLitrs
+        //            }
+        //            console.log("ValueCNT =" + item.valueCNT + "\nValue Litrs=" + item.valueLitrs)
+        //        }
+        //        chartTarTable.chartTarTableAmplitudeMax = parseInt(maxValueCnt)
+        //        chartTarTable.chartTarTableLength = parseInt(maxValueLitrs)
+        //        console.log("MaxLevel =" + chartTarTable.chartTarTableAmplitudeMax)
+        //        for(i=0; i<chartTarTable.chartTarTableLength; i++) {
+        //            chartTarTableLine.append(parseInt(tarArrayLitrs[i]), parseInt(tarArrayCNT[i]));
+        //            console.log("Add=" + i + " " + tarArrayLitrs[i])
+        //        }
     }
 
     function remakeTarTable() {
+        tarTabViewMultiple.model.clear()
         tarListDevice.model.clear()
-        if(stackSubProperty.currentItem === itemDevTarir) {
+        for(var index = tarTabViewMultiple.columnCount-1; index>=0; index--) {
+            tarTabViewMultiple.removeColumn(index)
+        }
+        timerAffterClearTarTable.start()
+    }
+
+    Timer {
+        id: timerAffterClearTarTable
+        interval: 10
+        running: false
+        repeat: false
+        onTriggered: {
             var tarSize = viewController.getStayedDevTarrirCount()
             var devType = []
             var devId = []
             var devSn = []
-            devType = viewController.getStayedDevTarrir_DevType()
-            devId =  viewController.getStayedDevTarrir_DevId()
-            devSn = viewController.getStayedDevTarrir_DevSerialNumber()
-            for(var i=0; i<tarSize; i++) {
-                // добавляем на list with current data
+            devType = viewController.getStayedDevTarrir_DevProperty("type")
+            devId =  viewController.getStayedDevTarrir_DevProperty("id")
+            devSn = viewController.getStayedDevTarrir_DevProperty("sn")
+            for(var i=0; i<tarSize; i++) { // добавляем на list with current data
                 tarListDevice.model.append({"devTyp":devType[i],"devId":devId[i],"devSn":devSn[i]})
             }
             // добавляем в таблицу как столблец для девайса
             var component = Qt.createComponent("DevPropertyProgressTmk24TarTableDelegate.qml");
-            var tableViewColumn
-
             for(var i2=0; i2<tarSize; i2++) {
-                tableViewColumn  = component.createObject(tarTabViewMultiple);
+                var tableViewColumn  = component.createObject(tarTabViewMultiple);
                 tableViewColumn.title = qsTr("Объем[ID-%1]").arg(devId[i2])
-                tableViewColumn.role = qsTr("roleLiters%1").arg(i2)
+                tableViewColumn.role = "roleLiters" + i2
                 tarTabViewMultiple.addColumn(tableViewColumn)
+                console.log("addeted1 =" + tableViewColumn.role)
 
                 tableViewColumn  = component.createObject(tarTabViewMultiple);
                 tableViewColumn.title = qsTr("CNT[ID-%1]").arg(devId[i2])
-                tableViewColumn.role = qsTr("roleCnt%1").arg(i2)
+                tableViewColumn.role = "roleCnt" + i2
                 tarTabViewMultiple.addColumn(tableViewColumn)
+                console.log("addeted2 =" + tableViewColumn.role)
             }
         }
     }
@@ -272,38 +281,83 @@ Rectangle {
         viewController.setCurrentDevTarTable(tarArrayCNT,tarArrayLiters)
     }
     function readTarTable(devCount) {
-        tarTableListModelMultiple.clear()
-        var strResultAppend = ""
-        var size = viewController.getTableCountReady()
+        console.log("readTarTable = " + devCount)
 
-        var valuesArray = []
+        var jsonArray = []
 
+        jsonArray.push({});
+        jsonArray.push({});
+        jsonArray.push({});
+//        jsonArray[0] = {}
+//        jsonArray[1] = {}
+//        jsonArray[2] = {}
+
+        var testArray = new Object
         // пока не переберем все уст-ва
-        for(var devIndex=0; devIndex<size; devIndex++) {
+        for(var devIndex=0; devIndex<devCount; devIndex++) {
             var table = viewController.getTableAtDevice(devIndex)
-            var roleLiters = qsTr("roleLiters%1").arg(devIndex)
-            var roleCnt = qsTr("roleCnt%1").arg(devIndex)
             var parity = 0
             var rowIndex = 0
             // перебираем таблицу уст-ва
             var valueCnt = 0
             var valueLiters = 0
+            console.log("getTable =" + table.length)
+
             for(var devTableRow=0; devTableRow<table.length; devTableRow++) {
                 if(parity == 0) {
                     parity = 1;
                     valueLiters = table[devTableRow]
+//                    console.log("step0 = " + valueLiters + " index=" + rowIndex)
                 } else {
                     parity = 0;
                     valueCnt = table[devTableRow]
-                    var json = { };
-                    json[roleLiters] = valueLiters;
-                    json[roleCnt] = valueCnt;
-                    tarTableListModelMultiple.set(rowIndex, json)
+                    var roleLiters = "roleLiters" + devIndex
+                    var roleCnt = "roleCnt" + devIndex
+//                    console.log("geting1 =" + roleLiters)
+//                    console.log("geting2 =" + roleCnt)
+//                    var item = {}
+                    testArray[roleLiters] = valueLiters;
+                    testArray[roleCnt] = valueCnt;
+//                    jsonArray[rowIndex] = item
+
+//                    testArray["roleLiters0"] = 0
+//                    testArray["roleCnt0"] = 1
+//                    testArray["roleLiters1"] = 2
+//                    testArray["roleCnt1"] = 3
+//                    testArray[roleLiters] = 0
+//                    testArray[roleCnt] = 1
+//                    testArray["roleLiters1"] = 2
+//                    testArray["roleCnt1"] = 3
+                    jsonArray[rowIndex] = testArray
+//                    console.log("step1 = " + valueCnt + " index = " + rowIndex)
                     rowIndex ++
                 }
             }
         }
+        for(var len=0; len<jsonArray.length; len++) {
+////            item = jsonArray[len]
+            tarTableListModelMultiple.set(len, jsonArray[len])
+////            tarTableListModelMultiple.set(len, ({"roleLiters0":0,"roleCnt0":1,"roleLiters1":2,"roleCnt1":3}))
+////            var testArray = {}
+////            testArray["roleLiters0"] = 0
+////            testArray["roleCnt0"] = 1
+////            testArray["roleLiters1"] = 2
+////            testArray["roleCnt1"] = 3
+////            tarTableListModelMultiple.set(len, testArray)
+////            console.log("step3 = " + " data=" + item)
+        }
         timerAffterRefrashTarTable.start()
+    }
+
+    Timer {
+        id: timerTestRepeat
+        interval: 1000
+        running: true
+        repeat: true
+        onTriggered: {
+            remakeTarTable()
+            viewController.getTarrirAllDev()
+        }
     }
 
     Rectangle {
@@ -2704,6 +2758,7 @@ Rectangle {
                                                         }
                                                         onApply: {
                                                             viewController.getTarrirAllDev()
+                                                            tarTabViewMultiple.model.clear()
                                                             close()
                                                         }
                                                     }

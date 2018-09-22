@@ -823,6 +823,7 @@ qrc_qml.cpp: qml.qrc \
 		qml/ProjectStartScreen.qml \
 		qml/DevPropertyProgressTmk24.qml \
 		qml/SearchDevice.qml \
+		qml/DevPropertyProgressTmk24TarTableDelegate.qml \
 		qml/ButtonRound.qml \
 		qml/SerialPortForm.ui.qml \
 		qml/LogoPanel.qml \

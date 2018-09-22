@@ -48,8 +48,9 @@ public:
     Q_INVOKABLE void setCurrentDevChangeId(QString passwordCheck, QString idNew);
 
 
+    DeviceAbstract *getCurrentDeviceToAbstract();
+
     //********************* TARING *********************//
-    //
     // какие устройства доступны для добавления в множественную таррировку
     // устройство с вкладки которого это начинают
     // уже должно быть туда добавленно, type, id, sn
@@ -61,9 +62,7 @@ public:
     Q_INVOKABLE int getStayedDevTarrirCount();
 
     // возвращает устройства добавленные в структуру тарировки (но без значений), type, id, sn
-    Q_INVOKABLE QStringList getStayedDevTarrir_DevType();
-    Q_INVOKABLE QStringList getStayedDevTarrir_DevId();
-    Q_INVOKABLE QStringList getStayedDevTarrir_DevSerialNumber();
+    Q_INVOKABLE QStringList getStayedDevTarrir_DevProperty(QString propertyName);
 
     // добавляем датчики в таблицу тарировки
     Q_INVOKABLE bool addTarrirDev(QString devTypeName, QString devId);
@@ -190,7 +189,7 @@ private:
     ConnectionFactory *connFactory;
     Model *interfaceTree;
 
-    Progress_tmk24Service *tmk24Service;
+    QList<ServiceDevicesAbstract*> serviceList;
 };
 
 #endif // VIEWCONTROLLER_H

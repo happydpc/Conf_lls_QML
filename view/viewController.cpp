@@ -4,12 +4,15 @@
 #include <QFile>
 
 ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObject(parent) {
+
     this->connFactory = new ConnectionFactory();
+
     this->interfaceTree = pInterfaceModel;
+
     connect(connFactory, SIGNAL(updateTree(ConnectionFactory::E_ConnectionUpdateType)),
             this, SLOT(interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateType)));
 
-    this->tmk24Service = new Progress_tmk24Service();
+    this->serviceList.push_back(new Progress_tmk24Service("PROGRESS TMK24"));
 
     QTimer::singleShot(500, Qt::CoarseTimer, [&] {
         QStringList strLis;
@@ -20,9 +23,9 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
 
         addDeviceToConnection("PROGRESS TMK24", QString::number(1), "1234");
         addDeviceToConnection("PROGRESS TMK24", QString::number(2), "");
-        //        for(int i=1; i<15; i++) { // 15
-        //            addDeviceToConnection("PROGRESS TMK24", QString::number(i+1), "");
-        //        }
+
+        addTarrirDev("PROGRESS TMK24", "1");
+        addTarrirDev("PROGRESS TMK24", "2");
     });
 }
 
@@ -82,20 +85,24 @@ bool ViewController::addDeviceToConnection(QString devTypeName, QString idNum, Q
     // get current interface
     pInterface = connFactory->getInterace(connFactory->getInteraceNameFromIndex(interfaceTree->getIoIndex()));
     if(pInterface != nullptr) {     // TODO: throw!!!
-        res = pInterface->getDeviceFactory()->addNewDevice(pInterface->getDeviceFactory()->getDeviceType(devTypeName), idNum, QStringList(password));
-        if(res) {
-            // change current device index
-            interfaceTree->setDevIndex((getDeviceCount()-1));
-            interfaceTree->addDeviceToConnection(getCurrentInterfaceNameToSerial(), getDeviceHeaderByIndex(interfaceTree->getDevIndex()).first(), false);//
-            connect(interfaceTree, SIGNAL(currentIndexIsChangedDevice(int,int)), this, SLOT(setChangedIndexDevice(int,int)));
-            connect(interfaceTree, SIGNAL(currentIndexIsChangedInteface(int)), this, SLOT(setChangedIndexInteface(int)));
-            // make it device - "not ready"
-            // while not read settings
-            pInterface->getDeviceFactory()->setDeviceReInitByIndex(interfaceTree->getDevIndex());
-            emit devUpdateLogMessage(0, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
-        } else {
-            emit devUpdateLogMessage(2, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
-            emit addDeviceFail(devTypeName);
+        for(auto it:serviceList) {
+            if(it->getTypeOwnDeviceName() == devTypeName) {
+                res = pInterface->getDeviceFactory()->addNewDevice(pInterface->getDeviceFactory()->getDeviceType(devTypeName), idNum, QStringList(password), it);
+                if(res) {
+                    // change current device index
+                    interfaceTree->setDevIndex((getDeviceCount()-1));
+                    interfaceTree->addDeviceToConnection(getCurrentInterfaceNameToSerial(), getDeviceHeaderByIndex(interfaceTree->getDevIndex()).first(), false);//
+                    connect(interfaceTree, SIGNAL(currentIndexIsChangedDevice(int,int)), this, SLOT(setChangedIndexDevice(int,int)));
+                    connect(interfaceTree, SIGNAL(currentIndexIsChangedInteface(int)), this, SLOT(setChangedIndexInteface(int)));
+                    // make it device - "not ready"
+                    // while not read settings
+                    pInterface->getDeviceFactory()->setDeviceReInitByIndex(interfaceTree->getDevIndex());
+                    emit devUpdateLogMessage(0, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+                } else {
+                    emit devUpdateLogMessage(2, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+                    emit addDeviceFail(devTypeName);
+                }
+            }
         }
     } else {
         qDebug() << "addDevice-" << interfaceTree->getIoIndex() << devTypeName <<" -ERR";
@@ -206,9 +213,8 @@ void ViewController::getCurrentDevTarTable() {
     getDeviceFactoryByIndex(interfaceTree->getIoIndex())->sendCustomCommadToDev(interfaceTree->getDevIndex(), "read current dev tar table");
 }
 void ViewController::getDevTarTableFromListId(QStringList devsId) {
-    //getDeviceFactoryByIndex()
-}
 
+}
 
 void ViewController::setCurrentDevTarTable(QStringList values, QStringList levels) {
     QPair<QStringList,QStringList> table;
@@ -300,67 +306,43 @@ QStringList ViewController::getAvailableDevTarrirAdd_DevSerialNumber() {
     return resList;
 }
 
+DeviceAbstract* ViewController::getCurrentDeviceToAbstract() {
+    return getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
+}
+
 int ViewController::getStayedDevTarrirCount() {
-    int count = 0;
-    DeviceAbstract *pAbstract = nullptr;
-    pAbstract = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
-    if(pAbstract != nullptr) {
-        if(pAbstract->getDevTypeName() == "PROGRESS TMK24") {
-            count = tmk24Service->getDeviceCount();
-        }
+    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+        return pService->getDeviceCount();
     }
-    return count;
+    return 0;
 }
-QStringList ViewController::getStayedDevTarrir_DevType() {
+
+QStringList ViewController::getStayedDevTarrir_DevProperty(QString propertyName) {
     QStringList res;
-    DeviceAbstract *pAbstract = nullptr;
-    pAbstract = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
-    if(pAbstract != nullptr) {
-        if(pAbstract->getDevTypeName() == "PROGRESS TMK24") {
-            for(int i=0; i<tmk24Service->getDeviceCount(); i++) {
-                res << tmk24Service->getDeviceProperty(i).at(0); // type
+    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+        for(int i=0; i<pService->getDeviceCount(); i++) {
+            if(propertyName.toLower() == "type") {
+                res << pService->getDeviceProperty(i).at(0); // type
+            }
+            if(propertyName.toLower() == "id") {
+                res << pService->getDeviceProperty(i).at(1); // id
+            }
+            if(propertyName.toLower() == "sn") {
+                res << pService->getDeviceProperty(i).at(2); // serialNum
             }
         }
     }
     return res;
 }
-QStringList ViewController::getStayedDevTarrir_DevId() {
-    QStringList res;
-    DeviceAbstract *pAbstract = nullptr;
-    pAbstract = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
-    if(pAbstract != nullptr) {
-        if(pAbstract->getDevTypeName() == "PROGRESS TMK24") {
-            Progress_tmk24 *pTmk24 = dynamic_cast<Progress_tmk24*>(pAbstract);
-            for(int i=0; i<tmk24Service->getDeviceCount(); i++) {
-                res << tmk24Service->getDeviceProperty(i).at(1); // id
-            }
-        }
-    }
-    return res;
-}
-QStringList ViewController::getStayedDevTarrir_DevSerialNumber() {
-    QStringList res;
-    DeviceAbstract *pAbstract = nullptr;
-    pAbstract = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
-    if(pAbstract != nullptr) {
-        if(pAbstract->getDevTypeName() == "PROGRESS TMK24") {
-            Progress_tmk24 *pTmk24 = dynamic_cast<Progress_tmk24*>(pAbstract);
-            for(int i=0; i<tmk24Service->getDeviceCount(); i++) {
-                res << tmk24Service->getDeviceProperty(i).at(1); // 2
-            }
-        }
-    }
-    return res;
-}
+
+
 bool ViewController::addTarrirDev(QString devTypeName, QString devId) {
     bool res = false;
-    DeviceAbstract *pAbstract = nullptr;
-    pAbstract = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
-    if(pAbstract != nullptr) {
-        if(pAbstract->getDevTypeName() == "PROGRESS TMK24") {
-            Progress_tmk24 *pTmk24 = dynamic_cast<Progress_tmk24*>(pAbstract);
-            res = tmk24Service->addDevice(devTypeName, devId,"-----");
-        }
+    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+        res = pService->addDevice(devTypeName, devId,"-----");
     }
     return res;
 }
@@ -375,46 +357,34 @@ void ViewController::removeTarrirDev(QString devTypeName, QString devId) {
 // когда последний опрошен, отсылаем результат в qml
 // если ответа небыло, значение выделить красным и вывести message
 void ViewController::getTarrirAllDev() {
-    DeviceAbstract *pAbstract = nullptr;
-    pAbstract = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
-    if(pAbstract != nullptr) {
-        if(pAbstract->getDevTypeName() == "PROGRESS TMK24") {
-            Progress_tmk24 *pTmk24 = dynamic_cast<Progress_tmk24*>(pAbstract);
-            QList<QString> listDevId = tmk24Service->requestGetTableFromAllDevice();
-            for(auto i:listDevId) {
-                int devIndex = getDeviceFactoryByIndex(interfaceTree->getDevIndex())->findDeviceIndex(i);
-                if(devIndex >= 0) {
-                    // отправляем всем dev из списка команду на чтение таблицы
-                    getDeviceFactoryByIndex(interfaceTree->getIoIndex())->sendCustomCommadToDev(devIndex, "read current dev tar table");
-                }
-            }
+    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+        for(auto i:pService->requestGetTableFromAllDevice()) {
+            // отправляем всем dev из списка команду на чтение таблицы
+            getDeviceFactoryByIndex(interfaceTree->getIoIndex())->sendCustomCommadToDev(
+                        getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(i),
+                        "read current dev tar table");
         }
     }
 }
+
 QStringList ViewController::getTableAtDevice(int index) {
-    DeviceAbstract *pAbstract = nullptr;
-    pAbstract = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
-    if(pAbstract != nullptr) {
-        if(pAbstract->getDevTypeName() == "PROGRESS TMK24") {
-            return tmk24Service->getTableAtDevice(index);
-        }
-    }
-}
-int ViewController::getTableCountReady() {
-    int res = 0;
-    DeviceAbstract *pAbstract = nullptr;
-    pAbstract = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
-    if(pAbstract != nullptr) {
-        if(pAbstract->getDevTypeName() == "PROGRESS TMK24") {
-            res = tmk24Service->requestGetTableFromAllDevice().size();
-        }
+    QStringList res;
+    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+        res = pService->getTableAtDevice(index);
     }
     return res;
 }
 
-//void ViewController::tarirDevEventsSlot(Calibrate::eTypeEvents eventsType) {
-
-//}
+int ViewController::getTableCountReady() {
+    int res = 0;
+    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+        res = pService->requestGetTableFromAllDevice().size();
+    }
+    return res;
+}
 
 //************************************************************************/
 //**                        SECURITY, PROPERTYES                        **/
@@ -492,13 +462,13 @@ void ViewController::deviceReadyInit(DevicesFactory::E_DeviceType type, QString 
 }
 
 void ViewController::interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateType type) {
+    disconnectToDevSignals();
+    interfaceTree->setDevIndex(0);
     if(getInterfaceCount() > 0) {
         if(interfaceTree->getIoIndex() > getInterfaceCount()-1) {
             interfaceTree->setIoIndex(0);
         }
     }
-    disconnectToDevSignals();
-    interfaceTree->setDevIndex(0);
     deviceTreeChanged(DevicesFactory::Type_Update_RamakeAfterChangeInterface, interfaceTree->getDevIndex());
 
     switch(type) {
@@ -515,8 +485,6 @@ void ViewController::interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateT
             // TODO: status interface
             status.push_back(1);
         }
-        //        interfaceListModel->
-        //        emit remakeInterfaceTree(list, status);
         break;
     }
     if(connFactory->getCountConnection() >0) {
@@ -568,9 +536,11 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
             }
             if(commmandData.devCommand == Progress_tmk24Data::lls_read_cal_table) {
                 if(commmandData.isNeedAckMessage) {
-                    tmk24Service->placeTableFromDevice(commmandData.deviceIdent, customData);
-                    if(tmk24Service->readTableAllDeviceIsReady()) {
-                        emit devUpdateReadTarTable(tmk24Service->getDeviceCount());
+                    Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(pDevFactory->getDeviceToDeviceAbstract(indexDev)->getServiceAbstract());
+                    pService->placeTableFromDevice(commmandData.deviceIdent, customData);
+                    if(pService->readTableAllDeviceIsReady()) {
+                        emit devUpdateReadTarTable(pService->getDeviceCount());
+
                     }
                 }
             }
@@ -648,26 +618,12 @@ void ViewController::disconnectToDevSignals() {
 }
 
 void ViewController::connectToDevSignals() {
-    DeviceAbstract *pAbstract = nullptr;
     if(connFactory->getCountConnection() > 0) {
-        //
         connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceConnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceConnected(DevicesFactory::E_DeviceType,QString)));
         connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceDisconnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceDisconnected(DevicesFactory::E_DeviceType,QString)));
         connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceReadyCurrentDataSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyCurrentData(DevicesFactory::E_DeviceType,QString)));
         connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceReadyInitSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyInit(DevicesFactory::E_DeviceType,QString)));
         connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceReadyPropertiesSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyProperties(DevicesFactory::E_DeviceType,QString)));
-        // если tmk24
-        if(getDeviceCount() > 0) {
-            pAbstract = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
-            if(pAbstract != nullptr) {
-                if(pAbstract->getDevTypeName() == "PROGRESS TMK24") {
-                    // TODO: throw cast
-                    Progress_tmk24 *pTmk24 = dynamic_cast<Progress_tmk24*>(pAbstract);
-                    //                    connect(pTmk24->getCalibrate(), SIGNAL(calibrateEvents(Calibrate::eTypeEvents)), this, SLOT(tarirDevEventsSlot(Calibrate::eTypeEvents)));
-                }
-            }
-        }
-
         connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceUpdateTree(DevicesFactory::E_DeviceUpdateType,int)),
                 this, SLOT(deviceTreeChanged(DevicesFactory::E_DeviceUpdateType,int)));
         connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceReadyCustomCommand(int,QString,QStringList,CommandController::sCommandData)),
@@ -691,10 +647,11 @@ void ViewController::setChangedIndexInteface(int interfaceIndex) {
     QList<int> status;
     // add interace command to read current property interface
     //...
+    disconnectToDevSignals();
     interfaceTree->setIoIndex(interfaceIndex);
     interfaceTree->setDevIndex(0);
     interfaceTreeChanged(ConnectionFactory::Type_Update_ChangedIndex);
+    connectToDevSignals(); // get interface property
     emit devUpdateLogMessage(1, QString("Переключение интерфейса[%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
-
     emit setActivePropertySerialPort();
 }

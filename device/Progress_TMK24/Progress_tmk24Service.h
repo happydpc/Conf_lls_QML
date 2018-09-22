@@ -7,7 +7,7 @@
 class Progress_tmk24Service : public ServiceDevicesAbstract
 {
 public:
-    Progress_tmk24Service();
+    explicit Progress_tmk24Service(QString owDeviceName);
 
     bool addDevice(QString devTypeName, QString devId, QString devSn);
     void removeDevice(int index);
@@ -39,6 +39,11 @@ public:
 
 private:
 
+    typedef enum {
+        OPERATION_IDLE,
+        OPERATION_WHITE_GET
+    }eTypOperation;
+
     typedef struct {
         uint32_t valueCnt;
         uint32_t valueLiters;
@@ -56,6 +61,8 @@ private:
     QString lastError;
 
     Progress_tmk24Service* m_pinstance;
+
+    eTypOperation operation = eTypOperation::OPERATION_IDLE;
 };
 
 #endif // PROGRESS_TMK24SERVICE_H

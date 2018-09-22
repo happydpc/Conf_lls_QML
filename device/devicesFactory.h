@@ -34,10 +34,11 @@ public:
 
 public slots:
 
-    bool addNewDevice(E_DeviceType type, QString uniqDevName, QStringList parameters);
+    bool addNewDevice(E_DeviceType type, QString uniqDevName, QStringList parameters, ServiceDevicesAbstract *pDevService);
     bool removeDevice(QString uniqDevName);
     bool removeDeviceByIndex(int index);
     bool removeDeviceAll();
+
     QString getDeviceName(int index);
     QString getDeviceNameByType(DevicesFactory::E_DeviceType type);
     E_DeviceType getDeviceType(QString typeText);
@@ -97,6 +98,8 @@ private:
     QTimer* devShedullerTimer;
 
     QMutex* devMutex;
+
+    QList<ServiceDevicesAbstract*> serviceList;
 
     int indexProcessedDev = 0;
 

@@ -11,10 +11,10 @@ TableViewColumn {
             id:inputValue
             anchors.fill: parent
             selectionColor: "red"
-            text: (model[role]===0) ? "0" : model[role]
+            text: model[role]//(model[role]==="") ? "0" : model[role]
             validator: RegExpValidator { regExp: /[0-9A-F]+/ }
             onEditingFinished: {
-//                model.roleCnt0 = text
+                model[role] = text
 //                remakeTarTableChart()
             }
         }

@@ -7,11 +7,16 @@ class ServiceDevicesAbstract : public QObject
 {
     Q_OBJECT
 public:
-    explicit ServiceDevicesAbstract();
+    ServiceDevicesAbstract();
+
+    QString getTypeOwnDeviceName();
 
 signals:
 
 public slots:
+
+protected:
+    QString ownDeviceName;
 };
 
 #endif // SERVICEDEVICESABSTRACT_H
