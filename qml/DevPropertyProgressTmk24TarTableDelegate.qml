@@ -3,19 +3,21 @@ import QtQuick 2.9
 
 TableViewColumn {
     id:tableColumn
+    signal valueIsChanged(var role, var text, var modelChanged)
     delegate: Rectangle {
         id:rectangle
         anchors.fill: parent
-        color: inputValue.text.length >0 ? "transparent" : "red"
+        color: (model[role]==="" | model[role]===undefined) ? "red" : "transparent"
         TextInput {
             id:inputValue
             anchors.fill: parent
             selectionColor: "red"
-            text: model[role]//(model[role]==="") ? "0" : model[role]
+            text: model[role]
             validator: RegExpValidator { regExp: /[0-9A-F]+/ }
             onEditingFinished: {
+                console.log("TableViewColumn- changed =" + role + " " + text)
                 model[role] = text
-//                remakeTarTableChart()
+                valueIsChanged(role, text, modelChanged)
             }
         }
     }

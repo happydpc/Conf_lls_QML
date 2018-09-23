@@ -14,9 +14,9 @@ Rectangle {
     function setActivePanelType(typeDev) {
         switch(typeDev) {
         case "SerialPort":
-            if(devicePropertieslistModel1.currentIndex != 1) {
+            if(devicePropertieslistModel1.currentIndex != 1) { // todo: maybe overink
                 console.log("setActivePanelType -" + typeDev)
-//                devPropertyProgressTmk24.setResetState()
+                devPropertyProgressTmk24.setResetState()
                 devicePropertieslistModel1.currentIndex = 1
             }
             break;
@@ -27,11 +27,9 @@ Rectangle {
             }
             break;
         case "PROGRESS TMK24":
-            if(devicePropertieslistModel1.currentIndex != 2) {
                 console.log("setActivePanelType -" + typeDev)
                 devicePropertieslistModel1.currentIndex = 2
                 devPropertyProgressTmk24.setResetState()
-            }
             break;
         default:
             console.log("setActivePanelType -unrecognise type dev")

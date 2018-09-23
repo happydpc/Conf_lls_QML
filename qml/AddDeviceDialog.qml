@@ -5,99 +5,97 @@ import QtGraphicalEffects 1.0
 
 Popup {
     id: addDeviceDialog
-
-    dim: false
-    clip: false
-
     modal: true
-
     y: width / 2
     x: height / 2
     width: 400
     height: 250
-    font.capitalization: Font.AllUppercase
 
-    GridLayout {
-        id: gridLayout
+    Rectangle {
         anchors.fill: parent
-        columnSpacing: 5
-        rowSpacing: 5
-        rows: 4
-        columns: 2
 
-        Label {
-            id: lTypeDevice
-            text: qsTr("Тип устройства")
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-        }
-        ComboBox {
-            id: typeDeviceText
-            Layout.fillWidth: true
-            model: ListModel {
-                id: modelTypeDeviceText
+        GridLayout {
+            id: gridLayout
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: parent.height - buttonClose.height - 5
+            columnSpacing: 10
+            rowSpacing: 0
+            columns: 2
+
+            Label {
+                id: lTypeDevice
+                text: qsTr("Тип устройства")
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+            ComboBox {
+                id: typeDeviceText
+                Layout.fillWidth: true
+                model: ListModel {
+                    id: modelTypeDeviceText
+                }
+            }
+            Label {
+                id: lTypeDeviceId
+                text: qsTr("ID")
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+            SpinBox {
+                id: typeDeviceIdText
+                Layout.fillWidth: true
+                from: 1
+                to: 255
+                value: 1
+            }
+            Label {
+                id: lPassword
+                height: typeDeviceIdText.height
+                text: qsTr("Пароль")
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+            }
+            TextField {
+                id: passwordText
+                anchors.right: parent.right
+                anchors.rightMargin: 0
+                anchors.left: typeDeviceText.left
+                maximumLength: 8
+                echoMode: TextInput.Password
             }
         }
-        Label {
-            id: lTypeDeviceId
-            text: qsTr("ID")
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-        }
-        SpinBox {
-            id: typeDeviceIdText
-            Layout.fillWidth: true
-            from: 1
-            to: 255
-            value: 1
-        }
-        Label {
-            id: lPassword
-            height: typeDeviceIdText.height
-            text: qsTr("Пароль")
-            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-        }
-        TextField {
-            id: passwordText
-            anchors.right: parent.right
-            anchors.rightMargin: 0
-            anchors.left: typeDeviceText.left
-            maximumLength: 8
-            echoMode: TextInput.Password
-        }
 
-        Button {
+        ButtonRound {
             id: buttonClose
-            text: qsTr("Закрыть")
-            Layout.fillWidth: true
+            anchors.top: gridLayout.bottom
+            anchors.left: parent.left
+            anchors.rightMargin: 10
+            textLine:2
+            textIsCenter: true
+            widthBody: 185
+            name: qsTr("Закрыть")
             onClicked: {
                 close()
             }
         }
-
-        Button {
+        ButtonRound {
             id: addDevButton
-            text: qsTr("Добавить")
-            Layout.fillWidth: true
+            textLine:2
+            widthBody: 185
+            textIsCenter: true
+            name: qsTr("Добавить")
+            anchors.top: gridLayout.bottom
+            anchors.right: parent.right
             onClicked: {
                 if (typeDeviceText.currentText.length != 0) {
                     viewController.addDeviceToConnection(typeDeviceText.currentText, typeDeviceIdText.value.toString(), passwordText.text)
                     close()
                 }
             }
-        }
-        layer.enabled: true
-        layer.effect: DropShadow {
-            transparentBorder: true
-            horizontalOffset: 0
-            verticalOffset: 1
-            color: "#e0e5ef"
-            samples: 10
-            radius: 20
         }
     }
 

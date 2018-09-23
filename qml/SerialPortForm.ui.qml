@@ -12,8 +12,6 @@ Popup {
     property alias buttonClose: buttonClose
     property alias portList: portList
     property alias baudRateList: baudRateList
-    dim: false
-    clip: false
 
     modal: true
 
@@ -68,27 +66,9 @@ Popup {
                     anchors.topMargin: 0
                     anchors.left: portList.left
                     anchors.leftMargin: 150
+                    textIsCenter: true
                     name: qsTr("Обновить")
                 }
-                //                Button {
-                //                    id: buttonAccept
-                //                    width: 110
-                //                    height: 40
-                //                    text: qsTr("Подсоединить")
-                //                    anchors.right: parent.right
-                //                    anchors.rightMargin: 0
-                //                }
-                //                Button {
-                //                    id: buttonUpdate
-                //                    width: 80
-                //                    height: 40
-                //                    text: qsTr("Обновить")
-                //                    enabled: false
-                //                    anchors.top: parent.top
-                //                    anchors.topMargin: 0
-                //                    anchors.left: portList.left
-                //                    anchors.leftMargin: 150
-                //                }
             }
 
             Row {
@@ -138,6 +118,7 @@ Popup {
             y: 193
             textLine: 2
             widthBody: 140
+            textIsCenter: true
 
             name: qsTr("Закрыть")
         }

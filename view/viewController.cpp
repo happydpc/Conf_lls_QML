@@ -22,10 +22,12 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
         addConnectionSerialPort(strLis.first(), QString("19200"));
 
         addDeviceToConnection("PROGRESS TMK24", QString::number(1), "1234");
-        addDeviceToConnection("PROGRESS TMK24", QString::number(2), "");
+//        addTarrirDev("PROGRESS TMK24", "1");
 
-        addTarrirDev("PROGRESS TMK24", "1");
-        addTarrirDev("PROGRESS TMK24", "2");
+        for(int a=0; a<2; a++) {
+            addDeviceToConnection("PROGRESS TMK24", QString::number(a+5), "");
+//            addTarrirDev("PROGRESS TMK24", QString::number(a+5));
+        }
     });
 }
 
@@ -150,7 +152,7 @@ QStringList ViewController::getDeviceHeaderByIndex(int devIndex) {
     return ret;
 }
 
-QStringList ViewController::getCurrentDevPropertyByIndex() {
+QStringList ViewController::getCurrentDevProperty() {
     QStringList ret = connFactory->getInterace(
                 connFactory->getInteraceNameFromIndex(interfaceTree->getIoIndex()))->getDeviceFactory()
             ->getDevicePropertyByIndex(interfaceTree->getDevIndex());
@@ -319,6 +321,15 @@ QStringList ViewController::getTarCurrentDeviceData(int index) {
     return res;
 }
 
+QList<int> ViewController::getTarCurrentDeviceChartData(int index) {
+    QList<int> res;
+    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+        res = pService->getCurrentChartDataDevice(index);
+    }
+    return res;
+}
+
 DeviceAbstract* ViewController::getCurrentDeviceToAbstract() {
     return getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
 }
@@ -360,7 +371,17 @@ bool ViewController::addTarrirDev(QString devTypeName, QString devId) {
     return res;
 }
 void ViewController::removeTarrirDev(QString devTypeName, QString devId) {
+    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+        pService->removeDevice(devTypeName, devId);
+    }
+}
 
+void ViewController::setLastRealTimeValuesToStep(int indexStep) {
+    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+        pService->setLastRealTimeValuesToStep(indexStep);
+    }
 }
 
 //1) считать таблицу с добавленных устройств
@@ -449,17 +470,18 @@ void ViewController::deviceReadyCurrentData(DevicesFactory::E_DeviceType type, Q
     if(devIndex >= 0) {
         Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(
                     getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(devIndex)->getServiceAbstract());
-        pService->placeCurrentataFromDevice(uniqNameId, getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(devIndex));
+        pService->placeCurrenDataFromDevice(uniqNameId, getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(devIndex));
+        pService->placeCurrentChartDataFromDevice(uniqNameId, getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceChartByIndex(devIndex));
     }
 }
 void ViewController::deviceReadyProperties(DevicesFactory::E_DeviceType type, QString uniqNameId) {
     if(isCurrentDevice(uniqNameId)) {
         switch(type) {
         case DevicesFactory::Type_Progress_tmk4UX:
-            emit devReadyPropertiesTmk4ux(getCurrentDevPropertyByIndex());
+            emit devReadyPropertiesTmk4ux(getCurrentDevProperty());
             break;
         case DevicesFactory::Type_Progress_Tmk24:
-            emit devReadyPropertiesTmk24(getCurrentDevPropertyByIndex());
+            emit devReadyPropertiesTmk24(getCurrentDevProperty());
             break;
         case DevicesFactory::Type_Undefined: break;
         }
@@ -470,10 +492,10 @@ void ViewController::deviceReadyInit(DevicesFactory::E_DeviceType type, QString 
     if(isCurrentDevice(uniqNameId)) {
         switch(type) {
         case DevicesFactory::Type_Progress_tmk4UX:
-            emit devFullReadyTmk4ux(getCurrentDevPropertyByIndex());
+            emit devFullReadyTmk4ux(getCurrentDevProperty());
             break;
         case DevicesFactory::Type_Progress_Tmk24:
-            emit devFullReadyTmk24(getCurrentDevPropertyByIndex());
+            emit devFullReadyTmk24(getCurrentDevProperty());
             break;
         case DevicesFactory::Type_Undefined: break;
         }

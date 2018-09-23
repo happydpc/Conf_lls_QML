@@ -29,7 +29,7 @@ public:
     Q_INVOKABLE int getDeviceCount();
     Q_INVOKABLE QStringList getDeviceHeaderByIndex(int index);
 
-    Q_INVOKABLE QStringList getCurrentDevPropertyByIndex();
+    Q_INVOKABLE QStringList getCurrentDevProperty();
 
     Q_INVOKABLE void setCurrentDevLevelAsEmpty();
     Q_INVOKABLE void setCurrentDevLevelAsFull();
@@ -52,6 +52,7 @@ public:
     //********************* TARING *********************//
     //
     Q_INVOKABLE int getTarMaxCountStep();
+
     // какие устройства доступны для добавления в множественную таррировку
     // устройство с вкладки которого это начинают
     // уже должно быть туда добавленно, type, id, sn
@@ -60,6 +61,7 @@ public:
     Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevSerialNumber();
 
     Q_INVOKABLE QStringList getTarCurrentDeviceData(int index);
+    Q_INVOKABLE QList<int> getTarCurrentDeviceChartData(int index);
 
     // возвразщает кол-во уже добавленных уст-в
     Q_INVOKABLE int getStayedDevTarrirCount();
@@ -71,6 +73,9 @@ public:
     Q_INVOKABLE bool addTarrirDev(QString devTypeName, QString devId);
     Q_INVOKABLE void removeTarrirDev(QString devTypeName, QString devId);
 
+    // добавляет текущее значение в таблицу
+    Q_INVOKABLE void setLastRealTimeValuesToStep(int indexStep);
+
     //1) считать таблицу с добавленных устройств
             // отправляем в контроллер список dev с id
             // указываем что считать таблицу
@@ -80,44 +85,6 @@ public:
     Q_INVOKABLE void sendReqGetTarrirAllDev();
     Q_INVOKABLE QStringList getTableAtDevice(int index);
     Q_INVOKABLE int getTableCountReady();
-
-    //2) записать таблицу в добавленные устройства
-            // как 1
-            // только в конце message с графическим результатом и текстом
-            // кто ответил и записался - зеленный иначе красное и писать что не получилось
-
-    //3) считать текущие значения с устройств
-            // берем deviceFactory
-            // находим нужные id
-            // забираем текущие значения
-            // если значения не валидные тогда -1
-            // отправлять в qml
-
-    //4) добавить считанные значения
-            // qml присылает сигнал
-            // что все текущие значения добавить в шаг таблицы
-            // считаем текущие значения
-            // добавляем в calibrate по id
-            // в qml отсылаем результат
-            // перерисовываем row в таблице
-            // если значения -1 красное
-
-    //5) добавить шаг таблицы
-            // если каком-то из шагов есть -1
-            // сообщаем и не даем делать следующий шаг
-
-    //6) редактирование текущего row таблицы
-            // когда срабатывает тригер
-            // обновляем все значения из таблицы
-            // в модель calibrate
-
-    //7) удалить выделенный шаг таблицы со всеми значениями
-            // приходит сигнал из qml
-            // находим устройства
-            // находим шаг
-            // очищаем row
-            // отсылаем в qml результат что готово
-            // перерисовываем таблицу и график
 
 signals:
 

@@ -3,7 +3,6 @@
 Progress_tmk24Service::Progress_tmk24Service(QString owDeviceName) {
     this->ownDeviceName = owDeviceName;
 }
-void Progress_tmk24Service::reset() {}
 
 bool Progress_tmk24Service::addDevice(QString devTypeName, QString devId, QString devSn) {
     bool isDuplicate = false;
@@ -30,8 +29,14 @@ bool Progress_tmk24Service::addDevice(QString devTypeName, QString devId, QStrin
     return res;
 }
 
-void Progress_tmk24Service::removeDevice(int index) {
-    
+void Progress_tmk24Service::removeDevice(QString devTypeName, QString devId) {
+    for(auto it: devList) {
+        if(it->first.devId == devId) {
+            if(it->first.devTypeName == devTypeName) {
+                devList.removeOne(it);
+            }
+        }
+    }
 }
 
 int Progress_tmk24Service::getDeviceCount() {
@@ -56,16 +61,6 @@ QList<QStringList> Progress_tmk24Service::getCalibrateList() {
         res.push_back(dev);
     }
     return res;
-}
-
-bool Progress_tmk24Service::addStep(uint32_t valueLiters, QList<uint32_t>valueCntDevs) {
-    
-}
-bool Progress_tmk24Service::changeStep(int index, uint32_t valueLiters, QList<uint32_t>valueCntDevs) {
-    
-}
-void Progress_tmk24Service::removeStep(int index) {
-    
 }
 
 QList<QString> Progress_tmk24Service::requestGetTableFromAllDevice() {
@@ -125,13 +120,23 @@ QStringList Progress_tmk24Service::getTableAtDevice(int index) {
     return res;
 }
 
-void Progress_tmk24Service::placeCurrentataFromDevice(QString deviceIdentName, QList<QString> currentData) {
+void Progress_tmk24Service::placeCurrenDataFromDevice(QString deviceIdentName, QList<QString> currentData) {
     for(auto it: devList) {
         if(it->first.devId == deviceIdentName) {
             if(currentData.length() >= 2) {
                 it->first.currData.cnt = currentData.at(2).toUInt();
                 it->first.currData.liters = currentData.at(0).toUInt();
                 it->first.currData.isValid = true;
+            }
+        }
+    }
+}
+
+void Progress_tmk24Service::placeCurrentChartDataFromDevice(QString deviceIdentName, QList<int> currentChartData) {
+    for(auto it: devList) {
+        if(it->first.devId == deviceIdentName) {
+            if(!currentChartData.empty()) {
+                it->first.chartData = currentChartData;
             }
         }
     }
@@ -148,6 +153,34 @@ QStringList Progress_tmk24Service::getCurrentDataDevice(int index) {
     }
     return res;
 }
+
+QList<int> Progress_tmk24Service::getCurrentChartDataDevice(int index) {
+    QList<int> res;
+    if(devList.at(index)->first.currData.isValid) {
+        res = devList.at(index)->first.chartData;
+    }
+    return res;
+}
+
+//void Progress_tmk24Service::setLastRealTimeValuesToStep(int indexStep) {
+//    if(indexStep == -1) {
+//        indexStep = 0;
+//    }
+//    for(auto itDev: devList) {
+//        while(itDev->second->size() < indexStep+1) {
+//            itDev->second->push_back(*new sDevValues);
+//        }
+//        sDevValues tDevValues = itDev->second->at(indexStep);
+//        if(itDev->first.currData.isValid) {
+//            tDevValues.valueCnt = itDev->first.currData.cnt;
+//            tDevValues.valueLiters = itDev->first.currData.liters;
+//        } else {
+//            tDevValues.valueCnt = 0;
+//            tDevValues.valueLiters = 0;
+//        }
+//        itDev->second->replace(indexStep, tDevValues);
+//    }
+//}
 
 int Progress_tmk24Service::getMaxCountStep() {
     int res = 0;

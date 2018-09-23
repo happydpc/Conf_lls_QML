@@ -28,9 +28,9 @@ Rectangle {
         devPropertyProgressTmk24.isReady = true
     }
     function setResetState() {
-        stackSubProperty.setCurrentIndex(5)
-        //        tabProperty.setCurrentIndex(0)
-        //        stackSubProperty.setCurrentIndex(0)
+//        stackSubProperty.setCurrentIndex(5)
+                tabProperty.setCurrentIndex(0)
+                stackSubProperty.setCurrentIndex(0)
         setNoReady()
         setWriteSettingsIsAvailable()
     }
@@ -62,9 +62,16 @@ Rectangle {
         if(values.length >0) {
             //levelValue.text = values[0]
             levelProgress.value = values[1]
-            levelCnt.value = values[2]
+            levelCnt.value = parseInt(values[2]).toPrecision(3)
             levelFreq.value = values[3]
             levelTemp.value = values[4]
+        }
+        //-- noise detect
+        if(values[5] == true) {
+            if(chartTarCurrentValuesMultiple.animateColorUp.running == false
+                    & chartTarCurrentValuesMultiple.animateColorDown.running == false) {
+                chartTarCurrentValuesMultiple.animateColorUp.start()
+            }
         }
         //-- chart
         var list = viewController.getCurrentDevChart()
@@ -198,11 +205,7 @@ Rectangle {
         error8Label.error8 = errors[7]
     }
     function remakeTarTableChart() {
-        chartTarTableLineMultiple.clear()
-        var tarArrayLitrs = [];
-        var tarArrayCNT = [];
-        var maxValueCnt = 0;
-        var maxValueLitrs = 0;
+        chartTarTableMultiple.removeAllSeries();
         var colorArray = []
         colorArray.push("#f34b4b")
         colorArray.push("#4bd5f3")
@@ -212,33 +215,58 @@ Rectangle {
         colorArray.push("#be4bf3")
         colorArray.push("#0d8741")
 
-//        var tarSize = viewController.getStayedDevTarrirCount()
-//        for(var i2=0; i2<tarSize; i2++) {
-//            tableViewColumn.role = "roleLiters" + i2
-//            tableViewColumn.role = "roleCnt" + i2
-//        }
-        var roleLiters = "roleLiters" + 0
-        var roleCnt = "roleCnt" + 0
+        var tarSize = viewController.getStayedDevTarrirCount()
+        for(var deviceCounter=0; deviceCounter<tarSize; deviceCounter++) {
+            var roleLiters = "roleLiters" + deviceCounter
+            var roleCnt = "roleCnt" + deviceCounter
+            var devId = viewController.getStayedDevTarrir_DevProperty("id")
 
-        for(var i=0; i<tarTabViewMultiple.rowCount; i++) {
-            var item = tarTabViewMultiple.model.get(i)
-            tarArrayLitrs.push(item[roleLiters])
-            tarArrayCNT.push(item[roleCnt])
+            var maxValueCnt = 0;
+            var maxValueLitrs = 0;
+            var tarArrayLitrs = [];
+            var tarArrayCNT = [];
 
-            if(maxValueCnt < item[roleCnt]) {
-                maxValueCnt = item[roleCnt]
+            for(var itemCounter=0; itemCounter<tarTabViewMultiple.rowCount; itemCounter++) {
+                var item = tarTabViewMultiple.model.get(itemCounter)
+                tarArrayLitrs.push(item[roleLiters])
+                tarArrayCNT.push(item[roleCnt])
+                if(maxValueCnt < item[roleCnt]) {
+                    maxValueCnt = item[roleCnt]
+                }
+                if(maxValueLitrs < item[roleLiters]) {
+                    maxValueLitrs = item[roleLiters]
+                }
+                console.log(roleLiters + " " + item[roleCnt] + "\nValue Litrs=" + item[roleLiters])
             }
-            if(maxValueLitrs < item[roleLiters]) {
-                maxValueLitrs = item[roleLiters]
+
+            var line = chartTarTableMultiple.createSeries(ChartView.SeriesTypeLine, "ID" + devId[deviceCounter], chartTarTableAxisXMultiple, chartTarTableAxisYMultiple);
+            line.color = colorArray[deviceCounter]
+            chartTarTableAxisXMultiple.min = 0;
+            chartTarTableAxisXMultiple.max = parseInt(maxValueLitrs)
+            chartTarTableAxisYMultiple.min = 0;
+            chartTarTableAxisYMultiple.max = parseInt(maxValueCnt)
+
+            chartTarTableMultiple.chartTarTableAmplitudeMax = parseInt(maxValueCnt)
+            chartTarTableMultiple.chartTarTableLength = parseInt(maxValueLitrs)
+
+            console.log("MaxLevel =" + chartTarTableMultiple.chartTarTableAmplitudeMax)
+            for(var i=0; i<tarArrayCNT.length; i++) {
+                line.append(parseInt(tarArrayLitrs[i]), parseInt(tarArrayCNT[i]));
+                console.log("Add=" + i + " " + tarArrayLitrs[i])
             }
-            console.log("ValueCNT =" + item[roleCnt] + "\nValue Litrs=" + item[roleLiters])
         }
-        chartTarTableMultiple.chartTarTableAmplitudeMax = parseInt(maxValueCnt)
-        chartTarTableMultiple.chartTarTableLength = parseInt(maxValueLitrs)
-        console.log("MaxLevel =" + chartTarTableMultiple.chartTarTableAmplitudeMax)
-        for(i=0; i<tarArrayCNT.length; i++) {
-            chartTarTableLineMultiple.append(parseInt(tarArrayLitrs[i]), parseInt(tarArrayCNT[i]));
-            console.log("Add=" + i + " " + tarArrayLitrs[i])
+    }
+
+    function addTarStepValue(rowIndex) {
+        var values = viewController.getCurrentDevOtherData()
+        if(values.length >0) {
+            var currValueCNT  = values[1]
+            var lastValueLitrs = 0
+            if(tarTableListModelMultiple.rowCount() > 0) {
+                var value = tarTableListModelMultiple.get(tarTableListModelMultiple.rowCount()-1)
+                lastValueLitrs = value.valueLitrs
+            }
+            tarTableListModel.append({"valueLitrs":parseInt(lastValueLitrs),"valueCNT":parseInt(currValueCNT)})
         }
     }
 
@@ -248,46 +276,47 @@ Rectangle {
         for(var index = tarTabViewMultiple.columnCount-1; index>=0; index--) {
             tarTabViewMultiple.removeColumn(index)
         }
-        timerAffterClearTarTable.start()
-    }
+        var tarSize = viewController.getStayedDevTarrirCount()
+        var devType = []
+        var devId = []
+        var devSn = []
+        devType = viewController.getStayedDevTarrir_DevProperty("type")
+        devId =  viewController.getStayedDevTarrir_DevProperty("id")
+        devSn = viewController.getStayedDevTarrir_DevProperty("sn")
+        for(var i=0; i<tarSize; i++) { // добавляем на list with current data
+            tarListDevice.model.append({"devTyp":devType[i],"devId":devId[i],"devSn":devSn[i],"valueLiters":"0","valueCnt":"0"})
+        }
+        // добавляем в таблицу как столблец для девайса
+        for(var i2=0; i2<tarSize; i2++) {
+            var component = {}
+            component = Qt.createComponent("DevPropertyProgressTmk24TarTableDelegate.qml");
+            var tableViewColumn  = component.createObject(tarTabViewMultiple);
+            tableViewColumn.title = qsTr("Объем[ID-%1]").arg(devId[i2])
+            tableViewColumn.role = "roleLiters" + i2
+            tableViewColumn.width = 100
+            tarTabViewMultiple.addColumn(tableViewColumn)
+            console.log("addeted1 =" + tableViewColumn.role)
+            tableViewColumn.valueIsChanged.connect(function(role, text, modelChanged) {
+                var curRow = tarTabViewMultiple.currentRow
+                modelChanged[role] = text
+                tarTabViewMultiple.model.set(curRow, modelChanged)
+                remakeTarTableChart()
+            });
+            tableViewColumn  = component.createObject(tarTabViewMultiple);
+            tableViewColumn.title = qsTr("CNT[ID-%1]").arg(devId[i2])
+            tableViewColumn.role = "roleCnt" + i2
+            tableViewColumn.width = 100
+            tarTabViewMultiple.addColumn(tableViewColumn)
 
-    Timer {
-        id: timerAffterClearTarTable
-        interval: 10
-        running: false
-        repeat: false
-        onTriggered: {
-            var tarSize = viewController.getStayedDevTarrirCount()
-            var devType = []
-            var devId = []
-            var devSn = []
-            devType = viewController.getStayedDevTarrir_DevProperty("type")
-            devId =  viewController.getStayedDevTarrir_DevProperty("id")
-            devSn = viewController.getStayedDevTarrir_DevProperty("sn")
-            for(var i=0; i<tarSize; i++) { // добавляем на list with current data
-                tarListDevice.model.append({"devTyp":devType[i],"devId":devId[i],"devSn":devSn[i],"valueLiters":"0","valueCnt":"0"})
-            }
-            var ttt = tarListDevice.model.get(0)
-            // добавляем в таблицу как столблец для девайса
-            var component = Qt.createComponent("DevPropertyProgressTmk24TarTableDelegate.qml");
-            for(var i2=0; i2<tarSize; i2++) {
-                var tableViewColumn  = component.createObject(tarTabViewMultiple);
-                tableViewColumn.title = qsTr("Объем[ID-%1]").arg(devId[i2])
-                tableViewColumn.role = "roleLiters" + i2
-                tableViewColumn.width = 100
-                tarTabViewMultiple.addColumn(tableViewColumn)
-                console.log("addeted1 =" + tableViewColumn.role)
-
-                tableViewColumn  = component.createObject(tarTabViewMultiple);
-                tableViewColumn.title = qsTr("CNT[ID-%1]").arg(devId[i2])
-                tableViewColumn.role = "roleCnt" + i2
-                tableViewColumn.width = 100
-                tarTabViewMultiple.addColumn(tableViewColumn)
-                console.log("addeted2 =" + tableViewColumn.role)
-            }
+            tableViewColumn.valueIsChanged.connect(function(role, text, modelChanged) {
+                var curRow = tarTabViewMultiple.currentRow
+                modelChanged[role] = text
+                tarTabViewMultiple.model.set(curRow, modelChanged)
+                remakeTarTableChart()
+            });
+            console.log("addeted2 =" + tableViewColumn.role)
         }
     }
-
     function writeTarTable() {
         var tarArrayLiters = [];
         var tarArrayCNT = [];
@@ -300,7 +329,6 @@ Rectangle {
     }
     function readTarTable(devCount) {
         console.log("readTarTable = " + devCount)
-
         var jsonArray = []
         var tarStepMax = viewController.getTarMaxCountStep()
         while(tarStepMax >0) {
@@ -313,21 +341,36 @@ Rectangle {
             var parity = 0
             var rowIndex = 0
             // перебираем таблицу уст-ва
-            var valueCnt = 0
-            var valueLiters = 0
+            var valueCnt = 0//"0"
+            var valueLiters = 0//"0"
+            var stepCount = viewController.getTarMaxCountStep() *2 // it pair
+            if(stepCount === 0 | stepCount === undefined) {
+                messageReadTarTableEmpty.open()
+            }
             console.log("getTable =" + table.length)
 
-            for(var devTableRow=0; devTableRow<table.length; devTableRow++) {
+            for(var devTableRow=0; devTableRow<stepCount; devTableRow++) {
                 if(parity == 0) {
                     parity = 1;
                     valueLiters = table[devTableRow]
+                    if(valueLiters == undefined) {
+                        valueLiters = ""
+                    }
                 } else {
                     parity = 0;
                     valueCnt = table[devTableRow]
+                    if(valueCnt == undefined) {
+                        valueCnt = ""
+                    }
+
                     var roleLiters = "roleLiters" + devIndex
                     var roleCnt = "roleCnt" + devIndex
 
                     var itemArray = jsonArray[rowIndex]
+                    if(itemArray === undefined) {
+                        itemArray = {}
+                        jsonArray.push(itemArray)
+                    }
                     itemArray[roleLiters] = valueLiters;
                     itemArray[roleCnt] = valueCnt;
                     jsonArray[rowIndex] = itemArray
@@ -336,21 +379,14 @@ Rectangle {
             }
         }
         for(var len=0; len<jsonArray.length; len++) {
-            tarTableListModelMultiple.set(len, jsonArray[len])
+            if(tarTabViewMultiple.model.get(len) === undefined) {
+                tarTabViewMultiple.model.append(jsonArray[len])
+            } else {
+                tarTabViewMultiple.model.set(len, jsonArray[len])
+            }
         }
         timerAffterRefrashTarTable.start()
     }
-
-    //    Timer {
-    //        id: timerTestRepeat
-    //        interval: 1000
-    //        running: true
-    //        repeat: true
-    //        onTriggered: {
-    //            remakeTarTable()
-    //            viewController.sendReqGetTarrirAllDev()
-    //        }
-    //    }
 
     Timer {
         id: timerTestRepeat
@@ -359,13 +395,47 @@ Rectangle {
         repeat: true
         onTriggered: {
             var devCount = viewController.getStayedDevTarrirCount()
-            for(var i=0; i<devCount; i++) {
-                var res = viewController.getTarCurrentDeviceData(i)
-                var dataArray = tarListDevice.model.get(i)
+            var devId = viewController.getStayedDevTarrir_DevProperty("id")
+            var colorArray = []
+            colorArray.push("#f34b4b")
+            colorArray.push("#4bd5f3")
+            colorArray.push("#f34be1")
+            colorArray.push("#4bf3c6")
+            colorArray.push("#4b4bf3")
+            colorArray.push("#be4bf3")
+            colorArray.push("#0d8741")
+            chartTarCurrentValuesMultiple.removeAllSeries();
+
+            for(var devIter=0; devIter<devCount; devIter++) {
+                var res = viewController.getTarCurrentDeviceData(devIter)
+                var dataArray = tarListDevice.model.get(devIter)
                 if(dataArray !== undefined) {
-                        dataArray["valueCnt"] = res[0]
-                        dataArray["valueLiters"] = res[1]
-                    tarListDevice.model.set(i, dataArray)
+                    dataArray["valueCnt"] = res[0]
+                    dataArray["valueLiters"] = res[1]
+                    tarListDevice.model.set(devIter, dataArray)
+                }
+                //-- chart
+                var chartArray = viewController.getTarCurrentDeviceChartData(devIter)
+
+                var line = chartTarCurrentValuesMultiple.createSeries(ChartView.SeriesTypeLine, "ID" + devId[devIter], currentTarChartAxisXMultiple, currentTarChartAxisYMultiple);
+                line.color = colorArray[devIter]
+
+                chartTarCurrentValuesMultiple.graphLength = chartArray.length
+                chartTarCurrentValuesMultiple.graphAmplitudeMax = 0
+
+                for(var chartIter=0; chartIter<chartArray.length; chartIter++) {
+                    if(chartTarCurrentValuesMultiple.graphAmplitudeMax < chartArray[chartIter]) {
+                        chartTarCurrentValuesMultiple.graphAmplitudeMax = chartArray[chartIter];
+                    }
+                }
+
+                currentTarChartAxisXMultiple.min = 0;
+                currentTarChartAxisXMultiple.max = chartArray.length
+                currentTarChartAxisYMultiple.min = 0;
+                currentTarChartAxisYMultiple.max = chartTarCurrentValuesMultiple.graphAmplitudeMax
+
+                for(chartIter=0; chartIter<chartArray.length; chartIter++) {
+                    line.append(chartIter, parseInt(chartArray[chartIter]));
                 }
             }
         }
@@ -787,6 +857,7 @@ Rectangle {
 
                         Column {
                             Rectangle {
+                                id:errorRectangle
                                 height: 400
                                 width: column.width
                                 color: "#ffffff"
@@ -796,7 +867,7 @@ Rectangle {
                                 Column {
                                     anchors.left: parent.left
                                     anchors.leftMargin: 15
-                                    spacing: 20
+                                    spacing: 5
 
                                     Label {
                                         id: errorsLabel
@@ -813,99 +884,132 @@ Rectangle {
                                         }
                                     }
 
-                                    Label {
-                                        id:error1Label
-                                        text: "Датчик не откалиброван:"
-                                        property bool error1: false
+                                    Row{
+                                        width: 400
+                                        height: 30
+                                        Label {
+                                            id:error1Label
+                                            property bool error1: false
+                                            text: "Датчик не откалиброван:"
+                                        }
                                         Image {
                                             height: 32
                                             width: 32
                                             anchors.left: parent.right
-                                            anchors.rightMargin: 20
+                                            anchors.leftMargin: 20
                                             source: error1Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
                                         }
                                     }
-                                    Label {
-                                        id:error2Label
-                                        text: "Выход за минимальную границу измерения на 10%:"
-                                        property bool error2: false
+                                    Row{
+                                        width: 400
+                                        height: 30
+                                        Label {
+                                            id:error2Label
+                                            text: "Выход за минимальную границу измерения на 10%:"
+                                            property bool error2: false
+                                        }
                                         Image {
                                             height: 32
                                             width: 32
                                             anchors.left: parent.right
-                                            anchors.rightMargin: 20
+                                            anchors.leftMargin: 20
                                             source: error2Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
                                         }
                                     }
-                                    Label {
-                                        id:error3Label
-                                        text: "Выход за максимальную границу измерения на 10%:"
-                                        property bool error3: false
+                                    Row{
+                                        width: 400
+                                        height: 30
+                                        Label {
+                                            id:error3Label
+                                            text: "Выход за максимальную границу измерения на 10%:"
+                                            property bool error3: false
+                                        }
                                         Image {
                                             height: 32
                                             width: 32
                                             anchors.left: parent.right
-                                            anchors.rightMargin: 20
+                                            anchors.leftMargin: 20
                                             source: error3Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
                                         }
                                     }
-                                    Label {
-                                        id:error4Label
-                                        text: "Частота измерительного генератора 0 Гц:"
-                                        property bool error4: false
+                                    Row{
+                                        width: 400
+                                        height: 30
+                                        Label {
+                                            id:error4Label
+                                            text: "Частота измерительного генератора 0 Гц:"
+                                            property bool error4: false
+                                        }
                                         Image {
                                             height: 32
                                             width: 32
                                             anchors.left: parent.right
-                                            anchors.rightMargin: 20
+                                            anchors.leftMargin: 20
                                             source: error4Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
                                         }
                                     }
-                                    Label {
-                                        id:error5Label
-                                        text: "Ведомый датчик №1 не отвечает:"
-                                        property bool error5: false
+                                    Row{
+                                        width: 400
+                                        height: 30
+                                        Label {
+                                            id:error5Label
+                                            text: "Ведомый датчик №1 не отвечает:"
+                                            property bool error5: false
+                                        }
                                         Image {
                                             height: 32
                                             width: 32
                                             anchors.left: parent.right
-                                            anchors.rightMargin: 20
+                                            anchors.leftMargin: 20
                                             source: error5Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
                                         }
                                     }
-                                    Label {
-                                        id:error6Label
-                                        text: "Ведомый датчик №2 не отвечает:"
-                                        property bool error6: false
+
+                                    Row{
+                                        width: 400
+                                        height: 30
+                                        Label {
+                                            id:error6Label
+                                            text: "Ведомый датчик №2 не отвечает:"
+                                            property bool error6: false
+                                        }
                                         Image {
                                             height: 32
                                             width: 32
                                             anchors.left: parent.right
-                                            anchors.rightMargin: 20
+                                            anchors.leftMargin: 20
                                             source: error6Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
                                         }
                                     }
-                                    Label {
-                                        id:error7Label
-                                        text: "Ведомый датчик №3 не отвечает:"
-                                        property bool error7: false
+                                    Row{
+                                        width: 400
+                                        height: 30
+                                        Label {
+                                            id:error7Label
+                                            text: "Ведомый датчик №3 не отвечает:"
+                                            property bool error7: false
+                                        }
                                         Image {
                                             height: 32
                                             width: 32
                                             anchors.left: parent.right
-                                            anchors.rightMargin: 20
+                                            anchors.leftMargin: 20
                                             source: error7Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
                                         }
                                     }
-                                    Label {
-                                        id:error8Label
-                                        text: "Ведомый датчик №4 не отвечает:"
-                                        property bool error8: false
+                                    Row{
+                                        width: 400
+                                        height: 30
+                                        Label {
+                                            id:error8Label
+                                            text: "Ведомый датчик №4 не отвечает:"
+                                            property bool error8: false
+                                        }
                                         Image {
                                             height: 32
                                             width: 32
                                             anchors.left: parent.right
-                                            anchors.rightMargin: 20
+                                            anchors.leftMargin: 20
                                             source: error8Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
                                         }
                                     }
@@ -1066,7 +1170,21 @@ Rectangle {
                         Controls_1_4.TableViewColumn{width: 30 }
                     }
                     onCurrentIndexChanged: {
-                        remakeTarTable()
+                        if(stackSubProperty.currentItem == itemDevTarir) {
+                            console.log("tarDev item -active")
+                            // clear tar table
+                            var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
+                            var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
+                            var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
+                            for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
+                                viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
+                            }
+                            var ident = viewController.getCurrentDevProperty()
+
+                            viewController.addTarrirDev(ident[2], ident[6])
+                            remakeTarTable()
+                            remakeTarTableChart()
+                        }
                     }
 
                     Item {
@@ -2457,12 +2575,6 @@ Rectangle {
                                                     max: chartTarTableMultiple.chartTarTableAmplitudeMax
                                                     tickCount: 5
                                                 }
-                                                LineSeries {
-                                                    id:chartTarTableLineMultiple
-                                                    color: "red"
-                                                    axisX: chartTarTableAxisXMultiple
-                                                    axisY: chartTarTableAxisYMultiple
-                                                }
                                             }
                                             Rectangle {
                                                 id:tarTabRectangleCurrentValuesMultiple
@@ -2584,11 +2696,6 @@ Rectangle {
                                                         max: chartCurrentValue.graphAmplitudeMax
                                                         tickCount: 5
                                                     }
-                                                    LineSeries {
-                                                        id: currentTarChartLinesMultiple
-                                                        axisX: currentTarChartAxisXMultiple
-                                                        axisY: currentTarChartAxisYMultiple
-                                                    }
                                                     enabled: devPropertyProgressTmk24.isReady
                                                 }
                                             }
@@ -2618,16 +2725,7 @@ Rectangle {
                                                     enabled: devPropertyProgressTmk24.isReady
                                                     onClicked: {
                                                         if(!isNoiseDetected) {
-                                                            var values = viewController.getCurrentDevOtherData()
-                                                            if(values.length >0) {
-                                                                var currValueCNT  = values[1]
-                                                                var lastValueLitrs = 0
-                                                                if(tarTableListModel.rowCount() > 0) {
-                                                                    var value = tarTableListModel.get(tarTableListModel.rowCount()-1)
-                                                                    lastValueLitrs = value.valueLitrs
-                                                                }
-                                                            }
-                                                            tarTableListModel.append({"valueLitrs":parseInt(lastValueLitrs),"valueCNT":parseInt(currValueCNT)})
+                                                           addTarStepValue(tarTabViewMultiple.currentRow)
                                                         } else {
                                                             dialogAddTarValueWhenNoiseDetected.open()
                                                         }
@@ -2648,16 +2746,7 @@ Rectangle {
                                                             }
                                                         }
                                                         onApply: {
-                                                            var values = viewController.getCurrentDevOtherData()
-                                                            if(values.length >0) {
-                                                                var currValueCNT  = values[1]
-                                                                var lastValueLitrs = 0
-                                                                if(tarTableListModel.rowCount() > 0) {
-                                                                    var value = tarTableListModel.get(tarTableListModel.rowCount()-1)
-                                                                    lastValueLitrs = value.valueLitrs
-                                                                }
-                                                                tarTableListModel.append({"valueLitrs":parseInt(lastValueLitrs),"valueCNT":parseInt(currValueCNT)})
-                                                            }
+                                                            addTarStepValue(tarTabViewMultiple.currentRow)
                                                             close()
                                                         }
                                                     }
@@ -2708,41 +2797,18 @@ Rectangle {
                                                         id:addDeviceTarirDialog
                                                         onAccepted: {
                                                             console.log("AddDeviceTarirDialog-accepted = " + deviceTypeName.length + deviceId.length + deviceSerialNumber.length)
-                                                            for(var i=0; i<deviceTypeName.length; i++) {
-                                                                viewController.addTarrirDev(deviceTypeName[i], deviceId[i],deviceSerialNumber[i])
+                                                            var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
+                                                            var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
+                                                            var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
+                                                            // обновляем таблицу dev
+                                                            for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
+                                                                viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
+                                                            }
+                                                            for(var devcount=0; devcount<deviceId.length; devcount++) {
+                                                                viewController.addTarrirDev(deviceTypeName[devcount], deviceId[devcount])
                                                             }
                                                             remakeTarTable()
                                                         }
-                                                    }
-                                                }
-                                                ButtonRound {
-                                                    id:tarTabCleaarFullMultiple
-                                                    textLine: 2
-                                                    name: "Очистить"
-                                                    Dialog {
-                                                        id: dialogClearTarTableMultiple
-                                                        visible: false
-                                                        title: "Очистка записей таблицы"
-                                                        standardButtons: StandardButton.Close | StandardButton.Apply
-                                                        Rectangle {
-                                                            color: "transparent"
-                                                            implicitWidth: 500
-                                                            implicitHeight: 50
-                                                            Text {
-                                                                text: "Очистить таблицу\nВы уверены?"
-                                                                color: "black"
-                                                                anchors.centerIn: parent
-                                                            }
-                                                        }
-                                                        onApply: {
-                                                            var size = tarTabView.rowCount
-                                                            tarTabView.model.clear()
-                                                            timerAffterRefrashTarTable.start()
-                                                            close()
-                                                        }
-                                                    }
-                                                    onClicked: {
-                                                        dialogClearTarTableMultiple.open()
                                                     }
                                                 }
                                                 ButtonRound {
@@ -2769,8 +2835,8 @@ Rectangle {
                                                             }
                                                         }
                                                         onApply: {
+                                                            remakeTarTable()
                                                             viewController.sendReqGetTarrirAllDev()
-                                                            tarTabViewMultiple.model.clear()
                                                             close()
                                                         }
                                                     }
@@ -2853,13 +2919,37 @@ Rectangle {
         }
     }
 
-    BusyIndicator {
-        id:waitReadyIndicator
-        width: 96
-        height: 96
-        visible: devPropertyProgressTmk24.isReady ? false : true
+    Rectangle {
+        id:busyIndicator
+        width: 350
+        height: 200
+        radius: 20
+        property string message: "Ожидание ответа..."
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+        visible: devPropertyProgressTmk24.isReady ? false : true
+        BusyIndicator {
+            id:waitReadyIndicator
+            width: 96
+            height: 96
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+        }
+        Label {
+            text: busyIndicator.message
+            anchors.top: waitReadyIndicator.bottom
+            anchors.topMargin: 20
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+        layer.enabled: true
+        layer.effect: DropShadow {
+            transparentBorder: true
+            horizontalOffset: 0
+            verticalOffset: 1
+            color: "#e0e5ef"
+            samples: 10
+            radius: 10
+        }
     }
 
     Dialog {
@@ -2882,7 +2972,6 @@ Rectangle {
             close()
         }
     }
-
     Dialog {
         id: dialogLevelSetFull
         visible: false
@@ -2903,7 +2992,6 @@ Rectangle {
             close()
         }
     }
-
     Dialog {
         id: messageMinMaxWriteOk
         visible: false
@@ -2924,7 +3012,6 @@ Rectangle {
             close()
         }
     }
-
     Dialog {
         id: messageReadSettingsOk
         visible: false
@@ -2945,7 +3032,6 @@ Rectangle {
             close()
         }
     }
-
     Dialog {
         id: messageWriteSettingsOk
         visible: false
@@ -2998,6 +3084,26 @@ Rectangle {
             anchors.fill: parent
             Text {
                 text: qsTr("Таблица тарировки успешно записана")
+                color: "black"
+                anchors.centerIn: parent
+            }
+        }
+        onApply: {
+            close()
+        }
+    }
+    Dialog {
+        id: messageReadTarTableEmpty
+        visible: false
+        title: "Чтение таблицы"
+        standardButtons: StandardButton.Apply
+        width: 500
+        height: 150
+        Rectangle {
+            color: "transparent"
+            anchors.fill: parent
+            Text {
+                text: qsTr("Для этого/этих устройств нет данных о таблице\nВозможно ее нет\nТогда ее требуется создать!")
                 color: "black"
                 anchors.centerIn: parent
             }

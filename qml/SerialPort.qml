@@ -6,6 +6,7 @@ SerialPortForm {
     x: width
     y: height
 
+    modal: true
     property int anyPrope: 0
 
     signal acceptConnectReady(var name, var baudrate)

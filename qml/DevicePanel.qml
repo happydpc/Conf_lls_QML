@@ -119,6 +119,7 @@ Rectangle {
         anchors.leftMargin: 20
         anchors.rightMargin: 20
         anchors.right: interfaceTree.right
+        enabled: false
         name: qsTr("Настройки")
     }
     ButtonRound {
@@ -131,6 +132,7 @@ Rectangle {
         anchors.leftMargin: 20
         anchors.rightMargin: 20
         anchors.right: interfaceTree.right
+        enabled: false
         name: qsTr("Поддержка")
     }
 
