@@ -14,21 +14,21 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
 
     this->serviceList.push_back(new Progress_tmk24Service("PROGRESS TMK24"));
 
-    QTimer::singleShot(500, Qt::CoarseTimer, [&] {
-        QStringList strLis;
-        strLis = connFactory->getAvailableName();
-        qDebug() << strLis;
+//    QTimer::singleShot(500, Qt::CoarseTimer, [&] {
+//        QStringList strLis;
+//        strLis = connFactory->getAvailableName();
+//        qDebug() << strLis;
 
-        addConnectionSerialPort(strLis.first(), QString("19200"));
+//        addConnectionSerialPort(strLis.first(), QString("19200"));
 
-        addDeviceToConnection("PROGRESS TMK24", QString::number(1), "1234");
-//        addTarrirDev("PROGRESS TMK24", "1");
+//        addDeviceToConnection("PROGRESS TMK24", QString::number(1), "1234");
+////        addTarrirDev("PROGRESS TMK24", "1");
 
-        for(int a=0; a<2; a++) {
-            addDeviceToConnection("PROGRESS TMK24", QString::number(a+5), "");
-//            addTarrirDev("PROGRESS TMK24", QString::number(a+5));
-        }
-    });
+//        for(int a=0; a<2; a++) {
+//            addDeviceToConnection("PROGRESS TMK24", QString::number(a+5), "");
+////            addTarrirDev("PROGRESS TMK24", QString::number(a+5));
+//        }
+//    });
 }
 
 QStringList ViewController::getAvailableNameToSerialPort() {
@@ -380,7 +380,7 @@ void ViewController::removeTarrirDev(QString devTypeName, QString devId) {
 void ViewController::setLastRealTimeValuesToStep(int indexStep) {
     if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
         Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-        pService->setLastRealTimeValuesToStep(indexStep);
+//        pService->setLastRealTimeValuesToStep(indexStep);
     }
 }
 

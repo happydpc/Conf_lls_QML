@@ -28,9 +28,8 @@ Rectangle {
         devPropertyProgressTmk24.isReady = true
     }
     function setResetState() {
-//        stackSubProperty.setCurrentIndex(5)
-                tabProperty.setCurrentIndex(0)
-                stackSubProperty.setCurrentIndex(0)
+        tabProperty.setCurrentIndex(0)
+        stackSubProperty.setCurrentIndex(0)
         setNoReady()
         setWriteSettingsIsAvailable()
     }
@@ -258,16 +257,56 @@ Rectangle {
     }
 
     function addTarStepValue(rowIndex) {
-        var values = viewController.getCurrentDevOtherData()
-        if(values.length >0) {
-            var currValueCNT  = values[1]
-            var lastValueLitrs = 0
-            if(tarTableListModelMultiple.rowCount() > 0) {
-                var value = tarTableListModelMultiple.get(tarTableListModelMultiple.rowCount()-1)
-                lastValueLitrs = value.valueLitrs
+        // если таблица пустая
+        // создаем строку и заносим в нее текущие значения по устройствам
+        if(tarTableListModelMultiple.count <= 0) {
+            var jsonArray = []
+            var tarStepMax = viewController.getTarMaxCountStep()
+            while(tarStepMax >0) {
+                jsonArray.push({});
+                tarStepMax--
             }
-            tarTableListModel.append({"valueLitrs":parseInt(lastValueLitrs),"valueCNT":parseInt(currValueCNT)})
+            // пока не переберем все уст-ва
+            var devCount = viewController.getStayedDevTarrirCount()
+            var devId = viewController.getStayedDevTarrir_DevProperty("id")
+
+            for(var devIndex=0; devIndex<devCount; devIndex++) {
+                var table = viewController.getTableAtDevice(devIndex)
+
+                var valueCnt = 0
+                var valueLiters = 0
+
+                valueLiters = 0//table[devTableRow]
+                if(valueLiters == undefined) {
+                    valueLiters = ""
+                }
+                valueCnt = 0//table[devTableRow]
+                if(valueCnt == undefined) {
+                    valueCnt = ""
+                }
+
+                var roleLiters = "roleLiters" + devIndex
+                var roleCnt = "roleCnt" + devIndex
+
+                var itemArray = jsonArray[rowIndex]
+                if(itemArray === undefined) {
+                    itemArray = {}
+                    jsonArray.push(itemArray)
+                }
+                itemArray[roleLiters] = valueLiters;
+                itemArray[roleCnt] = valueCnt;
+                jsonArray[rowIndex] = itemArray
+                rowIndex ++
+            }
         }
+        for(var len=0; len<jsonArray.length; len++) {
+            if(tarTabViewMultiple.model.get(len) === undefined) {
+                tarTabViewMultiple.model.append(jsonArray[len])
+            } else {
+                tarTabViewMultiple.model.set(len, jsonArray[len])
+            }
+        }
+        timerAffterRefrashTarTable.start()
     }
 
     function remakeTarTable() {
@@ -2725,11 +2764,11 @@ Rectangle {
                                                     enabled: devPropertyProgressTmk24.isReady
                                                     onClicked: {
                                                         if(!isNoiseDetected) {
-                                                           addTarStepValue(tarTabViewMultiple.currentRow)
+                                                            addTarStepValue(tarTabViewMultiple.currentRow)
+                                                            timerAffterRefrashTarTable.start()
                                                         } else {
                                                             dialogAddTarValueWhenNoiseDetected.open()
                                                         }
-                                                        timerAffterRefrashTarTable.start()
                                                     }
                                                     Dialog {
                                                         id: dialogAddTarValueWhenNoiseDetectedMultiple
@@ -2747,6 +2786,7 @@ Rectangle {
                                                         }
                                                         onApply: {
                                                             addTarStepValue(tarTabViewMultiple.currentRow)
+                                                            timerAffterRefrashTarTable.start()
                                                             close()
                                                         }
                                                     }
