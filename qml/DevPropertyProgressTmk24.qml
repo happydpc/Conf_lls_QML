@@ -411,8 +411,9 @@ Rectangle {
                 jsonArrayCnt.push(valueCnt)
                 jsonArrayLiters.push(valueLiters)
             }
-            viewController.setCurrentDevTarTable(devId[count], jsonArrayLiters, jsonArrayCnt)
+            viewController.setTableFromFrontEnd(devId[count], jsonArrayLiters, jsonArrayCnt)
         }
+        viewController.sendReqWriteTarrirAllDev()
     }
 
     function readTarTable(devCount) {
@@ -3229,8 +3230,9 @@ Rectangle {
     }
     Dialog {
         id: messageReadTarTableOk
+        property var message: ""
         visible: false
-        title: "Чтение таблицы"
+        title: "Запись таблицы"
         standardButtons: StandardButton.Apply
         width: 500
         height: 150
@@ -3238,7 +3240,7 @@ Rectangle {
             color: "transparent"
             anchors.fill: parent
             Text {
-                text: qsTr("Таблица тарировки успешно записана")
+                text: qsTr("Результат:\n" + messageReadTarTableOk.message)
                 color: "black"
                 anchors.centerIn: parent
             }

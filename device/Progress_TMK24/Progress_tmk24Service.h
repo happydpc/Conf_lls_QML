@@ -12,23 +12,28 @@ public:
     bool addDevice(QString devTypeName, QString devId, QString devSn);
     void removeDevice(QString devTypeName, QString devId);
 
+    // сколько всего dev
     int getDeviceCount();
     QStringList getDeviceProperty(int index);
-    QList<QStringList> getCalibrateList();
 
+    // запрос для считывание таблицы со всех уст-в
     QList<QString> requestGetTableFromAllDevice();
     void placeTableFromDevice(QString deviceIdentName, QStringList table);
     bool readTableAllDeviceIsReady();
 
+    QList<QString> requestWriteTableToAllDevice();
+    void placeTableFromFrontEnd(QString deviceIdentName, QStringList valueLiters, QStringList valueCnts);
+    void placeAckReplyOfWriteTableFromDevice(QString deviceIdentName, bool writeIsNormal);
+    bool getAckStatusDeviceAffterWriteTable(QString deviceIdentName);
+
     void placeCurrenDataFromDevice(QString deviceIdentName, QList<QString> currentData);
     void placeCurrentChartDataFromDevice(QString deviceIdentName, QList<int> currentChartData);
-
-//    void setLastRealTimeValuesToStep(int indexStep);
 
     QStringList getCurrentDataDevice(int index);
     QList<int> getCurrentChartDataDevice(int index);
 
     QStringList getTableAtDevice(int index);
+    QPair<QStringList,QStringList> getTableAtDeviceToPair(QString uniqDevNameId);
 
     // сколько самое больше кол-во ячеек в тарировки
     // для резервирования array в qml
@@ -40,7 +45,8 @@ private:
 
     typedef enum {
         OPERATION_IDLE,
-        OPERATION_WHITE_GET
+        OPERATION_WHITE_GET,
+        OPERATION_WHITE_WRITE,
     }eTypOperation;
 
     typedef struct {
@@ -53,6 +59,7 @@ private:
         QString devId;
         QString devSn;
         bool isWhitedResult;
+        bool writeIsNormal;
         struct {
             uint32_t cnt;
             uint32_t liters;
@@ -71,45 +78,3 @@ private:
 };
 
 #endif // PROGRESS_TMK24SERVICE_H
-
-
-//#ifndef CALIBRATE_H
-//#define CALIBRATE_H
-
-//#include <QObject>
-//#include <QList>
-//#include <QPair>
-//#include <command/commandController.h>
-
-//class Calibrate : public QObject
-//{
-//    Q_OBJECT
-//public:
-//    static Calibrate &Instance();
-
-//    typedef enum {
-//        CALIBRATE_STATUS_IDLE,
-//        CALIBRATE_STATUS_NEED_GET_TABLE_FROM_DEVICES,
-//        CALIBRATE_STATUS_WHITE_REPLY_READ_TABLE_FROM_DEVICES,
-//        CALIBRATE_STATUS_GET_TABLE_FROM_DEVICE_NORMAL_READY
-//    }eStatus;
-
-//public:
-
-//    typedef enum {
-//        EventType_ReadyReadTableAtDevices
-//    }eTypeEvents;
-
-//signals:
-//    void calibrateEvents(eTypeEvents type);
-
-
-
-//private:
-
-
-//    eStatus status = CALIBRATE_STATUS_IDLE;
-
-//};
-
-//#endif // CALIBRATE_H

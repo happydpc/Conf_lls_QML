@@ -303,13 +303,17 @@ bool Progress_tmk24::makeDataToCommand(CommandController::sCommandData &commandD
                     passArray.push_back((char)0);
                 }
                 commandData.commandOptionData.insert(commandData.commandOptionData.size(), passArray);
-                commandData.commandOptionData.push_back(commandData.args.value.size()/2);
+                commandData.commandOptionData.push_back((uint8_t)commandData.args.value.size());
 
-                for(uint8_t i=0; i<(TAR_TABLE_SIZE*2); i++) {
+                for(uint8_t i=0; i<(TAR_TABLE_SIZE); i++) {
                     if(i < commandData.args.value.size()) {
                         commandData.commandOptionData.push_back((uint32_t)commandData.args.value.at(i) & 0xFF);
                         commandData.commandOptionData.push_back(((uint32_t)commandData.args.value.at(i) & 0xFF00) >> 8);
+                        commandData.commandOptionData.push_back((uint32_t)commandData.args.key.at(i).toUInt() & 0xFF);
+                        commandData.commandOptionData.push_back(((uint32_t)commandData.args.key.at(i).toUInt() & 0xFF00) >> 8);
                     } else {
+                        commandData.commandOptionData.push_back((char)0);
+                        commandData.commandOptionData.push_back((char)0);
                         commandData.commandOptionData.push_back((char)0);
                         commandData.commandOptionData.push_back((char)0);
                     }

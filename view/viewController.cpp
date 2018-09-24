@@ -23,11 +23,11 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
 
         addDeviceToConnection("PROGRESS TMK24", QString::number(1), "1234");
         addDeviceToConnection("PROGRESS TMK24", QString::number(2), "");
-//        addTarrirDev("PROGRESS TMK24", "1");
+        //        addTarrirDev("PROGRESS TMK24", "1");
 
         for(int a=0; a<2; a++) {
             addDeviceToConnection("PROGRESS TMK24", QString::number(a+5), "");
-//            addTarrirDev("PROGRESS TMK24", QString::number(a+5));
+            //            addTarrirDev("PROGRESS TMK24", QString::number(a+5));
         }
     });
 }
@@ -216,15 +216,25 @@ void ViewController::getCurrentDevErrors() {
 void ViewController::getCurrentDevTarTable() {
     getDeviceFactoryByIndex(interfaceTree->getIoIndex())->sendCustomCommadToDev(interfaceTree->getDevIndex(), "read current dev tar table");
 }
-void ViewController::setCurrentDevTarTable(QString uniqDevName, QStringList valuesLiters, QStringList valuesCnt) {
-    QPair<QStringList,QStringList> table;
-    int size = valuesLiters.size();
-    for(auto i=0; i<size; i++) { // TODO: данные должны быть сортированныеми!!! std::sort(tcommand.args.key.begin(), tcommand.args.key.end());
-        table.first.push_back(QString::number(i));
-        table.second.push_back(valuesCnt.at(i));
-        table.second.push_back(valuesLiters.at(i));
+void ViewController::setTableFromFrontEnd(QString uniqDevName, QStringList valuesLiters, QStringList valuesCnt) {
+    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+        pService->placeTableFromFrontEnd(uniqDevName, valuesLiters, valuesCnt);
     }
-    getDeviceFactoryByIndex(interfaceTree->getIoIndex())->sendCustomCommadToDev(interfaceTree->getDevIndex(), "set current dev tar table", table);
+}
+
+void ViewController::sendReqWriteTarrirAllDev() {
+    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+        for(auto i:pService->requestWriteTableToAllDevice()) {
+            // извлекаем данные из таблциц
+            QPair<QStringList,QStringList> table;
+            table = pService->getTableAtDeviceToPair(i);
+            // отправляем всем dev из списка команду на запись таблиц
+            getDeviceFactoryByIndex(interfaceTree->getIoIndex())->sendCustomCommadToDev(
+                        getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(i), "set current dev tar table", table);
+        }
+    }
 }
 
 void ViewController::setCurrentDevExportTarTable(QString pathFile, QStringList values, QStringList levels) {
@@ -382,7 +392,7 @@ void ViewController::removeTarrirDev(QString devTypeName, QString devId) {
 void ViewController::setLastRealTimeValuesToStep(int indexStep) {
     if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
         Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-//        pService->setLastRealTimeValuesToStep(indexStep);
+        //        pService->setLastRealTimeValuesToStep(indexStep);
     }
 }
 
@@ -590,11 +600,18 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
             }
             if(commmandData.devCommand == Progress_tmk24Data::lls_write_cal_table) {
                 if(commmandData.isNeedAckMessage) {
-                    if(message == "Error") {
-                    } else if (message == "Normal") {
-
+                    Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(pDevFactory->getDeviceToDeviceAbstract(indexDev)->getServiceAbstract());
+                    pService->placeAckReplyOfWriteTableFromDevice(commmandData.deviceIdent, (message == "Normal" ? (true) : (false)));
+                    if(pService->readTableAllDeviceIsReady()) {
+                        QStringList resWrite;
+                        for(int index=0; index<pService->getDeviceCount(); index++) {
+                            resWrite << QString("ID%1 [%2][SN-%3]   статус - %4").arg(commmandData.deviceIdent)
+                                        .arg(pService->getDeviceProperty(index).at(0))
+                                        .arg(pService->getDeviceProperty(index).at(2))
+                                        .arg(message == "Normal" ? QString("Успешно записано") : QString("Нет ответа"));
+                        }
+                        emit devUpdateWriteTarTableExecuted(resWrite);
                     }
-                    //                emit devUpdateWriteTarTableExecuted(pDevFactory->getDeviceName(indexDev));
                 }
             }
             if(commmandData.devCommand == Progress_tmk24Data::lls_write_settings) {

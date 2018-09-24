@@ -20,6 +20,7 @@ bool Progress_tmk24Service::addDevice(QString devTypeName, QString devId, QStrin
         idBlock.devId = devId;
         idBlock.devSn = devSn;
         idBlock.isWhitedResult = 0;
+        idBlock.writeIsNormal = 0;
         idBlock.currData.isValid = false;
         devList.push_back(new QPair<sDevIdentBlock, QList<sDevValues>*>(idBlock, new QList<sDevValues>()));
         res = true;
@@ -48,18 +49,6 @@ QStringList Progress_tmk24Service::getDeviceProperty(int index) {
     res << devList.at(index)->first.devTypeName;
     res << devList.at(index)->first.devId;
     res << devList.at(index)->first.devSn;
-    return res;
-}
-
-QList<QStringList> Progress_tmk24Service::getCalibrateList() {
-    QList<QStringList>res;
-    for(auto it: devList) {
-        QStringList dev;
-        dev.push_back(it->first.devTypeName);
-        dev.push_back(it->first.devId);
-        dev.push_back(it->first.devSn);
-        res.push_back(dev);
-    }
     return res;
 }
 
@@ -120,6 +109,20 @@ QStringList Progress_tmk24Service::getTableAtDevice(int index) {
     return res;
 }
 
+QPair<QStringList,QStringList> Progress_tmk24Service::getTableAtDeviceToPair(QString uniqDevNameId) {
+    QPair<QStringList,QStringList> res;
+    for(auto it: devList) {
+        if(it->first.devId == uniqDevNameId) {
+            int devsLen = it->second->size();
+            for(int i=0; i<devsLen; i++ ) {
+                res.first << QString::number(it->second->at(i).valueLiters);
+                res.second << QString::number(it->second->at(i).valueCnt);
+            }
+        }
+    }
+    return res;
+}
+
 void Progress_tmk24Service::placeCurrenDataFromDevice(QString deviceIdentName, QList<QString> currentData) {
     for(auto it: devList) {
         if(it->first.devId == deviceIdentName) {
@@ -162,25 +165,6 @@ QList<int> Progress_tmk24Service::getCurrentChartDataDevice(int index) {
     return res;
 }
 
-//void Progress_tmk24Service::setLastRealTimeValuesToStep(int indexStep) {
-//    if(indexStep == -1) {
-//        indexStep = 0;
-//    }
-//    for(auto itDev: devList) {
-//        while(itDev->second->size() < indexStep+1) {
-//            itDev->second->push_back(*new sDevValues);
-//        }
-//        sDevValues tDevValues = itDev->second->at(indexStep);
-//        if(itDev->first.currData.isValid) {
-//            tDevValues.valueCnt = itDev->first.currData.cnt;
-//            tDevValues.valueLiters = itDev->first.currData.liters;
-//        } else {
-//            tDevValues.valueCnt = 0;
-//            tDevValues.valueLiters = 0;
-//        }
-//        itDev->second->replace(indexStep, tDevValues);
-//    }
-//}
 
 int Progress_tmk24Service::getMaxCountStep() {
     int res = 0;
@@ -192,85 +176,51 @@ int Progress_tmk24Service::getMaxCountStep() {
     return res;
 }
 
-////1) запрос от viewcontroller->QML
-//// считать таблицу с добавленных устройств
-//void Calibrate::requestGetTableFromAllDevice() {
-//    setStatus(CALIBRATE_STATUS_NEED_GET_TABLE_FROM_DEVICES);
-//}
+void Progress_tmk24Service::placeTableFromFrontEnd(QString deviceIdentName, QStringList valueLiters, QStringList valueCnts) {
+    for(auto it: devList) {
+        if(it->first.devId == deviceIdentName) {
+            it->second->clear();
+            sDevValues tDevValues;
+            for(int i=0; i<valueLiters.size(); i++) {
+                tDevValues.valueLiters = valueLiters.at(i).toUInt();
+                tDevValues.valueCnt = valueCnts.at(i).toUInt();
+                it->second->push_back(tDevValues);
+            }
+            it->first.isWhitedResult = false;
+        }
+    }
+}
 
-//// ответы от devs
-//void Calibrate::placeDeviceDataAtCurrentData(QString uniqNameId, uint32_t cntValue, uint32_t freq, uint32_t fuelLevel) {
+void Progress_tmk24Service::placeAckReplyOfWriteTableFromDevice(QString deviceIdentName, bool writeIsNormal) {
+    for(auto it: devList) {
+        if(it->first.devId == deviceIdentName) {
+            it->first.isWhitedResult = false;
+            it->first.writeIsNormal = writeIsNormal;
+        }
+    }
+    if(readTableAllDeviceIsReady()) {
+        operation = OPERATION_IDLE;
+    }
+}
 
-//}
-//// ответы от devs
-//void Calibrate::placeDeviceDataAtTableData(QString unqNameId, QStringList tarListValueLiters, QStringList tarListValueCnt) {
+bool Progress_tmk24Service::getAckStatusDeviceAffterWriteTable(QString deviceIdentName) {
+    bool res = false;
+    for(auto it: devList) {
+        if(it->first.devId == deviceIdentName) {
+            res = it->first.writeIsNormal;
+        }
+    }
+    return res;
+}
 
-//}
-
-//// командный планировщик
-//// опрашивает устройства
-//// отправляет им команды
-//QList<CommandController::sCommandData> Calibrate::getCommandList() {
-//    QList<CommandController::sCommandData> listCommand;
-//    CommandController::sCommandData command;
-//    switch(getStatus()) {
-//    // нормальное ожидание
-//    case Calibrate::CALIBRATE_STATUS_IDLE:
-//        break;
-
-//        // надо отправить запрос на чтение таблицы со всех устройств
-//    case Calibrate::CALIBRATE_STATUS_NEED_GET_TABLE_FROM_DEVICES:
-//        command.deviceIdent = getUniqIdent();
-//        command.devCommand = (int)Progress_tmk24Data::lls_read_settings;
-//        listCommand.push_back(command);
-//        for(auto it: devList) {
-//            it.first.devId
-//        }
-//        setStatus(Calibrate::CALIBRATE_STATUS_WHITE_REPLY_READ_TABLE_FROM_DEVICES);
-//        break;
-
-//        // запрос отправили, теперь надо собрать ответы
-//    case Calibrate::CALIBRATE_STATUS_WHITE_REPLY_READ_TABLE_FROM_DEVICES:
-//        // если все собрали
-//        setStatus(Calibrate::CALIBRATE_STATUS_GET_TABLE_FROM_DEVICE_NORMAL_READY);
-//        break;
-
-//        // ответы собрали
-//        // здесь надо оптравить сигнла в DeviceFactory
-//        // в custom разбор ответов от dev
-//        // там разобрать и передать в viewControl -> QML
-//        // после emit поменять статус на idle
-//    case Calibrate::CALIBRATE_STATUS_GET_TABLE_FROM_DEVICE_NORMAL_READY:
-////        emit ();
-//        setStatus(Calibrate::CALIBRATE_STATUS_IDLE);
-//        break;
-//    }
-
-//    //    int calibrateSize = calibrateTmk24->getDeviceCount();
-//    //    for(int i=0; i<calibrateSize; i++) {
-//    //        calibrateTmk24->get
-//    //    }
-
-//    //    command.deviceIdent = getUniqIdent();
-//    //    command.devCommand = (int)Progress_tmk24Data::lls_read_lvl_once;
-//    //    listCommand.push_back(command);
-//    //    command.devCommand = (int)Progress_tmk24Data::lls_read_cnt;
-//    //    listCommand.push_back(command);
-//    //    command.devCommand = (int)Progress_tmk24Data::lls_read_lvl_all;
-//    //    listCommand.push_back(command);
-//    //    command.devCommand = (int)Progress_tmk24Data::lls_read_errors;
-//    //    listCommand.push_back(command);
-//    return listCommand;
-//}
-
-//Calibrate::eStatus Calibrate::getStatus() {
-//    return status;
-//}
-
-//void Calibrate::setStatus(Calibrate::eStatus status) {
-//    this->status = status;
-//}
-
-//QString Calibrate::getLastError() {
-//    return lastError;
-//}
+QList<QString> Progress_tmk24Service::requestWriteTableToAllDevice() {
+    QList<QString>list;
+    if(operation == OPERATION_IDLE) {
+        for(auto it: devList) {
+            list.push_back(it->first.devId);
+            it->first.isWhitedResult = true;
+        }
+        operation = OPERATION_WHITE_WRITE;
+    }
+    return list;
+}

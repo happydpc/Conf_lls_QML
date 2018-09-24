@@ -49,7 +49,8 @@ public:
     DeviceAbstract *getCurrentDeviceToAbstract();
 
     //********************* TARING *********************//
-    Q_INVOKABLE void setCurrentDevTarTable(QString uniqNameId, QStringList valuesLiters, QStringList valuesCnt);
+    Q_INVOKABLE void setTableFromFrontEnd(QString uniqNameId, QStringList valuesLiters, QStringList valuesCnt);
+    Q_INVOKABLE void sendReqWriteTarrirAllDev();
     //
     Q_INVOKABLE int getTarMaxCountStep();
 
@@ -122,7 +123,7 @@ signals:
     void devUpdateReadSettingWithoutRequest(QString devNameId, QStringList key, QStringList settings);
     void devUpdateReadErrorsExecuted(QString devNameId, QStringList errors);
     void devUpdateWriteSettingExecuted(QString devNameId);
-    void devUpdateWriteTarTableExecuted(QString devNameId);
+    void devUpdateWriteTarTableExecuted(QStringList result);
     void devUpdateWriteScaleMeasureExecuted(QString devNameId);
 
     void devUpdateReadTarTable(int devCount);
