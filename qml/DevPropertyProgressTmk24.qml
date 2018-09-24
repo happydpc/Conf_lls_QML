@@ -257,56 +257,64 @@ Rectangle {
     }
 
     function addTarStepValue(rowIndex) {
+        if(rowIndex === -1) {
+            rowIndex = 0
+        } else {
+            rowIndex++
+        }
         // если таблица пустая
         // создаем строку и заносим в нее текущие значения по устройствам
-        if(tarTableListModelMultiple.count <= 0) {
-            var jsonArray = []
-            var tarStepMax = viewController.getTarMaxCountStep()
-            while(tarStepMax >0) {
-                jsonArray.push({});
-                tarStepMax--
+        // пока не переберем все уст-ва
+        var itemValue = {}
+        var devCount = viewController.getStayedDevTarrirCount()
+        var devId = viewController.getStayedDevTarrir_DevProperty("id")
+
+        for(var devIndex=0; devIndex<devCount; devIndex++) {
+            var valueCnt = 0
+            var valueLiters = 0
+            var value = viewController.getTarCurrentDeviceData(devIndex)
+            var roleLiters = "roleLiters" + devIndex
+            var roleCnt = "roleCnt" + devIndex
+
+            valueCnt = value[0]
+            if(valueCnt == undefined) {
+                valueCnt = "0"
             }
-            // пока не переберем все уст-ва
-            var devCount = viewController.getStayedDevTarrirCount()
-            var devId = viewController.getStayedDevTarrir_DevProperty("id")
-
-            for(var devIndex=0; devIndex<devCount; devIndex++) {
-                var table = viewController.getTableAtDevice(devIndex)
-
-                var valueCnt = 0
-                var valueLiters = 0
-
-                valueLiters = 0//table[devTableRow]
-                if(valueLiters == undefined) {
-                    valueLiters = ""
+            // попытка взять предыдущее значение литров
+            // если есть
+            var lastLiter = tarTabViewMultiple.model.get(rowIndex-1)
+            if(lastLiter !== undefined) {
+                valueLiters = lastLiter[roleLiters]
+                if(valueLiters == undefined | valueLiters.length === 0) {
+                    valueLiters = "0"
                 }
-                valueCnt = 0//table[devTableRow]
-                if(valueCnt == undefined) {
-                    valueCnt = ""
-                }
-
-                var roleLiters = "roleLiters" + devIndex
-                var roleCnt = "roleCnt" + devIndex
-
-                var itemArray = jsonArray[rowIndex]
-                if(itemArray === undefined) {
-                    itemArray = {}
-                    jsonArray.push(itemArray)
-                }
-                itemArray[roleLiters] = valueLiters;
-                itemArray[roleCnt] = valueCnt;
-                jsonArray[rowIndex] = itemArray
-                rowIndex ++
-            }
-        }
-        for(var len=0; len<jsonArray.length; len++) {
-            if(tarTabViewMultiple.model.get(len) === undefined) {
-                tarTabViewMultiple.model.append(jsonArray[len])
             } else {
-                tarTabViewMultiple.model.set(len, jsonArray[len])
+                valueLiters = value[1]
+                if(valueLiters == undefined) {
+                    valueLiters = "0"
+                }
             }
+            itemValue[roleLiters] = valueLiters;
+            itemValue[roleCnt] = valueCnt;
         }
+        if(tarTabViewMultiple.model.get(rowIndex) === undefined) {
+//            tarTabViewMultiple.model.append(itemValue)
+            tarTabViewMultiple.model.append({"roleLiters0":"0","roleLiters1":"1","roleCnt0":"0","roleCnt1":"1"})
+        } else {
+            tarTabViewMultiple.model.insert(rowIndex, {"roleLiters0":"0","roleLiters1":"1","roleCnt0":"0","roleCnt1":"1"})
+//            tarTabViewMultiple.model.insert(rowIndex, itemValue)
+        }
+        tarTabViewMultiple.currentRow = tarTabViewMultiple.currentRow+1
         timerAffterRefrashTarTable.start()
+    }
+
+    function removeTarStepValue(rowIndex) {
+        // если ничего не выбрано выходим
+        if(rowIndex >= 0) {
+            // удаляем строку
+            tarTabViewMultiple.model.remove(rowIndex)
+            timerAffterRefrashTarTable.start()
+        }
     }
 
     function remakeTarTable() {
@@ -315,57 +323,93 @@ Rectangle {
         for(var index = tarTabViewMultiple.columnCount-1; index>=0; index--) {
             tarTabViewMultiple.removeColumn(index)
         }
-        var tarSize = viewController.getStayedDevTarrirCount()
         var devType = []
         var devId = []
         var devSn = []
         devType = viewController.getStayedDevTarrir_DevProperty("type")
         devId =  viewController.getStayedDevTarrir_DevProperty("id")
         devSn = viewController.getStayedDevTarrir_DevProperty("sn")
-        for(var i=0; i<tarSize; i++) { // добавляем на list with current data
+        var devSize = viewController.getStayedDevTarrirCount()
+        for(var i=0; i<devSize; i++) { // добавляем на list with current data
             tarListDevice.model.append({"devTyp":devType[i],"devId":devId[i],"devSn":devSn[i],"valueLiters":"0","valueCnt":"0"})
         }
         // добавляем в таблицу как столблец для девайса
-        for(var i2=0; i2<tarSize; i2++) {
+        for(var i2=0; i2<devSize; i2++) {
             var component = {}
             component = Qt.createComponent("DevPropertyProgressTmk24TarTableDelegate.qml");
             var tableViewColumn  = component.createObject(tarTabViewMultiple);
             tableViewColumn.title = qsTr("Объем[ID-%1]").arg(devId[i2])
             tableViewColumn.role = "roleLiters" + i2
             tableViewColumn.width = 100
-            tarTabViewMultiple.addColumn(tableViewColumn)
-            console.log("addeted1 =" + tableViewColumn.role)
             tableViewColumn.valueIsChanged.connect(function(role, text, modelChanged) {
-                var curRow = tarTabViewMultiple.currentRow
-                modelChanged[role] = text
-                tarTabViewMultiple.model.set(curRow, modelChanged)
                 remakeTarTableChart()
             });
+            tarTabViewMultiple.addColumn(tableViewColumn)
+            console.log("addeted1 =" + tableViewColumn.role)
+            component = Qt.createComponent("DevPropertyProgressTmk24TarTableDelegate.qml");
             tableViewColumn  = component.createObject(tarTabViewMultiple);
             tableViewColumn.title = qsTr("CNT[ID-%1]").arg(devId[i2])
             tableViewColumn.role = "roleCnt" + i2
             tableViewColumn.width = 100
-            tarTabViewMultiple.addColumn(tableViewColumn)
-
             tableViewColumn.valueIsChanged.connect(function(role, text, modelChanged) {
-                var curRow = tarTabViewMultiple.currentRow
-                modelChanged[role] = text
-                tarTabViewMultiple.model.set(curRow, modelChanged)
                 remakeTarTableChart()
             });
+            tarTabViewMultiple.addColumn(tableViewColumn)
             console.log("addeted2 =" + tableViewColumn.role)
         }
     }
     function writeTarTable() {
-        var tarArrayLiters = [];
-        var tarArrayCNT = [];
-        for(var i=0; i<tarTabView.rowCount; i++) {
-            var item = tarTabView.model.get(i)
-            tarArrayLiters.push(item.valueLitrs)
-            tarArrayCNT.push(item.valueCNT)
+        var devCount = viewController.getStayedDevTarrirCount()
+        var devType = []
+        var devId = []
+        var devSn = []
+        devType = viewController.getStayedDevTarrir_DevProperty("type")
+        devId =  viewController.getStayedDevTarrir_DevProperty("id")
+        devSn = viewController.getStayedDevTarrir_DevProperty("sn")
+
+        var jsonArray = []
+        var modelTarSize = tarTabViewMultiple.model.count
+        while(modelTarSize > 0) {
+            jsonArray.push({})
+            modelTarSize--
+        }
+        // считываем данные по ролям
+        for(var count=0; count<devCount; count++) {
+            var valueCnt = 0
+            var valueLiters = 0
+            var roleLiters = "roleLiters" + count
+            var roleCnt = "roleCnt" + count
+
+            // считываем все шаги для одного устройства
+            modelTarSize = tarTabViewMultiple.model.count
+            for(var subCount=0; subCount<modelTarSize; subCount++) {
+                var values = tarTabViewMultiple.model.get(subCount)
+                if(values !== undefined) {
+                    valueLiters = values[roleLiters]
+                    valueCnt = values[roleCnt]
+                    if(valueLiters == undefined) {
+                        valueLiters = "0"
+                    }
+                    if(valueCnt == undefined) {
+                        valueCnt = "0"
+                    }
+                } else {
+                    valueLiters = values[1]
+                    if(valueLiters == undefined) {
+                        valueLiters = "0"
+                    }
+                    valueCnt = values[0]
+                    if(valueCnt == undefined) {
+                        valueCnt = "0"
+                    }
+                }
+                jsonArray[subCount][roleLiters] = valueLiters;
+                jsonArray[subCount][roleCnt] = valueCnt;
+            }
         }
         viewController.setCurrentDevTarTable(tarArrayCNT,tarArrayLiters)
     }
+
     function readTarTable(devCount) {
         console.log("readTarTable = " + devCount)
         var jsonArray = []
@@ -2765,7 +2809,6 @@ Rectangle {
                                                     onClicked: {
                                                         if(!isNoiseDetected) {
                                                             addTarStepValue(tarTabViewMultiple.currentRow)
-                                                            timerAffterRefrashTarTable.start()
                                                         } else {
                                                             dialogAddTarValueWhenNoiseDetected.open()
                                                         }
@@ -2786,7 +2829,6 @@ Rectangle {
                                                         }
                                                         onApply: {
                                                             addTarStepValue(tarTabViewMultiple.currentRow)
-                                                            timerAffterRefrashTarTable.start()
                                                             close()
                                                         }
                                                     }
@@ -2815,11 +2857,10 @@ Rectangle {
                                                         }
                                                     }
                                                     onClicked: {
-                                                        if(tarTabView.currentRow == -1) {
+                                                        if(tarTabViewMultiple.currentRow === -1) {
                                                             dialogRemoveTarTableRowMultiple.open()
-                                                            close()
                                                         } else {
-                                                            tarTabView.model.remove(tarTabView.currentRow)
+                                                            removeTarStepValue(tarTabViewMultiple.currentRow)
                                                             timerAffterRefrashTarTable.start()
                                                         }
                                                     }
@@ -2875,7 +2916,6 @@ Rectangle {
                                                             }
                                                         }
                                                         onApply: {
-                                                            remakeTarTable()
                                                             viewController.sendReqGetTarrirAllDev()
                                                             close()
                                                         }
@@ -2887,7 +2927,7 @@ Rectangle {
                                                     name:"Записать\nтаблицу"
                                                     enabled: devPropertyProgressTmk24.isReady
                                                     Dialog {
-                                                        id: dialogWriteTarTableMultiple
+                                                        id: dialogWriteTarTableMultipleRequest
                                                         visible: false
                                                         title: "Запись таблицы"
                                                         standardButtons: StandardButton.Close | StandardButton.Apply
@@ -2906,9 +2946,53 @@ Rectangle {
                                                             close()
                                                         }
                                                     }
+                                                    Dialog {
+                                                        id: dialogWriteTarTableMultipleWarningOverSize
+                                                        visible: false
+                                                        title: "Запись таблицы"
+                                                        standardButtons: StandardButton.Apply
+                                                        Rectangle {
+                                                            color: "transparent"
+                                                            implicitWidth: 500
+                                                            implicitHeight: 50
+                                                            Text {
+                                                                text: "Данных больше размера памяти в устройстве\nЗапись не возможна"
+                                                                color: "black"
+                                                                anchors.centerIn: parent
+                                                            }
+                                                        }
+                                                        onApply: {
+                                                            close()
+                                                        }
+                                                    }
+                                                    Dialog {
+                                                        id: dialogWriteTarTableMultipleWarningEmpty
+                                                        visible: false
+                                                        title: "Запись таблицы"
+                                                        standardButtons: StandardButton.Apply
+                                                        Rectangle {
+                                                            color: "transparent"
+                                                            implicitWidth: 500
+                                                            implicitHeight: 50
+                                                            Text {
+                                                                text: "Нет данных для записи!"
+                                                                color: "black"
+                                                                anchors.centerIn: parent
+                                                            }
+                                                        }
+                                                        onApply: {
+                                                            close()
+                                                        }
+                                                    }
                                                     onClicked: {
-                                                        if(tarTabView.rowCount >0) {
-                                                            dialogWriteTarTableMultiple.open()
+                                                        if(tarTabViewMultiple.model.count > 0) {
+                                                            if(tarTabViewMultiple.model.count < 30) {
+                                                                dialogWriteTarTableMultipleRequest.open()
+                                                            } else {
+                                                                dialogWriteTarTableMultipleWarningOverSize.open()
+                                                            }
+                                                        } else {
+                                                            dialogWriteTarTableMultipleWarningEmpty.open()
                                                         }
                                                     }
                                                 }
