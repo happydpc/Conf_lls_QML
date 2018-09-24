@@ -41,7 +41,6 @@ public:
 
     Q_INVOKABLE void getCurrentDevTarTable();
 
-    Q_INVOKABLE void setCurrentDevTarTable(QStringList values, QStringList levels);
     Q_INVOKABLE void setCurrentDevExportTarTable(QString pathFile, QStringList values, QStringList levels);
 
     Q_INVOKABLE void setCurrentDevChangeId(QString passwordCheck, QString idNew);
@@ -50,6 +49,7 @@ public:
     DeviceAbstract *getCurrentDeviceToAbstract();
 
     //********************* TARING *********************//
+    Q_INVOKABLE void setCurrentDevTarTable(QString uniqNameId, QStringList valuesLiters, QStringList valuesCnt);
     //
     Q_INVOKABLE int getTarMaxCountStep();
 

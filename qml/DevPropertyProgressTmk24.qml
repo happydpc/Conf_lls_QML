@@ -285,7 +285,10 @@ Rectangle {
             var lastLiter = tarTabViewMultiple.model.get(rowIndex-1)
             if(lastLiter !== undefined) {
                 valueLiters = lastLiter[roleLiters]
-                if(valueLiters == undefined | valueLiters.length === 0) {
+                if(valueLiters == undefined) {
+                    valueLiters = "0"
+                }
+                if(valueLiters.length === 0) {
                     valueLiters = "0"
                 }
             } else {
@@ -293,16 +296,17 @@ Rectangle {
                 if(valueLiters == undefined) {
                     valueLiters = "0"
                 }
+                if(valueLiters.length === 0) {
+                    valueLiters = "0"
+                }
             }
             itemValue[roleLiters] = valueLiters;
             itemValue[roleCnt] = valueCnt;
         }
         if(tarTabViewMultiple.model.get(rowIndex) === undefined) {
-//            tarTabViewMultiple.model.append(itemValue)
-            tarTabViewMultiple.model.append({"roleLiters0":"0","roleLiters1":"1","roleCnt0":"0","roleCnt1":"1"})
+            tarTabViewMultiple.model.append(itemValue)
         } else {
-            tarTabViewMultiple.model.insert(rowIndex, {"roleLiters0":"0","roleLiters1":"1","roleCnt0":"0","roleCnt1":"1"})
-//            tarTabViewMultiple.model.insert(rowIndex, itemValue)
+            tarTabViewMultiple.model.insert(rowIndex, itemValue)
         }
         tarTabViewMultiple.currentRow = tarTabViewMultiple.currentRow+1
         timerAffterRefrashTarTable.start()
@@ -323,38 +327,44 @@ Rectangle {
         for(var index = tarTabViewMultiple.columnCount-1; index>=0; index--) {
             tarTabViewMultiple.removeColumn(index)
         }
+        var tarSize = viewController.getStayedDevTarrirCount()
         var devType = []
         var devId = []
         var devSn = []
         devType = viewController.getStayedDevTarrir_DevProperty("type")
         devId =  viewController.getStayedDevTarrir_DevProperty("id")
         devSn = viewController.getStayedDevTarrir_DevProperty("sn")
-        var devSize = viewController.getStayedDevTarrirCount()
-        for(var i=0; i<devSize; i++) { // добавляем на list with current data
+        for(var i=0; i<tarSize; i++) { // добавляем на list with current data
             tarListDevice.model.append({"devTyp":devType[i],"devId":devId[i],"devSn":devSn[i],"valueLiters":"0","valueCnt":"0"})
         }
         // добавляем в таблицу как столблец для девайса
-        for(var i2=0; i2<devSize; i2++) {
+        for(var i2=0; i2<tarSize; i2++) {
             var component = {}
             component = Qt.createComponent("DevPropertyProgressTmk24TarTableDelegate.qml");
             var tableViewColumn  = component.createObject(tarTabViewMultiple);
             tableViewColumn.title = qsTr("Объем[ID-%1]").arg(devId[i2])
             tableViewColumn.role = "roleLiters" + i2
             tableViewColumn.width = 100
-            tableViewColumn.valueIsChanged.connect(function(role, text, modelChanged) {
-                remakeTarTableChart()
-            });
             tarTabViewMultiple.addColumn(tableViewColumn)
             console.log("addeted1 =" + tableViewColumn.role)
-            component = Qt.createComponent("DevPropertyProgressTmk24TarTableDelegate.qml");
+            tableViewColumn.valueIsChanged.connect(function(role, text, modelChanged) {
+                var curRow = tarTabViewMultiple.currentRow
+                modelChanged[role] = text
+                tarTabViewMultiple.model.set(curRow, modelChanged)
+                remakeTarTableChart()
+            });
             tableViewColumn  = component.createObject(tarTabViewMultiple);
             tableViewColumn.title = qsTr("CNT[ID-%1]").arg(devId[i2])
             tableViewColumn.role = "roleCnt" + i2
             tableViewColumn.width = 100
+            tarTabViewMultiple.addColumn(tableViewColumn)
+
             tableViewColumn.valueIsChanged.connect(function(role, text, modelChanged) {
+                var curRow = tarTabViewMultiple.currentRow
+                modelChanged[role] = text
+                tarTabViewMultiple.model.set(curRow, modelChanged)
                 remakeTarTableChart()
             });
-            tarTabViewMultiple.addColumn(tableViewColumn)
             console.log("addeted2 =" + tableViewColumn.role)
         }
     }
@@ -367,21 +377,16 @@ Rectangle {
         devId =  viewController.getStayedDevTarrir_DevProperty("id")
         devSn = viewController.getStayedDevTarrir_DevProperty("sn")
 
-        var jsonArray = []
-        var modelTarSize = tarTabViewMultiple.model.count
-        while(modelTarSize > 0) {
-            jsonArray.push({})
-            modelTarSize--
-        }
         // считываем данные по ролям
         for(var count=0; count<devCount; count++) {
             var valueCnt = 0
             var valueLiters = 0
             var roleLiters = "roleLiters" + count
             var roleCnt = "roleCnt" + count
-
+            var jsonArrayCnt = []
+            var jsonArrayLiters = []
             // считываем все шаги для одного устройства
-            modelTarSize = tarTabViewMultiple.model.count
+            var modelTarSize = tarTabViewMultiple.model.count
             for(var subCount=0; subCount<modelTarSize; subCount++) {
                 var values = tarTabViewMultiple.model.get(subCount)
                 if(values !== undefined) {
@@ -403,11 +408,11 @@ Rectangle {
                         valueCnt = "0"
                     }
                 }
-                jsonArray[subCount][roleLiters] = valueLiters;
-                jsonArray[subCount][roleCnt] = valueCnt;
+                jsonArrayCnt.push(valueCnt)
+                jsonArrayLiters.push(valueLiters)
             }
+            viewController.setCurrentDevTarTable(devId[count], jsonArrayLiters, jsonArrayCnt)
         }
-        viewController.setCurrentDevTarTable(tarArrayCNT,tarArrayLiters)
     }
 
     function readTarTable(devCount) {
@@ -424,8 +429,8 @@ Rectangle {
             var parity = 0
             var rowIndex = 0
             // перебираем таблицу уст-ва
-            var valueCnt = 0//"0"
-            var valueLiters = 0//"0"
+            var valueCnt = 0
+            var valueLiters = 0
             var stepCount = viewController.getTarMaxCountStep() *2 // it pair
             if(stepCount === 0 | stepCount === undefined) {
                 messageReadTarTableEmpty.open()
@@ -463,6 +468,7 @@ Rectangle {
         }
         for(var len=0; len<jsonArray.length; len++) {
             if(tarTabViewMultiple.model.get(len) === undefined) {
+                tarTabViewMultiple.currentRow = 0
                 tarTabViewMultiple.model.append(jsonArray[len])
             } else {
                 tarTabViewMultiple.model.set(len, jsonArray[len])
@@ -523,7 +529,6 @@ Rectangle {
             }
         }
     }
-
 
     Rectangle {
         id: devPropertyProgressTmk24
@@ -1255,6 +1260,14 @@ Rectangle {
                     onCurrentIndexChanged: {
                         if(stackSubProperty.currentItem == itemDevTarir) {
                             console.log("tarDev item -active")
+                            // сперва добавить всем роли
+                            // TODO: hack!!!
+                            var connDevId = viewController.getAvailableDevTarrirAdd_DevId()
+                            var connDevType = viewController.getAvailableDevTarrirAdd_DevType()
+                            for(var i=0; i<connDevId.length; i++) {
+                                viewController.addTarrirDev(connDevType[i], connDevId[i])
+                            }
+                            addTarStepValue(0)
                             // clear tar table
                             var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
                             var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
@@ -1263,8 +1276,16 @@ Rectangle {
                                 viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
                             }
                             var ident = viewController.getCurrentDevProperty()
-
                             viewController.addTarrirDev(ident[2], ident[6])
+                            timerAffterChangeTarTable.start()
+                        }
+                    }
+                    Timer {
+                        id: timerAffterChangeTarTable
+                        interval: 100
+                        running: false
+                        repeat: false
+                        onTriggered: {
                             remakeTarTable()
                             remakeTarTableChart()
                         }
@@ -1274,7 +1295,6 @@ Rectangle {
                         ScrollView {
                             clip: true
                             anchors.fill: parent
-
                             Column {
                                 spacing: 10
                                 anchors.top: parent.top
@@ -2888,7 +2908,17 @@ Rectangle {
                                                             for(var devcount=0; devcount<deviceId.length; devcount++) {
                                                                 viewController.addTarrirDev(deviceTypeName[devcount], deviceId[devcount])
                                                             }
+                                                            timerAffterAddRemoveDevTarTable.start()
+                                                        }
+                                                    }
+                                                    Timer {
+                                                        id: timerAffterAddRemoveDevTarTable
+                                                        interval: 100
+                                                        running: false
+                                                        repeat: false
+                                                        onTriggered: {
                                                             remakeTarTable()
+                                                            remakeTarTableChart()
                                                         }
                                                     }
                                                 }
@@ -2916,6 +2946,7 @@ Rectangle {
                                                             }
                                                         }
                                                         onApply: {
+                                                            remakeTarTable()
                                                             viewController.sendReqGetTarrirAllDev()
                                                             close()
                                                         }

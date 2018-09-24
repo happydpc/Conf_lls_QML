@@ -22,6 +22,7 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
         addConnectionSerialPort(strLis.first(), QString("19200"));
 
         addDeviceToConnection("PROGRESS TMK24", QString::number(1), "1234");
+        addDeviceToConnection("PROGRESS TMK24", QString::number(2), "");
 //        addTarrirDev("PROGRESS TMK24", "1");
 
         for(int a=0; a<2; a++) {
@@ -207,6 +208,7 @@ void ViewController::getCurrentDevErrors() {
     getDeviceFactoryByIndex(interfaceTree->getIoIndex())->sendCustomCommadToDev(interfaceTree->getDevIndex(), "read current dev errors");
 }
 
+#include <QJsonDocument>
 
 //************************************************************************/
 //**                        TARIR                                       **/
@@ -214,13 +216,13 @@ void ViewController::getCurrentDevErrors() {
 void ViewController::getCurrentDevTarTable() {
     getDeviceFactoryByIndex(interfaceTree->getIoIndex())->sendCustomCommadToDev(interfaceTree->getDevIndex(), "read current dev tar table");
 }
-void ViewController::setCurrentDevTarTable(QStringList values, QStringList levels) {
+void ViewController::setCurrentDevTarTable(QString uniqDevName, QStringList valuesLiters, QStringList valuesCnt) {
     QPair<QStringList,QStringList> table;
-    int size = values.size();
+    int size = valuesLiters.size();
     for(auto i=0; i<size; i++) { // TODO: данные должны быть сортированныеми!!! std::sort(tcommand.args.key.begin(), tcommand.args.key.end());
         table.first.push_back(QString::number(i));
-        table.second.push_back(values.at(i));
-        table.second.push_back(levels.at(i));
+        table.second.push_back(valuesCnt.at(i));
+        table.second.push_back(valuesLiters.at(i));
     }
     getDeviceFactoryByIndex(interfaceTree->getIoIndex())->sendCustomCommadToDev(interfaceTree->getDevIndex(), "set current dev tar table", table);
 }
