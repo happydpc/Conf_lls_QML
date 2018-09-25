@@ -23,6 +23,7 @@ Rectangle {
 
     function setNoReady() {
         devPropertyProgressTmk24.isReady = false
+        setWriteSettingsIsNoAvailable()
     }
     function setReady() {
         devPropertyProgressTmk24.isReady = true
@@ -61,7 +62,7 @@ Rectangle {
         if(values.length >0) {
             //levelValue.text = values[0]
             levelProgress.value = values[1]
-            levelCnt.value = parseInt(values[2]).toPrecision(3)
+            levelCnt.value = parseInt(values[2])
             levelFreq.value = values[3]
             levelTemp.value = values[4]
         }
@@ -562,11 +563,15 @@ Rectangle {
                     name: "Текущее состояние"
                     textLine:1
                     widthBody: 155
+                    useIcon: true
+                    iconCode: "\uF05A  "
                 }
                 TabButtonUp {
                     name: "Конфигурирование"
                     textLine:1
                     widthBody: 155
+                    useIcon: true
+                    iconCode: "\uF013  "
                 }
             }
         }
@@ -595,11 +600,14 @@ Rectangle {
                 ScrollView {
                     clip: true
                     anchors.fill: parent
+
                     Column {
                         anchors.left: parent.left
                         anchors.leftMargin: 15
                         spacing: 10
+
                         Row {
+
                             id:currentDataTexted
                             layer.enabled: true
                             width: 800
@@ -779,6 +787,7 @@ Rectangle {
                                         spanAngle: 70
                                         minValue: 0
                                         maxValue: 5000000
+                                        showText: false
                                         value: 0
                                         textFont {
                                             family: "Halvetica"
@@ -788,6 +797,18 @@ Rectangle {
                                         suffixText: ""
                                         textColor: "#888d91"
                                         enabled: devPropertyProgressTmk24.isReady
+                                        onValueChanged: {
+                                            levelCntValueCustom.text = value
+                                        }
+                                        Text {
+                                            id:levelCntValueCustom
+                                            text:"NA"
+                                            color: parent.textColor //"#888d91"
+                                            font.family: parent.textFont
+                                            font.pointSize: parent.textureSize
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            anchors.verticalCenter: parent.verticalCenter
+                                        }
                                     }
                                     layer.effect: DropShadow {
                                         transparentBorder: true
@@ -1223,31 +1244,43 @@ Rectangle {
                             name: "Общее"
                             textLine:1
                             widthBody: 100
+                            useIcon: true
+                            iconCode: "\uF015  "
                         }
                         TabButtonUp {
                             name: "Калибровка\nMinMax"
                             textLine:2
                             widthBody: 120
+                            useIcon: true
+                            iconCode: "\uF492  "
                         }
                         TabButtonUp {
                             name: "Фильтрация"
                             textLine:1
                             widthBody: 115
+                            useIcon: true
+                            iconCode: "\uF0B0  "
                         }
                         TabButtonUp {
                             name: "Температурная\nкомпенсация"
                             textLine:2
                             widthBody: 135
+                            useIcon: true
+                            iconCode: "\uF2C9  "
                         }
                         TabButtonUp {
                             name: "Ведущий\nведомый"
                             textLine:2
                             widthBody: 110
+                            useIcon: true
+                            iconCode: "\uf5ee  "
                         }
                         TabButtonUp {
                             name: "Тарировка"
                             textLine:1
                             widthBody: 110
+                            useIcon: true
+                            iconCode: "\uF080  "
                         }
                     }
                 }
@@ -2836,6 +2869,8 @@ Rectangle {
                                                     textLine:2
                                                     widthBody: 150
                                                     name: qsTr("Добавить\nтекущее значение")
+                                                    useIcon: true
+                                                    iconCode: "\uF055  "
                                                     enabled: devPropertyProgressTmk24.isReady
                                                     onClicked: {
                                                         if(!isNoiseDetected) {
@@ -2844,6 +2879,7 @@ Rectangle {
                                                             dialogAddTarValueWhenNoiseDetectedMultiple.open()
                                                         }
                                                     }
+
                                                     Dialog {
                                                         id: dialogAddTarValueWhenNoiseDetectedMultiple
                                                         title: "Добавление значения в таблицу"
@@ -2869,6 +2905,8 @@ Rectangle {
                                                     textLine:2
                                                     widthBody: 100
                                                     name: qsTr("Удалить\nзначение")
+                                                    useIcon: true
+                                                    iconCode: "\uF067  "
                                                     Dialog {
                                                         id: dialogRemoveTarTableRowMultiple
                                                         title: "Удаление записи таблицы"
@@ -2900,6 +2938,8 @@ Rectangle {
                                                     id:tarTabRemoveAddDeviceMultiple
                                                     textLine:2
                                                     widthBody: 165
+                                                    useIcon: true
+                                                    iconCode: "\uF055  "
                                                     name: qsTr("Добавить/Удалить\nустройство")
                                                     onClicked: {
                                                         addDeviceTarirDialog.parent = devPropertyProgressTmk24
@@ -2937,6 +2977,8 @@ Rectangle {
                                                     id:tarTabReadTableMultiple
                                                     textLine: 2
                                                     name:"Считать\nтаблицу"
+                                                    useIcon: true
+                                                    iconCode: "\uF07C  "
                                                     enabled: devPropertyProgressTmk24.isReady
                                                     onClicked: {
                                                         dialogReadTarTableMultiple.open()
@@ -2967,6 +3009,8 @@ Rectangle {
                                                     id:tarTabWriteTableMultiple
                                                     textLine: 2
                                                     name:"Записать\nтаблицу"
+                                                    useIcon: true
+                                                    iconCode: "\uF0C7  "
                                                     enabled: devPropertyProgressTmk24.isReady
                                                     Dialog {
                                                         id: dialogWriteTarTableMultipleRequest
@@ -3042,6 +3086,8 @@ Rectangle {
                                                     id:tarTabTableExportMultiple
                                                     textLine: 2
                                                     name:"Выгрузить\n.csv"
+                                                    useIcon: true
+                                                    iconCode: "\uF093  "
                                                     widthBody: 110
                                                     FileDialog {
                                                         id: dialogExportTarTableMultiple

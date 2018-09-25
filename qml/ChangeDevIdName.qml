@@ -76,6 +76,7 @@ Popup {
             x: 207
             y: 16
             text: qsTr("0")
+            readOnly: true
         }
 
         Label {

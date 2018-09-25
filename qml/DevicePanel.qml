@@ -105,6 +105,8 @@ Rectangle {
         anchors.rightMargin: 20
         anchors.right: interfaceTree.right
         name: qsTr("Добавить интерфейс")
+        useIcon: true
+        iconCode: "\uF055  "
         onClicked: {
             addNewConnection();
         }
@@ -121,6 +123,8 @@ Rectangle {
         anchors.right: interfaceTree.right
         enabled: false
         name: qsTr("Настройки")
+        useIcon: true
+        iconCode: "\uF013  "
     }
     ButtonRound {
         id:supportButton
@@ -134,6 +138,8 @@ Rectangle {
         anchors.right: interfaceTree.right
         enabled: false
         name: qsTr("Поддержка")
+        useIcon: true
+        iconCode: "\uF0E0  "
     }
 
     DevicePropertyPanel {

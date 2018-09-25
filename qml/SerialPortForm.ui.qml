@@ -57,16 +57,10 @@ Popup {
 
                 ButtonRound {
                     id: buttonUpdate
-                    x: 8
-                    y: 193
+                    x: 145
+                    y: 0
                     textLine: 2
-                    widthBody: 100
                     enabled: false
-                    anchors.top: parent.top
-                    anchors.topMargin: 0
-                    anchors.left: portList.left
-                    anchors.leftMargin: 150
-                    textIsCenter: true
                     name: qsTr("Обновить")
                 }
             }
@@ -119,7 +113,6 @@ Popup {
             textLine: 2
             widthBody: 140
             textIsCenter: true
-
             name: qsTr("Закрыть")
         }
     }

@@ -27,6 +27,8 @@ Popup {
             anchors.topMargin: 10
             textIsCenter: true
             name: qsTr("Принять")
+            useIcon: true
+            iconCode: "\uf00c  "
             onClicked: {
                 var size = tarDevListView.count
                 var deviceTypeName = []
@@ -51,6 +53,8 @@ Popup {
             anchors.topMargin: 10
             anchors.rightMargin: 10
             textIsCenter: true
+            useIcon: true
+            iconCode: "\uf00d  "
             name: qsTr("Закрыть")
             onClicked:  {
                 close()

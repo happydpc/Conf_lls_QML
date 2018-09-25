@@ -77,6 +77,8 @@ Popup {
             textLine:2
             textIsCenter: true
             widthBody: 185
+            useIcon: true
+            iconCode: "\uf00d  "
             name: qsTr("Закрыть")
             onClicked: {
                 close()
@@ -88,6 +90,8 @@ Popup {
             widthBody: 185
             textIsCenter: true
             name: qsTr("Добавить")
+            useIcon: true
+            iconCode: "\uf055  "
             anchors.top: gridLayout.bottom
             anchors.right: parent.right
             onClicked: {

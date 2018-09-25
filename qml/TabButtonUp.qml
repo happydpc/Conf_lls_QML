@@ -6,6 +6,8 @@ TabButton {
     property string name: name
     property int textLine: 1
     property int widthBody: 100
+    property bool useIcon: false
+    property string iconCode: ""
     width: widthBody
     height: 35
     background: Rectangle {
@@ -20,9 +22,16 @@ TabButton {
             anchors.leftMargin: 16
             anchors.top: parent.top
             anchors.topMargin: 10
-            color: "#3598fa"
+            color: useIcon ? ("transparent") : "#3598fa"
             width: 16
             height: 16
+            Text {
+                text: useIcon ? (iconCode) : ""
+                color: "#3598fa"
+                visible: useIcon
+                font { family: "customFont";}
+                font.pointSize: 14
+            }
         }
         Text {
             anchors.left: parent.left

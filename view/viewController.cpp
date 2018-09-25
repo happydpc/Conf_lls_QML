@@ -21,7 +21,7 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
 
         addConnectionSerialPort(strLis.first(), QString("19200"));
 
-        addDeviceToConnection("PROGRESS TMK24", QString::number(1), "1234");
+        addDeviceToConnection("PROGRESS TMK24", QString::number(1), "");
         addDeviceToConnection("PROGRESS TMK24", QString::number(2), "");
         //        addTarrirDev("PROGRESS TMK24", "1");
 

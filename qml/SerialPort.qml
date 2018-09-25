@@ -12,6 +12,15 @@ SerialPortForm {
     signal acceptConnectReady(var name, var baudrate)
     signal abortConnectButton()
 
+    Component.onCompleted: {
+        buttonClose.useIcon = true
+        buttonClose.iconCode = "\uf00d  "
+        buttonAccept.useIcon = true
+        buttonAccept.iconCode = "\uF1E6  "
+        buttonUpdate.useIcon = true
+        buttonUpdate.iconCode = "\uf055  "
+    }
+
     buttonAccept.onClicked: {
         acceptConnectReady(portList.currentText, baudRateList.currentText)
     }
