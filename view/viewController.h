@@ -44,10 +44,7 @@ public:
 
     Q_INVOKABLE void getCurrentDevTarTable();
 
-    Q_INVOKABLE void setCurrentDevExportTarTable(QString pathFile, QStringList values, QStringList levels);
-
     Q_INVOKABLE void setCurrentDevChangeId(QString password, QString uniqNameIdNew, QString uniqNameIdCurrent);
-
 
     DeviceAbstract *getCurrentDeviceToAbstract();
 
@@ -56,6 +53,8 @@ public:
     Q_INVOKABLE void sendReqWriteTarrirAllDev();
     //
     Q_INVOKABLE int getTarMaxCountStep();
+
+    Q_INVOKABLE void sendReqExportTarrirAllDevToCsv(QString pathFile);
 
     // какие устройства доступны для добавления в множественную таррировку
     // устройство с вкладки которого это начинают

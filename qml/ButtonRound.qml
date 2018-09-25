@@ -33,6 +33,7 @@ Button {
                 visible: useIcon
                 font { family: "customFont";}
                 font.pointSize: 14
+                anchors.verticalCenter: parent.verticalCenter
             }
         }
         Text {

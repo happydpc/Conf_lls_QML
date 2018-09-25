@@ -256,7 +256,6 @@ Rectangle {
             }
         }
     }
-
     function addTarStepValue(rowIndex) {
         if(rowIndex === -1) {
             rowIndex = 0
@@ -415,6 +414,54 @@ Rectangle {
             viewController.setTableFromFrontEnd(devId[count], jsonArrayLiters, jsonArrayCnt)
         }
         viewController.sendReqWriteTarrirAllDev()
+    }
+
+    function saveTarTableToCsv(pathFile) {
+        var devCount = viewController.getStayedDevTarrirCount()
+        var devType = []
+        var devId = []
+        var devSn = []
+        devType = viewController.getStayedDevTarrir_DevProperty("type")
+        devId =  viewController.getStayedDevTarrir_DevProperty("id")
+        devSn = viewController.getStayedDevTarrir_DevProperty("sn")
+
+        // считываем данные по ролям
+        for(var count=0; count<devCount; count++) {
+            var valueFuelLevel = 0
+            var valueLiters = 0
+            var roleLiters = "roleLiters" + count
+            var roleFuelLevel = "roleFuelLevel" + count
+            var jsonArrayCnt = []
+            var jsonArrayLiters = []
+            // считываем все шаги для одного устройства
+            var modelTarSize = tarTabViewMultiple.model.count
+            for(var subCount=0; subCount<modelTarSize; subCount++) {
+                var values = tarTabViewMultiple.model.get(subCount)
+                if(values !== undefined) {
+                    valueLiters = values[roleLiters]
+                    valueFuelLevel = values[roleFuelLevel]
+                    if(valueLiters == undefined) {
+                        valueLiters = "0"
+                    }
+                    if(valueFuelLevel == undefined) {
+                        valueFuelLevel = "0"
+                    }
+                } else {
+                    valueLiters = values[1]
+                    if(valueLiters == undefined) {
+                        valueLiters = "0"
+                    }
+                    valueFuelLevel = values[0]
+                    if(valueFuelLevel == undefined) {
+                        valueFuelLevel = "0"
+                    }
+                }
+                jsonArrayCnt.push(valueFuelLevel)
+                jsonArrayLiters.push(valueLiters)
+            }
+            viewController.setTableFromFrontEnd(devId[count], jsonArrayLiters, jsonArrayCnt)
+        }
+        viewController.sendReqExportTarrirAllDevToCsv(pathFile)
     }
 
     function readTarTable(devCount) {
@@ -3103,15 +3150,7 @@ Rectangle {
                                                             }
                                                             else {
                                                                 console.log(dialogExportTarTableMultiple.fileUrl)
-                                                                console.log("You chose: " + dialogExportTarTableMultiple.fileUrls)
-                                                                var tarArrayLiters = [];
-                                                                var tarArrayFuelLevel = [];
-                                                                for(var i=0; i<tarTabView.rowCount; i++) {
-                                                                    var item = tarTabView.model.get(i)
-                                                                    tarArrayLiters.push(item.Level)
-                                                                    tarArrayFuelLevel.push(item.Value)
-                                                                }
-                                                                viewController.setCurrentDevExportTarTable(dialogExportTarTableMultiple.fileUrls, tarArrayLiters,tarArrayFuelLevel)
+                                                                saveTarTableToCsv(dialogExportTarTableMultiple.fileUrl)
                                                             }
                                                         }
                                                     }

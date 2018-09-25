@@ -15,8 +15,6 @@ TableViewColumn {
             text: model[role] === null ? "" : model[role]
             validator: RegExpValidator { regExp: /[0-9A-F]+/ }
             onEditingFinished: {
-                console.log("TableViewColumn- changed =" + role + " " + text)
-                model[role] = text
                 valueIsChanged(role, text, modelChanged)
             }
         }

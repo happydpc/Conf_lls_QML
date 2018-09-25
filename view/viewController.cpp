@@ -242,48 +242,6 @@ void ViewController::sendReqWriteTarrirAllDev() {
     }
 }
 
-void ViewController::setCurrentDevExportTarTable(QString pathFile, QStringList values, QStringList levels) {
-    QStringList table;
-    QStringList exportList;
-    QString str;
-    int size = values.size();
-    for(auto i=0; i<size; i++) {
-        table.push_back(values.at(i));
-        table.push_back(levels.at(i));
-    }
-    if(!table.empty()) {
-        if(pathFile.size() > 0) {
-            if(!pathFile.contains(".csv")) {
-                pathFile.push_back(".csv");
-            }
-            if(pathFile.count(':') > 1) { // windows
-                pathFile.remove("file:///");
-            } else {
-                pathFile.remove("file://"); // unix
-            }
-            str.push_back("\"" + QString("Уровень") + "\"" + ",");
-            str.push_back("\"" + QString("Объем") + "\"");
-            exportList.push_back(str);
-            for(int counterPr=0; counterPr<table.size();) {
-                str.clear();
-                str.push_back("\"" + table.at(counterPr) + "\"" + ",");
-                counterPr++;
-                str.push_back("\"" + table.at(counterPr) + "\"");
-                counterPr++;
-                exportList.push_back(str);
-            }
-            QFile file(pathFile);
-            if (file.open(QFile::WriteOnly | QFile::Text)) {
-                QTextStream s(&file);
-                for (int counterExport=0; counterExport<exportList.size(); ++counterExport) {
-                    s << exportList.at(counterExport) << '\n';
-                }
-            }
-            file.close();
-        }
-    }
-}
-
 void ViewController::setCurrentDevChangeId(QString password, QString uniqNameIdNew, QString uniqNameIdCurrent) {
     QPair<QStringList,QStringList> id;
     id.first.push_back("netAddress_value");
@@ -302,6 +260,62 @@ int ViewController::getTarMaxCountStep() {
         return pService->getMaxCountStep();
     }
     return 0;
+}
+
+void ViewController::sendReqExportTarrirAllDevToCsv(QString pathFile) {
+    QStringList table;
+    QStringList exportList;
+    QString str;
+
+    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+        int devCount = pService->getDeviceCount();
+        int sizeTable = pService->getMaxCountStep();
+        // id[devType], объем, уровень топлива
+        QStringList idList;
+        QStringList litersList;
+        QStringList fuelLevelList;
+        // получаем стоблец с id
+        for(int i=0; i<devCount; i++) {
+            idList << QString("%1[%2]").arg(pService->getDeviceProperty(i).at(0)).arg(pService->getDeviceProperty(i).at(1));
+        }
+        // получаем стоблец с liters и fuelLevel
+        for(int i=0; i<sizeTable; i++) {
+            litersList << pService->getTableAtDevice(i).at(0); // lites
+            fuelLevelList << pService->getTableAtDevice(i).at(1); // fuelLevel
+        }
+        str.push_back("\"" + QString("Уровень") + "\"" + ",");
+        str.push_back("\"" + QString("Объем") + "\"");
+        exportList.push_back(str);
+        for(int i=0; i<sizeTable; i++) {
+            str.clear();
+            str.push_back("\"" + idList.at(i) + "\"" + ",");
+            str.push_back("\"" + ((fuelLevelList.size() >= i) ? (fuelLevelList.at(i) + "\"" + ",") : QString("Нет данных")));
+            str.push_back("\"" + ((litersList.size() >= i) ? (litersList.at(i) + "\"") : QString("Нет данных")));
+            exportList.push_back(str);
+        }
+
+        if(!table.empty()) {
+            if(pathFile.size() > 0) {
+                if(!pathFile.contains(".csv")) {
+                    pathFile.push_back(".csv");
+                }
+                if(pathFile.count(':') > 1) { // windows
+                    pathFile.remove("file:///");
+                } else {
+                    pathFile.remove("file://"); // unix
+                }
+                QFile file(pathFile);
+                if (file.open(QFile::WriteOnly | QFile::Text)) {
+                    QTextStream s(&file);
+                    for (int counterExport=0; counterExport<exportList.size(); ++counterExport) {
+                        s << exportList.at(counterExport) << '\n';
+                    }
+                }
+                file.close();
+            }
+        }
+    }
 }
 
 QStringList ViewController::getAvailableDevTarrirAdd_DevType() {

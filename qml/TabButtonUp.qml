@@ -20,9 +20,8 @@ TabButton {
         Rectangle {
             anchors.left: parent.left
             anchors.leftMargin: 16
-            anchors.top: parent.top
-            anchors.topMargin: 10
-            color: useIcon ? ("transparent") : "#3598fa"
+            anchors.verticalCenter: parent.verticalCenter
+            color: useIcon ? "transparent" : "#3598fa"
             width: 16
             height: 16
             Text {
@@ -31,6 +30,7 @@ TabButton {
                 visible: useIcon
                 font { family: "customFont";}
                 font.pointSize: 14
+                anchors.verticalCenter: parent.verticalCenter
             }
         }
         Text {
