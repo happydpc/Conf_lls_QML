@@ -44,7 +44,7 @@ signals:
 
 private:
 
-    QVector<interfacesAbstract*>interface;
+    QVector<interfacesAbstract*>interfaceList;
 
     QMutex *lockInterface;
 

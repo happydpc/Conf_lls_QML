@@ -43,10 +43,10 @@ Popup {
                     }
                 }
                 onApply: {
-                    var tNewId = ""
+                    var tNewId = newIdAddress.value
                     var tPassword = ""
                     var tCurrentId = currentId.text
-                    viewController.setCurrentDevNewIdAddress(tNewId, tPassword, tCurrentId)
+                    viewController.setCurrentDevChangeId(tPassword, tNewId, tCurrentId)
                     close()
                 }
             }

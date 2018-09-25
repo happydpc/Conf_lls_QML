@@ -2,7 +2,7 @@
 #include <QDebug>
 
 ConnectionFactory::ConnectionFactory() {
-    this->interface.clear();
+    this->interfaceList.clear();
     this->lockInterface = new QMutex();
 }
 ConnectionFactory::~ConnectionFactory() {}
@@ -15,7 +15,7 @@ bool ConnectionFactory::addConnection(QString typeConnection, QString name, QStr
         interfacesAbstract* pInterface = new InterfaceSerial(name, param);
         res  = pInterface->openInterface(name, param);
         if(res) { // TODO: !!! // connect(pInterface, SIGNAL(errorConnection(interfacesAbstract::eInterfaceTypes, QString)), this, SLOT(errorFromConnection(QString, QString)));
-            interface.push_back(std::move(pInterface));
+            interfaceList.push_back(std::move(pInterface));
             emit updateTree(ConnectionFactory::Type_Update_Add);
         } else {
             delete pInterface;
@@ -42,9 +42,9 @@ QStringList ConnectionFactory::getAvailableName() {
 
 void ConnectionFactory::removeConnection(QString name) {
     lockInterface->lock();
-    for(auto it = interface.begin(); it != interface.end(); it++) {
+    for(auto it = interfaceList.begin(); it != interfaceList.end(); it++) {
         if((*it)->getInterfaceName() == name) {
-            interface.erase(it);
+            interfaceList.erase(it);
         }
     }
     lockInterface->unlock();
@@ -53,21 +53,21 @@ void ConnectionFactory::removeConnection(QString name) {
 
 void ConnectionFactory::removeConnection(int index) {
     lockInterface->lock();
-    auto it = interface.begin();
+    auto it = interfaceList.begin();
     (*it)->closeInterface();
-    interface.erase(it+= index);
+    interfaceList.erase(it+= index);
     lockInterface->unlock();
     emit updateTree(ConnectionFactory::Type_Update_Removed);
 }
 
 int ConnectionFactory::getCountConnection() {
-    return interface.size();
+    return interfaceList.size();
 }
 
 QString ConnectionFactory::getInteraceNameFromIndex(int index) {
     QString res;
     int counter = 0;
-    for(auto i=interface.begin(); i!=interface.end(); i++) {
+    for(auto i=interfaceList.begin(); i!=interfaceList.end(); i++) {
         if(counter == index) {
             res = (*i)->getInterfaceName();
             break;
@@ -79,7 +79,7 @@ QString ConnectionFactory::getInteraceNameFromIndex(int index) {
 
 interfacesAbstract* ConnectionFactory::getInterace(QString name) {
     interfacesAbstract* pInterface = nullptr;
-    for(auto it = interface.begin(); it!=interface.end(); it++) {
+    for(auto it = interfaceList.begin(); it!=interfaceList.end(); it++) {
         if((*it)->getInterfaceName() == name) {
             pInterface = (*it);
             break;
@@ -92,7 +92,7 @@ interfacesAbstract* ConnectionFactory::getInterace(int index) {
     interfacesAbstract *pInterface = nullptr;
     QString name = getInteraceNameFromIndex(index);
     if(!name.isEmpty()) {
-        for(auto it = interface.begin(); it!=interface.end(); it++) {
+        for(auto it = interfaceList.begin(); it!=interfaceList.end(); it++) {
             if((*it)->getInterfaceName() == name) {
                 pInterface = (*it);
                 break;

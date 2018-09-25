@@ -46,7 +46,7 @@ public:
 
     Q_INVOKABLE void setCurrentDevExportTarTable(QString pathFile, QStringList values, QStringList levels);
 
-    Q_INVOKABLE void setCurrentDevChangeId(QString passwordCheck, QString idNew);
+    Q_INVOKABLE void setCurrentDevChangeId(QString password, QString uniqNameIdNew, QString uniqNameIdCurrent);
 
 
     DeviceAbstract *getCurrentDeviceToAbstract();
