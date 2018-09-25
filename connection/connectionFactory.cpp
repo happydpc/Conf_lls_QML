@@ -7,28 +7,37 @@ ConnectionFactory::ConnectionFactory() {
 }
 ConnectionFactory::~ConnectionFactory() {}
 
-bool ConnectionFactory::addConnection(interfacesAbstract::eInterfaceTypes type, QString name, QStringList param) {
+bool ConnectionFactory::addConnection(QString typeConnection, QString name, QStringList param) {
     bool res = false;
     lockInterface->lock();
-    Interface *pInterface = new Interface(type, name, param);
-    res  = pInterface->openInterface(name, param);
-    if(res) {
-        connect(pInterface,
-                SIGNAL(errorConnection(interfacesAbstract::eInterfaceTypes, QString)), this,
-                SLOT(errorFromConnection(interfacesAbstract::eInterfaceTypes, QString)));
-        interface.push_back(std::move(pInterface));
-        emit updateTree(ConnectionFactory::Type_Update_Add);
+
+    if(typeConnection.toUpper() == QString("Serial").toUpper()) {
+        interfacesAbstract* pInterface = new InterfaceSerial(name, param);
+        res  = pInterface->openInterface(name, param);
+        if(res) { // TODO: !!! // connect(pInterface, SIGNAL(errorConnection(interfacesAbstract::eInterfaceTypes, QString)), this, SLOT(errorFromConnection(QString, QString)));
+            interface.push_back(std::move(pInterface));
+            emit updateTree(ConnectionFactory::Type_Update_Add);
+        } else {
+            delete pInterface;
+            qDebug() << "ConnectionFactory: addConnection -ERR " + name;
+        }
+    } else if(typeConnection.toUpper() == QString("Ethernet").toUpper()) {
+
+    } else if(typeConnection.toUpper() == QString("BLE").toUpper()) {
+
     } else {
-        delete pInterface;
-        qDebug() << "ConnectionFactory: addConnection -ERR " + name;
+        qDebug() << "Error type create connection";
     }
     lockInterface->unlock();
     return res;
 }
 
 QStringList ConnectionFactory::getAvailableName() {
-    Interface tInterface(interfacesAbstract::InterfaceTypeSerialPort, "", QStringList("")); // TODO: it work only serialPort
-    return tInterface.getAvailableList();
+    QStringList interfaceList;
+    interfacesAbstract* pInterface = new InterfaceSerial("", QStringList("")); // TODO: it work only serialPort
+    interfaceList = pInterface->getAvailableList();
+    delete pInterface;
+    return interfaceList;
 }
 
 void ConnectionFactory::removeConnection(QString name) {
@@ -68,8 +77,8 @@ QString ConnectionFactory::getInteraceNameFromIndex(int index) {
     return res;
 }
 
-Interface* ConnectionFactory::getInterace(QString name) {
-    Interface *pInterface = nullptr;
+interfacesAbstract* ConnectionFactory::getInterace(QString name) {
+    interfacesAbstract* pInterface = nullptr;
     for(auto it = interface.begin(); it!=interface.end(); it++) {
         if((*it)->getInterfaceName() == name) {
             pInterface = (*it);
@@ -79,8 +88,8 @@ Interface* ConnectionFactory::getInterace(QString name) {
     return pInterface;
 }
 
-Interface* ConnectionFactory::getInterace(int index) {
-    Interface *pInterface = nullptr;
+interfacesAbstract* ConnectionFactory::getInterace(int index) {
+    interfacesAbstract *pInterface = nullptr;
     QString name = getInteraceNameFromIndex(index);
     if(!name.isEmpty()) {
         for(auto it = interface.begin(); it!=interface.end(); it++) {
@@ -96,6 +105,6 @@ Interface* ConnectionFactory::getInterace(int index) {
 //-----------------------------------------------------/
 //---------------         SLOTS             -----------/
 //-----------------------------------------------------/
-void ConnectionFactory::errorFromConnection(interfacesAbstract::eInterfaceTypes, QString name) {
-    qDebug() << "errorFromConnection -" << name;
+void ConnectionFactory::errorFromConnection(QString type, QString name) {
+    qDebug() << "errorFromConnection -"  << type << " " << name;
 }

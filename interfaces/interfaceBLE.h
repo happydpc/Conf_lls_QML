@@ -12,7 +12,7 @@ class InterfaceBLE : public interfacesAbstract
 public:
     explicit InterfaceBLE();
     ~InterfaceBLE();
-    InterfaceBLE(const InterfaceBLE &);
+//    InterfaceBLE(const InterfaceBLE &);
 
 public slots:
 
@@ -22,17 +22,17 @@ public slots:
     void closeInterface() override;
     bool sendData(QByteArray &pData) override;
     bool readData(QByteArray &pData) override;
-
     QString getInterfaceName() override;
     QStringList getInterfaceProperty() override;
     QStringList getAvailableList() override;
+    QString getType() override;
 
 private slots:
     void aboutClose() override;
 
 private:
-    QSerialPort *portHandler;
 
+    static constexpr char* typeName = "BLE";
 };
 
 #endif // INTERFACEBLE_H

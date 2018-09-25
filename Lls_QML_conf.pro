@@ -25,7 +25,6 @@ SOURCES += \
     interfaces/interfaceSerial.cpp \
     settings/settings.cpp \
     view/viewController.cpp \
-    interfaces/interface.cpp \
     command/commandController.cpp \
     other/crc.cpp \
     tests/testDevReply.cpp \
@@ -66,7 +65,6 @@ HEADERS += \
     interfaces/interfaceSerial.h \
     settings/settings.h \
     view/viewController.h \
-    interfaces/interface.h \
     command/commandController.h \
     other/crc.h \
     tests/testDevReply.h \

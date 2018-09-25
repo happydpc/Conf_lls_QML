@@ -1,14 +1,5 @@
 #include "./interfaces/interfacesAbstract.h"
 
-interfacesAbstract::interfacesAbstract()
-{
+interfacesAbstract::interfacesAbstract(QObject *parent) : QObject(parent) {
 
 }
-
-interfacesAbstract::~interfacesAbstract() {
-
-}
-
-//void interfacesAbstract::aboutClose() {
-//    emit closeIsNormal();
-//}

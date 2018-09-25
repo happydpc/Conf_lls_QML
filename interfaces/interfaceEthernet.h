@@ -9,7 +9,7 @@ class InterfaceEthernet : public interfacesAbstract
     Q_OBJECT
 public:
     explicit InterfaceEthernet();
-    InterfaceEthernet(const InterfaceEthernet & interface);
+//    InterfaceEthernet(const InterfaceEthernet & interface);
     ~InterfaceEthernet();
 
 public slots:
@@ -23,11 +23,13 @@ public slots:
     QString getInterfaceName() override;
     QStringList getInterfaceProperty() override;
     QStringList getAvailableList() override;
+    QString getType() override;
 
 private slots:
     void aboutClose() override;
 
 private:
+    static constexpr char* typeName = "Ethernet";
 
 };
 

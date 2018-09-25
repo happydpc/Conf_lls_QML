@@ -4,6 +4,7 @@
 #include <QObject>
 #include "connection/connectionFactory.h"
 #include "interfaceListControll/model.h"
+#include "device/devicesFactory.h"
 
 class ViewController : public QObject
 {

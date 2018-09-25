@@ -14,22 +14,22 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
 
     this->serviceList.push_back(new Progress_tmk24Service("PROGRESS TMK24"));
 
-    QTimer::singleShot(500, Qt::CoarseTimer, [&] {
-        QStringList strLis;
-        strLis = connFactory->getAvailableName();
-        qDebug() << strLis;
+//    QTimer::singleShot(500, Qt::CoarseTimer, [&] {
+//        QStringList strLis;
+//        strLis = connFactory->getAvailableName();
+//        qDebug() << strLis;
 
-        addConnectionSerialPort(strLis.first(), QString("19200"));
+//        addConnectionSerialPort(strLis.first(), QString("19200"));
 
-        addDeviceToConnection("PROGRESS TMK24", QString::number(1), "1234");
-        addDeviceToConnection("PROGRESS TMK24", QString::number(2), "");
-        //        addTarrirDev("PROGRESS TMK24", "1");
+//        addDeviceToConnection("PROGRESS TMK24", QString::number(1), "1234");
+//        addDeviceToConnection("PROGRESS TMK24", QString::number(2), "");
+//        //        addTarrirDev("PROGRESS TMK24", "1");
 
-        for(int a=0; a<2; a++) {
-            addDeviceToConnection("PROGRESS TMK24", QString::number(a+5), "");
-            //            addTarrirDev("PROGRESS TMK24", QString::number(a+5));
-        }
-    });
+//        for(int a=0; a<2; a++) {
+//            addDeviceToConnection("PROGRESS TMK24", QString::number(a+5), "");
+//            //            addTarrirDev("PROGRESS TMK24", QString::number(a+5));
+//        }
+//    });
 }
 
 QStringList ViewController::getAvailableNameToSerialPort() {
@@ -42,7 +42,7 @@ QStringList ViewController::getAvailableNameToSerialPort() {
 bool ViewController::addConnectionSerialPort(QString name, QString baudrate) {
     bool res = false;
     if((!name.isEmpty()) && (!baudrate.isEmpty())) {
-        res = connFactory->addConnection(interfacesAbstract::InterfaceTypeSerialPort, name, QStringList(baudrate));
+        res = connFactory->addConnection("Serial", name, QStringList(baudrate));
         if(res) {
             qDebug() << "addConnectionSerialPort -open= "<< res << name;
             emit devUpdateLogMessage(0, QString("Добавление интерфейса [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
@@ -77,6 +77,8 @@ QStringList ViewController::getAvailableDeviceNameToSerialPort() {
     QStringList retList;
     QString name = connFactory->getInteraceNameFromIndex(interfaceTree->getIoIndex());
     if(!name.isEmpty()) {
+        InterfaceSerial* pSerial = dynamic_cast<InterfaceSerial*>(connFactory->getInterace(name));
+        pSerial->getDeviceFactory()->getAvailableDeviceTypes();
         retList = connFactory->getInterace(name)->getDeviceFactory()->getAvailableDeviceTypes();
     }
     return retList;
@@ -84,7 +86,7 @@ QStringList ViewController::getAvailableDeviceNameToSerialPort() {
 
 bool ViewController::addDeviceToConnection(QString devTypeName, QString idNum, QString password) {
     bool res = false;
-    Interface *pInterface = nullptr;
+    interfacesAbstract *pInterface = nullptr;
     // get current interface
     pInterface = connFactory->getInterace(connFactory->getInteraceNameFromIndex(interfaceTree->getIoIndex()));
     if(pInterface != nullptr) {     // TODO: throw!!!
@@ -165,7 +167,6 @@ void ViewController::setCurrentDevNewIdAddress(QString newId, QString password, 
 }
 
 DevicesFactory* ViewController::getDeviceFactoryByIndex(int indexIterface) {
-    QString interfaceName = connFactory->getInteraceNameFromIndex(indexIterface);
     return connFactory->getInterace(connFactory->getInteraceNameFromIndex(indexIterface))->getDeviceFactory();
 }
 

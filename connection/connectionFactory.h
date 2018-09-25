@@ -2,9 +2,12 @@
 #define CONNECTIONFACTORY_H
 
 #include <QObject>
-#include <QMultiMap>
+#include <QVector>
 #include <QMutex>
-#include "interfaces/interface.h"
+#include "interfaces/interfacesAbstract.h"
+#include "interfaces/interfaceSerial.h"
+#include "interfaces/interfaceBLE.h"
+#include "interfaces/interfaceEthernet.h"
 
 class ConnectionFactory : public QObject
 {
@@ -21,7 +24,7 @@ public:
 
 public slots:
 
-    bool addConnection(interfacesAbstract::eInterfaceTypes type, QString name, QStringList param);
+    bool addConnection(QString typeConnection, QString name, QStringList param);
     void removeConnection(QString name);
     void removeConnection(int index);
 
@@ -31,17 +34,18 @@ public slots:
 
     QString getInteraceNameFromIndex(int index);
 
-    Interface* getInterace(QString name);
-    Interface* getInterace(int index);
+    interfacesAbstract* getInterace(QString name);
+    interfacesAbstract* getInterace(int index);
 
-    void errorFromConnection(interfacesAbstract::eInterfaceTypes, QString name);
+    void errorFromConnection(QString type, QString name);
 
 signals:
     void updateTree(ConnectionFactory::E_ConnectionUpdateType type);
 
 private:
 
-    QVector<Interface*>interface;
+    QVector<interfacesAbstract*>interface;
+
     QMutex *lockInterface;
 
 };
