@@ -6,8 +6,8 @@ import QtQuick.Controls.Styles 1.4
 Popup {
     id: addDeviceTarirDialog
     modal: true
-    width: 500
-    height: 300
+    width: 450
+    height: 275
 
     //    y: width / 2
     //    x: height / 2
@@ -15,67 +15,64 @@ Popup {
         id: rectangle
         anchors.fill: parent
 
-        ListView {
-            id: tarDevListView
-            anchors.bottom: rectangle.bottom
-            anchors.top: rectangle.top
-            anchors.left: rectangle.left
-            anchors.right: rectangle.right
-            ScrollBar.vertical: ScrollBar {
-                width: 20
-            }
-            delegate: Item {
-                id: tarDevListViewDelegate
-                height: 30
-                width: parent.width
+        Button {
+            id: acceptButton
+            x: 235
+            y: 220
+            width: 172
+            height: 40
+            text: qsTr("Сменить")
+        }
 
-                Rectangle {
-                    width: parent.width
-                    anchors.left: parent.left
-                    anchors.leftMargin: 10
-                    anchors.rightMargin: 10
-                    height: parent.height
-                    color: "transparent"
-                    TextField {
-                        id: deviceTypeName
-                        height: 20
-                        text: model.deviceTypeName
-                        font.bold: false
-                        anchors.top: parent.top
-                        anchors.topMargin: 10
-                        anchors.left: parent.left
-                        anchors.leftMargin: 10
-                        readOnly: true
-                        background: "#ded3d3"
-                    }
-                    TextField {
-                        id: deviceId
-                        height: 20
-                        text: model.deviceId
-                        font.bold: false
-                        anchors.top: deviceTypeName.bottom
-                        anchors.left: parent.left
-                        anchors.leftMargin: 10
-                        readOnly: true
-                        background: "#c4e7c3"
-                    }
-                    TextField {
-                        id: deviceSerialNumber
-                        height: 20
-                        text: model.deviceSerialNumber
-                        font.bold: false
-                        anchors.top: deviceId.bottom
-                        anchors.topMargin: 10
-                        anchors.left: parent.left
-                        anchors.leftMargin: 10
-                        readOnly: true
-                        background: "#e7e1c0"
-                    }
-                }
-            }
-            model: ListModel {
-                id: tarDevListModel
-            }
+        Button {
+            id: exitButton
+            x: 45
+            y: 220
+            width: 184
+            height: 40
+            text: qsTr("Закрыть")
+        }
+
+        Label {
+            id: label
+            x: 45
+            y: 23
+            text: qsTr("Текущий адрес:")
+        }
+
+        TextField {
+            id: currentId
+            x: 207
+            y: 16
+            text: qsTr("0")
+        }
+
+        Label {
+            id: label1
+            x: 45
+            y: 89
+            text: qsTr("Новый адрес:")
+        }
+
+        TextField {
+            id: password
+            x: 45
+            y: 135
+            width: 362
+            height: 40
+            text: qsTr("")
+            placeholderText: "Настроечный пароль"
+        }
+
+        SpinBox {
+            id: newIdAddress
+            x: 207
+            y: 77
+            width: 200
+            height: 40
+            to: 254
+            from: 1
+            value: 1
         }
     }
 }

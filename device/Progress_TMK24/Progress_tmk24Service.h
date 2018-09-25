@@ -22,7 +22,7 @@ public:
     bool readTableAllDeviceIsReady();
 
     QList<QString> requestWriteTableToAllDevice();
-    void placeTableFromFrontEnd(QString deviceIdentName, QStringList valueLiters, QStringList valueCnts);
+    void placeTableFromFrontEnd(QString deviceIdentName, QStringList valueLiters, QStringList valueFuelLevel);
     void placeAckReplyOfWriteTableFromDevice(QString deviceIdentName, bool writeIsNormal);
     bool getAckStatusDeviceAffterWriteTable(QString deviceIdentName);
 
@@ -50,8 +50,9 @@ private:
     }eTypOperation;
 
     typedef struct {
-        uint32_t valueCnt;
+        uint32_t valueFuelLevel;
         uint32_t valueLiters;
+        uint32_t valueCnt;
     }sDevValues;
 
     typedef struct {
@@ -61,8 +62,9 @@ private:
         bool isWhitedResult;
         bool writeIsNormal;
         struct {
-            uint32_t cnt;
+            uint32_t fuelLevel;
             uint32_t liters;
+            uint32_t cntValue;
             bool isValid;
         }currData;
         QList<int>chartData;

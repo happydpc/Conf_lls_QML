@@ -31,6 +31,8 @@ public:
 
     Q_INVOKABLE QStringList getCurrentDevProperty();
 
+    Q_INVOKABLE void setCurrentDevNewIdAddress(QString newId, QString password, QString currentId);
+
     Q_INVOKABLE void setCurrentDevLevelAsEmpty();
     Q_INVOKABLE void setCurrentDevLevelAsFull();
 
@@ -49,7 +51,7 @@ public:
     DeviceAbstract *getCurrentDeviceToAbstract();
 
     //********************* TARING *********************//
-    Q_INVOKABLE void setTableFromFrontEnd(QString uniqNameId, QStringList valuesLiters, QStringList valuesCnt);
+    Q_INVOKABLE void setTableFromFrontEnd(QString uniqNameId, QStringList valuesLiters, QStringList valuesFuelLevel);
     Q_INVOKABLE void sendReqWriteTarrirAllDev();
     //
     Q_INVOKABLE int getTarMaxCountStep();

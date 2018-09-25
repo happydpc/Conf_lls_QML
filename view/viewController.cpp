@@ -160,6 +160,10 @@ QStringList ViewController::getCurrentDevProperty() {
     return ret;
 }
 
+void ViewController::setCurrentDevNewIdAddress(QString newId, QString password, QString currentId) {
+
+}
+
 DevicesFactory* ViewController::getDeviceFactoryByIndex(int indexIterface) {
     QString interfaceName = connFactory->getInteraceNameFromIndex(indexIterface);
     return connFactory->getInterace(connFactory->getInteraceNameFromIndex(indexIterface))->getDeviceFactory();
@@ -216,10 +220,10 @@ void ViewController::getCurrentDevErrors() {
 void ViewController::getCurrentDevTarTable() {
     getDeviceFactoryByIndex(interfaceTree->getIoIndex())->sendCustomCommadToDev(interfaceTree->getDevIndex(), "read current dev tar table");
 }
-void ViewController::setTableFromFrontEnd(QString uniqDevName, QStringList valuesLiters, QStringList valuesCnt) {
+void ViewController::setTableFromFrontEnd(QString uniqDevName, QStringList valuesLiters, QStringList valuesFuelLevel) {
     if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
         Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-        pService->placeTableFromFrontEnd(uniqDevName, valuesLiters, valuesCnt);
+        pService->placeTableFromFrontEnd(uniqDevName, valuesLiters, valuesFuelLevel);
     }
 }
 
@@ -605,7 +609,7 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
                     if(pService->readTableAllDeviceIsReady()) {
                         QStringList resWrite;
                         for(int index=0; index<pService->getDeviceCount(); index++) {
-                            resWrite << QString("ID%1 [%2][SN-%3]   статус - %4").arg(commmandData.deviceIdent)
+                            resWrite << QString("\nID%1 [%2][SN-%3]   статус - %4").arg(commmandData.deviceIdent)
                                         .arg(pService->getDeviceProperty(index).at(0))
                                         .arg(pService->getDeviceProperty(index).at(2))
                                         .arg(message == "Normal" ? QString("Успешно записано") : QString("Нет ответа"));

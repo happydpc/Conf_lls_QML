@@ -76,7 +76,7 @@ void Progress_tmk24Service::placeTableFromDevice(QString deviceIdentName, QStrin
                     paritybit = true;
                     tDevValues.valueLiters = QString(table.at(i)).toUInt();
                 } else {
-                    tDevValues.valueCnt = QString(table.at(i)).toUInt();
+                    tDevValues.valueFuelLevel = QString(table.at(i)).toUInt();
                     paritybit = false;
                     it->second->push_back(tDevValues);
                 }
@@ -104,7 +104,7 @@ QStringList Progress_tmk24Service::getTableAtDevice(int index) {
     int devsLen = devList.at(index)->second->size();
     for(int i=0; i<devsLen; i++ ) {
         res << QString::number(devList.at(index)->second->at(i).valueLiters);
-        res << QString::number(devList.at(index)->second->at(i).valueCnt);
+        res << QString::number(devList.at(index)->second->at(i).valueFuelLevel);
     }
     return res;
 }
@@ -116,7 +116,7 @@ QPair<QStringList,QStringList> Progress_tmk24Service::getTableAtDeviceToPair(QSt
             int devsLen = it->second->size();
             for(int i=0; i<devsLen; i++ ) {
                 res.first << QString::number(it->second->at(i).valueLiters);
-                res.second << QString::number(it->second->at(i).valueCnt);
+                res.second << QString::number(it->second->at(i).valueFuelLevel);
             }
         }
     }
@@ -127,8 +127,9 @@ void Progress_tmk24Service::placeCurrenDataFromDevice(QString deviceIdentName, Q
     for(auto it: devList) {
         if(it->first.devId == deviceIdentName) {
             if(currentData.length() >= 2) {
-                it->first.currData.cnt = currentData.at(2).toUInt();
-                it->first.currData.liters = currentData.at(0).toUInt();
+                it->first.currData.fuelLevel = currentData.at(0).toUInt();
+                it->first.currData.cntValue = currentData.at(2).toUInt();
+                it->first.currData.liters = 0; // TODO: liters  не известны и заносятся юзером
                 it->first.currData.isValid = true;
             }
         }
@@ -148,8 +149,9 @@ void Progress_tmk24Service::placeCurrentChartDataFromDevice(QString deviceIdentN
 QStringList Progress_tmk24Service::getCurrentDataDevice(int index) {
     QStringList res;
     if(devList.at(index)->first.currData.isValid) {
-        res << QString::number(devList.at(index)->first.currData.cnt);
+        res << QString::number(devList.at(index)->first.currData.fuelLevel);
         res << QString::number(devList.at(index)->first.currData.liters);
+        res << QString::number(devList.at(index)->first.currData.cntValue);
     } else {
         res << "0";
         res << "0";
@@ -176,14 +178,14 @@ int Progress_tmk24Service::getMaxCountStep() {
     return res;
 }
 
-void Progress_tmk24Service::placeTableFromFrontEnd(QString deviceIdentName, QStringList valueLiters, QStringList valueCnts) {
+void Progress_tmk24Service::placeTableFromFrontEnd(QString deviceIdentName, QStringList valueLiters, QStringList valueFuelLevel) {
     for(auto it: devList) {
         if(it->first.devId == deviceIdentName) {
             it->second->clear();
             sDevValues tDevValues;
             for(int i=0; i<valueLiters.size(); i++) {
                 tDevValues.valueLiters = valueLiters.at(i).toUInt();
-                tDevValues.valueCnt = valueCnts.at(i).toUInt();
+                tDevValues.valueFuelLevel = valueFuelLevel.at(i).toUInt();
                 it->second->push_back(tDevValues);
             }
             it->first.isWhitedResult = false;
