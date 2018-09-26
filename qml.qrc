@@ -28,7 +28,7 @@
         <file>qml/TestUiForm.ui.qml</file>
         <file>qml/DevPropertyProgressTmk24TarTableDelegate.qml</file>
         <file>qml/ChangeDevIdName.qml</file>
-        <file>awesome_900.otf</file>
+        <file>awesome_900.ttf</file>
     </qresource>
     <qresource prefix="/new/icons">
         <file>images/icon/normal.png</file>
