@@ -83,4 +83,7 @@ HEADERS += \
 
 DISTFILES += \
     device/service/serviceDevicesAbstract. \
-    device/service/serviceDevicesAbstract.
+    device/service/serviceDevicesAbstract. \
+    icon.rc
+
+RC_FILE += icon.rc
