@@ -32,7 +32,7 @@ Item {
 
     Timer {
         id: timerLogo
-        interval: 100 //1000
+        interval: 1000
         running: false
         repeat: false
         onTriggered: {

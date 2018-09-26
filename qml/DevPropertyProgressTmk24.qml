@@ -850,9 +850,8 @@ Rectangle {
                                         Text {
                                             id:levelCntValueCustom
                                             text:"NA"
-                                            color: parent.textColor //"#888d91"
-                                            font.family: parent.textFont
-                                            font.pointSize: parent.textureSize
+                                            color: parent.textColor
+                                            font.pointSize: (text.length > 6) ? (parent.textFont.pointSize) : (16)
                                             anchors.horizontalCenter: parent.horizontalCenter
                                             anchors.verticalCenter: parent.verticalCenter
                                         }
@@ -3329,7 +3328,7 @@ Rectangle {
     }
     Dialog {
         id: messageReadTarTableOk
-        property var message: ""
+        property string message: ""
         visible: false
         title: "Запись таблицы"
         standardButtons: StandardButton.Apply

@@ -74,9 +74,9 @@ void Progress_tmk24Service::placeTableFromDevice(QString deviceIdentName, QStrin
             for(int i=0; i<table.size(); i++) {
                 if(!paritybit) {
                     paritybit = true;
-                    tDevValues.valueLiters = QString(table.at(i)).toUInt();
-                } else {
                     tDevValues.valueFuelLevel = QString(table.at(i)).toUInt();
+                } else {
+                    tDevValues.valueLiters = QString(table.at(i)).toUInt();
                     paritybit = false;
                     it->second->push_back(tDevValues);
                 }

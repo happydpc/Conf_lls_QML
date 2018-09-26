@@ -10,14 +10,14 @@ Row{
         id: itemRectRoot
         width: 10
         height: 20
-
-        Image {
+        Text {
             id:itemRectIcon
+            text: " \uf1e6"
             anchors.left: itemRectRoot.left
             anchors.leftMargin: 5
-            width: 24
-            height: 24
-            source: modelData.isCurrent ? "/new/icons/images/icon/cables_selected.png" : "/new/icons/images/icon/cables_no_selected.png"
+            color: "#a7b6c6"
+            font { family: "customFont";}
+            font.pointSize: 14
         }
         MouseArea{
             id:aread
@@ -43,13 +43,16 @@ Row{
             anchors.left: itemRectIcon.left
             anchors.leftMargin: 50
         }
-        Rectangle {
+
+        Text {
             id: childRectIndicator
-            width: 16
-            height: 16
             anchors.left: interfaceName.left
             anchors.leftMargin: 60
-            color: (modelData.hasChild) ? ("#a7b6c6") : ("transparent")
+            text: " \uf2db"
+            color: "#a7b6c6"
+            font { family: "customFont";}
+            font.pointSize: 14
+            visible: (modelData.hasChild) ? true : false
         }
     }
 

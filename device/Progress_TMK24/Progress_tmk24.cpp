@@ -307,10 +307,10 @@ bool Progress_tmk24::makeDataToCommand(CommandController::sCommandData &commandD
 
                 for(uint8_t i=0; i<(TAR_TABLE_SIZE); i++) {
                     if(i < commandData.args.value.size()) {
-                        commandData.commandOptionData.push_back((uint32_t)commandData.args.value.at(i) & 0xFF);
-                        commandData.commandOptionData.push_back(((uint32_t)commandData.args.value.at(i) & 0xFF00) >> 8);
                         commandData.commandOptionData.push_back((uint32_t)commandData.args.key.at(i).toUInt() & 0xFF);
                         commandData.commandOptionData.push_back(((uint32_t)commandData.args.key.at(i).toUInt() & 0xFF00) >> 8);
+                        commandData.commandOptionData.push_back((uint32_t)commandData.args.value.at(i) & 0xFF);
+                        commandData.commandOptionData.push_back(((uint32_t)commandData.args.value.at(i) & 0xFF00) >> 8);
                     } else {
                         commandData.commandOptionData.push_back((char)0);
                         commandData.commandOptionData.push_back((char)0);
@@ -628,12 +628,15 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
             if(commandReqData.devCommand == (uint8_t)commandArrayReplyData.at(2)) {
                 if(lls_data.typeIsValid) {
                     if(commandArrayReplyData.size() > 4) {
+                        res = true;
                         if(commandArrayReplyData.at(3) == 0) {
                             if(commandReqData.isNeedAckMessage) {
                                 emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommandNorlal, getUniqIdent(),
                                                             commandReqData.devCommand, QString("Normal"), QStringList(), commandReqData);
                             }
-                            res = true;
+                        } else {
+                            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommandNorlal, getUniqIdent(),
+                                                        commandReqData.devCommand, QString("Data no valid"), QStringList(), commandReqData);
                         }
                     }
                 }

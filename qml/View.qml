@@ -97,15 +97,8 @@ Item {
             source: "/new/icons/images/logo/ico.png"
             width: 256
             height: 160
+            visible: false //!!!
         }
-//        Image {
-//            anchors.right: parent.right
-//            anchors.rightMargin: 10
-//            anchors.top: parent.top
-//            source: "/new/icons/images/icon/user.png"
-//            width: 48
-//            height: 48
-//        }
     }
 
     StartPanel {

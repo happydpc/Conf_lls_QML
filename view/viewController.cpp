@@ -14,22 +14,22 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
 
     this->serviceList.push_back(new Progress_tmk24Service("PROGRESS TMK24"));
 
-    QTimer::singleShot(500, Qt::CoarseTimer, [&] {
-        QStringList strLis;
-        strLis = connFactory->getAvailableName();
-        qDebug() << strLis;
+//    QTimer::singleShot(500, Qt::CoarseTimer, [&] {
+//        QStringList strLis;
+//        strLis = connFactory->getAvailableName();
+//        qDebug() << strLis;
 
-        addConnectionSerialPort(strLis.first(), QString("19200"));
+//        addConnectionSerialPort(strLis.first(), QString("19200"));
 
-        addDeviceToConnection("PROGRESS TMK24", QString::number(1), "");
-        addDeviceToConnection("PROGRESS TMK24", QString::number(2), "");
-        //        addTarrirDev("PROGRESS TMK24", "1");
+//        addDeviceToConnection("PROGRESS TMK24", QString::number(1), "");
+//        addDeviceToConnection("PROGRESS TMK24", QString::number(2), "");
+//        //        addTarrirDev("PROGRESS TMK24", "1");
 
-        for(int a=0; a<2; a++) {
-            addDeviceToConnection("PROGRESS TMK24", QString::number(a+5), "");
-            //            addTarrirDev("PROGRESS TMK24", QString::number(a+5));
-        }
-    });
+//        for(int a=0; a<2; a++) {
+//            addDeviceToConnection("PROGRESS TMK24", QString::number(a+5), "");
+//            //            addTarrirDev("PROGRESS TMK24", QString::number(a+5));
+//        }
+//    });
 }
 
 QStringList ViewController::getAvailableNameToSerialPort() {
@@ -263,39 +263,39 @@ int ViewController::getTarMaxCountStep() {
 }
 
 void ViewController::sendReqExportTarrirAllDevToCsv(QString pathFile) {
-    QStringList table;
     QStringList exportList;
     QString str;
 
     if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
         Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-        int devCount = pService->getDeviceCount();
-        int sizeTable = pService->getMaxCountStep();
+        int devAll = pService->getDeviceCount();
         // id[devType], объем, уровень топлива
-        QStringList idList;
-        QStringList litersList;
-        QStringList fuelLevelList;
-        // получаем стоблец с id
-        for(int i=0; i<devCount; i++) {
-            idList << QString("%1[%2]").arg(pService->getDeviceProperty(i).at(0)).arg(pService->getDeviceProperty(i).at(1));
-        }
-        // получаем стоблец с liters и fuelLevel
-        for(int i=0; i<sizeTable; i++) {
-            litersList << pService->getTableAtDevice(i).at(0); // lites
-            fuelLevelList << pService->getTableAtDevice(i).at(1); // fuelLevel
-        }
-        str.push_back("\"" + QString("Уровень") + "\"" + ",");
-        str.push_back("\"" + QString("Объем") + "\"");
-        exportList.push_back(str);
-        for(int i=0; i<sizeTable; i++) {
+        for(int devCounter=0; devCounter<devAll; devCounter++) {
+            QStringList litersList;
+            QStringList fuelLevelList;
+            // получаем стоблец с liters и fuelLevel
+            QPair<QStringList,QStringList> tableData;
+            tableData = pService->getTableAtDeviceToPair(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceIdTextByIndex(devCounter));
+            for(int tableCounter=0; tableCounter<tableData.first.size(); tableCounter++) {
+                // lites
+                litersList << tableData.first.at(tableCounter);
+                // fuelLevel
+                fuelLevelList << tableData.second.at(tableCounter);
+            }
             str.clear();
-            str.push_back("\"" + idList.at(i) + "\"" + ",");
-            str.push_back("\"" + ((fuelLevelList.size() >= i) ? (fuelLevelList.at(i) + "\"" + ",") : QString("Нет данных")));
-            str.push_back("\"" + ((litersList.size() >= i) ? (litersList.at(i) + "\"") : QString("Нет данных")));
+            str.push_back("\"" + QString("ID/Тип") + "\"" + ",");
+            str.push_back("\"" + QString("Объем") + "\"" + ",");
+            str.push_back("\"" + QString("Уровень") + "\"");
             exportList.push_back(str);
+            for(int makeCounter=0; makeCounter<litersList.size(); makeCounter++) {
+                str.clear();
+                str.push_back("\"" + QString("ID%1[%2]").arg(pService->getDeviceProperty(devCounter).at(1)).arg(pService->getDeviceProperty(devCounter).at(0)) + "\"" + ",");
+                str.push_back("\"" + ((litersList.size() >= makeCounter) ? (litersList.at(makeCounter) + "\"" + ",") : QString("Нет данных")));
+                str.push_back("\"" + ((fuelLevelList.size() >= makeCounter) ? (fuelLevelList.at(makeCounter) + "\"") : QString("Нет данных")));
+                exportList.push_back(str);
+            }
         }
-
-        if(!table.empty()) {
+        if(!exportList.empty()) {
             if(pathFile.size() > 0) {
                 if(!pathFile.contains(".csv")) {
                     pathFile.push_back(".csv");
@@ -641,7 +641,8 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
                             resWrite << QString("\nID%1 [%2][SN-%3]   статус - %4").arg(commmandData.deviceIdent)
                                         .arg(pService->getDeviceProperty(index).at(0))
                                         .arg(pService->getDeviceProperty(index).at(2))
-                                        .arg(message == "Normal" ? QString("Успешно записано") : QString("Нет ответа"));
+                                        .arg(message == QString("Normal") ? QString("Успешно записано") :
+                                                                   (message == QString("Data no valid") ? (QString("Устройство отвергло данные")) : QString("Нет ответа")));
                         }
                         emit devUpdateWriteTarTableExecuted(resWrite);
                     }

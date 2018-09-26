@@ -9,12 +9,10 @@ Column{
 
         delegate: Row {
             id: deviceTreeView
-
             Rectangle {
                 id:rectBase
                 width: 150
                 height: 20
-
                 MouseArea {
                     id:area
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -47,14 +45,12 @@ Column{
                         }
                     }
                 }
-
-                Rectangle {
+                Text {
                     id:iconRect
-                    anchors.left: rectBase.left
-                    anchors.leftMargin: 20
-                    width: 16
-                    height: 16
+                    text: " \uf1fb"
                     color: modelData.isConnected === true ? "#58fce4" : "#dbd9d9"
+                    font { family: "customFont";}
+                    font.pointSize: 14
                 }
                 Text {
                     anchors.left: iconRect.right
@@ -69,4 +65,6 @@ Column{
             }
         }
     }
+
+    FontLoader { id: customFont; source: "qrc:/awesome_900.otf" }
 }
