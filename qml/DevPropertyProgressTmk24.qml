@@ -611,14 +611,14 @@ Rectangle {
                     textLine:1
                     widthBody: 155
                     useIcon: true
-                    iconCode: "\uF05A  "
+                    iconCode: "\uF274  "
                 }
                 TabButtonUp {
                     name: "Конфигурирование"
                     textLine:1
                     widthBody: 155
                     useIcon: true
-                    iconCode: "\uF013  "
+                    iconCode: "\uF54A  "
                 }
             }
         }
@@ -1041,6 +1041,9 @@ Rectangle {
                                         textLine: 1
                                         widthBody: 150
                                         name:"Считать ошибки"
+                                        iconCode: "\uf12a  "
+                                        useIcon: true
+
                                         enabled: devPropertyProgressTmk24.isReady
                                         onClicked: {
                                             viewController.getCurrentDevErrors()
@@ -2916,7 +2919,7 @@ Rectangle {
                                                     widthBody: 150
                                                     name: qsTr("Добавить\nтекущее значение")
                                                     useIcon: true
-                                                    iconCode: "\uF055  "
+                                                    iconCode: "\uF0FE  "
                                                     enabled: devPropertyProgressTmk24.isReady
                                                     onClicked: {
                                                         if(!isNoiseDetected) {
@@ -2952,7 +2955,7 @@ Rectangle {
                                                     widthBody: 100
                                                     name: qsTr("Удалить\nзначение")
                                                     useIcon: true
-                                                    iconCode: "\uF067  "
+                                                    iconCode: "\uF1f8  "
                                                     Dialog {
                                                         id: dialogRemoveTarTableRowMultiple
                                                         title: "Удаление записи таблицы"
@@ -2985,7 +2988,7 @@ Rectangle {
                                                     textLine:2
                                                     widthBody: 165
                                                     useIcon: true
-                                                    iconCode: "\uF055  "
+                                                    iconCode: "\uF0FE  "
                                                     name: qsTr("Добавить/Удалить\nустройство")
                                                     onClicked: {
                                                         addDeviceTarirDialog.parent = devPropertyProgressTmk24
@@ -3024,7 +3027,7 @@ Rectangle {
                                                     textLine: 2
                                                     name:"Считать\nтаблицу"
                                                     useIcon: true
-                                                    iconCode: "\uF07C  "
+                                                    iconCode: "\uF093  "
                                                     enabled: devPropertyProgressTmk24.isReady
                                                     onClicked: {
                                                         dialogReadTarTableMultiple.open()

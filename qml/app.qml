@@ -11,6 +11,8 @@ ApplicationWindow {
     visible: true
     width: 1200
     height: 700
+    visibility: "Maximized"
+
     title: qsTr("Конфигуратор ДУТ (Beta 0.1)")
     View {
         id: view

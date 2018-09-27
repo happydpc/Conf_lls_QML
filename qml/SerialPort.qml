@@ -18,7 +18,7 @@ SerialPortForm {
         buttonAccept.useIcon = true
         buttonAccept.iconCode = "\uF1E6  "
         buttonUpdate.useIcon = true
-        buttonUpdate.iconCode = "\uf055  "
+        buttonUpdate.iconCode = "\uF0FE  "
     }
 
     buttonAccept.onClicked: {

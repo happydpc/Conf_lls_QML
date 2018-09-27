@@ -91,7 +91,7 @@ Popup {
             textIsCenter: true
             name: qsTr("Добавить")
             useIcon: true
-            iconCode: "\uf055  "
+            iconCode: "\uF0FE  "
             anchors.top: gridLayout.bottom
             anchors.right: parent.right
             onClicked: {
