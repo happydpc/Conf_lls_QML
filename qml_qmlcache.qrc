@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<RCC>
+    <qresource prefix="/">
+        <file alias="images/logo/logo_progress.png">images/logo/logo_progress.png</file>
+        <file alias="awesome_900.ttf">awesome_900.ttf</file>
+    </qresource>
+    <qresource prefix="/new/icons">
+        <file alias="images/icon/normal.png">images/icon/normal.png</file>
+        <file alias="images/icon/no_normal.png">images/icon/no_normal.png</file>
+        <file alias="images/icon/4149.png">images/icon/4149.png</file>
+        <file alias="images/icon/4372.png">images/icon/4372.png</file>
+        <file alias="images/icon/cables_no_selected.png">images/icon/cables_no_selected.png</file>
+        <file alias="images/icon/cables_selected.png">images/icon/cables_selected.png</file>
+        <file alias="images/icon/battery-level.png">images/icon/battery-level.png</file>
+        <file alias="images/icon/calibration.png">images/icon/calibration.png</file>
+        <file alias="images/icon/tunes-connect.png">images/icon/tunes-connect.png</file>
+        <file alias="images/icon/list.png">images/icon/list.png</file>
+        <file alias="images/icon/server.png">images/icon/server.png</file>
+        <file alias="images/logo/ico.png">images/logo/ico.png</file>
+        <file alias="images/logo/icon_gls.ico">images/logo/icon_gls.ico</file>
+        <file alias="images/logo/icon_prg.ico">images/logo/icon_prg.ico</file>
+        <file alias="images/logo/logo_gls.png">images/logo/logo_gls.png</file>
+        <file alias="images/logo/logo_progress.png">images/logo/logo_progress.png</file>
+        <file alias="images/icon/user.png">images/icon/user.png</file>
+    </qresource>
+    <qresource prefix="/controls"/>
+</RCC>
