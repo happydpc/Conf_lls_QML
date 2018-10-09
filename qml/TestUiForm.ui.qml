@@ -13,29 +13,29 @@ import QtGraphicalEffects 1.0
 Rectangle {
     anchors.fill: parent
 
-    property alias messageMinMaxWriteOk: messageMinMaxWriteOk
-    property alias messageReadSettingsOk: messageReadSettingsOk
-    property alias messageWriteSettingsOk: messageWriteSettingsOk
-    property alias messageReadErrorsOk: messageReadErrorsOk
-    property alias messageReadTarTableOk: messageReadTarTableOk
 
-    property bool isNoiseDetected: false
+    //    property alias messageMinMaxWriteOk: messageMinMaxWriteOk
+    //    property alias messageReadSettingsOk: messageReadSettingsOk
+    //    property alias messageWriteSettingsOk: messageWriteSettingsOk
+    //    property alias messageReadErrorsOk: messageReadErrorsOk
+    //    property alias messageReadTarTableOk: messageReadTarTableOk
+    //    property bool isNoiseDetected: false
     width: 900
     height: 600
 
-    //    function setNoReady() {
+    //        function setNoReady() {
     //        devPropertyProgressTmk24.isReady = false
     //        setWriteSettingsIsNoAvailable()
-    //    }
-    //    function setReady() {
+    //        }
+    //        function setReady() {
     //        devPropertyProgressTmk24.isReady = true
-    //    }
-    //    function setResetState() {
+    //        }
+    //        function setResetState() {
     //        tabProperty.setCurrentIndex(0)
     //        stackSubProperty.setCurrentIndex(0)
     //        setNoReady()
     //        setWriteSettingsIsAvailable()
-    //    }
+    //        }
     //    function setWriteSettingsIsAvailable() {
     //        writeSettingsButton_1.enabled = true
     //        writeSettingsButton_2.enabled = true
@@ -50,15 +50,15 @@ Rectangle {
     //        writeSettingsButton_4.enabled = false
     //        writeSettingsButton_5.enabled = false
     //    }
-    //    function setDevProperty(listProperty) {
+    //        function setDevProperty(listProperty) {
     //        typeDeviceText.text = listProperty[2]
     //        snText.text = listProperty[0]
     //        //netIdText.text = listProperty[1]
     //        versionFirmwareText.text = listProperty[3]
     //        // give settings without request to device (copy allready readed)
     //        viewController.getCurrentDevSettingsWithoutRequest()
-    //    }
-    //    function setUpdateCurrentValues(data) {
+    //        }
+    //        function setUpdateCurrentValues(data) {
     //        devPropertyProgressTmk24.isReady = true
     //        var values = viewController.getCurrentDevOtherData()
     //        if(values.length >0) {
@@ -90,13 +90,13 @@ Rectangle {
     //            currentChartLines.append(i, list[i]);
     //        }
     //        logListView.positionViewAtEnd()
-    //    }
-    //    function addLogMessage(codeMessage, message) {
+    //        }
+    //        function addLogMessage(codeMessage, message) {
     //        if(logListView.model.length > 1000) {
     //            logListView.model.clear()
     //        }
     //        logListView.model.append({"message":message,"status":codeMessage})
-    //    }
+    //        }
     //    function readSettings(devName, key, settings) {
     //        for(var i=0; i<settings.length; i++) {
     //            if(key[i] === "k1_value") {
@@ -645,11 +645,11 @@ Rectangle {
 
         SwipeView {
             id: devStackParam
+            currentIndex: 0
             anchors.top: spacerList.bottom
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            currentIndex: tabProperty.currentIndex
 
             Item {
                 ScrollView {
@@ -853,9 +853,45 @@ Rectangle {
                                         suffixText: ""
                                         textColor: "#888d91"
                                         enabled: devPropertyProgressTmk24.isReady
-//                                        onValueChanged: {
-//                                            levelCntValueCustom.text = value
-//                                        }
+                                        //                                        onValueChanged: {
+                                        //                                            levelCntValueCustom.text = value
+                                        //                                        }
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 10
+                                    }
+                                }
+
+                                Rectangle {
+                                    id: rectangle1
+                                    width: 200
+                                    height: 150
+                                    layer.enabled: true
+                                    radius: 15
+                                    Label {
+                                        id: levelTempLabel
+                                        text: qsTr("Карта")
+                                        anchors.left: parent.left
+                                        color: "#888d91"
+                                        anchors.leftMargin: 15
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 0
+                                    }
+
+                                    TextField {
+                                        id: textField
+                                        y: 55
+                                        text: qsTr("")
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 5
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 5
+                                        placeholderText: "номер карты"
                                     }
                                     layer.effect: DropShadow {
                                         transparentBorder: true
@@ -870,51 +906,60 @@ Rectangle {
                                 Rectangle {
                                     width: 150
                                     height: 150
-                                    layer.enabled: true
                                     radius: 15
+                                    layer.effect: DropShadow {
+                                        color: "#e0e5ef"
+                                        radius: 10
+                                        transparentBorder: true
+                                        samples: 10
+                                        verticalOffset: 1
+                                        horizontalOffset: 0
+                                    }
+                                    layer.enabled: true
                                     Label {
-                                        id: levelTempLabel
-                                        text: qsTr("Температура:")
-                                        anchors.left: parent.left
+                                        id: levelTempLabel1
                                         color: "#888d91"
-                                        anchors.leftMargin: 15
+                                        text: qsTr("Акселерометр:")
+                                        anchors.left: parent.left
                                         anchors.right: parent.right
+                                        anchors.leftMargin: 15
                                         anchors.rightMargin: 0
                                     }
-                                    RadialBar {
-                                        id: levelTemp
-                                        anchors.top: levelTempLabel.bottom
-                                        anchors.topMargin: 15
+
+                                    ProgressBar {
+                                        id: progressBar
+                                        x: 17
+                                        y: 41
+                                        to: 100
                                         anchors.left: parent.left
-                                        anchors.leftMargin: 20
-                                        width: 150
-                                        height: 150
-                                        penStyle: Qt.RoundCap
-                                        dialType: RadialBar.FullDial
-                                        progressColor: "#f329b8"
-                                        foregroundColor: "transparent"
-                                        dialWidth: 15
-                                        startAngle: 180
-                                        spanAngle: 70
-                                        minValue: 0
-                                        maxValue: 80
+                                        anchors.leftMargin: 5
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 5
                                         value: 0
-                                        textFont {
-                                            family: "Halvetica"
-                                            italic: false
-                                            pointSize: 16
-                                        }
-                                        suffixText: "°C"
-                                        textColor: "#888d91"
-                                        enabled: devPropertyProgressTmk24.isReady
                                     }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 10
+
+                                    ProgressBar {
+                                        id: progressBar1
+                                        x: 7
+                                        y: 72
+                                        anchors.left: parent.left
+                                        anchors.right: parent.right
+                                        anchors.leftMargin: 5
+                                        anchors.rightMargin: 5
+                                        to: 100
+                                        value: 0
+                                    }
+
+                                    ProgressBar {
+                                        id: progressBar2
+                                        x: 11
+                                        y: 104
+                                        anchors.left: parent.left
+                                        anchors.right: parent.right
+                                        anchors.leftMargin: 5
+                                        anchors.rightMargin: 5
+                                        to: 100
+                                        value: 0
                                     }
                                 }
                             }
@@ -978,451 +1023,360 @@ Rectangle {
             }
 
             Item {
+                x: 0
+                y: 7
+                clip: true
+
+                TextArea {
+                    id: log
+                    text: qsTr("")
+                    placeholderText: "Сообщения"
+                    anchors.rightMargin: 10
+                    anchors.leftMargin: 10
+                    anchors.bottomMargin: 10
+                    anchors.topMargin: 10
+                    anchors.fill: parent
+                }
+            }
+
+            Item {
+                x: 1
+                y: 1
                 clip: true
                 Rectangle {
                     id: subBarup
-                    color: "#fdfdfb"
                     height: 45
-                    anchors.top: parent.top
+                    color: "#fdfdfb"
                     anchors.left: parent.left
                     anchors.right: parent.right
-
+                    anchors.top: parent.top
                     TabBar {
                         id: tabSubProperty
                         height: 25
                         anchors.left: parent.left
-                        //                        anchors.right: parent.right
-                        anchors.top: parent.top
-                        anchors.topMargin: 17
                         anchors.leftMargin: 30
-                        spacing: 5
-                        currentIndex: stackSubProperty.currentIndex
-                        font.pointSize: 8
-                        background: Rectangle {
-                            color: "transparent"
+                        TabButtonUp {
+                            name: "Акселерометр"
+                            textLine: 1
+                            widthBody: 130
+                            useIcon: true
+                            iconCode: "\\uF015  "
                         }
 
                         TabButtonUp {
-                            name: "Общее"
+                            name: "Сеть"
                             textLine: 1
-                            widthBody: 100
-                            useIcon: true
-                            iconCode: "\uF015  "
-                        }
-                        TabButtonUp {
-                            name: "Калибровка\nMinMax"
-                            textLine: 2
                             widthBody: 120
                             useIcon: true
-                            iconCode: "\uF492  "
+                            iconCode: "\\uF492  "
                         }
-                        TabButtonUp {
-                            name: "Фильтрация"
-                            textLine: 1
-                            widthBody: 115
-                            useIcon: true
-                            iconCode: "\uF0B0  "
+                        spacing: 5
+                        currentIndex: stackSubProperty.currentIndex
+                        anchors.top: parent.top
+                        font.pointSize: 8
+                        background: Rectangle {
+                            color: "#00000000"
                         }
-                        TabButtonUp {
-                            name: "Температурная\nкомпенсация"
-                            textLine: 2
-                            widthBody: 135
-                            useIcon: true
-                            iconCode: "\uF2C9  "
-                        }
-                        TabButtonUp {
-                            name: "Ведущий\nведомый"
-                            textLine: 2
-                            widthBody: 110
-                            useIcon: true
-                            iconCode: "\uf5ee  "
-                        }
-                        TabButtonUp {
-                            name: "Тарировка"
-                            textLine: 1
-                            widthBody: 110
-                            useIcon: true
-                            iconCode: "\uF080  "
-                        }
+                        anchors.topMargin: 17
                     }
                 }
 
                 SwipeView {
                     id: stackSubProperty
-                    currentIndex: tabSubProperty.currentIndex
+                    currentIndex: 0
+                    anchors.left: subBarup.left
+                    anchors.bottom: parent.bottom
+                    anchors.right: parent.right
                     clip: true
                     anchors.top: subBarup.bottom
-                    anchors.left: subBarup.left
-                    anchors.right: parent.right
-                    anchors.bottom: parent.bottom
 
                     Item {
                         ScrollView {
-                            clip: true
-                            anchors.fill: parent
-                            Column {
-                                spacing: 10
-                                anchors.top: parent.top
-                                anchors.topMargin: 15
-                                Row {
-                                    height: 100
-                                    width: 500
-                                    Rectangle {
-                                        id: changeIdRect
+                            contentItem: [
+                                Column {
+                                    spacing: 10
+                                    anchors.top: parent.top
+                                    Row {
+                                        id: row
+                                        anchors.top: parent.top
+                                        anchors.topMargin: 15
                                         width: 500
                                         height: 100
-                                        color: "#fdfdfb"
-                                        layer.enabled: true
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        Label {
-                                            text: "Смена сетевого адреса:"
+                                        Rectangle {
+                                            id: accelCoefRect
+                                            width: 500
+                                            height: 160
+                                            color: "#fdfdfb"
                                             anchors.left: parent.left
+                                            layer.effect: DropShadow {
+                                                color: "#e0e5ef"
+                                                radius: 20
+                                                transparentBorder: true
+                                                samples: 10
+                                                verticalOffset: 1
+                                                horizontalOffset: 0
+                                            }
                                             anchors.leftMargin: 15
+                                            layer.enabled: true
+                                            Label {
+                                                text: "Коэффициенты:"
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                            }
+                                            Column {
+                                                id: column3
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 0
+                                                anchors.horizontalCenter: parent.horizontalCenter
+                                                spacing: 10
+                                                anchors.top: parent.top
+                                                anchors.topMargin: 30
+                                                TextField {
+                                                    id: accelCoefX
+                                                    height: 30
+                                                    anchors.left: parent.left
+                                                    anchors.leftMargin: 15
+                                                    width: 300
+                                                    placeholderText: "введите значение"
+                                                }
+                                                TextField {
+                                                    id: accelCoefY
+                                                    height: 30
+                                                    anchors.left: parent.left
+                                                    anchors.leftMargin: 15
+                                                    width: 300
+                                                    placeholderText: "введите значение"
+                                                }
+                                                TextField {
+                                                    id: accelCoefZ
+                                                    height: 30
+                                                    anchors.left: parent.left
+                                                    anchors.leftMargin: 15
+                                                    width: 300
+                                                    placeholderText: "введите значение"
+                                                }
+                                            }
                                         }
-                                        Button {
-                                            text: "Сменить адрес"
-                                            id: changeIdAddr
-                                            width: 300
-                                            height: 30
+                                        Rectangle {
+                                            id: accelDeltaRect
+                                            width: 500
+                                            height: 90
+                                            color: "#fdfdfb"
+                                            anchors.top: accelCoefRect.bottom
+                                            anchors.topMargin: 15
                                             anchors.left: parent.left
+                                            layer.effect: DropShadow {
+                                                color: "#e0e5ef"
+                                                radius: 20
+                                                transparentBorder: true
+                                                samples: 10
+                                                verticalOffset: 1
+                                                horizontalOffset: 0
+                                            }
                                             anchors.leftMargin: 15
-                                            anchors.verticalCenter: parent.verticalCenter
+                                            layer.enabled: true
+                                            Label {
+                                                text: "Дельта:"
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                            }
+                                            TextField {
+                                                id: accelCoeDeltaX
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                anchors.top: parent.top
+                                                anchors.topMargin: 30
+                                                height: 30
+                                                width: 300
+                                                placeholderText: "введите значение"
+                                            }
+                                        }
+
+                                        Button {
+                                            id: readSetingsButton_1
+                                            width: 180
+                                            height: 50
+                                            text: "Считать настройки"
+                                            anchors.top: parent.top
+                                            anchors.topMargin: 0
+                                            anchors.left: accelCoefRect.right
+                                            layer.effect: DropShadow {
+                                                color: "#e0e5ef"
+                                                radius: 20
+                                                transparentBorder: true
+                                                samples: 10
+                                                verticalOffset: 1
+                                                horizontalOffset: 0
+                                            }
+                                            anchors.leftMargin: 25
+                                            layer.enabled: true
                                             enabled: devPropertyProgressTmk24.isReady
                                         }
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
-                                        }
-                                    }
-                                    Button {
-                                        text: "Считать настройки"
-                                        id: readSetingsButton_1
-                                        width: 180
-                                        height: 50
-                                        anchors.left: changeIdRect.right
-                                        anchors.leftMargin: 15
-                                        layer.enabled: true
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
-                                        }
-                                        enabled: devPropertyProgressTmk24.isReady
-                                        //                                        onClicked: {
-                                        //                                            viewController.getCurrentDevSettings()
-                                        //                                        }
-                                    }
-                                    Button {
-                                        id: writeSettingsButton_1
-                                        text: "Записать настройки"
-                                        width: 180
-                                        height: 50
-                                        anchors.left: changeIdRect.right
-                                        anchors.leftMargin: 15
-                                        anchors.top: readSetingsButton_1.bottom
-                                        anchors.topMargin: 15
-                                        layer.enabled: true
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
-                                        }
-                                        enabled: devPropertyProgressTmk24.isReady
-                                        //                                        onClicked: {
-                                        //                                            writeSettings()
-                                        //                                        }
-                                    }
-                                }
 
-                                Rectangle {
-                                    width: 500
-                                    height: 100
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-                                    Label {
-                                        text: "Самостоятельная выдача данных:"
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                    }
-                                    ComboBox {
-                                        id: periodicSendType
-                                        height: 25
-                                        width: 300
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        model: ListModel {
-                                            ListElement {
-                                                text: "Выключена"
+                                        Button {
+                                            id: writeSettingsButton_1
+                                            width: 180
+                                            height: 50
+                                            text: "Записать настройки"
+                                            anchors.top: parent.top
+                                            anchors.topMargin: 60
+                                            anchors.left: accelCoefRect.right
+                                            layer.effect: DropShadow {
+                                                color: "#e0e5ef"
+                                                radius: 20
+                                                transparentBorder: true
+                                                samples: 10
+                                                verticalOffset: 1
+                                                horizontalOffset: 0
                                             }
-                                            ListElement {
-                                                text: "Бинарная"
-                                            }
-                                            ListElement {
-                                                text: "Символьная"
-                                            }
+                                            anchors.leftMargin: 25
+                                            layer.enabled: true
+                                            enabled: devPropertyProgressTmk24.isReady
                                         }
                                     }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 20
-                                    }
                                 }
-                                Rectangle {
-                                    width: 500
-                                    height: 100
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-                                    Label {
-                                        text: "Период выдачи данных (0-255), с:"
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                    }
-                                    SpinBox {
-                                        id: periodicSendTime
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        height: 25
-                                        width: 200
-                                    }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 20
-                                    }
-                                }
-                            }
+                            ]
+                            anchors.fill: parent
+                            clip: true
                         }
                     }
 
                     Item {
                         ScrollView {
-                            clip: true
-                            anchors.fill: parent
-                            Column {
-                                spacing: 10
-                                anchors.top: parent.top
-                                anchors.topMargin: 15
-                                Row {
-                                    height: 100
-                                    width: 500
-                                    Rectangle {
-                                        //                                        id: changeIdRect
+                            contentItem: [
+                                Column {
+                                    spacing: 10
+                                    anchors.top: parent.top
+                                    Row {
+                                        anchors.top: parent.top
+                                        anchors.topMargin: 15
                                         width: 500
                                         height: 100
-                                        color: "#fdfdfb"
-                                        layer.enabled: true
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        Label {
-                                            text: "Смена сетевого адреса:"
+                                        Rectangle {
+                                            id: networlSettingsCoefRect
+                                            width: 500
+                                            height: 80
+                                            color: "#fdfdfb"
                                             anchors.left: parent.left
+                                            layer.effect: DropShadow {
+                                                color: "#e0e5ef"
+                                                radius: 20
+                                                transparentBorder: true
+                                                samples: 10
+                                                verticalOffset: 1
+                                                horizontalOffset: 0
+                                            }
                                             anchors.leftMargin: 15
+                                            layer.enabled: true
+                                            Label {
+                                                text: "Пароль:"
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                            }
+                                            Column {
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 0
+                                                anchors.horizontalCenter: parent.horizontalCenter
+                                                spacing: 10
+                                                anchors.top: parent.top
+                                                anchors.topMargin: 30
+                                                TextField {
+                                                    id: networkPassword
+                                                    //                                                    id: accelCoefX
+                                                    height: 30
+                                                    anchors.left: parent.left
+                                                    anchors.leftMargin: 15
+                                                    width: 300
+                                                    placeholderText: "введите значение"
+                                                }
+                                            }
                                         }
                                         Button {
-                                            text: "Сменить адрес"
-                                            //                                            id: changeIdAddr
-                                            width: 300
-                                            height: 30
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            anchors.verticalCenter: parent.verticalCenter
+                                            id: readSetingsButton_2
+                                            width: 180
+                                            height: 50
+                                            text: "Считать настройки"
+                                            anchors.top: parent.top
+                                            anchors.topMargin: 0
+                                            anchors.left: networlSettingsCoefRect.right
+                                            layer.effect: DropShadow {
+                                                color: "#e0e5ef"
+                                                radius: 20
+                                                transparentBorder: true
+                                                samples: 10
+                                                verticalOffset: 1
+                                                horizontalOffset: 0
+                                            }
+                                            anchors.leftMargin: 25
+                                            layer.enabled: true
                                             enabled: devPropertyProgressTmk24.isReady
                                         }
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
-                                        }
-                                    }
-                                    Button {
-                                        text: "Считать настройки"
-                                        //                                        id: readSetingsButton_1
-                                        width: 180
-                                        height: 50
-                                        anchors.left: changeIdRect.right
-                                        anchors.leftMargin: 15
-                                        layer.enabled: true
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
-                                        }
-                                        enabled: devPropertyProgressTmk24.isReady
-                                        //                                        onClicked: {
-                                        //                                            viewController.getCurrentDevSettings()
-                                        //                                        }
-                                    }
-                                    Button {
-                                        //                                        id: writeSettingsButton_1
-                                        text: "Записать настройки"
-                                        width: 180
-                                        height: 50
-                                        anchors.left: changeIdRect.right
-                                        anchors.leftMargin: 15
-                                        anchors.top: readSetingsButton_1.bottom
-                                        anchors.topMargin: 15
-                                        layer.enabled: true
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
-                                        }
-                                        enabled: devPropertyProgressTmk24.isReady
-                                        //                                        onClicked: {
-                                        //                                            writeSettings()
-                                        //                                        }
-                                    }
-                                }
 
-                                Rectangle {
-                                    width: 500
-                                    height: 100
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-                                    Label {
-                                        text: "Самостоятельная выдача данных:"
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                    }
-                                    ComboBox {
-                                        //                                        id: periodicSendType
-                                        height: 25
-                                        width: 300
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        model: ListModel {
-                                            ListElement {
-                                                text: "Выключена"
+                                        Button {
+                                            id: writeSettingsButton_2
+                                            width: 180
+                                            height: 50
+                                            text: "Записать настройки"
+                                            anchors.top: parent.top
+                                            anchors.topMargin: 60
+                                            anchors.left: networlSettingsCoefRect.right
+                                            layer.effect: DropShadow {
+                                                color: "#e0e5ef"
+                                                radius: 20
+                                                transparentBorder: true
+                                                samples: 10
+                                                verticalOffset: 1
+                                                horizontalOffset: 0
                                             }
-                                            ListElement {
-                                                text: "Бинарная"
-                                            }
-                                            ListElement {
-                                                text: "Символьная"
-                                            }
+                                            anchors.leftMargin: 25
+                                            layer.enabled: true
+                                            enabled: devPropertyProgressTmk24.isReady
                                         }
                                     }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 20
-                                    }
                                 }
-                                Rectangle {
-                                    width: 500
-                                    height: 100
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-                                    Label {
-                                        text: "Период выдачи данных (0-255), с:"
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                    }
-                                    SpinBox {
-                                        //                                        id: periodicSendTime
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        height: 25
-                                        width: 200
-                                    }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 20
-                                    }
-                                }
-                            }
+                            ]
+                            anchors.fill: parent
+                            clip: true
                         }
                     }
                 }
             }
-
-            Item {
-                x: 0
-                y: 7
-                clip: true
-            }
         }
     }
 
-    Rectangle {
-        id: busyIndicator
-        width: 350
-        height: 200
-        radius: 20
-        property string message: "Ожидание ответа..."
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        visible: devPropertyProgressTmk24.isReady ? false : true
-        BusyIndicator {
-            id: waitReadyIndicator
-            width: 96
-            height: 96
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-        }
-        Label {
-            text: busyIndicator.message
-            anchors.top: waitReadyIndicator.bottom
-            anchors.topMargin: 20
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-        layer.enabled: true
-        layer.effect: DropShadow {
-            transparentBorder: true
-            horizontalOffset: 0
-            verticalOffset: 1
-            color: "#e0e5ef"
-            samples: 10
-            radius: 10
-        }
-    }
 
+    //    Rectangle {
+    //        id: busyIndicator
+    //        width: 350
+    //        height: 200
+    //        radius: 20
+    //        visible: false
+    //        property string message: "Ожидание ответа..."
+    //        anchors.horizontalCenter: parent.horizontalCenter
+    //        anchors.verticalCenter: parent.verticalCenter
+    //        BusyIndicator {
+    //            id: waitReadyIndicator
+    //            width: 96
+    //            height: 96
+    //            anchors.horizontalCenter: parent.horizontalCenter
+    //            anchors.verticalCenter: parent.verticalCenter
+    //        }
+    //        Label {
+    //            text: busyIndicator.message
+    //            anchors.top: waitReadyIndicator.bottom
+    //            anchors.topMargin: 20
+    //            anchors.horizontalCenter: parent.horizontalCenter
+    //        }
+    //        layer.enabled: true
+    //        layer.effect: DropShadow {
+    //            transparentBorder: true
+    //            horizontalOffset: 0
+    //            verticalOffset: 1
+    //            color: "#e0e5ef"
+    //            samples: 10
+    //            radius: 10
+    //        }
+    //    }
     Dialog {
         id: messageReadSettingsOk
         visible: false
@@ -1454,3 +1408,8 @@ Rectangle {
     //        }
     //    }
 }
+
+/*##^## Designer {
+    D{i:125;anchors_x:0}D{i:115;anchors_x:"-7"}D{i:123;anchors_x:"-7"}D{i:124;anchors_x:"-7"}
+}
+ ##^##*/

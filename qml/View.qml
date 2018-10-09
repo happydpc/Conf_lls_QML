@@ -7,41 +7,30 @@ Item {
     Connections {
         target: viewController
 
-        onSetActivePropertySerialPort: {
-            projectPanel.devicePanel.devicePropertyPanel.setActivePanelType("serialPort")
+        onInterfaceSetActiveProperty: {
+            projectPanel.devicePanel.devicePropertyPanel.setActivePanelType(ioType)
         }
         onSetActiveDeviceProperty: {
             projectPanel.devicePanel.devicePropertyPanel.setActivePanelType(devType)
         }
-        onUpdatePropertiesSerialPort: {
-            projectPanel.devicePanel.devicePropertyPanel.setActivePanelType("serialPort")
-            projectPanel.devicePanel.devicePropertyPanel.setPropertyToSerialPort(properties)
+        onInterfaceReadyProperties: {
+            projectPanel.devicePanel.devicePropertyPanel.setInterfaceProperites(ioType, properties)
         }
-        onInterfaceAndDeviceListIsEmpty: {
-            projectPanel.devicePanel.devicePropertyPanel.setActivePanelType("empty")
+        onInterfaceAndDeviceListIsEmpty: {}
+        onDevReadyProperties: {
+            projectPanel.devicePanel.devicePropertyPanel.setReadyProperties(typeDev, data)
         }
-        onDevReadyPropertiesTmk4ux: {
+        onDevReadyOtherData: {
+            projectPanel.devicePanel.devicePropertyPanel.setReadyOtherData(typeDev, data)
         }
-        onDevReadyPropertiesTmk24: {
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setDevProperty(data)
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setReady()
-        }
-        onDevReadyOtherDataTmk4ux: {
-        }
-        onDevReadyOtherDataTmk24: {
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setUpdateCurrentValues(data)
-        }
-        onDevFullReadyTmk4ux: {}
-        onDevFullReadyTmk24: {}
-        onDevDisconnectedTmk4ux: {}
-        onDevDisconnectedTmk24: {
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setNoReady()
+        onDevDisconnected: {
+            projectPanel.devicePanel.devicePropertyPanel.setDevDisconnected(typeDev)
         }
         onDevUpdatePasswordIncorrect: {
             projectPanel.devicePanel.devicePropertyPanel.devShowPasswordIncorrect(devType, devNameId)
         }
-        onDevUpdateTypeDevIncorrect: {
-            projectPanel.devicePanel.devicePropertyPanel.devShowTypeIncorrect(devNameId)
+        onDevWrongTypeIncorrect: {
+            projectPanel.devicePanel.devicePropertyPanel.devShowTypeIncorrect(typeDev, devNameId)
         }
         onAddConnectionFail: {
             projectPanel.devicePanel.devicePropertyPanel.dialogAddInterfaceFail.open()
@@ -49,6 +38,8 @@ Item {
         onAddDeviceFail: {
             projectPanel.devicePanel.devicePropertyPanel.dialogAddDeviceFail.open()
         }
+
+
         onDevUpdateWriteScaleMeasureExecuted: {
             projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageMinMaxWriteOk.open()
         }

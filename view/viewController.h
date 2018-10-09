@@ -91,35 +91,26 @@ public:
 
 signals:
 
-    void setActivePropertySerialPort();
+    void interfaceSetActiveProperty(QString ioType);
     void setActiveDeviceProperty(QString devType);
 
     void interfaceAndDeviceListIsEmpty();
 
-    void updatePropertiesSerialPort(QStringList properties);
+    void interfaceReadyProperties(QString ioType, QStringList properties);
 
     void addConnectionFail(QString devName);
     void addDeviceFail(QString devName);
 
-    void devConnectedTmk24();
-    void devConnectedTmk4ux();
-    void devDisconnectedTmk24();
-    void devDisconnectedTmk4ux();
+    void devConnected(QString typeDev);
+    void devDisconnected(QString typeDev);
 
-    void devReadyPropertiesTmk24(QStringList data);
-    void devReadyPropertiesTmk4ux(QStringList data);
-
-    void devReadyOtherDataTmk24(QStringList data);
-    void devReadyOtherDataTmk4ux(QStringList data);
-
-    void devFullReadyTmk24(QStringList data);
-    void devFullReadyTmk4ux(QStringList data);
+    void devReadyProperties(QStringList data);
+    void devReadyOtherData(QStringList data);
 
     void devErrorOperation(QString message);
 
     void devUpdatePasswordIncorrect(QString devType, QString devNameId);
-
-    void devUpdateTypeDevIncorrect(QString devNameId);
+    void devWrongTypeIncorrect(QString typeDev, QString devNameId);
 
     void devUpdateReadSettingExecuted(QString devNameId, QStringList key, QStringList settings);
     void devUpdateReadSettingWithoutRequest(QString devNameId, QStringList key, QStringList settings);

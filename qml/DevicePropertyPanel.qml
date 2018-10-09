@@ -12,19 +12,13 @@ Rectangle {
     property DevPropertyProgressTmk24 devPropertyProgressTmk24: devPropertyProgressTmk24
     property DevPropertyNozzle_v_0_00 devPropertyNozzle_v_0_00: devPropertyNozzle
 
-    function setActivePanelType(typeDev) {
-        switch(typeDev) {
+    function setActivePanelType(ioType) {
+        switch(ioType) {
         case "serialPort":
             if(devicePropertieslistModel1.currentIndex != 1) { // todo: maybe overink
                 console.log("setActivePanelType -" + typeDev)
                 devPropertyProgressTmk24.setResetState()
                 devicePropertieslistModel1.currentIndex = 1
-            }
-            break;
-        case "empty":
-            if(devicePropertieslistModel1.currentIndex != 0) {
-                console.log("setActivePanelType -" + typeDev)
-                devicePropertieslistModel1.currentIndex = 0
             }
             break;
         case "progress tmk24":
@@ -42,10 +36,69 @@ Rectangle {
             break;
         }
     }
+    function setInterfaceProperites(ioType, propepties) {
+        switch(typeDev) {
+        case "serialPort":
+            projectPanel.devicePanel.devicePropertyPanel.setPropertyToSerialPort(properties)
+            break;
+        default: break;
+        }
+    }
+
+
     function setPropertyToSerialPort(listData) {
         console.log("setPropertyToSerialPort")
         devPropertySerialPort.setPropertyValues(listData)
     }
+
+    function setReadyProperties(typeDev, data) {
+        switch(typeDev) {
+        case "progress tmk24":
+            devPropertyProgressTmk24.setDevProperty(data)
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setReady()
+            break;
+        case "nozzle revision 0.00 oct 2018":
+            devPropertyNozzle.setDevProperty(data)
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setReady()
+            break;
+        default: break;
+        }
+    }
+    function setReadyOtherData(typeDev, data) {
+        switch(typeDev) {
+        case "progress tmk24":
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setUpdateCurrentValues(data)
+            break;
+        case "nozzle revision 0.00 oct 2018":
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setUpdateCurrentValues(data)
+            break;
+        default: break;
+        }
+    }
+
+    function setDevDisconnected(typeDev) {
+        switch(typeDev) {
+        case "progress tmk24":
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setNoReady()
+            break;
+        case "nozzle revision 0.00 oct 2018":
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setNoReady()
+            break;
+        default: break;
+        }
+    }
+    function setDevConnected(typeDev) {
+        switch(typeDev) {
+        case "progress tmk24":
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setReady()
+            break;
+        case "nozzle revision 0.00 oct 2018":
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setReady()
+            break;
+        default: break;
+        }
+    }
+
     function devShowPasswordIncorrect(devType, devNameId) {
         console.log("devShowPasswordIncorrect -unrecognise type dev")
         dialogPasswordError.messageArg = devNameId
@@ -60,7 +113,9 @@ Rectangle {
             break;
         }
     }
-    function devShowTypeIncorrect(devNameId) {
+
+    // TODO: type!
+    function devShowTypeIncorrect(typeDev, devNameId) {
         dialogTypeError.messageArg = devNameId
         dialogTypeError.open()
     }

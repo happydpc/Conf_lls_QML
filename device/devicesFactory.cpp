@@ -87,7 +87,7 @@ QString DevicesFactory::getDeviceName(int index) {
     return findDeviceByIndex(index)->second->getDevTypeName();
 }
 
-QString DevicesFactory::getDeviceNameByType(DevicesFactory::E_DeviceType type) {
+QString DevicesFactory::getDeviceTypeNameByType(DevicesFactory::E_DeviceType type) {
     if(type == DevicesFactory::Type_Progress_tmk4UX) {
         return QString::fromUtf8(Progress_tmk4UX::name, strlen(Progress_tmk4UX::name));
     } else if(type == DevicesFactory::Type_Progress_Tmk24) {

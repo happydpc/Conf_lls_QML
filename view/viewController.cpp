@@ -580,7 +580,8 @@ void ViewController::interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateT
         break;
     }
     if(connFactory->getCountConnection() >0) {
-        emit updatePropertiesSerialPort(connFactory->getInterace(interfaceTree->getIoIndex())->getInterfaceProperty());
+        emit interfaceReadyProperties(connFactory->getInterace(interfaceTree->getIoIndex())->getType(),
+                                      connFactory->getInterace(interfaceTree->getIoIndex())->getInterfaceProperty());
     }
     emit devUpdateLogMessage(2, QString("Перестроение дерева интерфейсов[%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
     connectToDevSignals();
@@ -696,7 +697,8 @@ void ViewController::deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, 
         break;
     case DevicesFactory::Type_Update_TypeIncorrect:
         emit devUpdateLogMessage(2, QString("Не правильный тип [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
-        emit devUpdateTypeDevIncorrect(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceHeaderByIndex(indexDev).first());
+        emit devWrongTypeIncorrect(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                    getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceHeaderByIndex(indexDev).first());
         break;
     }
 }
@@ -752,5 +754,5 @@ void ViewController::setChangedIndexInteface(int interfaceIndex) {
     interfaceTreeChanged(ConnectionFactory::Type_Update_ChangedIndex);
     connectToDevSignals(); // get interface property
     emit devUpdateLogMessage(1, QString("Переключение интерфейса[%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
-    emit setActivePropertySerialPort();
+    emit interfaceSetActiveProperty(connFactory->getInterace(interfaceTree->getIoIndex())->getType());
 }
