@@ -39,7 +39,10 @@ SOURCES += \
     device/Progress_Base/progress_base_data.cpp \
     device/Progress_Base/Progress_Base.cpp \
     device/service/serviceDevicesAbstract.cpp \
-    device/Progress_TMK24/Progress_tmk24Service.cpp
+    device/Progress_TMK24/Progress_tmk24Service.cpp \
+    device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.cpp \
+    device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.cpp \
+    device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.cpp
 
 RESOURCES += \
     qml.qrc
@@ -79,11 +82,13 @@ HEADERS += \
     device/Progress_Base/Progress_BaseData.h \
     device/Progress_Base/Progress_Base.h \
     device/service/serviceDevicesAbstract.h \
-    device/Progress_TMK24/Progress_tmk24Service.h
+    device/Progress_TMK24/Progress_tmk24Service.h \
+    device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.h \
+    device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.h \
+    device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.h
 
 DISTFILES += \
-    device/service/serviceDevicesAbstract. \
-    device/service/serviceDevicesAbstract. \
+    device/service/serviceDevicesAbstract
     icon.rc
 
 RC_FILE += icon.rc

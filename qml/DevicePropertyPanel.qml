@@ -10,26 +10,32 @@ Rectangle {
     property alias dialogAddInterfaceFail: dialogAddInterfaceFail
     property alias messageOperationError: messageOperationError
     property DevPropertyProgressTmk24 devPropertyProgressTmk24: devPropertyProgressTmk24
+    property DevPropertyNozzle_v_0_00 devPropertyNozzle_v_0_00: devPropertyNozzle
 
     function setActivePanelType(typeDev) {
         switch(typeDev) {
-        case "SerialPort":
+        case "serialPort":
             if(devicePropertieslistModel1.currentIndex != 1) { // todo: maybe overink
                 console.log("setActivePanelType -" + typeDev)
                 devPropertyProgressTmk24.setResetState()
                 devicePropertieslistModel1.currentIndex = 1
             }
             break;
-        case "Empty":
+        case "empty":
             if(devicePropertieslistModel1.currentIndex != 0) {
                 console.log("setActivePanelType -" + typeDev)
                 devicePropertieslistModel1.currentIndex = 0
             }
             break;
-        case "PROGRESS TMK24":
-                console.log("setActivePanelType -" + typeDev)
-                devicePropertieslistModel1.currentIndex = 2
-                devPropertyProgressTmk24.setResetState()
+        case "progress tmk24":
+            console.log("setActivePanelType -" + typeDev)
+            devPropertyProgressTmk24.setResetState()
+            devicePropertieslistModel1.currentIndex = 2
+            break;
+        case "nozzle revision 0.00 oct 2018":
+            console.log("setActivePanelType -" + typeDev)
+            devPropertyNozzle.setResetState()
+            devicePropertieslistModel1.currentIndex = 3
             break;
         default:
             console.log("setActivePanelType -unrecognise type dev")
@@ -109,6 +115,11 @@ Rectangle {
                     Item{
                         DevPropertyProgressTmk24 {
                             id: devPropertyProgressTmk24
+                        }
+                    }
+                    Item{
+                        DevPropertyNozzle_v_0_00 {
+                            id: devPropertyNozzle
                         }
                     }
                 }

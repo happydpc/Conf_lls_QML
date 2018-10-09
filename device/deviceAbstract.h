@@ -27,8 +27,7 @@ public:
         Type_DeviceEvent_CurrentDataUpdated,
         Type_DeviceEvent_PasswordError,
         Type_DeviceEvent_TypeError,
-        Type_DeviceEvent_ExectCustomCommandNorlal,
-        Type_DeviceEvent_ExectCustomCommandError,
+        Type_DeviceEvent_ExectCustomCommand
     }E_DeviceEvent;
 
     virtual QString getDevTypeName() = 0;
@@ -63,6 +62,7 @@ signals:
 
     void eventDeviceUpdateState(DeviceAbstract::E_DeviceEvent typeEvent, QString deviceUniqueId,
                                 int operation, QString operationResult, QStringList customData, CommandController::sCommandData commandData);
+    void eventDeviceMessage(QString deviceUniqueId, QStringList messageData);
 
 private:
     int priority = 0;

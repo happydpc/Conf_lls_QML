@@ -1,5 +1,8 @@
 #include "devicesFactory.h"
 #include <QtDebug>
+#include "device/Progress_TMK4UX/Progress_tmk4UX.h"
+#include "device/Progress_TMK24/Progress_tmk24.h"
+#include "device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.h"
 
 DevicesFactory::DevicesFactory() {
     this->devShedullerTimer = new QTimer();
@@ -22,6 +25,14 @@ bool DevicesFactory::addNewDevice(E_DeviceType type, QString uniqDevName, QStrin
             res = true;
         }
     } else if(type == Type_Progress_tmk4UX) {
+    } else if(type == Type_Nozzle_rev_0_00) {
+        if(findDeviceByUnicIdent(uniqDevName) == nullptr) {
+            lockMutextDevMap();
+            deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Nozzle_Revision_0_00_Oct_2018(uniqDevName)));
+            unlockMutextDevMap();
+            emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
+            res = true;
+        }
     } else {
         throw QString("undefined class");
     }
@@ -82,6 +93,7 @@ QString DevicesFactory::getDeviceNameByType(DevicesFactory::E_DeviceType type) {
     } else if(type == DevicesFactory::Type_Progress_Tmk24) {
         return QString::fromUtf8(Progress_tmk24::name, strlen(Progress_tmk24::name));
     } else {
+        qDebug() << "undefined type name!";
         throw QString("undefined type name!");
     }
 }
@@ -91,7 +103,11 @@ DevicesFactory::E_DeviceType DevicesFactory::getDeviceType(QString typeText) {
         return DevicesFactory::Type_Progress_tmk4UX;
     } else if(typeText == QString::fromUtf8(Progress_tmk24::name, strlen(Progress_tmk24::name))) {
         return DevicesFactory::Type_Progress_Tmk24;
-    } else {
+    } else if(typeText == QString::fromUtf8(Nozzle_Revision_0_00_Oct_2018::name, strlen(Nozzle_Revision_0_00_Oct_2018::name))) {
+        return DevicesFactory::Type_Nozzle_rev_0_00;
+    }
+    else {
+        qDebug() << "undefined type name!";
         throw QString("undefined type name!");
     }
 }
@@ -173,8 +189,8 @@ DeviceAbstract::E_State DevicesFactory::getDevStateByIndex(int index) {
 
 QStringList DevicesFactory::getAvailableDeviceTypes() {
     QStringList types;
-    //    types << QString::fromUtf8(Progress_tmk4UX::name, strlen(Progress_tmk4UX::name));
     types << QString::fromUtf8(Progress_tmk24::name, strlen(Progress_tmk24::name));
+    types << QString::fromUtf8(Nozzle_Revision_0_00_Oct_2018::name, strlen(Nozzle_Revision_0_00_Oct_2018::name));
     return types;
 }
 
@@ -339,12 +355,10 @@ void DevicesFactory::deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEven
         removeDeviceByIndex(findDeviceIndex(devUniqueId));
         break;
 
-    case DeviceAbstract::Type_DeviceEvent_ExectCustomCommandNorlal:
+    case DeviceAbstract::Type_DeviceEvent_ExectCustomCommand:
         emit deviceReadyCustomCommand(findDeviceIndex(devUniqueId), operationResult, customData, commandData);
         break;
-    case DeviceAbstract::Type_DeviceEvent_ExectCustomCommandError:
-        // TODO: --
-        break;
+    default: break;
     }
 }
 

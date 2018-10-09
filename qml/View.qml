@@ -8,17 +8,17 @@ Item {
         target: viewController
 
         onSetActivePropertySerialPort: {
-            projectPanel.devicePanel.devicePropertyPanel.setActivePanelType("SerialPort")
+            projectPanel.devicePanel.devicePropertyPanel.setActivePanelType("serialPort")
         }
-        onSetActivePropertyProgressTmk24: {
-            projectPanel.devicePanel.devicePropertyPanel.setActivePanelType("PROGRESS TMK24")
+        onSetActiveDeviceProperty: {
+            projectPanel.devicePanel.devicePropertyPanel.setActivePanelType(devType)
         }
         onUpdatePropertiesSerialPort: {
-            projectPanel.devicePanel.devicePropertyPanel.setActivePanelType("SerialPort")
+            projectPanel.devicePanel.devicePropertyPanel.setActivePanelType("serialPort")
             projectPanel.devicePanel.devicePropertyPanel.setPropertyToSerialPort(properties)
         }
         onInterfaceAndDeviceListIsEmpty: {
-            projectPanel.devicePanel.devicePropertyPanel.setActivePanelType("Empty")
+            projectPanel.devicePanel.devicePropertyPanel.setActivePanelType("empty")
         }
         onDevReadyPropertiesTmk4ux: {
         }

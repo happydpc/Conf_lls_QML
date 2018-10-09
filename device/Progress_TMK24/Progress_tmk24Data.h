@@ -4,21 +4,21 @@
 #include <QObject>
 #include <QList>
 
-#define SERIALNUMBER_STRING_SIZE            12
-#define PERSONAL_DATA_SIZE                  176
-#define FIRMWARE_VERSION_STRING_SIZE         8
-#define CPU_ID_SIZE                         12
-#define DUT_TYPE                            13
-#define PASSWORD_SIZE                       8
-#define TAR_TABLE_SIZE                      30
-#define MAX_SIZE_HISTORY_CNT_LIST           10
 class Progress_tmk24Data : public QObject
 {
     Q_OBJECT
 public:
-
     Progress_tmk24Data();
     ~Progress_tmk24Data();
+
+    static const int SERIALNUMBER_STRING_SIZE         =     12;
+    static const int PERSONAL_DATA_SIZE               =     176;
+    static const int FIRMWARE_VERSION_STRING_SIZE     =     8;
+    static const int CPU_ID_SIZE                      =     12;
+    static const int DUT_TYPE                         =     13;
+    static const int PASSWORD_SIZE                    =     8;
+    static const int TAR_TABLE_SIZE                   =     30;
+    static const int MAX_SIZE_HISTORY_CNT_LIST        =     10;
 
     typedef enum {
         param_id_address = 1,

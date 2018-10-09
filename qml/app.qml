@@ -11,9 +11,9 @@ ApplicationWindow {
     visible: true
     width: 1200
     height: 700
-    visibility: "Maximized"
+//    visibility: "Maximized"
 
-    title: qsTr("Конфигуратор ДУТ (Beta 0.1)")
+    title: qsTr("Конфигуратор Beta 0.2")
     View {
         id: view
         height: parent.height

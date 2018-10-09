@@ -2,6 +2,9 @@
 #include <QDebug>
 #include <QTime>
 #include <QFile>
+#include "device/Progress_TMK24/Progress_tmk24.h"
+#include "device/Progress_TMK4UX/Progress_tmk4UX.h"
+#include "device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.h"
 
 ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObject(parent) {
 
@@ -12,24 +15,26 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
     connect(connFactory, SIGNAL(updateTree(ConnectionFactory::E_ConnectionUpdateType)),
             this, SLOT(interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateType)));
 
+    // TODO: the service need and necessery for other action
     this->serviceList.push_back(new Progress_tmk24Service("PROGRESS TMK24"));
+    this->serviceList.push_back(new Nozzle_Rev_0_00_Service("Nozzle Revision 0.00 Oct 2018"));
 
-//    QTimer::singleShot(500, Qt::CoarseTimer, [&] {
-//        QStringList strLis;
-//        strLis = connFactory->getAvailableName();
-//        qDebug() << strLis;
+    QTimer::singleShot(500, Qt::CoarseTimer, [&] {
+        QStringList strLis;
+        strLis = connFactory->getAvailableName();
+        qDebug() << strLis;
 
-//        addConnectionSerialPort(strLis.first(), QString("19200"));
+        addConnectionSerialPort("ttyACM0", QString("115200"));
+        addDeviceToConnection("Nozzle Revision 0.00 Oct 2018", QString::number(0), "");
 
 //        addDeviceToConnection("PROGRESS TMK24", QString::number(1), "");
 //        addDeviceToConnection("PROGRESS TMK24", QString::number(2), "");
-//        //        addTarrirDev("PROGRESS TMK24", "1");
 
 //        for(int a=0; a<2; a++) {
 //            addDeviceToConnection("PROGRESS TMK24", QString::number(a+5), "");
-//            //            addTarrirDev("PROGRESS TMK24", QString::number(a+5));
+            //            addTarrirDev("PROGRESS TMK24", QString::number(a+5));
 //        }
-//    });
+    });
 }
 
 QStringList ViewController::getAvailableNameToSerialPort() {
@@ -733,8 +738,7 @@ void ViewController::setChangedIndexDevice(int interfaceIndex, int devIndex) {
     connectToDevSignals(); // get interface property
     getDeviceFactoryByIndex(interfaceTree->getIoIndex())->setDeviceInitCommandByIndex(interfaceTree->getDevIndex());
     emit devUpdateLogMessage(2, QString("Переключение устройства [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
-
-    emit setActivePropertyProgressTmk24(false);
+    emit setActiveDeviceProperty(QString(getCurrentDevProperty().at(0)).toLower());
 }
 
 void ViewController::setChangedIndexInteface(int interfaceIndex) {

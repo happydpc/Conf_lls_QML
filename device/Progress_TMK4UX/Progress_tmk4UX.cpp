@@ -6,8 +6,6 @@ Progress_tmk4UX::Progress_tmk4UX(QString uniqIdentId, QString passwordSession) {
     this->chartData = new QList<int>();
     this->uniqIdentId = uniqIdentId;
     this->state = STATE_DISCONNECTED;
-    this->lls_data.password.session.value = passwordSession;
-    this->lls_data.password.session.isValid = true;
     setDefaultValues();
 }
 
@@ -19,42 +17,7 @@ QString Progress_tmk4UX::getDevTypeName() {
     return QString::fromLocal8Bit(Progress_tmk4UX::name, strlen(Progress_tmk4UX::name));
 }
 
-void Progress_tmk4UX::setDefaultValues() {
-    this->settings.k1 = 0;
-    this->settings.k2 = 0;
-    this->settings.netAddress = uniqIdentId.toInt();
-    this->settings.thermoCompensationType = 0;
-    this->settings.periodicSendType = 0;
-    this->settings.periodicSendTime = 0;
-    this->settings.outputValue = 0;
-    this->settings.filterType = 0;
-    this->settings.interpolationType = 0;
-    this->settings.minLevel = 0;
-    this->settings.maxLevel = 4095;
-    this->settings.masterMode = 0x00;
-    this->settings.rs232Speed = 3;
-    this->settings.rs485Speed = 3;
-    this->settings.slaveCount = 0;
-    this->settings.slaveAddr[0] = 2;
-    this->settings.slaveAddr[1] = 3;
-    this->settings.slaveAddr[2] = 4;
-    this->settings.slaveAddr[3] = 5;
-    this->settings.avarageLength = 21;
-    this->settings.medianLength = 7;
-    this->settings.q = 0.001;
-    this->settings.r = 5000;
-    this->lls_data.serialNum.isValid = false;
-    this->calibrationTable.TableSize = 0;
-    memset(this->calibrationTable.x,0, sizeof(this->calibrationTable.x));
-    memset(this->calibrationTable.y,0, sizeof(this->calibrationTable.y));
-    this->newSettings = this->settings;
-    this->lls_data.fuelLevel.isValid = false;
-    this->lls_data.freq.isValid = false;
-    this->lls_data.temp.isValid = false;
-    this->lls_data.cnt.isValid = false;
-    this->lls_data.firmware.isValid = false;
-    this->lls_data.typeIsValid = false;
-}
+void Progress_tmk4UX::setDefaultValues() {}
 
 QList<int> Progress_tmk4UX::getChart() {
     return *chartData;
@@ -63,41 +26,16 @@ QList<int> Progress_tmk4UX::getChart() {
 // TODO: is valid handler!
 QStringList Progress_tmk4UX::getPropertyData() {
     QStringList res;
-    res << lls_data.serialNum.value;
-    res << QString::number(settings.netAddress);
-    res << getDevTypeName();
-    res << lls_data.firmware.value;
-    res << QString::number(lls_data.password.get.isValid);
     return res;
 }
 
 QStringList Progress_tmk4UX::getCurrentData() {
     QList<QString> res;
-    res << QString::number(lls_data.fuelLevel.value.value_u32);
-    res << QString::number(lls_data.fuelProcent.value.value_u16);
-    res << QString::number(lls_data.cnt.value.value_u32);
-    res << QString::number(lls_data.freq.value.value_u16);
-    res << QString::number(lls_data.temp.value.value_i);
     return res;
 }
 
 QStringList Progress_tmk4UX::getErrors() {
     QStringList ret;
-    if(lls_data.errors.isValid) {
-        ret << QString::number(lls_data.errors.errors.GenFreq0);
-        ret << QString::number(lls_data.errors.errors.MaxFreqOut);
-        ret << QString::number(lls_data.errors.errors.MinFreqOut);
-        ret << QString::number(lls_data.errors.errors.NotCalibrated);
-        ret << QString::number(lls_data.errors.errors.QeueManagerError);
-        ret << QString::number(lls_data.errors.errors.ReplayNotComeRs232);
-        ret << QString::number(lls_data.errors.errors.ReplayNotComeRs485);
-        ret << QString::number(lls_data.errors.errors.Rs232Error);
-        ret << QString::number(lls_data.errors.errors.Rs485Error);
-        ret << QString::number(lls_data.errors.errors.Slave1Error);
-        ret << QString::number(lls_data.errors.errors.Slave2Error);
-        ret << QString::number(lls_data.errors.errors.Slave3Error);
-        ret << QString::number(lls_data.errors.errors.Slave4Error);
-    }
     return ret;
 }
 
@@ -122,114 +60,6 @@ QString Progress_tmk4UX::getUniqIdent() {
 
 bool Progress_tmk4UX::makeDataToCommand(CommandController::sCommandData &commandData) {
     bool res = false;
-    if(!commandData.deviceIdent.isEmpty()) {
-        try {
-            commandData.commandOptionData.push_back(0x31);
-            // id addr
-            commandData.commandOptionData.push_back(commandData.deviceIdent.toInt());
-            // command byte
-            commandData.commandOptionData.push_back(commandData.devCommand);
-            switch(commandData.devCommand) {
-            case Progress_tmk4UXData::lls_read_lvl_once: break;
-            case Progress_tmk4UXData::lls_send_data_enable: break;
-            case Progress_tmk4UXData::lls_set_send_time: break;
-            case Progress_tmk4UXData::lls_send_data_default: break;
-            case Progress_tmk4UXData::lls_read_cnt: break;
-            case Progress_tmk4UXData::lls_read_lvl_all: break;
-            case Progress_tmk4UXData::lls_read_settings: break;
-
-            case Progress_tmk4UXData::lls_write_settings: {
-                // сперва заносим текущий пароль для разрешения доступа
-                //                QString password = QString::fromUtf8(commandArg.Progress_tmk4UX::E_param_suquence::param_password_session), 0);
-                //                for(uint8_t i=0; i<sizeof(password_session); i++) {
-                //                    array.push_back(password_session[i]);
-                //                }
-                //                array.push_back(0xFF);
-                //                array.push_back(0xFF);
-                //                array.insert(13, (char*)&tcommand.data.settings_new, sizeof(T_settings));
-                //                while(array.size() != 62) {
-                //                    array.push_back(0xFF);
-                //                }
-            }
-                break;
-
-            case Progress_tmk4UXData::lls_read_cal_table:
-                break;
-
-            case Progress_tmk4UXData::lls_write_cal_table: {
-            }
-                break;
-            case Progress_tmk4UXData::lls_calibrate_min:
-            case Progress_tmk4UXData::lls_calibrate_max: {
-                // заносим текущий пароль для разрешения доступа
-                // значение заносится в самоме датчике
-                QByteArray passArray;
-                if(lls_data.password.session.isValid) {
-                    if(!lls_data.password.session.value.isEmpty()) {
-                        int passLen = lls_data.password.session.value.length();
-                        for(int passCounter=0; passCounter<passLen; passCounter++) {
-                            commandData.commandOptionData.push_back(
-                                        lls_data.password.session.value.at(passCounter).toLatin1());
-                        }
-                    }
-                }
-                while(passArray.size() < PASSWORD_SIZE) {
-                    passArray.push_back((char)0);
-                }
-                commandData.commandOptionData.insert(commandData.commandOptionData.size(), passArray);
-            }
-                break;
-            case Progress_tmk4UXData::lls_read_errors: break;
-            case Progress_tmk4UXData::lls_set_serial_number: break;
-            case Progress_tmk4UXData::lls_read_serial_number: break;
-            case Progress_tmk4UXData::lls_set_personal: break;
-            case Progress_tmk4UXData::lls_read_personal: break;
-            case Progress_tmk4UXData::lls_set_new_password: {
-                if(!commandData.commandOptionData.isEmpty()) {
-                    //                // сперва заносим текущий пароль для разрешения доступа
-                    //                for(uint8_t i=0; i<sizeof(password_session); i++) {
-                    //                    array.push_back(password_session[i]);
-                    //                }
-                    //                // потом новый пароль
-                    //                for(uint8_t i=0; i<sizeof(password_session); i++) {
-                    //                    array.push_back(tcommand.data.new_passw[i]);
-                    //                }
-                }
-            }
-                break;
-
-            case Progress_tmk4UXData::lls_check_address_and_pass: {
-                // заносим текущий пароль для разрешения доступа
-                // значение заносится в самоме датчике
-                QByteArray passArray;
-                if(lls_data.password.session.isValid) {
-                    if(!lls_data.password.session.value.isEmpty()) {
-                        int passLen = lls_data.password.session.value.length();
-                        for(int passCounter=0; passCounter<passLen; passCounter++) {
-                            passArray.push_back(lls_data.password.session.value.at(passCounter).toLatin1());
-                        }
-                    }
-                }
-                while(passArray.size() < PASSWORD_SIZE) {
-                    passArray.push_back((char)0);
-                }
-                commandData.commandOptionData.insert(commandData.commandOptionData.size(), passArray);
-            }
-                break;
-            case Progress_tmk4UXData::lls_run_bootloader: break;
-            default : break;
-            }
-            Crc crcCalc;
-            uint8_t crcResult = 0;
-            crcResult = crcCalc.crc8_dallas(commandData.commandOptionData.data(), commandData.commandOptionData.length());
-            commandData.commandOptionData.push_back(crcResult);
-            res = true;
-        } catch(...) {
-            qDebug("Device: makeDataToCommand -catch!");
-        }
-    } else {
-        qDebug() << "Device: makeDataToCommand paramIsNull!";
-    }
     return res;
 }
 

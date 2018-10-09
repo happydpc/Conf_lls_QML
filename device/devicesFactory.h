@@ -7,8 +7,6 @@
 #include <QMutex>
 #include "command/commandController.h"
 #include "device/deviceAbstract.h"
-#include "device/Progress_TMK4UX/Progress_tmk4UX.h"
-#include "device/Progress_TMK24/Progress_tmk24.h"
 
 class DevicesFactory : public QObject
 {
@@ -20,6 +18,7 @@ public:
     typedef enum {
         Type_Progress_Tmk24,
         Type_Progress_tmk4UX,
+        Type_Nozzle_rev_0_00,
         Type_Undefined
     }E_DeviceType;
 

@@ -5,7 +5,6 @@
         <file>qml/DevPropertySerialPort.qml</file>
         <file>qml/MainMenuBar.qml</file>
         <file>qml/ProjectMainStack.qml</file>
-        <file>qml/ProjectMenu.qml</file>
         <file>qml/ProjectStartScreen.qml</file>
         <file>qml/SerialPort.qml</file>
         <file>qml/SerialPortForm.ui.qml</file>
@@ -29,6 +28,7 @@
         <file>qml/DevPropertyProgressTmk24TarTableDelegate.qml</file>
         <file>qml/ChangeDevIdName.qml</file>
         <file>awesome_900.ttf</file>
+        <file>qml/DevPropertyNozzle_v_0_00.qml</file>
     </qresource>
     <qresource prefix="/new/icons">
         <file>images/icon/normal.png</file>

@@ -44,10 +44,6 @@ private slots:
 
 private:
     Progress_tmk4UXData tmkData;
-    Progress_tmk4UXData::T_calibrationTable calibrationTable;
-    Progress_tmk4UXData::T_settings newSettings;
-    Progress_tmk4UXData::T_settings settings;
-    Progress_tmk4UXData::S_lls_data lls_data;
     QList<int> *chartData;
     QString uniqIdentId;
 };

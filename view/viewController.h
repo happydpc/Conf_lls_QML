@@ -92,7 +92,7 @@ public:
 signals:
 
     void setActivePropertySerialPort();
-    void setActivePropertyProgressTmk24(bool status);
+    void setActiveDeviceProperty(QString devType);
 
     void interfaceAndDeviceListIsEmpty();
 

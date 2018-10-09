@@ -6,7 +6,6 @@ Component {
 
     Rectangle {
         id: projectDevicePanel
-//        color: "#ffffff"
         color: "transparent"
 
         Rectangle {
