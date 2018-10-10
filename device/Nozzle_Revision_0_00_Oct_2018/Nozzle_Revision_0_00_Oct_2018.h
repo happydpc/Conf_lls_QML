@@ -16,8 +16,8 @@ public:
     static constexpr char* name = "Nozzle Revision 0.00 Oct 2018";
 
     QString getDevTypeName() override;
-    QStringList getPropertyData() override;
-    QStringList getCurrentData() override;
+    QPair<QStringList,QStringList> getPropertyData() override;
+    QPair<QStringList,QStringList> getCurrentData() override;
     DeviceAbstract::E_State getState() override;
     void setState(DeviceAbstract::E_State) override;
     QPair<QStringList,QStringList> getSettings() override;

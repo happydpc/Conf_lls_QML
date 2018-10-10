@@ -353,7 +353,18 @@ QStringList ViewController::getAvailableDevTarrirAdd_DevSerialNumber() {
     return resList;
 }
 
-QStringList ViewController::getTarCurrentDeviceData(int index) {
+QStringList ViewController::getTarCurrentDeviceDataKey(int index) {
+    QStringList res;
+    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
+        if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+            Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+            res = pService->getCurrentDataDevice(index);
+        }
+    }
+    return res;
+}
+
+QStringList ViewController::getTarCurrentDeviceDataValue(int index) {
     QStringList res;
     if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
         if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
@@ -573,6 +584,8 @@ void ViewController::deviceLogMessage(int indexDev, QStringList message) {
 
 void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QStringList argList, CommandController::sCommandData commmandData) {
     DevicesFactory *pDevFactory = nullptr;
+    QStringList keys;
+    QStringList values;
     pDevFactory = getDeviceFactoryByIndex(interfaceTree->getIoIndex());
     if(pDevFactory != nullptr) {
         emit devUpdateLogMessage(2, QString("Получен ответ с команды [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
@@ -583,6 +596,8 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
                     if (message == "Normal") {
                         emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Задание границы измерения"),
                                             QStringList(tr("Задание границы измерения успешно выполнено")));
+                        emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                                      QStringList("lls_calibrate_max"), QStringList("normal"));
                     } else {
                         emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Задание границы измерения"),
                                             QStringList(tr("Задание границы измерения не выполнено!")));
@@ -594,6 +609,8 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
                     if (message == "Normal") {
                         emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Задание границы измерения"),
                                             QStringList(tr("Задание границы измерения успешно выполнено")));
+                        emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                                      QStringList("lls_calibrate_mix"), QStringList("normal"));
                     } else {
                         emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Задание границы измерения"),
                                             QStringList(tr("Задание границы измерения не выполнено")));
@@ -605,6 +622,9 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
                     if (message == "Normal") {
                         emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Чтение настроек"),
                                             QStringList(tr("Чтение настроек успешно выполнено")));
+                        keys << "lls_read_settings" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).first;
+                        values << "normal" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).second;
+                        emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values);
                     } else {
                         emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Чтение настроек"),
                                             QStringList(tr("Чтение настроек не выполнено")));
@@ -616,6 +636,8 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
                     if (message == "Normal") {
                         emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Чтение ошибок"),
                                             QStringList(tr("Чтение ошибок успешно выполнено")));
+                        emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                                      QStringList("lls_read_errors"), QStringList("normal"));
                     } else {
                         emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Чтение ошибок"),
                                             QStringList(tr("Чтение ошибок не выполнено")));
@@ -629,6 +651,8 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
                     if (message == "Normal") {
                         emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Чтение таблицы"),
                                             QStringList(tr("Чтение таблицы успешно выполнено")));
+                        emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                                      QStringList("lls_read_cal_table"), QStringList("normal"));
                     } else {
                         emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Чтение таблицы"),
                                             QStringList(tr("Чтение таблицы не выполнено")));
@@ -651,6 +675,8 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
                                                                                  QString("Нет ответа")));
                         }
                         emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Запись таблицы"), resWrite);
+                        emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                                      QStringList("lls_write_cal_table"), QStringList("normal"));
                     }
                 }
             }
@@ -659,6 +685,8 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
                     if (message == "Normal") {
                         emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Запись настроек"),
                                             QStringList(tr("Запись настроек успешно выполнена")));
+                        emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                                      QStringList("lls_write_settings"), QStringList("normal"));
                     } else {
                         emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Запись настроек"),
                                             QStringList(tr("Запись настроек не выполнена")));
@@ -672,19 +700,24 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_EmptyCommand) {}
             // init
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getPassword) {
-                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), QStringList("getBatteryProperty"));
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              QStringList("getBatteryProperty"), QStringList("normal"));
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getAccelConfig) {
                 if(commmandData.isNeedAckMessage) {
                     if(message.toLower() == "normal") {
-                        emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), QStringList("getBatteryProperty"));
+                        keys << "getAccelConfig" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).first;
+                        values << "normal" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).second;
+                        emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values);
                     }
                 }
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkConfig) {
                 if(commmandData.isNeedAckMessage) {
                     if(message.toLower() == "normal") {
-                        emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), QStringList("getBatteryProperty"));
+                        keys << "getNetworkConfig" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).first;
+                        values << "normal" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).second;
+                        emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values);
                     }
                 }
             }
@@ -692,42 +725,51 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
             // current data
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getAccelData) {
                 if(message.toLower() == "normal") {
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), QStringList("getAccelData"));
+                    keys << "getAccelData" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).first;
+                    values << "normal" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).second;
+                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values);
                 }
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkData) {
                 if(message.toLower() == "normal") {
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), QStringList("getNetworkData"));
+                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                                  QStringList("getNetworkData"), QStringList("normal"));
                 }
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getCardProperty) {
                 if(message.toLower() == "normal") {
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), QStringList("getCardProperty"));
+                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                                  QStringList("getCardProperty"), QStringList("normal"));
                 }
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getBatteryProperty) {
                 if(message.toLower() == "normal") {
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), QStringList("getBatteryProperty"));
+                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                                  QStringList("getBatteryProperty"), QStringList("normal"));
                 }
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setNetworkPassword) {
                 if(message.toLower() == "normal") {
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), QStringList("setNetworkPassword"));
+                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                                  QStringList("setNetworkPassword"), QStringList("normal"));
                 }
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setAccelConfig) {
                 if(message.toLower() == "normal") {
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), QStringList("setAccelConfig"));
+                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                                  QStringList("setAccelConfig"), QStringList("normal"));
                 }
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setAccelUseCurrentValuesAsNullPoint) {
                 if(message.toLower() == "normal") {
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), QStringList("setAccelUseCurrentValuesAsNullPoint"));
+                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                                  QStringList("setAccelUseCurrentValuesAsNullPoint"), QStringList("normal"));
                 }
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setNetworkConfig) {
                 if(message.toLower() == "normal") {
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), QStringList("setNetworkConfig"));
+                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                                  QStringList("setNetworkConfig"), QStringList("normal"));
                 }
             }
         }
@@ -802,7 +844,7 @@ void ViewController::connectToDevSignals() {
         connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceReadyCustomCommand(int,QString,QStringList,CommandController::sCommandData)),
                 this, SLOT(deviceReadyCustomCommand(int,QString,QStringList,CommandController::sCommandData)));
         connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceReadyLog(int, QStringList)),
-                   this, SLOT(deviceLogMessage(int, QStringList)));
+                this, SLOT(deviceLogMessage(int, QStringList)));
     }
 }
 

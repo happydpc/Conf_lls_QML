@@ -29,8 +29,8 @@ QStringList Progress_tmk4UX::getPropertyData() {
     return res;
 }
 
-QStringList Progress_tmk4UX::getCurrentData() {
-    QList<QString> res;
+QPair<QStringList,QStringList> Progress_tmk4UX::getCurrentData() {
+    QPair<QStringList,QStringList> res;
     return res;
 }
 

@@ -112,13 +112,13 @@ Rectangle {
         }
     }
 
-    function setDevCustomCommandExecuted(typeDev, args) {
+    function setDevCustomCommandExecuted(typeDev, keys, args) {
         switch(typeDev.toLowerCase()) {
         case "progress tmk24":
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setCustomCommandExecuted(args)
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setCustomCommandExecuted(keys, args)
             break;
         case "nozzle revision 0.00 oct 2018":
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setCustomCommandExecuted(args)
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setCustomCommandExecuted(keys, args)
             break;
         default: break;
         }

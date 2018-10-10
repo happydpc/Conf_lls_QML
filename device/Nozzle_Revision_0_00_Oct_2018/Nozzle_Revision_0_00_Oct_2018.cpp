@@ -58,8 +58,16 @@ QStringList Nozzle_Revision_0_00_Oct_2018::getPropertyData() {
     return res;
 }
 
-QStringList Nozzle_Revision_0_00_Oct_2018::getCurrentData() {
-    QList<QString> res;
+QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getCurrentData() {
+    QPair<QStringList,QStringList> res;
+    res.first.push_back("accelConfX");
+    res.second.push_back(dev_data.accelConfX.isValid == true ? QString::number(dev_data.accelConfX.value.value_i) : "NA");
+    res.first.push_back("accelConfY");
+    res.second.push_back(dev_data.accelConfY.isValid == true ? QString::number(dev_data.accelConfY.value.value_i) : "NA");
+    res.first.push_back("accelConfZ");
+    res.second.push_back(dev_data.accelConfZ.isValid == true ? QString::number(dev_data.accelConfZ.value.value_i) : "NA");
+    res.first.push_back("networkPassword");
+
     res.push_back(dev_data.accelX.isValid == true ? QString::number(dev_data.accelX.value.value_f) : "NA");
     res.push_back(dev_data.accelY.isValid == true ? QString::number(dev_data.accelY.value.value_f) : "NA");
     res.push_back(dev_data.accelZ.isValid == true ? QString::number(dev_data.accelZ.value.value_f) : "NA");
@@ -74,17 +82,19 @@ QStringList Nozzle_Revision_0_00_Oct_2018::getCurrentData() {
     res.push_back(dev_data.powerCurrentAccumulateHourse.isValid == true ? QString::number(dev_data.powerCurrentAccumulateHourse.value.value_f) : "NA");
     res.push_back(dev_data.powerCurrentResouresAvailable.isValid == true ? QString::number(dev_data.powerCurrentResouresAvailable.value.value_f) : "NA");
     res.push_back(dev_data.powerCurrentResouresAvailableHourse.isValid == true ? QString::number(dev_data.powerCurrentResouresAvailableHourse.value.value_f) : "NA");
-    res.push_back(dev_data.networkPassword.isValid == true ? dev_data.networkPassword.value : "NA");
     return res;
 }
 
 QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getSettings() {
     QPair<QStringList,QStringList> res;
-    if(dev_data.settings.get.isValid) {
-        res.first.push_back("device_value");
-        res.second.push_back(getDevTypeName());
-        res.first.push_back("k1_value");
-    }
+    res.first.push_back("accelConfX");
+    res.second.push_back(dev_data.accelConfX.isValid == true ? QString::number(dev_data.accelConfX.value.value_i) : "NA");
+    res.first.push_back("accelConfY");
+    res.second.push_back(dev_data.accelConfY.isValid == true ? QString::number(dev_data.accelConfY.value.value_i) : "NA");
+    res.first.push_back("accelConfZ");
+    res.second.push_back(dev_data.accelConfZ.isValid == true ? QString::number(dev_data.accelConfZ.value.value_i) : "NA");
+    res.first.push_back("networkPassword");
+    res.second.push_back(dev_data.networkPassword.isValid == true ? dev_data.networkPassword.value : "NA");
     return res;
 }
 

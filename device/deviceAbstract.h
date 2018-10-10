@@ -32,8 +32,8 @@ public:
     }E_DeviceEvent;
 
     virtual QString getDevTypeName() = 0;
-    virtual QStringList getPropertyData() = 0;
-    virtual QStringList getCurrentData() = 0;
+    virtual QPair<QStringList,QStringList> getPropertyData() = 0;
+    virtual QPair<QStringList,QStringList> getCurrentData() = 0;
     virtual QString getUniqIdent() = 0;
     virtual QPair<QStringList,QStringList> getSettings() = 0;
     virtual QStringList getErrors() = 0;

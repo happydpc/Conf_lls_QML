@@ -79,8 +79,8 @@ QStringList Progress_tmk24::getPropertyData() {
     return res;
 }
 
-QStringList Progress_tmk24::getCurrentData() {
-    QList<QString> res;
+QPair<QStringList,QStringList> Progress_tmk24::getCurrentData() {
+    QPair<QStringList,QStringList> res;
     res.push_back(lls_data.fuelLevel.isValid == true ? QString::number(lls_data.fuelLevel.value.value_u32) : QString::number(0));
     res.push_back(lls_data.fuelProcent.isValid ? QString::number(lls_data.fuelProcent.value.value_u16) : QString::number(0));
     res.push_back(lls_data.cnt.isValid ? QString::number(lls_data.cnt.value.value_u32) : QString::number(0));

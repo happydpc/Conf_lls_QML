@@ -63,7 +63,8 @@ public:
     Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevId();
     Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevSerialNumber();
 
-    Q_INVOKABLE QStringList getTarCurrentDeviceData(int index);
+    Q_INVOKABLE QStringList getTarCurrentDeviceDataKey(int index);
+    Q_INVOKABLE QStringList getTarCurrentDeviceDataValue(int index);
     Q_INVOKABLE QList<int> getTarCurrentDeviceChartData(int index);
 
     // возвразщает кол-во уже добавленных уст-в
@@ -112,7 +113,7 @@ signals:
     void devShowMessage(QString typeDev, QString messageHeader, QStringList messageList);
     void devUpdateLogMessage(int codeMessage, QString message);
     void devUpdateLogDeviceMessage(QString typeDev, QString message);
-    void devCustomCommandExecuted(QString typeDev, QStringList args);
+    void devCustomCommandExecuted(QString typeDev, QStringList keys, QStringList args);
     void devUpdateTree(QStringList devNames, QList<int>status);
 
 public slots:

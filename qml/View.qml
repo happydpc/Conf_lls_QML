@@ -41,7 +41,7 @@ Item {
         }
 
         onDevCustomCommandExecuted: {
-            projectPanel.devicePanel.devicePropertyPanel.setDevCustomCommandExecuted(typeDev, args)
+            projectPanel.devicePanel.devicePropertyPanel.setDevCustomCommandExecuted(typeDev, keys, args)
         }
 
         onDevUpdateLogMessage: {
@@ -50,13 +50,6 @@ Item {
         onDevUpdateLogDeviceMessage: {
             projectPanel.devicePanel.devicePropertyPanel.addDeviceLog(typeDev, message)
         }
-
-//                            emit devUpdateWriteTarTableExecuted(resWrite);
-
-//        if(pService->readTableAllDeviceIsReady()) {
-//            emit devUpdateReadTarTable(pService->getDeviceCount());
-
-//        }
 
 //        onDevUpdateWriteSettingExecuted: {
 //            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageWriteSettingsOk.open()

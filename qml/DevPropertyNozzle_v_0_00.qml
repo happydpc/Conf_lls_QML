@@ -41,40 +41,48 @@ Rectangle {
         viewController.getCurrentDevSettingsWithoutRequest()
     }
 
-    function setCustomCommandExecuted(args) {
-        var data = null
-        switch(args[0].toLowerCase()) {
+    function setCustomCommandExecuted(keys, args) {
+        switch(keys[0].toLowerCase()) {
         case "getacceldata" :
-            data = viewController.getCurrentDevPeriodicData()
-            accelXProgressBar.value = data[0]
-            accelYProgressBar.value = data[1]
-            accelZProgressBar.value = data[2]
+            for(var i=0; i<settings.length; i++) {
+                if(key[i] === "k1_value") {
+                    accelXProgressBar.value = args[i]
+                } else if(key[i] === "k2_value") {
+                    accelYProgressBar.value = args[i]
+                } else if(key[i] === "typeTempCompensation_value") {
+                    accelZProgressBar.value = args[i]
+                }
+            }
             break;
         case "getnetworkdata":
-            data = viewController.getCurrentDevPeriodicData()
-            networkParentIp.text = data[5]
+            networkParentIp.text = args[5]
+            res.second.push_back(dev_data.accelConfZ.isValid == true ? QString::number(dev_data.accelConfZ.value.value_i) : "NA");
+            break;
+        case "getnetworkconfig":
+            res.first.push_back("networkPassword");
+            accelCoefX.text = args[1]
+            accelCoefY.text = args[2]
+            accelCoefZ.text = args[3]
+            accelDelta.text = args[4]
             break;
         case "getcardproperty":
-            data = viewController.getCurrentDevPeriodicData()
-            cardNumber.text = data[3]
+            cardNumber.text = args[3]
             break;
         case "getbatteryproperty":
-            data = viewController.getCurrentDevPeriodicData()
-            batteryVoltage.value = data[8]
-            batteryResourseAvailable.value = parseInt(data[12])
+            batteryVoltage.value = args[8]
+            batteryResourseAvailable.value = parseInt(args[12])
             break;
         case "setnetworkpassword": break;
         case "setaccelconfig":
-            data = viewController.getCurrentDevPeriodicData()
-            accelCoefX.text = data[0]
-            accelCoefY.text = data[1]
-            accelCoefZ.text = data[2]
-            accelDelta.text = data[3]
+            res.first.push_back("accelConfX");
+            res.second.push_back(dev_data.accelConfX.isValid == true ? QString::number(dev_data.accelConfX.value.value_i) : "NA");
+            res.first.push_back("accelConfY");
+            res.second.push_back(dev_data.accelConfY.isValid == true ? QString::number(dev_data.accelConfY.value.value_i) : "NA");
+            res.first.push_back("accelConfZ");
             break;
         case "setaccelusecurrentvaluesasnullpoint": break;
         case "setnetworkconfig":
-            data = viewController.getCurrentDevPeriodicData()
-            networkPassword.text = data[14]
+            networkPassword.text = args[14]
             break
         default: break;
         }
@@ -83,12 +91,6 @@ Rectangle {
     function setUpdatePeriodicValues(data) {
         devProperty.isReady = true
         var values = viewController.getCurrentDevPeriodicData()
-//        if(values.length >0) {
-//            levelProgress.value = values[1]
-//            levelCnt.value = parseInt(values[2])
-//            levelFreq.value = values[3]
-//            levelTemp.value = values[4]
-//        }
         var list = viewController.getCurrentDevChart()
         currentChartLines.clear();
         chartCurrentValue.graphLength = list.length
@@ -114,16 +116,6 @@ Rectangle {
             devMessageLog.remove(0, message.length + 100)
         }
         devMessageLog.append(message)
-    }
-
-    function readSettings(devName, key, settings) {
-        for(var i=0; i<settings.length; i++) {
-            if(key[i] === "k1_value") {
-                k1.text = settings[i]
-            } else if(key[i] === "k2_value") {
-                k2.text = settings[i]
-            }
-        }
     }
 
     function writeSettings() {
