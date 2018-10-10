@@ -392,25 +392,6 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
     uint16_t frequency = 0;
     uint16_t value = 0;
 
-    if(!commandArrayReplyData.isEmpty()) {
-        if(getState() == STATE_DISCONNECTED) { // если что-то есть в ответе - меняем статус на Connected
-            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Connected, getUniqIdent(),
-                                        commandReqData.devCommand, QString("Connected"), QStringList(), commandReqData);
-            setState(DeviceAbstract::STATE_GET_TYPE);
-        }
-
-        crcRes = crc.crc8_dallas(commandArrayReplyData.data(), commandArrayReplyData.length()-1);
-        if(crcRes != (0xff & commandArrayReplyData.at(commandArrayReplyData.length()-1))) {
-            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Disconnected, getUniqIdent(),
-                                        commandReqData.devCommand, QString("Disconnected"), QStringList(), commandReqData);
-            setState(DeviceAbstract::STATE_DISCONNECTED);
-            return false;
-        }
-    } else {
-        state = STATE_DISCONNECTED;
-        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Disconnected, getUniqIdent(),
-                                    commandReqData.devCommand, QString("Status disconnected"), QStringList(), commandReqData);
-    }
     // мы же знаем какую команду отправили, ее и ожидаем
     // внутри смотрим что она совпадает в пакете
     // ответ должен быть на отправленную команду
@@ -828,6 +809,26 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
     }
         break;
     default : break;
+    }
+
+    if(!commandArrayReplyData.isEmpty() && res == true) {
+        if(getState() == STATE_DISCONNECTED) { // если что-то есть в ответе - меняем статус на Connected
+            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Connected, getUniqIdent(),
+                                        commandReqData.devCommand, QString("Connected"), QStringList(), commandReqData);
+            setState(DeviceAbstract::STATE_GET_TYPE);
+        }
+
+        crcRes = crc.crc8_dallas(commandArrayReplyData.data(), commandArrayReplyData.length()-1);
+        if(crcRes != (0xff & commandArrayReplyData.at(commandArrayReplyData.length()-1))) {
+            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Disconnected, getUniqIdent(),
+                                        commandReqData.devCommand, QString("Disconnected"), QStringList(), commandReqData);
+            setState(DeviceAbstract::STATE_DISCONNECTED);
+            return false;
+        }
+    } else {
+        state = STATE_DISCONNECTED;
+        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Disconnected, getUniqIdent(),
+                                    commandReqData.devCommand, QString("Status disconnected"), QStringList(), commandReqData);
     }
 
     if(getState() == STATE_START_INIT) {

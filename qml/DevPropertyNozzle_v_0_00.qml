@@ -12,11 +12,6 @@ import QtGraphicalEffects 1.0
 
 Rectangle {
     anchors.fill: parent
-    //    property alias messageMinMaxWriteOk: messageMinMaxWriteOk
-    //    property alias messageReadSettingsOk: messageReadSettingsOk
-    //    property alias messageWriteSettingsOk: messageWriteSettingsOk
-    //    property alias messageReadErrorsOk: messageReadErrorsOk
-    //    property alias messageReadTarTableOk: messageReadTarTableOk
 
     function setNoReady() {
         devProperty.isReady = false
@@ -40,535 +35,105 @@ Rectangle {
         writeSettingsButton_2.enabled = false
     }
     function setDevProperty(listProperty) {
-        typeDeviceText.text = listProperty[2]
-        snText.text = listProperty[0]
+        typeDeviceText.text = listProperty[0]
+        snText.text = listProperty[2]
         versionFirmwareText.text = listProperty[3]
-        // give settings without request to device (copy allready readed)
         viewController.getCurrentDevSettingsWithoutRequest()
     }
-    function setUpdateCurrentValues(data) {
-        //        devProperty.isReady = true
-        //        var values = viewController.getCurrentDevOtherData()
-        //        if(values.length >0) {
-        //            //levelValue.text = values[0]
-        //            levelProgress.value = values[1]
-        //            levelCnt.value = parseInt(values[2])
-        //            levelFreq.value = values[3]
-        //            levelTemp.value = values[4]
-        //        }
-        //        //-- noise detect
-        //        if(values[5] == true) {
-        //            if(chartTarCurrentValuesMultiple.animateColorUp.running == false
-        //                    & chartTarCurrentValuesMultiple.animateColorDown.running == false) {
-        //                chartTarCurrentValuesMultiple.animateColorUp.start()
-        //            }
-        //        }
-        //        //-- chart
-        //        var list = viewController.getCurrentDevChart()
-        //        currentChartLines.clear();
-        //        chartCurrentValue.graphLength = list.length
-        //        chartCurrentValue.graphAmplitudeMax = 0
 
-        //        for(var i=0; i<list.length; i++) {
-        //            if(chartCurrentValue.graphAmplitudeMax < list[i]) {
-        //                chartCurrentValue.graphAmplitudeMax = list[i];
-        //            }
-        //        }
-        //        for(i=0; i<list.length; i++) {
-        //            currentChartLines.append(i, list[i]);
-        //        }
-        //        logListView.positionViewAtEnd()
+    function setCustomCommandExecuted(args) {
+        var data = null
+        switch(args[0].toLowerCase()) {
+        case "getacceldata" :
+            data = viewController.getCurrentDevPeriodicData()
+            accelXProgressBar.value = data[0]
+            accelYProgressBar.value = data[1]
+            accelZProgressBar.value = data[2]
+            break;
+        case "getnetworkdata":
+            data = viewController.getCurrentDevPeriodicData()
+            networkParentIp.text = data[5]
+            break;
+        case "getcardproperty":
+            data = viewController.getCurrentDevPeriodicData()
+            cardNumber.text = data[3]
+            break;
+        case "getbatteryproperty":
+            data = viewController.getCurrentDevPeriodicData()
+            batteryVoltage.value = data[8]
+            batteryResourseAvailable.value = parseInt(data[12])
+            break;
+        case "setnetworkpassword": break;
+        case "setaccelconfig":
+            data = viewController.getCurrentDevPeriodicData()
+            accelCoefX.text = data[0]
+            accelCoefY.text = data[1]
+            accelCoefZ.text = data[2]
+            accelDelta.text = data[3]
+            break;
+        case "setaccelusecurrentvaluesasnullpoint": break;
+        case "setnetworkconfig":
+            data = viewController.getCurrentDevPeriodicData()
+            networkPassword.text = data[14]
+            break
+        default: break;
+        }
     }
+
+    function setUpdatePeriodicValues(data) {
+        devProperty.isReady = true
+        var values = viewController.getCurrentDevPeriodicData()
+//        if(values.length >0) {
+//            levelProgress.value = values[1]
+//            levelCnt.value = parseInt(values[2])
+//            levelFreq.value = values[3]
+//            levelTemp.value = values[4]
+//        }
+        var list = viewController.getCurrentDevChart()
+        currentChartLines.clear();
+        chartCurrentValue.graphLength = list.length
+        chartCurrentValue.graphAmplitudeMax = 0
+
+        for(var i=0; i<list.length; i++) {
+            if(chartCurrentValue.graphAmplitudeMax < list[i]) {
+                chartCurrentValue.graphAmplitudeMax = list[i];
+            }
+        }
+        for(i=0; i<list.length; i++) {
+            currentChartLines.append(i, list[i]);
+        }
+        logListView.positionViewAtEnd()
+    }
+
     function addLogMessage(codeMessage, message) {
         log.append(message)
     }
-    //    function readSettings(devName, key, settings) {
-    //        for(var i=0; i<settings.length; i++) {
-    //            if(key[i] === "k1_value") {
-    //                k1.text = settings[i]
-    //            } else if(key[i] === "k2_value") {
-    //                k2.text = settings[i]
-    //            } else if(key[i] === "typeTempCompensation_value") {
-    //                typeTempCompensation.currentIndex = settings[i]
-    //            } else if(key[i] === "periodicSendType_value") {
-    //                periodicSendType.currentIndex = settings[i]
-    //            } else if(key[i] === "periodicSendTime_value") {
-    //                periodicSendTime.value = settings[i]
-    //            } else if(key[i] === "typeOutMessage_value") {
-    //                typeOutMessage.currentIndex = settings[i]
-    //            } else if(key[i] === "typeInterpolation_value") {
-    //                typeInterpolation.currentIndex = settings[i]
-    //            } else if(key[i] === "typeFiltration_value") {
-    //                typeFiltration.currentIndex = settings[i]
-    //            } else if(key[i] === "filterLenghtMediana_value") {
-    //                filterLenghtMediana.value = settings[i]
-    //            } else if(key[i] === "filterAvarageValueSec_value") {
-    //                filterAvarageValueSec.value = settings[i]
-    //            } else if(key[i] === "filterValueR_value") {
-    //                filterValueR.value= settings[i]
-    //            } else if(key[i] === "filterValueQ_value") {
-    //                filterValueQ.value = settings[i]
-    //            } else if(key[i] === "minLevelValue_value") {
-    //                minLevelValue.value = settings[i]
-    //            } else if(key[i] === "maxLevelValue_value") {
-    //                maxLevelValue.value = settings[i]
-    //            } else if(key[i] === "masterSlaveModes_value") {
-    //                masterSlaveModes.currentIndex = settings[i]
-    //            } else if(key[i] === "baudrateRs232Values_value") {
-    //                baudrateRs232Values.currentIndex = settings[i]
-    //            } else if(key[i] === "baudrateRs485Values_value") {
-    //                baudrateRs485Values.currentIndex = settings[i]
-    //            } else if(key[i] === "masterSlaveFullCountes_value") {
-    //                masterSlaveFullCountes.value = settings[i]
-    //            } else if(key[i] === "masterSlaveSlaveId_1_value") {
-    //                masterSlaveSlaveId_1.value = settings[i]
-    //            } else if(key[i] === "masterSlaveSlaveId_2_value") {
-    //                masterSlaveSlaveId_2.value = settings[i]
-    //            } else if(key[i] === "masterSlaveSlaveId_3_value") {
-    //                masterSlaveSlaveId_3.value = settings[i]
-    //            } else if(key[i] === "masterSlaveSlaveId_4_value") {
-    //                masterSlaveSlaveId_4.value = settings[i]
-    //            }
-    //        }
-    //    }
-    //    function writeSettings() {
-    //        var settings = [];
-    //        var key = [];
-    //        key.push("k1_value")
-    //        settings.push(k1.text)
-    //        key.push("k2_value")
-    //        settings.push(k2.text)
-    //        key.push("typeTempCompensation_value")
-    //        settings.push(typeTempCompensation.currentIndex)
-    //        key.push("periodicSendType_value")
-    //        settings.push(periodicSendType.currentIndex)
-    //        key.push("periodicSendTime_value")
-    //        settings.push(periodicSendTime.value)
-    //        key.push("typeOutMessage_value")
-    //        settings.push(typeOutMessage.currentIndex)
-    //        key.push("typeInterpolation_value")
-    //        settings.push(typeInterpolation.currentIndex)
-    //        key.push("typeFiltration_value")
-    //        settings.push(typeFiltration.currentIndex)
-    //        key.push("filterLenghtMediana_value")
-    //        settings.push(filterLenghtMediana.value)
-    //        key.push("filterAvarageValueSec_value")
-    //        settings.push(filterAvarageValueSec.value)
-    //        key.push("filterValueR_value")
-    //        settings.push(filterValueR.value)
-    //        key.push("filterValueQ_value")
-    //        settings.push(filterValueQ.value)
-    //        key.push("minLevelValue_value")
-    //        settings.push(minLevelValue.value)
-    //        key.push("maxLevelValue_value")
-    //        settings.push(maxLevelValue.value)
-    //        key.push("masterSlaveModes_value")
-    //        settings.push(masterSlaveModes.currentIndex)
-    //        key.push("baudrateRs232Values_value")
-    //        settings.push(baudrateRs232Values.currentIndex)
-    //        key.push("baudrateRs485Values_value")
-    //        settings.push(baudrateRs485Values.currentIndex)
-    //        key.push("masterSlaveFullCountes_value")
-    //        settings.push(masterSlaveFullCountes.value)
-    //        key.push("masterSlaveSlaveId_1_value")
-    //        settings.push(masterSlaveSlaveId_1.value)
-    //        key.push("masterSlaveSlaveId_2_value")
-    //        settings.push(masterSlaveSlaveId_2.value)
-    //        key.push("masterSlaveSlaveId_3_value")
-    //        settings.push(masterSlaveSlaveId_3.value)
-    //        key.push("masterSlaveSlaveId_4_value")
-    //        settings.push(masterSlaveSlaveId_4.value)
 
-    //        viewController.setCurrentDevSettings(key, settings)
-    //    }
-    //    function readErrors(devName, errors) {
-    //        error1Label.error1 = errors[0]
-    //        error2Label.error2 = errors[1]
-    //        error3Label.error3 = errors[2]
-    //        error4Label.error4 = errors[3]
-    //        error5Label.error5 = errors[4]
-    //        error6Label.error6 = errors[5]
-    //        error7Label.error7 = errors[6]
-    //        error8Label.error8 = errors[7]
-    //    }
-    //    function remakeTarTableChart() {
-    //        chartTarTableMultiple.removeAllSeries();
-    //        var colorArray = []
-    //        colorArray.push("#f34b4b")
-    //        colorArray.push("#4bd5f3")
-    //        colorArray.push("#f34be1")
-    //        colorArray.push("#4bf3c6")
-    //        colorArray.push("#4b4bf3")
-    //        colorArray.push("#be4bf3")
-    //        colorArray.push("#0d8741")
+    function addDeviceLogMessage(message) {
+        if(devMessageLog.length > 512) {
+            devMessageLog.remove(0, message.length + 100)
+        }
+        devMessageLog.append(message)
+    }
 
-    //        var tarSize = viewController.getStayedDevTarrirCount()
-    //        for(var deviceCounter=0; deviceCounter<tarSize; deviceCounter++) {
-    //            var roleLiters = "roleLiters" + deviceCounter
-    //            var roleFuelLevel = "roleFuelLevel" + deviceCounter
-    //            var devId = viewController.getStayedDevTarrir_DevProperty("id")
+    function readSettings(devName, key, settings) {
+        for(var i=0; i<settings.length; i++) {
+            if(key[i] === "k1_value") {
+                k1.text = settings[i]
+            } else if(key[i] === "k2_value") {
+                k2.text = settings[i]
+            }
+        }
+    }
 
-    //            var maxvalueFuelLevel = 0;
-    //            var maxValueLitrs = 0;
-    //            var tarArrayLitrs = [];
-    //            var tarArrayFuelLevel = [];
+    function writeSettings() {
+        var settings = [];
+        var key = [];
+        key.push("k1_value")
+        settings.push(k1.text)
+        key.push("k2_value")
+    }
 
-    //            for(var itemCounter=0; itemCounter<tarTabViewMultiple.rowCount; itemCounter++) {
-    //                var item = tarTabViewMultiple.model.get(itemCounter)
-    //                tarArrayLitrs.push(item[roleLiters])
-    //                tarArrayFuelLevel.push(item[roleFuelLevel])
-    //                if(maxvalueFuelLevel < item[roleFuelLevel]) {
-    //                    maxvalueFuelLevel = item[roleFuelLevel]
-    //                }
-    //                if(maxValueLitrs < item[roleLiters]) {
-    //                    maxValueLitrs = item[roleLiters]
-    //                }
-    //                console.log(roleLiters + " " + item[roleFuelLevel] + "\nValue Litrs=" + item[roleLiters])
-    //            }
-
-    //            var line = chartTarTableMultiple.createSeries(ChartView.SeriesTypeLine, "ID" + devId[deviceCounter], chartTarTableAxisXMultiple, chartTarTableAxisYMultiple);
-    //            line.color = colorArray[deviceCounter]
-    //            chartTarTableAxisXMultiple.min = 0;
-    //            chartTarTableAxisXMultiple.max = parseInt(maxValueLitrs)
-    //            chartTarTableAxisYMultiple.min = 0;
-    //            chartTarTableAxisYMultiple.max = parseInt(maxvalueFuelLevel)
-
-    //            chartTarTableMultiple.chartTarTableAmplitudeMax = parseInt(maxvalueFuelLevel)
-    //            chartTarTableMultiple.chartTarTableLength = parseInt(maxValueLitrs)
-
-    //            console.log("MaxLevel =" + chartTarTableMultiple.chartTarTableAmplitudeMax)
-    //            for(var i=0; i<tarArrayFuelLevel.length; i++) {
-    //                line.append(parseInt(tarArrayLitrs[i]), parseInt(tarArrayFuelLevel[i]));
-    //                console.log("Add=" + i + " " + tarArrayLitrs[i])
-    //            }
-    //        }
-    //    }
-    //    function addTarStepValue(rowIndex) {
-    //        if(rowIndex === -1) {
-    //            rowIndex = 0
-    //        } else {
-    //            rowIndex++
-    //        }
-    //        // если таблица пустая
-    //        // создаем строку и заносим в нее текущие значения по устройствам
-    //        // пока не переберем все уст-ва
-    //        var itemValue = {}
-    //        var devCount = viewController.getStayedDevTarrirCount()
-    //        var devId = viewController.getStayedDevTarrir_DevProperty("id")
-
-    //        for(var devIndex=0; devIndex<devCount; devIndex++) {
-    //            var valueFuelLevel = 0
-    //            var valueLiters = 0
-    //            var value = viewController.getTarCurrentDeviceData(devIndex)
-    //            var roleLiters = "roleLiters" + devIndex
-    //            var roleFuelLevel = "roleFuelLevel" + devIndex
-
-    //            valueFuelLevel = value[0]
-    //            if(valueFuelLevel == undefined) {
-    //                valueFuelLevel = "0"
-    //            }
-    //            // попытка взять предыдущее значение литров
-    //            // если есть
-    //            var lastLiter = tarTabViewMultiple.model.get(rowIndex-1)
-    //            if(lastLiter !== undefined) {
-    //                valueLiters = lastLiter[roleLiters]
-    //                if(valueLiters == undefined) {
-    //                    valueLiters = "0"
-    //                }
-    //                if(valueLiters.length === 0) {
-    //                    valueLiters = "0"
-    //                }
-    //            } else {
-    //                valueLiters = value[1]
-    //                if(valueLiters == undefined) {
-    //                    valueLiters = "0"
-    //                }
-    //                if(valueLiters.length === 0) {
-    //                    valueLiters = "0"
-    //                }
-    //            }
-    //            itemValue[roleLiters] = valueLiters;
-    //            itemValue[roleFuelLevel] = valueFuelLevel;
-    //        }
-    //        if(tarTabViewMultiple.model.get(rowIndex) === undefined) {
-    //            tarTabViewMultiple.model.append(itemValue)
-    //        } else {
-    //            tarTabViewMultiple.model.insert(rowIndex, itemValue)
-    //        }
-    //        tarTabViewMultiple.currentRow = tarTabViewMultiple.currentRow+1
-    //        timerAffterRefrashTarTable.start()
-    //    }
-
-    //    function removeTarStepValue(rowIndex) {
-    //        // если ничего не выбрано выходим
-    //        if(rowIndex >= 0) {
-    //            // удаляем строку
-    //            tarTabViewMultiple.model.remove(rowIndex)
-    //            timerAffterRefrashTarTable.start()
-    //        }
-    //    }
-
-    //    function remakeTarTable() {
-    //        tarTabViewMultiple.model.clear()
-    //        tarListDevice.model.clear()
-    //        for(var index = tarTabViewMultiple.columnCount-1; index>=0; index--) {
-    //            tarTabViewMultiple.removeColumn(index)
-    //        }
-    //        var tarSize = viewController.getStayedDevTarrirCount()
-    //        var devType = []
-    //        var devId = []
-    //        var devSn = []
-    //        devType = viewController.getStayedDevTarrir_DevProperty("type")
-    //        devId =  viewController.getStayedDevTarrir_DevProperty("id")
-    //        devSn = viewController.getStayedDevTarrir_DevProperty("sn")
-    //        for(var i=0; i<tarSize; i++) { // добавляем на list with current data
-    //            tarListDevice.model.append({"devTyp":devType[i],"devId":devId[i],"devSn":devSn[i],"valueCnt":"0","valueFuelLevel":"0"})
-    //        }
-    //        // добавляем в таблицу как столблец для девайса
-    //        for(var i2=0; i2<tarSize; i2++) {
-    //            var component = {}
-    //            component = Qt.createComponent("devPropertyTarTableDelegate.qml");
-    //            var tableViewColumn  = component.createObject(tarTabViewMultiple);
-    //            tableViewColumn.title = qsTr("Объем[ID-%1]").arg(devId[i2])
-    //            tableViewColumn.role = "roleLiters" + i2
-    //            tableViewColumn.width = 100
-    //            tarTabViewMultiple.addColumn(tableViewColumn)
-    //            console.log("addeted1 =" + tableViewColumn.role)
-    //            tableViewColumn.valueIsChanged.connect(function(role, text, modelChanged) {
-    //                var curRow = tarTabViewMultiple.currentRow
-    //                modelChanged[role] = text
-    //                tarTabViewMultiple.model.set(curRow, modelChanged)
-    //                remakeTarTableChart()
-    //            });
-    //            tableViewColumn  = component.createObject(tarTabViewMultiple);
-    //            tableViewColumn.title = qsTr("Ур.топ-ва[ID-%1]").arg(devId[i2])
-    //            tableViewColumn.role = "roleFuelLevel" + i2
-    //            tableViewColumn.width = 100
-    //            tarTabViewMultiple.addColumn(tableViewColumn)
-
-    //            tableViewColumn.valueIsChanged.connect(function(role, text, modelChanged) {
-    //                var curRow = tarTabViewMultiple.currentRow
-    //                modelChanged[role] = text
-    //                tarTabViewMultiple.model.set(curRow, modelChanged)
-    //                remakeTarTableChart()
-    //            });
-    //            console.log("addeted2 =" + tableViewColumn.role)
-    //        }
-    //    }
-    //    function writeTarTable() {
-    //        var devCount = viewController.getStayedDevTarrirCount()
-    //        var devType = []
-    //        var devId = []
-    //        var devSn = []
-    //        devType = viewController.getStayedDevTarrir_DevProperty("type")
-    //        devId =  viewController.getStayedDevTarrir_DevProperty("id")
-    //        devSn = viewController.getStayedDevTarrir_DevProperty("sn")
-
-    //        // считываем данные по ролям
-    //        for(var count=0; count<devCount; count++) {
-    //            var valueFuelLevel = 0
-    //            var valueLiters = 0
-    //            var roleLiters = "roleLiters" + count
-    //            var roleFuelLevel = "roleFuelLevel" + count
-    //            var jsonArrayCnt = []
-    //            var jsonArrayLiters = []
-    //            // считываем все шаги для одного устройства
-    //            var modelTarSize = tarTabViewMultiple.model.count
-    //            for(var subCount=0; subCount<modelTarSize; subCount++) {
-    //                var values = tarTabViewMultiple.model.get(subCount)
-    //                if(values !== undefined) {
-    //                    valueLiters = values[roleLiters]
-    //                    valueFuelLevel = values[roleFuelLevel]
-    //                    if(valueLiters == undefined) {
-    //                        valueLiters = "0"
-    //                    }
-    //                    if(valueFuelLevel == undefined) {
-    //                        valueFuelLevel = "0"
-    //                    }
-    //                } else {
-    //                    valueLiters = values[1]
-    //                    if(valueLiters == undefined) {
-    //                        valueLiters = "0"
-    //                    }
-    //                    valueFuelLevel = values[0]
-    //                    if(valueFuelLevel == undefined) {
-    //                        valueFuelLevel = "0"
-    //                    }
-    //                }
-    //                jsonArrayCnt.push(valueFuelLevel)
-    //                jsonArrayLiters.push(valueLiters)
-    //            }
-    //            viewController.setTableFromFrontEnd(devId[count], jsonArrayLiters, jsonArrayCnt)
-    //        }
-    //        viewController.sendReqWriteTarrirAllDev()
-    //    }
-
-    //    function saveTarTableToCsv(pathFile) {
-    //        var devCount = viewController.getStayedDevTarrirCount()
-    //        var devType = []
-    //        var devId = []
-    //        var devSn = []
-    //        devType = viewController.getStayedDevTarrir_DevProperty("type")
-    //        devId =  viewController.getStayedDevTarrir_DevProperty("id")
-    //        devSn = viewController.getStayedDevTarrir_DevProperty("sn")
-
-    //        // считываем данные по ролям
-    //        for(var count=0; count<devCount; count++) {
-    //            var valueFuelLevel = 0
-    //            var valueLiters = 0
-    //            var roleLiters = "roleLiters" + count
-    //            var roleFuelLevel = "roleFuelLevel" + count
-    //            var jsonArrayCnt = []
-    //            var jsonArrayLiters = []
-    //            // считываем все шаги для одного устройства
-    //            var modelTarSize = tarTabViewMultiple.model.count
-    //            for(var subCount=0; subCount<modelTarSize; subCount++) {
-    //                var values = tarTabViewMultiple.model.get(subCount)
-    //                if(values !== undefined) {
-    //                    valueLiters = values[roleLiters]
-    //                    valueFuelLevel = values[roleFuelLevel]
-    //                    if(valueLiters == undefined) {
-    //                        valueLiters = "0"
-    //                    }
-    //                    if(valueFuelLevel == undefined) {
-    //                        valueFuelLevel = "0"
-    //                    }
-    //                } else {
-    //                    valueLiters = values[1]
-    //                    if(valueLiters == undefined) {
-    //                        valueLiters = "0"
-    //                    }
-    //                    valueFuelLevel = values[0]
-    //                    if(valueFuelLevel == undefined) {
-    //                        valueFuelLevel = "0"
-    //                    }
-    //                }
-    //                jsonArrayCnt.push(valueFuelLevel)
-    //                jsonArrayLiters.push(valueLiters)
-    //            }
-    //            viewController.setTableFromFrontEnd(devId[count], jsonArrayLiters, jsonArrayCnt)
-    //        }
-    //        viewController.sendReqExportTarrirAllDevToCsv(pathFile)
-    //    }
-
-    //    function readTarTable(devCount) {
-    //        console.log("readTarTable = " + devCount)
-    //        var jsonArray = []
-    //        var tarStepMax = viewController.getTarMaxCountStep()
-    //        while(tarStepMax >0) {
-    //            jsonArray.push({});
-    //            tarStepMax--
-    //        }
-    //        // пока не переберем все уст-ва
-    //        for(var devIndex=0; devIndex<devCount; devIndex++) {
-    //            var table = viewController.getTableAtDevice(devIndex)
-    //            var parity = 0
-    //            var rowIndex = 0
-    //            // перебираем таблицу уст-ва
-    //            var valueFuelLevel = 0
-    //            var valueLiters = 0
-    //            var stepCount = viewController.getTarMaxCountStep() *2 // it pair
-    //            if(stepCount === 0 | stepCount === undefined) {
-    //                messageReadTarTableEmpty.open()
-    //            }
-    //            console.log("getTable =" + table.length)
-
-    //            for(var devTableRow=0; devTableRow<stepCount; devTableRow++) {
-    //                if(parity == 0) {
-    //                    parity = 1;
-    //                    valueLiters = table[devTableRow]
-    //                    if(valueLiters == undefined) {
-    //                        valueLiters = ""
-    //                    }
-    //                } else {
-    //                    parity = 0;
-    //                    valueFuelLevel = table[devTableRow]
-    //                    if(valueFuelLevel == undefined) {
-    //                        valueFuelLevel = ""
-    //                    }
-
-    //                    var roleLiters = "roleLiters" + devIndex
-    //                    var roleFuelLevel = "roleFuelLevel" + devIndex
-
-    //                    var itemArray = jsonArray[rowIndex]
-    //                    if(itemArray === undefined) {
-    //                        itemArray = {}
-    //                        jsonArray.push(itemArray)
-    //                    }
-    //                    itemArray[roleLiters] = valueLiters;
-    //                    itemArray[roleFuelLevel] = valueFuelLevel;
-    //                    jsonArray[rowIndex] = itemArray
-    //                    rowIndex ++
-    //                }
-    //            }
-    //        }
-    //        for(var len=0; len<jsonArray.length; len++) {
-    //            if(tarTabViewMultiple.model.get(len) === undefined) {
-    //                tarTabViewMultiple.currentRow = 0
-    //                tarTabViewMultiple.model.append(jsonArray[len])
-    //            } else {
-    //                tarTabViewMultiple.model.set(len, jsonArray[len])
-    //            }
-    //        }
-    //        timerAffterRefrashTarTable.start()
-    //    }
-
-    //    function changeDeviceUniqId() {
-    //        changeDevId.open()
-    //    }
-
-    //    Timer {
-    //        id: timerTestRepeat
-    //        interval: 1000
-    //        running: true
-    //        repeat: true
-    //        onTriggered: {
-    //            var devCount = viewController.getStayedDevTarrirCount()
-    //            var devId = viewController.getStayedDevTarrir_DevProperty("id")
-    //            var colorArray = []
-    //            colorArray.push("#f34b4b")
-    //            colorArray.push("#4bd5f3")
-    //            colorArray.push("#f34be1")
-    //            colorArray.push("#4bf3c6")
-    //            colorArray.push("#4b4bf3")
-    //            colorArray.push("#be4bf3")
-    //            colorArray.push("#0d8741")
-    //            chartTarCurrentValuesMultiple.removeAllSeries();
-
-    //            for(var devIter=0; devIter<devCount; devIter++) {
-    //                var res = viewController.getTarCurrentDeviceData(devIter)
-    //                var dataArray = tarListDevice.model.get(devIter)
-    //                if(dataArray !== undefined) {
-    //                    dataArray["valueCnt"] = res[0]
-    //                    dataArray["valueFuelLevel"] = res[2]
-    //                    tarListDevice.model.set(devIter, dataArray)
-    //                }
-    //                //-- chart
-    //                var chartArray = viewController.getTarCurrentDeviceChartData(devIter)
-
-    //                var line = chartTarCurrentValuesMultiple.createSeries(ChartView.SeriesTypeLine, "ID" + devId[devIter], currentTarChartAxisXMultiple, currentTarChartAxisYMultiple);
-    //                line.color = colorArray[devIter]
-
-    //                chartTarCurrentValuesMultiple.graphLength = chartArray.length
-    //                chartTarCurrentValuesMultiple.graphAmplitudeMax = 0
-
-    //                for(var chartIter=0; chartIter<chartArray.length; chartIter++) {
-    //                    if(chartTarCurrentValuesMultiple.graphAmplitudeMax < chartArray[chartIter]) {
-    //                        chartTarCurrentValuesMultiple.graphAmplitudeMax = chartArray[chartIter];
-    //                    }
-    //                }
-
-    //                currentTarChartAxisXMultiple.min = 0;
-    //                currentTarChartAxisXMultiple.max = chartArray.length
-    //                currentTarChartAxisYMultiple.min = 0;
-    //                currentTarChartAxisYMultiple.max = chartTarCurrentValuesMultiple.graphAmplitudeMax
-
-    //                for(chartIter=0; chartIter<chartArray.length; chartIter++) {
-    //                    line.append(chartIter, parseInt(chartArray[chartIter]));
-    //                }
-    //            }
-    //        }
-    //    }
     Rectangle {
         id: devProperty
         property bool isReady: true
@@ -751,7 +316,7 @@ Rectangle {
                                     layer.enabled: true
                                     radius: 15
                                     Label {
-                                        id: levelValueLabel
+                                        id: batteryVoltageLabel
                                         text: qsTr("Напряжение:")
                                         anchors.left: parent.left
                                         color: "#888d91"
@@ -760,13 +325,10 @@ Rectangle {
                                         anchors.rightMargin: 0
                                     }
                                     RadialBar {
-                                        id: levelProgress
-                                        anchors.top: levelValueLabel.bottom
-                                        anchors.topMargin: 15
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 20
-                                        width: 150
-                                        height: 150
+                                        id: batteryVoltage
+                                        anchors.centerIn: parent
+                                        width: 100
+                                        height: 100
                                         penStyle: Qt.RoundCap
                                         dialType: RadialBar.FullDial
                                         progressColor: "#05fff0"
@@ -775,14 +337,14 @@ Rectangle {
                                         startAngle: 180
                                         spanAngle: 70
                                         minValue: 0
-                                        maxValue: 100
+                                        maxValue: 4.2
                                         value: 0
                                         textFont {
                                             family: "Halvetica"
                                             italic: false
-                                            pointSize: 16
+                                            pointSize: 12
                                         }
-                                        suffixText: "%"
+                                        suffixText: "V"
                                         textColor: "#888d91"
                                         enabled: devProperty.isReady
                                     }
@@ -811,35 +373,28 @@ Rectangle {
                                         anchors.rightMargin: 0
                                     }
                                     RadialBar {
-                                        id: levelCnt
-                                        anchors.top: levelCntLabel.bottom
-                                        anchors.topMargin: 15
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 20
-                                        width: 150
-                                        height: 150
+                                        id: batteryResourseAvailable
+                                        anchors.centerIn: parent
+                                        width: 100
+                                        height: 100
                                         penStyle: Qt.RoundCap
                                         dialType: RadialBar.FullDial
-                                        progressColor: "#1dc58f"
+                                        progressColor: "#05fff0"
                                         foregroundColor: "transparent"
                                         dialWidth: 15
                                         startAngle: 180
                                         spanAngle: 70
                                         minValue: 0
-                                        maxValue: 5000000
-                                        showText: false
+                                        maxValue: 9999
                                         value: 0
                                         textFont {
                                             family: "Halvetica"
                                             italic: false
-                                            pointSize: 16
+                                            pointSize: 12
                                         }
-                                        suffixText: ""
+                                        suffixText: "mA"
                                         textColor: "#888d91"
                                         enabled: devProperty.isReady
-                                        //                                        onValueChanged: {
-                                        //                                            levelCntValueCustom.text = value
-                                        //                                        }
                                     }
                                     layer.effect: DropShadow {
                                         transparentBorder: true
@@ -852,13 +407,12 @@ Rectangle {
                                 }
 
                                 Rectangle {
-                                    id: rectangle1
+                                    id: cardRectangle
                                     width: 200
                                     height: 150
                                     layer.enabled: true
                                     radius: 15
                                     Label {
-                                        id: levelTempLabel
                                         text: qsTr("Карта")
                                         anchors.left: parent.left
                                         color: "#888d91"
@@ -868,7 +422,7 @@ Rectangle {
                                     }
 
                                     TextField {
-                                        id: textField
+                                        id: cardNumber
                                         y: 55
                                         text: qsTr("")
                                         anchors.right: parent.right
@@ -876,6 +430,41 @@ Rectangle {
                                         anchors.left: parent.left
                                         anchors.leftMargin: 5
                                         placeholderText: "номер карты"
+                                    }
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 10
+                                    }
+                                }
+
+                                Rectangle {
+                                    id: networkRectangle
+                                    width: 200
+                                    height: 150
+                                    layer.enabled: true
+                                    radius: 15
+                                    Label {
+                                        text: qsTr("Сеть")
+                                        anchors.left: parent.left
+                                        color: "#888d91"
+                                        anchors.leftMargin: 15
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 0
+                                    }
+
+                                    TextField {
+                                        id: networkParentIp
+                                        y: 55
+                                        text: qsTr("")
+                                        anchors.right: parent.right
+                                        anchors.rightMargin: 5
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 5
+                                        placeholderText: "ip адрес"
                                     }
                                     layer.effect: DropShadow {
                                         transparentBorder: true
@@ -911,7 +500,7 @@ Rectangle {
                                     }
 
                                     ProgressBar {
-                                        id: progressBar
+                                        id: accelXProgressBar
                                         x: 17
                                         y: 41
                                         to: 100
@@ -923,7 +512,7 @@ Rectangle {
                                     }
 
                                     ProgressBar {
-                                        id: progressBar1
+                                        id: accelYProgressBar
                                         x: 7
                                         y: 72
                                         anchors.left: parent.left
@@ -935,7 +524,7 @@ Rectangle {
                                     }
 
                                     ProgressBar {
-                                        id: progressBar2
+                                        id: accelZProgressBar
                                         x: 11
                                         y: 104
                                         anchors.left: parent.left
@@ -966,7 +555,7 @@ Rectangle {
                                 ChartView {
                                     id: chartCurrentValue
                                     theme: ChartView.ChartThemeLight
-                                    title: "Уровень/Объем"
+                                    title: "RSSI"
                                     antialiasing: true
                                     property int graphLength: 1
                                     property int graphAmplitudeMax: 1
@@ -1010,16 +599,18 @@ Rectangle {
                 x: 0
                 y: 7
                 clip: true
-
-                TextArea {
-                    id: log
-                    text: qsTr("")
-                    placeholderText: "Сообщения"
-                    anchors.rightMargin: 10
-                    anchors.leftMargin: 10
-                    anchors.bottomMargin: 10
-                    anchors.topMargin: 10
+                ScrollView {
                     anchors.fill: parent
+                    TextArea {
+                        id: devMessageLog
+                        text: qsTr("")
+                        placeholderText: "Сообщения"
+                        anchors.rightMargin: 10
+                        anchors.leftMargin: 10
+                        anchors.bottomMargin: 10
+                        anchors.topMargin: 10
+                        anchors.fill: parent
+                    }
                 }
             }
 
@@ -1191,6 +782,9 @@ Rectangle {
                                         anchors.leftMargin: 25
                                         layer.enabled: true
                                         enabled: devProperty.isReady
+                                        onClicked: {
+                                            viewController.getCurrentDevSettings()
+                                        }
                                     }
 
                                     Button {
@@ -1212,6 +806,9 @@ Rectangle {
                                         anchors.leftMargin: 25
                                         layer.enabled: true
                                         enabled: devProperty.isReady
+                                        onClicked: {
+                                            writeSettings()
+                                        }
                                     }
                                 }
                             }
@@ -1258,7 +855,6 @@ Rectangle {
                                             anchors.topMargin: 30
                                             TextField {
                                                 id: networkPassword
-                                                //                                                    id: accelCoefX
                                                 height: 30
                                                 anchors.left: parent.left
                                                 anchors.leftMargin: 15
@@ -1286,6 +882,9 @@ Rectangle {
                                         anchors.leftMargin: 25
                                         layer.enabled: true
                                         enabled: devProperty.isReady
+                                        onClicked: {
+                                            viewController.getCurrentDevSettings()
+                                        }
                                     }
 
                                     Button {
@@ -1307,6 +906,9 @@ Rectangle {
                                         anchors.leftMargin: 25
                                         layer.enabled: true
                                         enabled: devProperty.isReady
+                                        onClicked: {
+                                            writeSettings()
+                                        }
                                     }
                                 }
                             }
@@ -1319,67 +921,36 @@ Rectangle {
         }
     }
 
-    //    Rectangle {
-    //        id: busyIndicator
-    //        width: 350
-    //        height: 200
-    //        radius: 20
-    //        visible: false
-    //        property string message: "Ожидание ответа..."
-    //        anchors.horizontalCenter: parent.horizontalCenter
-    //        anchors.verticalCenter: parent.verticalCenter
-    //        BusyIndicator {
-    //            id: waitReadyIndicator
-    //            width: 96
-    //            height: 96
-    //            anchors.horizontalCenter: parent.horizontalCenter
-    //            anchors.verticalCenter: parent.verticalCenter
-    //        }
-    //        Label {
-    //            text: busyIndicator.message
-    //            anchors.top: waitReadyIndicator.bottom
-    //            anchors.topMargin: 20
-    //            anchors.horizontalCenter: parent.horizontalCenter
-    //        }
-    //        layer.enabled: true
-    //        layer.effect: DropShadow {
-    //            transparentBorder: true
-    //            horizontalOffset: 0
-    //            verticalOffset: 1
-    //            color: "#e0e5ef"
-    //            samples: 10
-    //            radius: 10
-    //        }
-    //    }
-
-    Dialog {
-        id: messageReadSettingsOk
+    Rectangle {
+        id: busyIndicator
+        width: 350
+        height: 200
+        radius: 20
         visible: false
-        title: "Чтение настроек"
-        standardButtons: StandardButton.Apply
-        width: 500
-        height: 150
-        Rectangle {
-            color: "transparent"
-            anchors.fill: parent
-            Text {
-                text: qsTr("Чтение настроек успешно выполнено")
-                color: "black"
-                anchors.centerIn: parent
-            }
+        property string message: "Ожидание ответа..."
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        BusyIndicator {
+            id: waitReadyIndicator
+            width: 96
+            height: 96
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
         }
-        //        onApply: {
-        //            close()
-        //        }
+        Label {
+            text: busyIndicator.message
+            anchors.top: waitReadyIndicator.bottom
+            anchors.topMargin: 20
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+        layer.enabled: true
+        layer.effect: DropShadow {
+            transparentBorder: true
+            horizontalOffset: 0
+            verticalOffset: 1
+            color: "#e0e5ef"
+            samples: 10
+            radius: 10
+        }
     }
-
-    //    Timer {
-    //        id: timerAffterRefrashTarTable
-    //        interval: 100
-    //        running: false
-    //        repeat: false
-    //        onTriggered: {
-    //            remakeTarTableChart()
-    //        }
-    //    }
 }

@@ -8,10 +8,10 @@ Item {
         target: viewController
 
         onInterfaceSetActiveProperty: {
-            projectPanel.devicePanel.devicePropertyPanel.setActivePanelType(ioType)
+            projectPanel.devicePanel.devicePropertyPanel.setActiveInterfacePanelType(ioType)
         }
         onSetActiveDeviceProperty: {
-            projectPanel.devicePanel.devicePropertyPanel.setActivePanelType(devType)
+            projectPanel.devicePanel.devicePropertyPanel.setActiveDevicePanelType(devType)
         }
         onInterfaceReadyProperties: {
             projectPanel.devicePanel.devicePropertyPanel.setInterfaceProperites(ioType, properties)
@@ -20,14 +20,11 @@ Item {
         onDevReadyProperties: {
             projectPanel.devicePanel.devicePropertyPanel.setReadyProperties(typeDev, data)
         }
-        onDevReadyOtherData: {
-            projectPanel.devicePanel.devicePropertyPanel.setReadyOtherData(typeDev, data)
+        onDevReadyPeriodicData: {
+            projectPanel.devicePanel.devicePropertyPanel.setReadyPeriodicData(typeDev, data)
         }
         onDevDisconnected: {
             projectPanel.devicePanel.devicePropertyPanel.setDevDisconnected(typeDev)
-        }
-        onDevUpdatePasswordIncorrect: {
-            projectPanel.devicePanel.devicePropertyPanel.devShowPasswordIncorrect(devType, devNameId)
         }
         onDevWrongTypeIncorrect: {
             projectPanel.devicePanel.devicePropertyPanel.devShowTypeIncorrect(typeDev, devNameId)
@@ -39,38 +36,59 @@ Item {
             projectPanel.devicePanel.devicePropertyPanel.dialogAddDeviceFail.open()
         }
 
+        onDevShowMessage: {
+            projectPanel.devicePanel.devicePropertyPanel.setDevShowMessage(typeDev, messageHeader, message)
+        }
 
-        onDevUpdateWriteScaleMeasureExecuted: {
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageMinMaxWriteOk.open()
+        onDevCustomCommandExecuted: {
+            projectPanel.devicePanel.devicePropertyPanel.setDevCustomCommandExecuted(typeDev, args)
         }
-        onDevUpdateWriteSettingExecuted: {
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageWriteSettingsOk.open()
-        }
-        onDevUpdateReadSettingExecuted: {
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readSettings(devNameId, key, settings)
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadSettingsOk.open()
-        }
-        onDevUpdateReadSettingWithoutRequest: {
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readSettings(devNameId, key, settings)
-        }
-        onDevUpdateReadErrorsExecuted: {
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readErrors(devNameId, errors)
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadErrorsOk.open()
-        }
+
         onDevUpdateLogMessage: {
             projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.addLogMessage(codeMessage, message)
         }
-        onDevUpdateReadTarTable: {
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readTarTable(devCount)
+        onDevUpdateLogDeviceMessage: {
+            projectPanel.devicePanel.devicePropertyPanel.addDeviceLog(typeDev, message)
         }
-        onDevUpdateWriteTarTableExecuted: {
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadTarTableOk.message = result
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadTarTableOk.open()
-        }
-        onDevErrorOperation: {
-            projectPanel.devicePanel.messageOperationError.message = message
-            projectPanel.devicePanel.messageOperationError.open()
-        }
+
+//                            emit devUpdateWriteTarTableExecuted(resWrite);
+
+//        if(pService->readTableAllDeviceIsReady()) {
+//            emit devUpdateReadTarTable(pService->getDeviceCount());
+
+//        }
+
+//        onDevUpdateWriteSettingExecuted: {
+//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageWriteSettingsOk.open()
+//        }
+//        onDevUpdateReadSettingExecuted: {
+//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readSettings(devNameId, key, settings)
+//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadSettingsOk.open()
+//        }
+//        onDevUpdateReadSettingWithoutRequest: {
+//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readSettings(devNameId, key, settings)
+//        }
+//        onDevUpdateReadErrorsExecuted: {
+//        emit devUpdateReadErrorsExecuted(pDevFactory->getDeviceName(indexDev),
+//                                         pDevFactory->getDeviceErrrors(indexDev));
+//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readErrors(devNameId, errors)
+//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadErrorsOk.open()
+//        }
+//        onDevUpdatePasswordIncorrect: {
+//            projectPanel.devicePanel.devicePropertyPanel.devShowPasswordIncorrect(devType, devNameId)
+//        }
+//        onDevUpdateReadTarTable: {
+//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readTarTable(devCount)
+//        }
+//        onDevUpdateWriteTarTableExecuted: {
+//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadTarTableOk.message = result
+//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadTarTableOk.open()
+//        }
+//        onDevErrorOperation: {
+//            projectPanel.devicePanel.messageOperationError.message = message
+//            projectPanel.devicePanel.messageOperationError.open()
+//        }
+
     }
 
     Rectangle {

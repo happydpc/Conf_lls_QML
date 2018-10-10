@@ -31,17 +31,6 @@
         <file>qml/DevPropertyNozzle_v_0_00.qml</file>
     </qresource>
     <qresource prefix="/new/icons">
-        <file>images/icon/normal.png</file>
-        <file>images/icon/no_normal.png</file>
-        <file>images/icon/4149.png</file>
-        <file>images/icon/4372.png</file>
-        <file>images/icon/cables_no_selected.png</file>
-        <file>images/icon/cables_selected.png</file>
-        <file>images/icon/battery-level.png</file>
-        <file>images/icon/calibration.png</file>
-        <file>images/icon/tunes-connect.png</file>
-        <file>images/icon/list.png</file>
-        <file>images/icon/server.png</file>
         <file>images/logo/ico.png</file>
         <file>images/logo/icon_gls.ico</file>
         <file>images/logo/icon_prg.ico</file>

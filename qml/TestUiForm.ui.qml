@@ -58,9 +58,9 @@ Rectangle {
     //        // give settings without request to device (copy allready readed)
     //        viewController.getCurrentDevSettingsWithoutRequest()
     //        }
-    //        function setUpdateCurrentValues(data) {
+    //        function setUpdatePeriodicValues(data) {
     //        devPropertyProgressTmk24.isReady = true
-    //        var values = viewController.getCurrentDevOtherData()
+    //        var values = viewController.getCurrentDevPeriodicData()
     //        if(values.length >0) {
     //            //levelValue.text = values[0]
     //            levelProgress.value = values[1]

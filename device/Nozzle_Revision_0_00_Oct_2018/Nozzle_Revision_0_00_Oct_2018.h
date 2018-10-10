@@ -43,7 +43,9 @@ private slots:
     void setDefaultValues();
 
 private:
-    Nozzle_Revision_0_00_Oct_2018_Data::S_lls_data lls_data;
+    Nozzle_Revision_0_00_Oct_2018_Data::S_dev_data dev_data;
+    QString serialNumber;
+    QString versionFirmware;
     QList<int> *chartData;
     QString uniqIdentId;
 };

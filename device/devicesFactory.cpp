@@ -354,7 +354,9 @@ void DevicesFactory::deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEven
         // удаляем устройство
         removeDeviceByIndex(findDeviceIndex(devUniqueId));
         break;
-
+    case DeviceAbstract::Type_DeviceEvent_LogMessage:
+        emit deviceReadyLog(findDeviceIndex(devUniqueId), customData);
+        break;
     case DeviceAbstract::Type_DeviceEvent_ExectCustomCommand:
         emit deviceReadyCustomCommand(findDeviceIndex(devUniqueId), operationResult, customData, commandData);
         break;

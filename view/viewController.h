@@ -23,7 +23,7 @@ public:
     Q_INVOKABLE bool addDeviceToConnection(QString devTypeName, QString idNum, QString password);
 
     Q_INVOKABLE QList<int> getCurrentDevChart();
-    Q_INVOKABLE QList<QString> getCurrentDevOtherData();
+    Q_INVOKABLE QList<QString> getCurrentDevPeriodicData();
 
     Q_INVOKABLE QString getCurrentInterfaceNameToSerial();
 
@@ -104,25 +104,15 @@ signals:
     void devConnected(QString typeDev);
     void devDisconnected(QString typeDev);
 
-    void devReadyProperties(QStringList data);
-    void devReadyOtherData(QStringList data);
-
+    void devReadyProperties(QString typeDev, QStringList data);
+    void devReadyPeriodicData(QString typeDev, QStringList data);
     void devErrorOperation(QString message);
 
-    void devUpdatePasswordIncorrect(QString devType, QString devNameId);
     void devWrongTypeIncorrect(QString typeDev, QString devNameId);
-
-    void devUpdateReadSettingExecuted(QString devNameId, QStringList key, QStringList settings);
-    void devUpdateReadSettingWithoutRequest(QString devNameId, QStringList key, QStringList settings);
-    void devUpdateReadErrorsExecuted(QString devNameId, QStringList errors);
-    void devUpdateWriteSettingExecuted(QString devNameId);
-    void devUpdateWriteTarTableExecuted(QStringList result);
-    void devUpdateWriteScaleMeasureExecuted(QString devNameId);
-
-    void devUpdateReadTarTable(int devCount);
-
+    void devShowMessage(QString typeDev, QString messageHeader, QStringList messageList);
     void devUpdateLogMessage(int codeMessage, QString message);
-
+    void devUpdateLogDeviceMessage(QString typeDev, QString message);
+    void devCustomCommandExecuted(QString typeDev, QStringList args);
     void devUpdateTree(QStringList devNames, QList<int>status);
 
 public slots:
@@ -139,6 +129,7 @@ private slots:
     void interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateType type);
     void deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, int index);
     void deviceReadyCustomCommand(int index, QString message, QStringList customData, CommandController::sCommandData commmandData);
+    void deviceLogMessage(int indexDev, QStringList message);
 
     bool isCurrentDevice(QString uniqNameId);
 

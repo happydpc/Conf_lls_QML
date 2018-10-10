@@ -13,12 +13,6 @@ import QtGraphicalEffects 1.0
 Rectangle {
     anchors.fill: parent
 
-    property alias messageMinMaxWriteOk: messageMinMaxWriteOk
-    property alias messageReadSettingsOk: messageReadSettingsOk
-    property alias messageWriteSettingsOk: messageWriteSettingsOk
-    property alias messageReadErrorsOk: messageReadErrorsOk
-    property alias messageReadTarTableOk: messageReadTarTableOk
-
     property bool isNoiseDetected: false
 
     function setNoReady() {
@@ -28,6 +22,13 @@ Rectangle {
     function setReady() {
         devPropertyProgressTmk24.isReady = true
     }
+
+    function devShowMessage(messageHeader, message) {
+        messageDialog.headerTitile = messageHeader
+        messageDialog.message = message
+        messageDialog.open()
+    }
+
     function setResetState() {
         tabProperty.setCurrentIndex(0)
         stackSubProperty.setCurrentIndex(0)
@@ -56,9 +57,9 @@ Rectangle {
         // give settings without request to device (copy allready readed)
         viewController.getCurrentDevSettingsWithoutRequest()
     }
-    function setUpdateCurrentValues(data) {
+    function setUpdatePeriodicValues(data) {
         devPropertyProgressTmk24.isReady = true
-        var values = viewController.getCurrentDevOtherData()
+        var values = viewController.getCurrentDevPeriodicData()
         if(values.length >0) {
             //levelValue.text = values[0]
             levelProgress.value = values[1]
@@ -1821,10 +1822,30 @@ Rectangle {
                                             anchors.topMargin: 10
                                             anchors.left: parent.left
                                             anchors.leftMargin: 15
+
                                             onClicked: {
                                                 dialogLevelSetFull.open()
                                             }
-                                            enabled: devPropertyProgressTmk24.isReady
+                                            Dialog {
+                                                id: dialogLevelSetFull
+                                                visible: false
+                                                title: "Смена уровня Min-Max"
+                                                standardButtons: StandardButton.Close | StandardButton.Apply
+                                                Rectangle {
+                                                    color: "transparent"
+                                                    implicitWidth: 250
+                                                    implicitHeight: 100
+                                                    Text {
+                                                        text: "Присвоить уровень \"Максимум\""
+                                                        color: "black"
+                                                        anchors.centerIn: parent
+                                                    }
+                                                }
+                                                onApply: {
+                                                    viewController.setCurrentDevLevelAsFull()
+                                                    close()
+                                                }
+                                            }
                                         }
                                         Button {
                                             id: buttonEdit
@@ -3229,147 +3250,30 @@ Rectangle {
             close()
         }
     }
+
     Dialog {
-        id: dialogLevelSetFull
+        id: messageDialog
         visible: false
-        title: "Смена уровня Min-Max"
-        standardButtons: StandardButton.Close | StandardButton.Apply
-        Rectangle {
-            color: "transparent"
-            implicitWidth: 250
-            implicitHeight: 100
-            Text {
-                text: "Присвоить уровень \"Максимум\""
-                color: "black"
-                anchors.centerIn: parent
-            }
-        }
-        onApply: {
-            viewController.setCurrentDevLevelAsFull()
-            close()
-        }
-    }
-    Dialog {
-        id: messageMinMaxWriteOk
-        visible: false
-        title: "Задание границ измерения"
-        standardButtons: StandardButton.Apply
+        property string headerTitile: "undefine"
+        property string message: "undefine"
+        title: headerTitile
+        standardButtons: StandardButton.Accepted
         width: 500
         height: 150
         Rectangle {
             color: "transparent"
             anchors.fill: parent
             Text {
-                text: qsTr("Задание границы измерения успешно выполнено")
+                text: messageDialog.message
                 color: "black"
                 anchors.centerIn: parent
             }
         }
-        onApply: {
+        onAccepted: {
             close()
         }
     }
-    Dialog {
-        id: messageReadSettingsOk
-        visible: false
-        title: "Чтение настроек"
-        standardButtons: StandardButton.Apply
-        width: 500
-        height: 150
-        Rectangle {
-            color: "transparent"
-            anchors.fill: parent
-            Text {
-                text: qsTr("Чтение настроек успешно выполнено")
-                color: "black"
-                anchors.centerIn: parent
-            }
-        }
-        onApply: {
-            close()
-        }
-    }
-    Dialog {
-        id: messageWriteSettingsOk
-        visible: false
-        title: "Запись настроек"
-        standardButtons: StandardButton.Apply
-        width: 500
-        height: 150
-        Rectangle {
-            color: "transparent"
-            anchors.fill: parent
-            Text {
-                text: qsTr("Запись настроек успешно выполнена")
-                color: "black"
-                anchors.centerIn: parent
-            }
-        }
-        onApply: {
-            close()
-        }
-    }
-    Dialog {
-        id: messageReadErrorsOk
-        visible: false
-        title: "Чтение ошибок"
-        standardButtons: StandardButton.Apply
-        width: 500
-        height: 150
-        Rectangle {
-            color: "transparent"
-            anchors.fill: parent
-            Text {
-                text: qsTr("Ошибки считаны успешно")
-                color: "black"
-                anchors.centerIn: parent
-            }
-        }
-        onApply: {
-            close()
-        }
-    }
-    Dialog {
-        id: messageReadTarTableOk
-        property string message: ""
-        visible: false
-        title: "Запись таблицы"
-        standardButtons: StandardButton.Apply
-        width: 500
-        height: 150
-        Rectangle {
-            color: "transparent"
-            anchors.fill: parent
-            Text {
-                text: qsTr("Результат:\n" + messageReadTarTableOk.message)
-                color: "black"
-                anchors.centerIn: parent
-            }
-        }
-        onApply: {
-            close()
-        }
-    }
-    Dialog {
-        id: messageReadTarTableEmpty
-        visible: false
-        title: "Чтение таблицы"
-        standardButtons: StandardButton.Apply
-        width: 500
-        height: 150
-        Rectangle {
-            color: "transparent"
-            anchors.fill: parent
-            Text {
-                text: qsTr("Для этого/этих устройств нет данных о таблице\nВозможно ее нет\nТогда ее требуется создать!")
-                color: "black"
-                anchors.centerIn: parent
-            }
-        }
-        onApply: {
-            close()
-        }
-    }
+
     Timer {
         id: timerAffterRefrashTarTable
         interval: 100

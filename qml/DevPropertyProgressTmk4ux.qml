@@ -20,9 +20,9 @@ Rectangle {
         versionFirmwareText.text = listProperty[4]
     }
 
-    function setUpdateCurrentValues(data) {
+    function setUpdatePeriodicValues(data) {
         devPropertyProgressTmk4ux.isReady = true
-        var values = viewController.getCurrentDevOtherData()
+        var values = viewController.getCurrentDevPeriodicData()
         if(values.length >0) {
             levelValue.text = values[0]
             levelProgress.value = values[1]

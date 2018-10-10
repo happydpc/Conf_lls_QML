@@ -146,6 +146,7 @@ public:
         sValue accelConfDelta;
 
         sValueText networkParentIp;
+        sValue rssi;
         sValue networkState;
 
         sValueText networkPassword;
@@ -159,7 +160,7 @@ public:
                 bool isValid;
             }get;
         }settings;
-    }S_lls_data;
+    }S_dev_data;
 };
 
 #endif // Nozzle_Revision_0_00_Oct_2018_Data_H
