@@ -53,7 +53,7 @@ public:
 typedef struct {
     uint32_t versionProtocol;
     uint32_t deviceIdent;
-    eConsoleCommandType commandType;
+    uint8_t commandType; // eConsoleCommandType - warning size 4 bytes!
     struct {
         char data[128];
     }data;
@@ -63,7 +63,7 @@ typedef struct {
 typedef struct{
     uint32_t versionProtocol;
     uint32_t deviceIdent;
-    eConsoleCommandType commandType;
+    uint8_t commandType; // eConsoleCommandType - warning size enum 4 bytes!
     struct {
         char data[128];
     }data;
@@ -105,8 +105,8 @@ typedef struct{
     }sAccelConfig;
 
     typedef struct {
-        uint8_t data[64];
-    }sPaswordConfig;
+        char password[64];
+    }sPasswordConfig;
 #pragma pack()
 
 #pragma pack(1)
@@ -114,8 +114,8 @@ typedef struct{
     typedef struct {
         sCardConfig cardConfig;
         sNetworkConfig netConfig;
+        sPasswordConfig passConfig;
         sAccelConfig accelConfig;
-        sPaswordConfig passConfig;
         sBatteryConfig batConfig;
         uint16_t magic_word;
     }Nozzle_config_t;

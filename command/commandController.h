@@ -23,7 +23,7 @@ public:
         // buffer for transmit settings, firmware and other data
         struct {
             QList<QString>key;
-            QList<double>value;
+            QList<QString>value;
         }args;
 
         QString operationHeader;

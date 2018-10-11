@@ -231,51 +231,51 @@ bool Progress_tmk24::makeDataToCommand(CommandController::sCommandData &commandD
                     memcpy(&tSettings, &lls_data.settings.get.value, sizeof(tSettings));
                     for(int i=0; i<commandData.args.key.size(); i++) {
                         if(commandData.args.key.at(i) == "k1_value") {
-                            tSettings.k1 = commandData.args.value.at(i);
+                            tSettings.k1 = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "k2_value") {
-                            tSettings.k2 = commandData.args.value.at(i);
+                            tSettings.k2 = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "typeTempCompensation_value") {
-                            tSettings.thermoCompensationType = commandData.args.value.at(i);
+                            tSettings.thermoCompensationType = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "netAddress_value") {
-                            tSettings.netAddress = commandData.args.value.at(i);
+                            tSettings.netAddress = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "periodicSendType_value") {
-                            tSettings.periodicSendType = commandData.args.value.at(i);
+                            tSettings.periodicSendType = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "periodicSendTime_value") {
-                            tSettings.periodicSendTime = commandData.args.value.at(i);
+                            tSettings.periodicSendTime = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "typeOutMessage_value") {
-                            tSettings.outputValue = commandData.args.value.at(i);
+                            tSettings.outputValue = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "typeInterpolation_value") {
-                            tSettings.interpolationType = commandData.args.value.at(i);
+                            tSettings.interpolationType = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "typeFiltration_value") {
-                            tSettings.filterType = commandData.args.value.at(i);
+                            tSettings.filterType = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "filterLenghtMediana_value") {
-                            tSettings.medianLength = commandData.args.value.at(i);
+                            tSettings.medianLength = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "filterAvarageValueSec_value") {
-                            tSettings.avarageLength = commandData.args.value.at(i); //
+                            tSettings.avarageLength = commandData.args.value.at(i).toInt(); //
                         } else if(commandData.args.key.at(i) == "filterValueQ_value") {
-                            tSettings.q = commandData.args.value.at(i);
+                            tSettings.q = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "filterValueR_value") {
-                            tSettings.r = commandData.args.value.at(i);
+                            tSettings.r = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "minLevelValue_value") {
-                            tSettings.minLevel = commandData.args.value.at(i);
+                            tSettings.minLevel = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "maxLevelValue_value") {
-                            tSettings.maxLevel = commandData.args.value.at(i);
+                            tSettings.maxLevel = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "masterSlaveModes_value") {
-                            tSettings.masterMode = commandData.args.value.at(i);
+                            tSettings.masterMode = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "baudrateRs232Values_value") {
-                            tSettings.rs232Speed = commandData.args.value.at(i);
+                            tSettings.rs232Speed = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "baudrateRs485Values_value") {
-                            tSettings.rs485Speed = commandData.args.value.at(i);
+                            tSettings.rs485Speed = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "masterSlaveFullCountes_value") {
-                            tSettings.slaveCount = commandData.args.value.at(i);
+                            tSettings.slaveCount = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "masterSlaveSlaveId_1_value") {
-                            tSettings.slaveAddr[0] = commandData.args.value.at(i);
+                            tSettings.slaveAddr[0] = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "masterSlaveSlaveId_2_value") {
-                            tSettings.slaveAddr[1] = commandData.args.value.at(i);
+                            tSettings.slaveAddr[1] = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "masterSlaveSlaveId_3_value") {
-                            tSettings.slaveAddr[2] = commandData.args.value.at(i);
+                            tSettings.slaveAddr[2] = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "masterSlaveSlaveId_4_value") {
-                            tSettings.slaveAddr[3] = commandData.args.value.at(i);
+                            tSettings.slaveAddr[3] = commandData.args.value.at(i).toInt();
                         } else {
                             qDebug() << "settings udnefined type parcing";
                         }
@@ -309,19 +309,19 @@ bool Progress_tmk24::makeDataToCommand(CommandController::sCommandData &commandD
                 commandData.commandOptionData.insert(commandData.commandOptionData.size(), passArray);
                 commandData.commandOptionData.push_back((uint8_t)commandData.args.value.size());
 
-                for(uint8_t i=0; i<(Progress_tmk24Data::TAR_TABLE_SIZE); i++) {
-                    if(i < commandData.args.value.size()) {
-                        commandData.commandOptionData.push_back((uint32_t)commandData.args.key.at(i).toUInt() & 0xFF);
-                        commandData.commandOptionData.push_back(((uint32_t)commandData.args.key.at(i).toUInt() & 0xFF00) >> 8);
-                        commandData.commandOptionData.push_back((uint32_t)commandData.args.value.at(i) & 0xFF);
-                        commandData.commandOptionData.push_back(((uint32_t)commandData.args.value.at(i) & 0xFF00) >> 8);
-                    } else {
-                        commandData.commandOptionData.push_back((char)0);
-                        commandData.commandOptionData.push_back((char)0);
-                        commandData.commandOptionData.push_back((char)0);
-                        commandData.commandOptionData.push_back((char)0);
-                    }
-                }
+//                for(uint8_t i=0; i<(Progress_tmk24Data::TAR_TABLE_SIZE); i++) {
+//                    if(i < commandData.args.value.size()) {
+//                        commandData.commandOptionData.push_back((uint32_t)commandData.args.key.at(i).toUInt() & 0xFF);
+//                        commandData.commandOptionData.push_back(((uint32_t)commandData.args.key.at(i).toUInt() & 0xFF00) >> 8);
+//                        commandData.commandOptionData.push_back((uint32_t)commandData.args.value.at(i) & 0xFF);
+//                        commandData.commandOptionData.push_back(((uint32_t)commandData.args.value.at(i) & 0xFF00) >> 8);
+//                    } else {
+//                        commandData.commandOptionData.push_back((char)0);
+//                        commandData.commandOptionData.push_back((char)0);
+//                        commandData.commandOptionData.push_back((char)0);
+//                        commandData.commandOptionData.push_back((char)0);
+//                    }
+//                }
             }
                 break;
             case Progress_tmk24Data::lls_calibrate_min:
@@ -933,7 +933,7 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
         }
         // value
         for(auto i:data.second) {
-            tcommand.args.value.push_back(i.toDouble());
+            tcommand.args.value.push_back(i);
         }
         command.push_back(tcommand);
     } else if(operation == "read current dev errors") {
@@ -951,7 +951,7 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
         }
         // value
         for(auto i:data.second) { // qstringList values
-            tcommand.args.value.push_back(i.toInt());
+            tcommand.args.value.push_back(i);
         }
         command.push_back(tcommand);
     } else if(operation == "read current dev tar table") {
@@ -978,7 +978,7 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
         }
         // value
         for(auto i:data.second) { // qstringList values
-            tcommand.args.value.push_back(i.toInt());
+            tcommand.args.value.push_back(i);
         }
         command.push_back(tcommand);
     } else {

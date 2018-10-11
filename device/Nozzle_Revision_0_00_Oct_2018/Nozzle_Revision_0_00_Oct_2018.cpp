@@ -177,15 +177,63 @@ bool Nozzle_Revision_0_00_Oct_2018::makeDataToCommand(CommandController::sComman
             res = true;
         }
             break;
-        case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setAccelConfig:
-//            accelConfX
-//            accelConfDelta
+        case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setAccelConfig: {
+            typedef struct {
+                int thresholdX;
+                int thresholdY;
+                int thresholdZ;
+                int delta;
+            }sOutBatBuff;
+            sOutBatBuff tbuf;
+            for(int keyCount=0; keyCount<commandData.args.key.size(); keyCount++) {
+                if(commandData.args.key[keyCount] == "accelConfX") {
+                    tbuf.thresholdX = (int)commandData.args.value[keyCount].toInt();
+                }
+                if(commandData.args.key[keyCount] == "accelConfY") {
+                    tbuf.thresholdY = (int)commandData.args.value[keyCount].toInt();
+                }
+                if(commandData.args.key[keyCount] == "accelConfZ") {
+                    tbuf.thresholdZ = (int)commandData.args.value[keyCount].toInt();
+                }
+                if(commandData.args.key[keyCount] == "accelConfDelta") {
+                    tbuf.delta  = (int)commandData.args.value[keyCount].toInt();
+                }
+            }
+            memcpy(tCommand.data.data, (uint8_t*)&tbuf, sizeof(tbuf));
             commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
             res = true;
+        }
             break;
-        case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setNetworkConfig:
+        case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setPassword: {
+            typedef struct {
+                char password[64];
+            }sOutBatBuff;
+            sOutBatBuff tbuf;
+            for(int keyCount=0; keyCount<commandData.args.key.size(); keyCount++) {
+                if(commandData.args.key[keyCount] == "password") {
+                    strcpy(tbuf.password, commandData.args.value[keyCount].toUtf8());
+                }
+            }
+            memcpy(tCommand.data.data, (uint8_t*)&tbuf, sizeof(tbuf));
             commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
             res = true;
+        }
+            break;
+
+        case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setNetworkConfig: {
+            typedef struct {
+                char networkPassword[64];
+            }sOutBatBuff;
+            sOutBatBuff tbuf;
+            for(int keyCount=0; keyCount<commandData.args.key.size(); keyCount++) {
+                if(commandData.args.key[keyCount] == "networkPassword") {
+                    strcpy(tbuf.networkPassword, commandData.args.value[keyCount].toUtf8());
+                }
+            }
+            memcpy(tCommand.data.data, (uint8_t*)&tbuf, sizeof(tbuf));
+            commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
+            res = true;
+        }
             break;
         default : break;
         }
@@ -199,17 +247,19 @@ bool Nozzle_Revision_0_00_Oct_2018::placeDataReplyToCommand(QByteArray &commandA
     bool res = false;
     int indexStartLog = 0;
     int indexEndLog = 0;
-    Crc crc;
     if(!commandArrayReplyData.isEmpty()) {
         qDebug() << "placeDataReplyToCommand inputBuf =" << commandArrayReplyData.data();
-
+        if(inputBuffer.size() > CRITICAL_SIZE_BUF) {
+            inputBuffer.clear();
+        }
+        inputBuffer += commandArrayReplyData;
         // logs
-        std::string log(commandArrayReplyData.data());
+        std::string log(inputBuffer.data());
         while(1) {
             indexStartLog = log.find(Nozzle_Revision_0_00_Oct_2018_Data::logHeaderBegind);
             indexEndLog = log.find(Nozzle_Revision_0_00_Oct_2018_Data::logHeaderEnd);
             if((indexStartLog != log.npos) && (indexEndLog != log.npos)) {
-                char tlog[128] = {0};
+                char tlog[256] = {0};
                 log.copy(tlog, indexEndLog - indexStartLog - strlen(Nozzle_Revision_0_00_Oct_2018_Data::logHeaderBegind), indexStartLog + strlen(Nozzle_Revision_0_00_Oct_2018_Data::logHeaderBegind));
                 log.erase(log.begin(), log.begin() + indexEndLog + strlen(Nozzle_Revision_0_00_Oct_2018_Data::logHeaderEnd));
                 if(strlen(tlog)>0) {
@@ -225,26 +275,26 @@ bool Nozzle_Revision_0_00_Oct_2018::placeDataReplyToCommand(QByteArray &commandA
         // commands
         indexEndLog = 0;
         indexStartLog = 0;
-        for(int it=0; it<commandArrayReplyData.size(); it++) {
-            if(commandArrayReplyData.at(it) == Nozzle_Revision_0_00_Oct_2018_Data::logCommandBegind[0]) {
-                if(it+1 < commandArrayReplyData.size()) {
-                    if(commandArrayReplyData.at(it+1) == Nozzle_Revision_0_00_Oct_2018_Data::logCommandBegind[1]) {
+        for(int it=0; it<inputBuffer.size(); it++) {
+            if(inputBuffer.at(it) == Nozzle_Revision_0_00_Oct_2018_Data::logCommandBegind[0]) {
+                if(it+1 < inputBuffer.size()) {
+                    if(inputBuffer.at(it+1) == Nozzle_Revision_0_00_Oct_2018_Data::logCommandBegind[1]) {
                         indexStartLog = it;
                     }
                 }
             }
-            if(commandArrayReplyData.at(it) == Nozzle_Revision_0_00_Oct_2018_Data::logCommandEnd[0]) {
-                if(it+1 < commandArrayReplyData.size()) {
-                    if(commandArrayReplyData.at(it+1) == Nozzle_Revision_0_00_Oct_2018_Data::logCommandEnd[1]) {
+            if(inputBuffer.at(it) == Nozzle_Revision_0_00_Oct_2018_Data::logCommandEnd[0]) {
+                if(it+1 < inputBuffer.size()) {
+                    if(inputBuffer.at(it+1) == Nozzle_Revision_0_00_Oct_2018_Data::logCommandEnd[1]) {
                         indexEndLog = it;
                     }
                 }
             }
         }
-        if((indexStartLog < commandArrayReplyData.size()) && (indexEndLog != 0)) {
+        if((indexStartLog < inputBuffer.size()) && (indexEndLog != 0)) {
             Nozzle_Revision_0_00_Oct_2018_Data::sConsoleReplyBuff *tReplyCommand;
             int size = indexEndLog - indexStartLog - strlen(Nozzle_Revision_0_00_Oct_2018_Data::logCommandEnd);
-            QByteArray logArray = commandArrayReplyData.mid(indexStartLog + strlen(Nozzle_Revision_0_00_Oct_2018_Data::logCommandBegind), size);
+            QByteArray logArray = inputBuffer.mid(indexStartLog + strlen(Nozzle_Revision_0_00_Oct_2018_Data::logCommandBegind), size);
             tReplyCommand = (Nozzle_Revision_0_00_Oct_2018_Data::sConsoleReplyBuff*)(logArray.data());
             qDebug() << "placeDataReplyToCommand - logCommand = "
                      << QString((tReplyCommand->deviceIdent == Nozzle_Revision_0_00_Oct_2018_Data::CONSOLE_DEVICE_IDENT
@@ -254,6 +304,8 @@ bool Nozzle_Revision_0_00_Oct_2018::placeDataReplyToCommand(QByteArray &commandA
                     && tReplyCommand->versionProtocol == Nozzle_Revision_0_00_Oct_2018_Data::CONSOLE_VERSION_PROTOCOL
                     && tReplyCommand->magic_word == Nozzle_Revision_0_00_Oct_2018_Data::CONSOLE_MAGIC_WORD) {
 
+                // -- commandReqData -> то что отправили и ожидаем принять
+                // -- но это поток и очередь, ответы на команды приходят с задержкой
                 parseCommandReply(*tReplyCommand, commandReqData);
 
                 if(getState() == STATE_DISCONNECTED) {
@@ -409,6 +461,10 @@ void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(Nozzle_Revision_0_00_Oct_2
         emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
                                     command.commandType, "Normal", QStringList(""), commandReqData);
         break;
+    case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setPassword:
+        emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
+                                    command.commandType, "Normal", QStringList(""), commandReqData);
+        break;
     default : break;
     }
 }
@@ -486,7 +542,20 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
         }
         // value
         for(auto i:data.second) {
-            tcommand.args.value.push_back(i.toDouble());
+            tcommand.args.value.push_back(i);
+        }
+        command.push_back(tcommand);
+    } else if(operation == "set current dev password") {
+        tcommand.deviceIdent = getUniqIdent();
+        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setPassword;
+        // key
+        for(auto i:data.first) {
+            tcommand.args.key.push_back(i);
+        }
+        // value
+        for(auto i:data.second) {
+            tcommand.args.value.push_back(i);
         }
         command.push_back(tcommand);
     } else if(operation == "set current dev settings net config") {
@@ -499,7 +568,7 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
         }
         // value
         for(auto i:data.second) {
-            tcommand.args.value.push_back(i.toDouble());
+            tcommand.args.value.push_back(i);
         }
         command.push_back(tcommand);
     } else {
@@ -516,9 +585,9 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
     listCommand.push_back(command);
     command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getBatteryData;
     listCommand.push_back(command);
-    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkData;
-    listCommand.push_back(command);
     command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getCardData;
+    listCommand.push_back(command);
+    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkData;
     listCommand.push_back(command);
     return listCommand;
 }

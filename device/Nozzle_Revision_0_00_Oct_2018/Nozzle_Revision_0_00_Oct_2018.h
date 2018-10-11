@@ -13,6 +13,7 @@ public:
     Nozzle_Revision_0_00_Oct_2018(QString nameDevice);
     ~Nozzle_Revision_0_00_Oct_2018();
 
+    const int CRITICAL_SIZE_BUF = 24000;
     static constexpr char* name = "Nozzle Revision 0.00 Oct 2018";
 
     QString getDevTypeName() override;
@@ -47,6 +48,7 @@ private:
     QString serialNumber;
     QString versionFirmware;
     QList<int> *chartData;
+    QByteArray inputBuffer;
     QString uniqIdentId;
 };
 
