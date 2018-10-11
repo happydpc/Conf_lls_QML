@@ -34,63 +34,107 @@ Rectangle {
         writeSettingsButton_1.enabled = false
         writeSettingsButton_2.enabled = false
     }
-    function setDevProperty(listProperty) {
-        typeDeviceText.text = listProperty[0]
-        snText.text = listProperty[2]
-        versionFirmwareText.text = listProperty[3]
-        viewController.getCurrentDevSettingsWithoutRequest()
+    function setDevProperty() {
+        var keys = viewController.getCurrentDevPropertyKey()
+        var values = viewController.getCurrentDevPropertyValue()
+        for(var i=0; i<keys.length; i++) {
+            if(keys[i].toLowerCase() === "devtypename"){
+                typeDeviceText.text = values[i]
+            }
+            if(keys[i].toLowerCase() === "serialnum"){
+                snText.text = values[i]
+            }
+            if(keys[i].toLowerCase() === "firmware"){
+                versionFirmwareText.text = values[i]
+            }
+        }
     }
 
-    function setCustomCommandExecuted(keys, args) {
+    function setCustomCommandExecuted(keys, args, ackMessageIsVisible) {
+        var i = 0;
         switch(keys[0].toLowerCase()) {
         case "getacceldata" :
-            for(var i=0; i<settings.length; i++) {
-                if(key[i] === "k1_value") {
-                    accelXProgressBar.value = args[i]
-                } else if(key[i] === "k2_value") {
-                    accelYProgressBar.value = args[i]
-                } else if(key[i] === "typeTempCompensation_value") {
-                    accelZProgressBar.value = args[i]
+            for(i=0; i<keys.length; i++) {
+                if(keys[i].toLowerCase() === "accelx"){
+                    accelXProgressBar.value = parseFloat(args[i])
+                }
+                if(keys[i].toLowerCase() === "accely"){
+                    accelYProgressBar.value = parseFloat(args[i])
+                }
+                if(keys[i].toLowerCase() === "accelz"){
+                    accelZProgressBar.value = parseFloat(args[i])
                 }
             }
             break;
         case "getnetworkdata":
-            networkParentIp.text = args[5]
-            res.second.push_back(dev_data.accelConfZ.isValid == true ? QString::number(dev_data.accelConfZ.value.value_i) : "NA");
+            for(i=0; i<keys.length; i++) {
+                if(keys[i].toLowerCase() === "networkparentip"){
+                    networkParentIp.text = args[i]
+                }
+            }
             break;
+            // it last command to read the settings
         case "getnetworkconfig":
-            res.first.push_back("networkPassword");
-            accelCoefX.text = args[1]
-            accelCoefY.text = args[2]
-            accelCoefZ.text = args[3]
-            accelDelta.text = args[4]
+            for(i=0; i<keys.length; i++) {
+                if(keys[i].toLowerCase() === "networkpassword"){
+                    networkPassword.text = args[i]
+                }
+            }
+            break;
+        case "getaccelconfig":
+            for(i=0; i<keys.length; i++) {
+                if(keys[i].toLowerCase() === "accelconfx") {
+                    accelCoefX.text = args[i]
+                }
+                if(keys[i].toLowerCase() === "accelconfy") {
+                    accelCoefY.text = args[i]
+                }
+                if(keys[i].toLowerCase() === "accelconfz") {
+                    accelCoefZ.text = args[i]
+                }
+                if(keys[i].toLowerCase() === "accelconfdelta") {
+                    accelCoeDeltaX.text = args[i]
+                }
+            }
+            if(ackMessageIsVisible) {
+                dialogInfoMessage.message = "Настройки успешно считаны"
+                dialogInfoMessage.title = "Настройки"
+                dialogInfoMessage.open()
+            }
             break;
         case "getcardproperty":
-            cardNumber.text = args[3]
+            for(i=0; i<keys.length; i++) {
+                if(keys[i].toLowerCase() === "cardnumber"){
+                    cardNumber.text = args[i]
+                }
+            }
             break;
         case "getbatteryproperty":
-            batteryVoltage.value = args[8]
-            batteryResourseAvailable.value = parseInt(args[12])
+            for(i=0; i<keys.length; i++) {
+                if(keys[i].toLowerCase() === "powervoltage"){
+                    batteryVoltage.value = parseFloat(args[i])
+                }
+                if(keys[i].toLowerCase() === "powercurrentresouresavailable"){
+                    batteryResourseAvailable.value = parseFloat(args[i])
+                }
+            }
             break;
-        case "setnetworkpassword": break;
+        case "setnetworkpassword":
         case "setaccelconfig":
-            res.first.push_back("accelConfX");
-            res.second.push_back(dev_data.accelConfX.isValid == true ? QString::number(dev_data.accelConfX.value.value_i) : "NA");
-            res.first.push_back("accelConfY");
-            res.second.push_back(dev_data.accelConfY.isValid == true ? QString::number(dev_data.accelConfY.value.value_i) : "NA");
-            res.first.push_back("accelConfZ");
-            break;
-        case "setaccelusecurrentvaluesasnullpoint": break;
+        case "setaccelusecurrentvaluesasnullpoint":
         case "setnetworkconfig":
-            networkPassword.text = args[14]
+            if(ackMessageIsVisible) {
+                dialogInfoMessage.message = "Настройки успешно записаны"
+                dialogInfoMessage.title = "Настройки"
+                dialogInfoMessage.open()
+            }
             break
         default: break;
         }
     }
 
-    function setUpdatePeriodicValues(data) {
+    function setUpdatePeriodicValues() {
         devProperty.isReady = true
-        var values = viewController.getCurrentDevPeriodicData()
         var list = viewController.getCurrentDevChart()
         currentChartLines.clear();
         chartCurrentValue.graphLength = list.length
@@ -104,7 +148,6 @@ Rectangle {
         for(i=0; i<list.length; i++) {
             currentChartLines.append(i, list[i]);
         }
-        logListView.positionViewAtEnd()
     }
 
     function addLogMessage(codeMessage, message) {
@@ -118,12 +161,25 @@ Rectangle {
         devMessageLog.append(message)
     }
 
-    function writeSettings() {
-        var settings = [];
-        var key = [];
-        key.push("k1_value")
-        settings.push(k1.text)
-        key.push("k2_value")
+    function writeAccelConfig() {
+        var keys = [];
+        var values = [];
+        keys.push("accelConfX")
+        values.push(accelCoefX.text)
+        keys.push("accelConfY")
+        values.push(accelCoefY.text)
+        keys.push("accelConfZ")
+        values.push(accelCoefZ.text)
+        keys.push("accelConfDelta")
+        values.push(accelCoeDeltaX.text)
+        viewController.setCurrentDevCustomCommandWithoutAckDialog("set current dev settings accel config", keys, values)
+    }
+    function writeNetworkConfig() {
+        var keys = [];
+        var values = [];
+        keys.push("networkPassword")
+        values.push(networkPassword.text)
+        viewController.setCurrentDevCustomCommandWithoutAckDialog("set current dev settings net config", keys, values)
     }
 
     Rectangle {
@@ -192,6 +248,11 @@ Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
+            onCurrentIndexChanged: {
+                if(devStackParam.currentItem == settingsItem) {
+                    viewController.getCurrentDevCustomCommand("get current dev settings witout dialog")
+                }
+            }
 
             Item {
                 ScrollView {
@@ -607,6 +668,7 @@ Rectangle {
             }
 
             Item {
+                id:settingsItem
                 clip: true
                 Rectangle {
                     id: subBarup
@@ -654,8 +716,14 @@ Rectangle {
                     anchors.right: parent.right
                     clip: true
                     anchors.top: subBarup.bottom
+                    onCurrentIndexChanged: {
+                        if(stackSubProperty.currentItem == settingsStackData) {
+                            viewController.getCurrentDevCustomCommand("get current dev settings witout dialog")
+                        }
+                    }
 
                     Item {
+                        id: currentStackData
                         ScrollView {
                             Column {
                                 spacing: 10
@@ -775,7 +843,7 @@ Rectangle {
                                         layer.enabled: true
                                         enabled: devProperty.isReady
                                         onClicked: {
-                                            viewController.getCurrentDevSettings()
+                                            viewController.getCurrentDevCustomCommand("get current dev settings")
                                         }
                                     }
 
@@ -799,7 +867,7 @@ Rectangle {
                                         layer.enabled: true
                                         enabled: devProperty.isReady
                                         onClicked: {
-                                            writeSettings()
+                                            writeAccelConfig()
                                         }
                                     }
                                 }
@@ -808,6 +876,7 @@ Rectangle {
                     }
 
                     Item {
+                        id: settingsStackData
                         ScrollView {
                             Column {
                                 spacing: 10
@@ -875,7 +944,7 @@ Rectangle {
                                         layer.enabled: true
                                         enabled: devProperty.isReady
                                         onClicked: {
-                                            viewController.getCurrentDevSettings()
+                                            viewController.getCurrentDevCustomCommand("get current dev settings")
                                         }
                                     }
 
@@ -899,7 +968,7 @@ Rectangle {
                                         layer.enabled: true
                                         enabled: devProperty.isReady
                                         onClicked: {
-                                            writeSettings()
+                                            writeNetworkConfig()
                                         }
                                     }
                                 }
@@ -910,6 +979,27 @@ Rectangle {
                     }
                 }
             }
+        }
+    }
+
+    Dialog {
+        id: dialogInfoMessage
+        visible: false
+        title: ""
+        property string message: ""
+        standardButtons: StandardButton.Apply
+        Rectangle {
+            color: "transparent"
+            implicitWidth: 500
+            implicitHeight: 50
+            Text {
+                text: dialogInfoMessage.message
+                color: "black"
+                anchors.centerIn: parent
+            }
+        }
+        onApply: {
+            close()
         }
     }
 

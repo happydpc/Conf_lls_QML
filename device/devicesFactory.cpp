@@ -137,13 +137,13 @@ QList<int> DevicesFactory::getDeviceChartByIndex(int index) {
     return findDeviceByIndex(index)->second->getChart();
 }
 
-QList<QString> DevicesFactory::getDeviceCurrentDataByIndex(int index) {
-    if(deviceMap.empty()) {return QList<QString>();}
+QPair<QStringList,QStringList> DevicesFactory::getDeviceCurrentDataByIndex(int index) {
+    if(deviceMap.empty()) {return QPair<QStringList,QStringList>();}
     return findDeviceByIndex(index)->second->getCurrentData();
 }
 
-QStringList DevicesFactory::getDevicePropertyByIndex(int index) {
-    if(deviceMap.empty()) {return QStringList("");}
+QPair<QStringList,QStringList> DevicesFactory::getDevicePropertyByIndex(int index) {
+    if(deviceMap.empty()) {return QPair<QStringList,QStringList>();}
     return findDeviceByIndex(index)->second->getPropertyData();
 }
 
@@ -176,11 +176,6 @@ int DevicesFactory::getDeviceStatusByIndex(int index) {
         break;
     }
     return ret;
-}
-
-QStringList DevicesFactory::getDeviceProperty(int indexDev) {
-    if(deviceMap.empty()) {return QStringList("");}
-    return findDeviceByIndex(indexDev)->second->getPropertyData();
 }
 
 DeviceAbstract::E_State DevicesFactory::getDevStateByIndex(int index) {
@@ -383,8 +378,13 @@ void DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation) {
     }
 }
 
-void DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation, QPair<QStringList, QStringList> arguments) {
+void DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation, QStringList keys, QStringList values) {
     QList<CommandController::sCommandData> command;
+    QPair<QStringList,QStringList> arguments;
+    for(int i=0; i<keys.size(); i++) {
+        arguments.first.push_back(keys.at(i));
+        arguments.second.push_back(values.at(i));
+    }
     command = findDeviceByIndex(indexDev)->second->getCommandCustom(operation, arguments);
     // что требует подтверждения о выполнении (на форме)
     for(auto cIt: command) {

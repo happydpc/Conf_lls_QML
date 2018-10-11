@@ -26,7 +26,7 @@ public:
     void placeAckReplyOfWriteTableFromDevice(QString deviceIdentName, bool writeIsNormal);
     bool getAckStatusDeviceAffterWriteTable(QString deviceIdentName);
 
-    void placeCurrenDataFromDevice(QString deviceIdentName, QList<QString> currentData);
+    void placeCurrenDataFromDevice(QString deviceIdentName, QPair<QStringList,QStringList>);
     void placeCurrentChartDataFromDevice(QString deviceIdentName, QList<int> currentChartData);
 
     QStringList getCurrentDataDevice(int index);

@@ -537,50 +537,50 @@ Rectangle {
         running: true
         repeat: true
         onTriggered: {
-            var devCount = viewController.getStayedDevTarrirCount()
-            var devId = viewController.getStayedDevTarrir_DevProperty("id")
-            var colorArray = []
-            colorArray.push("#f34b4b")
-            colorArray.push("#4bd5f3")
-            colorArray.push("#f34be1")
-            colorArray.push("#4bf3c6")
-            colorArray.push("#4b4bf3")
-            colorArray.push("#be4bf3")
-            colorArray.push("#0d8741")
-            chartTarCurrentValuesMultiple.removeAllSeries();
+//            var devCount = viewController.getStayedDevTarrirCount()
+//            var devId = viewController.getStayedDevTarrir_DevProperty("id")
+//            var colorArray = []
+//            colorArray.push("#f34b4b")
+//            colorArray.push("#4bd5f3")
+//            colorArray.push("#f34be1")
+//            colorArray.push("#4bf3c6")
+//            colorArray.push("#4b4bf3")
+//            colorArray.push("#be4bf3")
+//            colorArray.push("#0d8741")
+//            chartTarCurrentValuesMultiple.removeAllSeries();
 
-            for(var devIter=0; devIter<devCount; devIter++) {
-                var res = viewController.getTarCurrentDeviceData(devIter)
-                var dataArray = tarListDevice.model.get(devIter)
-                if(dataArray !== undefined) {
-                    dataArray["valueCnt"] = res[0]
-                    dataArray["valueFuelLevel"] = res[2]
-                    tarListDevice.model.set(devIter, dataArray)
-                }
-                //-- chart
-                var chartArray = viewController.getTarCurrentDeviceChartData(devIter)
+//            for(var devIter=0; devIter<devCount; devIter++) {
+//                var res = viewController.getTarCurrentDeviceData(devIter)
+//                var dataArray = tarListDevice.model.get(devIter)
+//                if(dataArray !== undefined) {
+//                    dataArray["valueCnt"] = res[0]
+//                    dataArray["valueFuelLevel"] = res[2]
+//                    tarListDevice.model.set(devIter, dataArray)
+//                }
+//                //-- chart
+//                var chartArray = viewController.getTarCurrentDeviceChartData(devIter)
 
-                var line = chartTarCurrentValuesMultiple.createSeries(ChartView.SeriesTypeLine, "ID" + devId[devIter], currentTarChartAxisXMultiple, currentTarChartAxisYMultiple);
-                line.color = colorArray[devIter]
+//                var line = chartTarCurrentValuesMultiple.createSeries(ChartView.SeriesTypeLine, "ID" + devId[devIter], currentTarChartAxisXMultiple, currentTarChartAxisYMultiple);
+//                line.color = colorArray[devIter]
 
-                chartTarCurrentValuesMultiple.graphLength = chartArray.length
-                chartTarCurrentValuesMultiple.graphAmplitudeMax = 0
+//                chartTarCurrentValuesMultiple.graphLength = chartArray.length
+//                chartTarCurrentValuesMultiple.graphAmplitudeMax = 0
 
-                for(var chartIter=0; chartIter<chartArray.length; chartIter++) {
-                    if(chartTarCurrentValuesMultiple.graphAmplitudeMax < chartArray[chartIter]) {
-                        chartTarCurrentValuesMultiple.graphAmplitudeMax = chartArray[chartIter];
-                    }
-                }
+//                for(var chartIter=0; chartIter<chartArray.length; chartIter++) {
+//                    if(chartTarCurrentValuesMultiple.graphAmplitudeMax < chartArray[chartIter]) {
+//                        chartTarCurrentValuesMultiple.graphAmplitudeMax = chartArray[chartIter];
+//                    }
+//                }
 
-                currentTarChartAxisXMultiple.min = 0;
-                currentTarChartAxisXMultiple.max = chartArray.length
-                currentTarChartAxisYMultiple.min = 0;
-                currentTarChartAxisYMultiple.max = chartTarCurrentValuesMultiple.graphAmplitudeMax
+//                currentTarChartAxisXMultiple.min = 0;
+//                currentTarChartAxisXMultiple.max = chartArray.length
+//                currentTarChartAxisYMultiple.min = 0;
+//                currentTarChartAxisYMultiple.max = chartTarCurrentValuesMultiple.graphAmplitudeMax
 
-                for(chartIter=0; chartIter<chartArray.length; chartIter++) {
-                    line.append(chartIter, parseInt(chartArray[chartIter]));
-                }
-            }
+//                for(chartIter=0; chartIter<chartArray.length; chartIter++) {
+//                    line.append(chartIter, parseInt(chartArray[chartIter]));
+//                }
+//            }
         }
     }
 

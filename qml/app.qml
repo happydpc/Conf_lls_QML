@@ -10,7 +10,7 @@ import QtQml.Models 2.11
 ApplicationWindow {
     visible: true
     width: 1200
-    height: 700
+    height: 600
 //    visibility: "Maximized"
 
     title: qsTr("Конфигуратор Beta 0.2")

@@ -23,15 +23,12 @@ QList<int> Progress_tmk4UX::getChart() {
     return *chartData;
 }
 
-// TODO: is valid handler!
-QStringList Progress_tmk4UX::getPropertyData() {
-    QStringList res;
-    return res;
+QPair<QStringList,QStringList> Progress_tmk4UX::getPropertyData() {
+    return QPair<QStringList,QStringList>();
 }
 
 QPair<QStringList,QStringList> Progress_tmk4UX::getCurrentData() {
-    QPair<QStringList,QStringList> res;
-    return res;
+    return QPair<QStringList,QStringList>();
 }
 
 QStringList Progress_tmk4UX::getErrors() {

@@ -18,10 +18,10 @@ Item {
         }
         onInterfaceAndDeviceListIsEmpty: {}
         onDevReadyProperties: {
-            projectPanel.devicePanel.devicePropertyPanel.setReadyProperties(typeDev, data)
+            projectPanel.devicePanel.devicePropertyPanel.setReadyProperties(typeDev)
         }
         onDevReadyPeriodicData: {
-            projectPanel.devicePanel.devicePropertyPanel.setReadyPeriodicData(typeDev, data)
+            projectPanel.devicePanel.devicePropertyPanel.setReadyPeriodicData(typeDev)
         }
         onDevDisconnected: {
             projectPanel.devicePanel.devicePropertyPanel.setDevDisconnected(typeDev)
@@ -41,7 +41,7 @@ Item {
         }
 
         onDevCustomCommandExecuted: {
-            projectPanel.devicePanel.devicePropertyPanel.setDevCustomCommandExecuted(typeDev, keys, args)
+            projectPanel.devicePanel.devicePropertyPanel.setDevCustomCommandExecuted(typeDev, keys, args, ackMessageIsVisible)
         }
 
         onDevUpdateLogMessage: {

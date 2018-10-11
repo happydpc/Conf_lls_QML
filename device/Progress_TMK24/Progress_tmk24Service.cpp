@@ -123,12 +123,17 @@ QPair<QStringList,QStringList> Progress_tmk24Service::getTableAtDeviceToPair(QSt
     return res;
 }
 
-void Progress_tmk24Service::placeCurrenDataFromDevice(QString deviceIdentName, QList<QString> currentData) {
+// TODO: !!!!!
+void Progress_tmk24Service::placeCurrenDataFromDevice(QString deviceIdentName, QPair<QStringList,QStringList>data) {
     for(auto it: devList) {
         if(it->first.devId == deviceIdentName) {
-            if(currentData.length() >= 2) {
-                it->first.currData.fuelLevel = currentData.at(0).toUInt();
-                it->first.currData.cntValue = currentData.at(2).toUInt();
+            if(!data.first.isEmpty()) {
+                if(data.first.indexOf("fuelLevel") >= 0) {
+                    it->first.currData.fuelLevel = data.second.at(data.first.indexOf("fuelLevel")).toUInt();
+                }
+                if(data.first.indexOf("cntValue") >= 0) {
+                    it->first.currData.cntValue = data.second.at(data.first.indexOf("cntValue")).toUInt();
+                }
                 it->first.currData.liters = 0; // TODO: liters  не известны и заносятся юзером
                 it->first.currData.isValid = true;
             }
@@ -148,14 +153,14 @@ void Progress_tmk24Service::placeCurrentChartDataFromDevice(QString deviceIdentN
 
 QStringList Progress_tmk24Service::getCurrentDataDevice(int index) {
     QStringList res;
-    if(devList.at(index)->first.currData.isValid) {
-        res << QString::number(devList.at(index)->first.currData.fuelLevel);
-        res << QString::number(devList.at(index)->first.currData.liters);
-        res << QString::number(devList.at(index)->first.currData.cntValue);
-    } else {
-        res << "0";
-        res << "0";
-    }
+//    if(devList.at(index)->first.currData.isValid) {
+//        res << QString::number(devList.at(index)->first.currData.fuelLevel);
+//        res << QString::number(devList.at(index)->first.currData.liters);
+//        res << QString::number(devList.at(index)->first.currData.cntValue);
+//    } else {
+//        res << "0";
+//        res << "0";
+//    }
     return res;
 }
 

@@ -40,49 +40,35 @@ public:
         // current data
         E_ConsoleCommandType_getAccelData,
         E_ConsoleCommandType_getNetworkData,
-        E_ConsoleCommandType_getCardProperty,
-        E_ConsoleCommandType_getBatteryProperty,
+        E_ConsoleCommandType_getCardData,
+        E_ConsoleCommandType_getBatteryData,
         // set conf
-        E_ConsoleCommandType_setNetworkPassword,
+        E_ConsoleCommandType_setPassword,
         E_ConsoleCommandType_setAccelConfig,
         E_ConsoleCommandType_setAccelUseCurrentValuesAsNullPoint,
         E_ConsoleCommandType_setNetworkConfig
     }eConsoleCommandType;
 
-    typedef enum {
-        E_ConsoleMode_log,
-        E_ConsoleMode_configuring
-    }eConsoleMode;
-
-    // eTypeData;
-    const uint8_t eTypeData_integer = 0;
-    const uint8_t eTypeData_string = 1;
-
 #pragma pack(1)
-    typedef struct {
-        uint32_t versionProtocol;
-        uint32_t devieIcdent;
-        uint8_t commandType; //eConsoleCommandType
-        uint8_t argCount;
-        struct {
-            uint8_t typeData; //eTypeData
-            union {
-                uint32_t data_uint32;
-                char data_string[32];
-            }data_union;
-        }dataArg[CONSOLE_COMMAND_MAX_ARGS];
-        uint16_t magic_word;
-    }sConsoleBufData;
-#pragma pack()
+typedef struct {
+    uint32_t versionProtocol;
+    uint32_t deviceIdent;
+    eConsoleCommandType commandType;
+    struct {
+        char data[128];
+    }data;
+    uint16_t magic_word;
+}sConsoleBufData;
 
-#pragma pack(1)
-    typedef struct{
-        uint32_t versionProtocol;
-        uint32_t deviceIdent;
-        uint8_t commandType; // eConsoleCommandType
-        uint8_t data[128];
-        uint16_t magic_word;
-    }sConsoleReplyBuff;
+typedef struct{
+    uint32_t versionProtocol;
+    uint32_t deviceIdent;
+    eConsoleCommandType commandType;
+    struct {
+        char data[128];
+    }data;
+    uint16_t magic_word;
+}sConsoleReplyBuff;
 #pragma pack()
 
 #pragma pack(1)
@@ -102,8 +88,37 @@ public:
 
 #pragma pack(1)
     typedef struct {
-        uint8_t password[PASSWORD_SIZE];
-    }T_settings;
+    }sCardConfig;
+
+    typedef struct {
+    }sBatteryConfig;
+
+    typedef struct {
+        char networkPassword[64];
+    }sNetworkConfig;
+
+    typedef struct {
+        int thresholdX;
+        int thresholdY;
+        int thresholdZ;
+        int delta;
+    }sAccelConfig;
+
+    typedef struct {
+        uint8_t data[64];
+    }sPaswordConfig;
+#pragma pack()
+
+#pragma pack(1)
+
+    typedef struct {
+        sCardConfig cardConfig;
+        sNetworkConfig netConfig;
+        sAccelConfig accelConfig;
+        sPaswordConfig passConfig;
+        sBatteryConfig batConfig;
+        uint16_t magic_word;
+    }Nozzle_config_t;
 #pragma pack()
 
     typedef struct {
@@ -140,11 +155,6 @@ public:
         sValue accelY;
         sValue accelZ;
 
-        sValue accelConfX;
-        sValue accelConfY;
-        sValue accelConfZ;
-        sValue accelConfDelta;
-
         sValueText networkParentIp;
         sValue rssi;
         sValue networkState;
@@ -156,7 +166,7 @@ public:
 
         struct {
             struct {
-                T_settings value;
+                Nozzle_config_t value;
                 bool isValid;
             }get;
         }settings;

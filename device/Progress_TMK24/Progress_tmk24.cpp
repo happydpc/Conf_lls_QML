@@ -66,27 +66,39 @@ QList<int> Progress_tmk24::getChart() {
     return *chartData;
 }
 
-QStringList Progress_tmk24::getPropertyData() {
-    QStringList res;
-    res << getDevTypeName();
-    // TODO: check it
-    res << ((lls_data.serialNum.value.isEmpty() || lls_data.serialNum.value.at(0) > 0x255) ? QString("Не присвоен") : lls_data.serialNum.value);
-    res << QString::number(settings.netAddress);
-    res << lls_data.firmware.value;
-    res << QString::number(lls_data.password.get.authIsNormal);
-    res << lls_data.password.get.value.value;
-    res << uniqIdentId;
+QPair<QStringList,QStringList> Progress_tmk24::getPropertyData() {
+    QPair<QStringList,QStringList> res;
+    res.first.push_back("devTypeName");
+    res.second.push_back(getDevTypeName());
+    res.first.push_back("serialNum");
+    res.second.push_back((lls_data.serialNum.value.isEmpty() || lls_data.serialNum.value.at(0) > 0x255) ? QString("Не присвоен") : lls_data.serialNum.value);
+    res.first.push_back("netAddress");
+    res.second.push_back(QString::number(settings.netAddress));
+    res.first.push_back("firmware");
+    res.second.push_back(lls_data.firmware.value);
+    res.first.push_back("authIsNormal");
+    res.second.push_back(QString::number(lls_data.password.get.authIsNormal));
+    res.first.push_back("password");
+    res.second.push_back(lls_data.password.get.value.value);
+    res.first.push_back("uniqIdentId");
+    res.second.push_back(uniqIdentId);
     return res;
 }
 
 QPair<QStringList,QStringList> Progress_tmk24::getCurrentData() {
     QPair<QStringList,QStringList> res;
-    res.push_back(lls_data.fuelLevel.isValid == true ? QString::number(lls_data.fuelLevel.value.value_u32) : QString::number(0));
-    res.push_back(lls_data.fuelProcent.isValid ? QString::number(lls_data.fuelProcent.value.value_u16) : QString::number(0));
-    res.push_back(lls_data.cnt.isValid ? QString::number(lls_data.cnt.value.value_u32) : QString::number(0));
-    res.push_back(lls_data.freq.isValid ? QString::number(lls_data.freq.value.value_u16) : QString::number(0));
-    res.push_back(lls_data.temp.isValid ? QString::number(lls_data.temp.value.value_i) : QString::number(0));
-    res.push_back(QString::number(lls_data.noiseDetected));
+    res.first.push_back("fuelLevel");
+    res.second.push_back(lls_data.fuelLevel.isValid == true ? QString::number(lls_data.fuelLevel.value.value_u32) : QString::number(0));
+    res.first.push_back("fuelProcent");
+    res.second.push_back(lls_data.fuelProcent.isValid ? QString::number(lls_data.fuelProcent.value.value_u16) : QString::number(0));
+    res.first.push_back("cnt");
+    res.second.push_back(lls_data.cnt.isValid ? QString::number(lls_data.cnt.value.value_u32) : QString::number(0));
+    res.first.push_back("freq");
+    res.second.push_back(lls_data.freq.isValid ? QString::number(lls_data.freq.value.value_u16) : QString::number(0));
+    res.first.push_back("temp");
+    res.second.push_back(lls_data.temp.isValid ? QString::number(lls_data.temp.value.value_i) : QString::number(0));
+    res.first.push_back("noiseDetected");
+    res.second.push_back(QString::number(lls_data.noiseDetected));
     return res;
 }
 

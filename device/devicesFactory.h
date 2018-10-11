@@ -51,9 +51,9 @@ public slots:
     QStringList getDeviceErrrors(int indexDev);
     int getDeviceStatusByIndex(int index);
     QList<int> getDeviceChartByIndex(int index);
-    QList<QString> getDeviceCurrentDataByIndex(int index);
-    QStringList getDevicePropertyByIndex(int index);
-    QStringList getDeviceProperty(int indexDev);
+    QPair<QStringList,QStringList> getDeviceCurrentDataByIndex(int index);
+    QPair<QStringList,QStringList> getDevicePropertyByIndex(int index);
+
     DeviceAbstract::E_State getDevStateByIndex(int index);
 
     DeviceAbstract* getDeviceToDeviceAbstract(int index);
@@ -64,7 +64,7 @@ public slots:
 
     void placeReplyDataFromInterface(QByteArray data);
     void setDeviceReInitByIndex(int index);
-    void sendCustomCommadToDev(int indexDev, QString operation, QPair<QStringList, QStringList> arguments);
+    void sendCustomCommadToDev(int indexDev, QString operation, QStringList keys, QStringList values);
     void sendCustomCommadToDev(int indexDev, QString operation);
 
 signals:

@@ -49,50 +49,64 @@ ServiceDevicesAbstract* Nozzle_Revision_0_00_Oct_2018::getServiceAbstract() {
     return nullptr;
 }
 
-QStringList Nozzle_Revision_0_00_Oct_2018::getPropertyData() {
-    QStringList res;
-    res << getDevTypeName();
-    res << uniqIdentId;
-    res << (serialNumber.isEmpty() ? QString("NA") : serialNumber);
-    res << (versionFirmware.isEmpty() ? QString("NA") : versionFirmware);
+QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getPropertyData() {
+    QPair<QStringList,QStringList> res;
+    res.first.push_back("devTypeName");
+    res.second.push_back(getDevTypeName());
+    res.first.push_back("serialNum");
+    res.second.push_back(serialNumber.isEmpty() ? QString("Не присвоен") : serialNumber);
+    res.first.push_back("netAddress");
+    res.second.push_back(uniqIdentId);
+    res.first.push_back("firmware");
+    res.second.push_back(versionFirmware.isEmpty() ? QString("NA") : versionFirmware);
+    res.first.push_back("uniqIdentId");
+    res.second.push_back(uniqIdentId);
     return res;
 }
 
 QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getCurrentData() {
     QPair<QStringList,QStringList> res;
-    res.first.push_back("accelConfX");
-    res.second.push_back(dev_data.accelConfX.isValid == true ? QString::number(dev_data.accelConfX.value.value_i) : "NA");
-    res.first.push_back("accelConfY");
-    res.second.push_back(dev_data.accelConfY.isValid == true ? QString::number(dev_data.accelConfY.value.value_i) : "NA");
-    res.first.push_back("accelConfZ");
-    res.second.push_back(dev_data.accelConfZ.isValid == true ? QString::number(dev_data.accelConfZ.value.value_i) : "NA");
-    res.first.push_back("networkPassword");
-
-    res.push_back(dev_data.accelX.isValid == true ? QString::number(dev_data.accelX.value.value_f) : "NA");
-    res.push_back(dev_data.accelY.isValid == true ? QString::number(dev_data.accelY.value.value_f) : "NA");
-    res.push_back(dev_data.accelZ.isValid == true ? QString::number(dev_data.accelZ.value.value_f) : "NA");
-    res.push_back(dev_data.cardNumber.isValid == true ? dev_data.cardNumber.value : "NA");
-    res.push_back(dev_data.cardState.isValid == true ? QString::number(dev_data.cardState.value.value_i) : "NA");
-    res.push_back(dev_data.networkParentIp.isValid == true ? dev_data.networkParentIp.value : "NA");
-    res.push_back(dev_data.networkState.isValid == true ? (dev_data.networkState.value.value_i == true ? "Подключено" : "Не подключено") : "NA");
-    res.push_back(dev_data.temperature.isValid == true ? QString::number(dev_data.temperature.value.value_f) : "NA");
-    res.push_back(dev_data.powerVoltage.isValid == true ? QString::number(dev_data.powerVoltage.value.value_f) : "NA");
-    res.push_back(dev_data.powertypeBattery.isValid == true ? dev_data.powertypeBattery.value : "NA");
-    res.push_back(dev_data.powerCurrentAccumulate.isValid == true ? QString::number(dev_data.powerCurrentAccumulate.value.value_f) : "NA");
-    res.push_back(dev_data.powerCurrentAccumulateHourse.isValid == true ? QString::number(dev_data.powerCurrentAccumulateHourse.value.value_f) : "NA");
-    res.push_back(dev_data.powerCurrentResouresAvailable.isValid == true ? QString::number(dev_data.powerCurrentResouresAvailable.value.value_f) : "NA");
-    res.push_back(dev_data.powerCurrentResouresAvailableHourse.isValid == true ? QString::number(dev_data.powerCurrentResouresAvailableHourse.value.value_f) : "NA");
+    res.first.push_back("accelX");
+    res.second.push_back(dev_data.accelX.isValid == true ? QString::number(dev_data.accelX.value.value_i) : "NA");
+    res.first.push_back("accelY");
+    res.second.push_back(dev_data.accelY.isValid == true ? QString::number(dev_data.accelY.value.value_i) : "NA");
+    res.first.push_back("accelZ");
+    res.second.push_back(dev_data.accelZ.isValid == true ? QString::number(dev_data.accelZ.value.value_i) : "NA");
+    res.first.push_back("cardNumber");
+    res.second.push_back(dev_data.cardNumber.isValid == true ? dev_data.cardNumber.value : "NA");
+    res.first.push_back("cardState");
+    res.second.push_back(dev_data.cardState.isValid == true ? QString::number(dev_data.cardState.value.value_i) : "NA");
+    res.first.push_back("networkParentIp");
+    res.second.push_back(dev_data.networkParentIp.isValid == true ? dev_data.networkParentIp.value : "NA");
+    res.first.push_back("networkState");
+    res.second.push_back(dev_data.networkState.isValid == true ? (dev_data.networkState.value.value_i == true ? "Подключено" : "Не подключено") : "NA");
+    res.first.push_back("temperature");
+    res.second.push_back(dev_data.temperature.isValid == true ? QString::number(dev_data.temperature.value.value_f) : "NA");
+    res.first.push_back("powerVoltage");
+    res.second.push_back(dev_data.powerVoltage.isValid == true ? QString::number(dev_data.powerVoltage.value.value_f) : "NA");
+    res.first.push_back("powertypeBattery");
+    res.second.push_back(dev_data.powertypeBattery.isValid == true ? dev_data.powertypeBattery.value : "NA");
+    res.first.push_back("powerCurrentAccumulate");
+    res.second.push_back(dev_data.powerCurrentAccumulate.isValid == true ? QString::number(dev_data.powerCurrentAccumulate.value.value_f) : "NA");
+    res.first.push_back("powerCurrentAccumulateHourse");
+    res.second.push_back(dev_data.powerCurrentAccumulateHourse.isValid == true ? QString::number(dev_data.powerCurrentAccumulateHourse.value.value_f) : "NA");
+    res.first.push_back("powerCurrentResouresAvailable");
+    res.second.push_back(dev_data.powerCurrentResouresAvailable.isValid == true ? QString::number(dev_data.powerCurrentResouresAvailable.value.value_f) : "NA");
+    res.first.push_back("powerCurrentResouresAvailableHourse");
+    res.second.push_back(dev_data.powerCurrentResouresAvailableHourse.isValid == true ? QString::number(dev_data.powerCurrentResouresAvailableHourse.value.value_f) : "NA");
     return res;
 }
 
 QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getSettings() {
     QPair<QStringList,QStringList> res;
     res.first.push_back("accelConfX");
-    res.second.push_back(dev_data.accelConfX.isValid == true ? QString::number(dev_data.accelConfX.value.value_i) : "NA");
+    res.second.push_back(dev_data.settings.get.isValid == true ? QString::number(dev_data.settings.get.value.accelConfig.thresholdX) : "NA");
     res.first.push_back("accelConfY");
-    res.second.push_back(dev_data.accelConfY.isValid == true ? QString::number(dev_data.accelConfY.value.value_i) : "NA");
+    res.second.push_back(dev_data.settings.get.isValid == true ? QString::number(dev_data.settings.get.value.accelConfig.thresholdY) : "NA");
     res.first.push_back("accelConfZ");
-    res.second.push_back(dev_data.accelConfZ.isValid == true ? QString::number(dev_data.accelConfZ.value.value_i) : "NA");
+    res.second.push_back(dev_data.settings.get.isValid == true ? QString::number(dev_data.settings.get.value.accelConfig.thresholdZ) : "NA");
+    res.first.push_back("accelConfDelta");
+    res.second.push_back(dev_data.settings.get.isValid == true ? QString::number(dev_data.settings.get.value.accelConfig.delta) : "NA");
     res.first.push_back("networkPassword");
     res.second.push_back(dev_data.networkPassword.isValid == true ? dev_data.networkPassword.value : "NA");
     return res;
@@ -123,9 +137,8 @@ bool Nozzle_Revision_0_00_Oct_2018::makeDataToCommand(CommandController::sComman
     Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData tCommand;
     memset(&tCommand, 0, sizeof(tCommand));
     tCommand.commandType = (Nozzle_Revision_0_00_Oct_2018_Data::eConsoleCommandType)commandData.devCommand;
-    tCommand.argCount = 0;
     tCommand.magic_word = Nozzle_Revision_0_00_Oct_2018_Data::CONSOLE_MAGIC_WORD;
-    tCommand.devieIcdent = Nozzle_Revision_0_00_Oct_2018_Data::CONSOLE_DEVICE_IDENT;
+    tCommand.deviceIdent = Nozzle_Revision_0_00_Oct_2018_Data::CONSOLE_DEVICE_IDENT;
     tCommand.versionProtocol = Nozzle_Revision_0_00_Oct_2018_Data::CONSOLE_VERSION_PROTOCOL;
     try {
         switch(commandData.devCommand) {
@@ -144,7 +157,7 @@ bool Nozzle_Revision_0_00_Oct_2018::makeDataToCommand(CommandController::sComman
             res = true;
         }
             break;
-        case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getBatteryProperty: {
+        case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getBatteryData: {
             commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
             res = true;
         }
@@ -154,7 +167,7 @@ bool Nozzle_Revision_0_00_Oct_2018::makeDataToCommand(CommandController::sComman
             res = true;
         }
             break;
-        case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getCardProperty: {
+        case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getCardData: {
             commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
             res = true;
         }
@@ -164,22 +177,16 @@ bool Nozzle_Revision_0_00_Oct_2018::makeDataToCommand(CommandController::sComman
             res = true;
         }
             break;
-
-            //            Nozzle_Revision_0_00_Oct_2018_Data::T_settings tSettings;
-            //            if(dev_data.settings.get.isValid) {
-            //                memcpy(&tSettings, &dev_data.settings.get.value, sizeof(tSettings));
-            //                for(int i=0; i<commandData.args.key.size(); i++) {
-            //                    if(commandData.args.key.at(i) == "k1_value") {
-            //                        //                            tSettings.k1 = commandData.args.value.at(i);
-            //                    } else {
-            //                        qDebug() << "settings udnefined type parcing";
-            //                    }
-            //                }
-            //                commandData.commandOptionData.insert(13, (char*)&tSettings, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::T_settings));
-            //            }
-            //            res = true;
-            //        }
-            //            break;
+        case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setAccelConfig:
+//            accelConfX
+//            accelConfDelta
+            commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
+            res = true;
+            break;
+        case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setNetworkConfig:
+            commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
+            res = true;
+            break;
         default : break;
         }
     } catch(...) {
@@ -252,8 +259,7 @@ bool Nozzle_Revision_0_00_Oct_2018::placeDataReplyToCommand(QByteArray &commandA
                 if(getState() == STATE_DISCONNECTED) {
                     setState(DeviceAbstract::STATE_START_INIT);
                 }
-                if(dev_data.networkPassword.isValid && dev_data.accelConfX.isValid
-                        && dev_data.accelConfY.isValid && dev_data.accelConfZ.isValid) {
+                if(dev_data.networkPassword.isValid && dev_data.settings.get.isValid) {
                     setState(DeviceAbstract::STATE_NORMAL_READY);
                 }
             }
@@ -267,7 +273,7 @@ bool Nozzle_Revision_0_00_Oct_2018::placeDataReplyToCommand(QByteArray &commandA
 
 void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleReplyBuff command,CommandController::sCommandData commandReqData) {
     switch(command.commandType) {
-    case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getBatteryProperty: {
+    case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getBatteryData: {
         typedef struct {
             float powerVoltage;
             char powertypeBattery[32];
@@ -279,7 +285,7 @@ void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(Nozzle_Revision_0_00_Oct_2
             float  powerCurrentResouresAvailable;
             float  powerCurrentResouresAvailableHourse;
         }sOutBatBuff;
-        sOutBatBuff *tbuf = (sOutBatBuff*)command.data;
+        sOutBatBuff *tbuf = (sOutBatBuff*)command.data.data;
         dev_data.powerVoltage.value.value_f = tbuf->powerVoltage;
         dev_data.powertypeBattery.value = QString::fromUtf8(tbuf->powertypeBattery);
         dev_data.powerCurrentAccumulate.value.value_f = tbuf->powerCurrentAccumulate;
@@ -293,6 +299,9 @@ void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(Nozzle_Revision_0_00_Oct_2
         dev_data.powerCurrentAccumulateHourse.isValid = true;
         dev_data.powerCurrentResouresAvailable.isValid = true;
         dev_data.powerCurrentResouresAvailableHourse.isValid = true;
+
+        emit eventDeviceUpdateState(Type_DeviceEvent_CurrentDataUpdated, commandReqData.deviceIdent,
+                                    command.commandType, "Update current data", QStringList(""), commandReqData);
         emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
                                     command.commandType, "Normal", QStringList(""), commandReqData);
     }
@@ -304,15 +313,12 @@ void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(Nozzle_Revision_0_00_Oct_2
             int thresholdZ;
             int delta;
         }sOutBatBuff;
-        sOutBatBuff *tbuf = (sOutBatBuff*)command.data;
-        dev_data.accelConfX.value.value_i = tbuf->thresholdX;
-        dev_data.accelConfY.value.value_i = tbuf->thresholdY;
-        dev_data.accelConfZ.value.value_i = tbuf->thresholdZ;
-        dev_data.accelConfDelta.value.value_i = tbuf->delta;
-        dev_data.accelConfX.isValid = true;
-        dev_data.accelConfY.isValid = true;
-        dev_data.accelConfZ.isValid = true;
-        dev_data.accelConfDelta.isValid = true;
+        sOutBatBuff *tbuf = (sOutBatBuff*)command.data.data;
+        dev_data.settings.get.value.accelConfig.thresholdX = tbuf->thresholdX;
+        dev_data.settings.get.value.accelConfig.thresholdY = tbuf->thresholdY;
+        dev_data.settings.get.value.accelConfig.thresholdZ = tbuf->thresholdZ;
+        dev_data.settings.get.value.accelConfig.delta = tbuf->delta;
+        dev_data.settings.get.isValid = true;
         emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
                                     command.commandType, "Normal", QStringList(""), commandReqData);
     }
@@ -322,27 +328,31 @@ void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(Nozzle_Revision_0_00_Oct_2
             int y;
             int z;
         }sOutBatBuff;
-        sOutBatBuff *tbuf = (sOutBatBuff*)command.data;
+        sOutBatBuff *tbuf = (sOutBatBuff*)command.data.data;
         dev_data.accelX.value.value_i = tbuf->x;
         dev_data.accelY.value.value_i = tbuf->y;
         dev_data.accelZ.value.value_i = tbuf->z;
         dev_data.accelX.isValid = true;
         dev_data.accelY.isValid = true;
         dev_data.accelZ.isValid = true;
+        emit eventDeviceUpdateState(Type_DeviceEvent_CurrentDataUpdated, commandReqData.deviceIdent,
+                                    command.commandType, "Update current data", QStringList(""), commandReqData);
         emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
                                     command.commandType, "Normal", QStringList(""), commandReqData);
     }
         break;
-    case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getCardProperty: {
+    case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getCardData: {
         typedef struct {
             int status;
             char cardNumber[64];
         }sOutBatBuff;
-        sOutBatBuff *tbuf = (sOutBatBuff*)command.data;
+        sOutBatBuff *tbuf = (sOutBatBuff*)command.data.data;
         dev_data.cardNumber.value = QString::fromUtf8(tbuf->cardNumber);
         dev_data.cardState.value.value_i = tbuf->status;
         dev_data.cardNumber.isValid = true;
         dev_data.cardState.isValid = true;
+        emit eventDeviceUpdateState(Type_DeviceEvent_CurrentDataUpdated, commandReqData.deviceIdent,
+                                    command.commandType, "Update current data", QStringList(""), commandReqData);
         emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
                                     command.commandType, "Normal", QStringList(""), commandReqData);
     }
@@ -353,7 +363,7 @@ void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(Nozzle_Revision_0_00_Oct_2
             bool status;
             int rssi;
         }sOutBatBuff;
-        sOutBatBuff *tbuf = (sOutBatBuff*)command.data;
+        sOutBatBuff *tbuf = (sOutBatBuff*)command.data.data;
         dev_data.networkParentIp.value = QString::fromUtf8(tbuf->networkParentIp);
         dev_data.networkParentIp.isValid = true;
         dev_data.rssi.value.value_i = tbuf->rssi;
@@ -366,6 +376,8 @@ void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(Nozzle_Revision_0_00_Oct_2
         while(chartData->size() > 50) {
             chartData->pop_front();
         }
+        emit eventDeviceUpdateState(Type_DeviceEvent_CurrentDataUpdated, commandReqData.deviceIdent,
+                                    command.commandType, "Update current data", QStringList(""), commandReqData);
         emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
                                     command.commandType, "Normal", QStringList(""), commandReqData);
     }
@@ -374,7 +386,7 @@ void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(Nozzle_Revision_0_00_Oct_2
         typedef struct {
             char networkPassword[64];
         }sOutBatBuff;
-        sOutBatBuff *tbuf = (sOutBatBuff*)command.data;
+        sOutBatBuff *tbuf = (sOutBatBuff*)command.data.data;
         dev_data.networkPassword.value = QString::fromUtf8(tbuf->networkPassword);
         dev_data.networkPassword.isValid = true;
         emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ReadyReadProperties, getUniqIdent(),
@@ -385,11 +397,18 @@ void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(Nozzle_Revision_0_00_Oct_2
         break;
 
     case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getIsReadyCommand: {
-        dev_data.temperature.value.value_i = 32;
-        dev_data.temperature.isValid = true;
         emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
                                     command.commandType, "Normal", QStringList(""), commandReqData);
     }
+        break;
+    case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setAccelConfig:
+        emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
+                                    command.commandType, "Normal", QStringList(""), commandReqData);
+        break;
+    case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setNetworkConfig:
+        emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
+                                    command.commandType, "Normal", QStringList(""), commandReqData);
+        break;
     default : break;
     }
 }
@@ -438,8 +457,51 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
     QList <CommandController::sCommandData> command;
     CommandController::sCommandData tcommand;
     tcommand.operationHeader = operation;
-    if(operation == "set current level value as min") {
-
+    if(operation == "set current accel value as null pointe") { // TODO:!!!
+    } else if(operation == "get current dev settings witout dialog") {
+        tcommand.deviceIdent = getUniqIdent();
+        tcommand.isNeedAckMessage = false; // что не нужен ответ на форме
+        tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getPassword;
+        command.push_back(tcommand);
+        tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getAccelConfig;
+        command.push_back(tcommand);
+        tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkConfig;
+        command.push_back(tcommand);
+    } else if(operation == "get current dev settings") {
+        tcommand.deviceIdent = getUniqIdent();
+        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getPassword;
+        command.push_back(tcommand);
+        tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getAccelConfig;
+        command.push_back(tcommand);
+        tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkConfig;
+        command.push_back(tcommand);
+    } else if(operation == "set current dev settings accel config") {
+        tcommand.deviceIdent = getUniqIdent();
+        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setAccelConfig;
+        // key
+        for(auto i:data.first) {
+            tcommand.args.key.push_back(i);
+        }
+        // value
+        for(auto i:data.second) {
+            tcommand.args.value.push_back(i.toDouble());
+        }
+        command.push_back(tcommand);
+    } else if(operation == "set current dev settings net config") {
+        tcommand.deviceIdent = getUniqIdent();
+        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setNetworkConfig;
+        // key
+        for(auto i:data.first) {
+            tcommand.args.key.push_back(i);
+        }
+        // value
+        for(auto i:data.second) {
+            tcommand.args.value.push_back(i.toDouble());
+        }
+        command.push_back(tcommand);
     } else {
         qDebug() << "getCommandCustom -type unknown!";
     }
@@ -452,11 +514,11 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
     command.deviceIdent = getUniqIdent();
     command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getAccelData;
     listCommand.push_back(command);
-    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getBatteryProperty;
+    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getBatteryData;
     listCommand.push_back(command);
     command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkData;
     listCommand.push_back(command);
-    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getCardProperty;
+    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getCardData;
     listCommand.push_back(command);
     return listCommand;
 }

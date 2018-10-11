@@ -52,26 +52,26 @@ Rectangle {
         devPropertySerialPort.setPropertyValues(listData)
     }
 
-    function setReadyProperties(typeDev, data) {
+    function setReadyProperties(typeDev) {
         switch(typeDev.toLowerCase()) {
         case "progress tmk24":
-            devPropertyProgressTmk24.setDevProperty(data)
+            devPropertyProgressTmk24.setDevProperty()
             projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setReady()
             break;
         case "nozzle revision 0.00 oct 2018":
-            devPropertyNozzle.setDevProperty(data)
+            devPropertyNozzle.setDevProperty()
             projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setReady()
             break;
         default: break;
         }
     }
-    function setReadyPeriodicData(typeDev, data) {
-        switch(typeDev) {
+    function setReadyPeriodicData(typeDev) {
+        switch(typeDev.toLowerCase()) {
         case "progress tmk24":
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setUpdatePeriodicValues(data)
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setUpdatePeriodicValues()
             break;
         case "nozzle revision 0.00 oct 2018":
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setUpdatePeriodicValues(data)
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setUpdatePeriodicValues()
             break;
         default: break;
         }
@@ -112,13 +112,13 @@ Rectangle {
         }
     }
 
-    function setDevCustomCommandExecuted(typeDev, keys, args) {
+    function setDevCustomCommandExecuted(typeDev, keys, args, ackMessageIsVisible) {
         switch(typeDev.toLowerCase()) {
         case "progress tmk24":
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setCustomCommandExecuted(keys, args)
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setCustomCommandExecuted(keys, args, ackMessageIsVisible)
             break;
         case "nozzle revision 0.00 oct 2018":
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setCustomCommandExecuted(keys, args)
+            projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setCustomCommandExecuted(keys, args, ackMessageIsVisible)
             break;
         default: break;
         }
