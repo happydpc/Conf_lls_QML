@@ -38,10 +38,12 @@ public:
     ServiceDevicesAbstract* getServiceAbstract() override;
 
     QList<QString>getCurrentOtherData();
+    void prepareReply(QByteArray &data);
     void parseCommandReply(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleReplyBuff command, CommandController::sCommandData commandReqData);
 
 private slots:
     void setDefaultValues();
+    QPair<bool, QPair<int,int>> findTag(QString regExpValueBegin, QString regExpValueEnd, QByteArray data);
 
 private:
     Nozzle_Revision_0_00_Oct_2018_Data::S_dev_data dev_data;
