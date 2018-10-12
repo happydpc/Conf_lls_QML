@@ -26,6 +26,8 @@ public:
             QList<QString>value;
         }args;
 
+        bool isNeedIncreasedDelay;
+
         QString operationHeader;
     }sCommandData;
 

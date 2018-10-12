@@ -13,7 +13,6 @@ public:
     Nozzle_Revision_0_00_Oct_2018(QString nameDevice);
     ~Nozzle_Revision_0_00_Oct_2018();
 
-    const int CRITICAL_SIZE_BUF = 24000;
     static constexpr char* name = "Nozzle Revision 0.00 Oct 2018";
 
     QString getDevTypeName() override;
@@ -25,7 +24,7 @@ public:
     QStringList getErrors() override;
     QString getUniqIdent() override;
     bool makeDataToCommand(CommandController::sCommandData &commandData) override;
-    bool placeDataReplyToCommand(QByteArray &commandArrayReplyData, CommandController::sCommandData commandReqData) override;
+    bool placeDataReplyToCommand(QByteArray &commandArray, CommandController::sCommandData commandReqData) override;
 
     CommandController::sCommandData getCommandToCheckConnected() override;
     CommandController::sCommandData getCommandToGetType() override;
@@ -38,8 +37,8 @@ public:
     ServiceDevicesAbstract* getServiceAbstract() override;
 
     QList<QString>getCurrentOtherData();
-    void prepareReply(QByteArray &data);
-    void parseCommandReply(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleReplyBuff command, CommandController::sCommandData commandReqData);
+    QList<QPair<QString,QByteArray>> prepareReply(QByteArray &data);
+    void parseCommandReply(QByteArray data, CommandController::sCommandData commandReqData);
 
 private slots:
     void setDefaultValues();
@@ -50,8 +49,8 @@ private:
     QString serialNumber;
     QString versionFirmware;
     QList<int> *chartData;
-    QByteArray inputBuffer;
     QString uniqIdentId;
+    QByteArray commandArrayReplyData;
 };
 
 #endif // NOZZLE_REV_0_00_H

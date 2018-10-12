@@ -552,40 +552,55 @@ Rectangle {
                                         anchors.rightMargin: 0
                                     }
 
-                                    ProgressBar {
-                                        id: accelXProgressBar
-                                        x: 17
+                                    Row {
+                                        spacing: 10
+                                        x: 5
                                         y: 41
-                                        to: 100
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 5
-                                        anchors.right: parent.right
-                                        anchors.rightMargin: 5
-                                        value: 0
+                                        Label {
+                                            text: "X:"
+                                            anchors.verticalCenter: parent.verticalCenter
+                                        }
+                                        ProgressBar {
+                                            id: accelXProgressBar
+                                            to: 100
+                                            width: 100
+                                            value: 0
+                                            anchors.verticalCenter: parent.verticalCenter
+                                        }
                                     }
 
-                                    ProgressBar {
-                                        id: accelYProgressBar
-                                        x: 7
+                                    Row {
+                                        spacing: 10
+                                        x: 5
                                         y: 72
-                                        anchors.left: parent.left
-                                        anchors.right: parent.right
-                                        anchors.leftMargin: 5
-                                        anchors.rightMargin: 5
-                                        to: 100
-                                        value: 0
+                                        Label {
+                                            text: "Y:"
+                                            anchors.verticalCenter: parent.verticalCenter
+                                        }
+                                        ProgressBar {
+                                            id: accelYProgressBar
+                                            to: 100
+                                            width: 100
+                                            value: 0
+                                            anchors.verticalCenter: parent.verticalCenter
+                                        }
                                     }
 
-                                    ProgressBar {
-                                        id: accelZProgressBar
-                                        x: 11
+                                    Row {
+                                        spacing: 10
+                                        x: 5
                                         y: 104
-                                        anchors.left: parent.left
-                                        anchors.right: parent.right
-                                        anchors.leftMargin: 5
-                                        anchors.rightMargin: 5
-                                        to: 100
-                                        value: 0
+                                        Label {
+                                            text: "Z:"
+                                            anchors.verticalCenter: parent.verticalCenter
+                                        }
+                                        ProgressBar {
+                                            id: accelZProgressBar
+                                            to: 100
+                                            width: 100
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            value: 0
+                                        }
                                     }
                                 }
                             }
@@ -717,9 +732,9 @@ Rectangle {
                     clip: true
                     anchors.top: subBarup.bottom
                     onCurrentIndexChanged: {
-                        if(stackSubProperty.currentItem == settingsStackData) {
-                            viewController.getCurrentDevCustomCommand("get current dev settings witout dialog")
-                        }
+                        //                        if(stackSubProperty.currentItem == settingsStackData) {
+                        //                            viewController.getCurrentDevCustomCommand("get current dev settings witout dialog")
+                        //                        }
                     }
 
                     Item {
@@ -757,34 +772,49 @@ Rectangle {
                                         Column {
                                             id: column3
                                             anchors.left: parent.left
-                                            anchors.leftMargin: 0
+                                            anchors.leftMargin: 15
                                             anchors.horizontalCenter: parent.horizontalCenter
                                             spacing: 10
                                             anchors.top: parent.top
                                             anchors.topMargin: 30
-                                            TextField {
-                                                id: accelCoefX
-                                                height: 30
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 15
-                                                width: 300
-                                                placeholderText: "введите значение"
+                                            Row {
+                                                spacing: 10
+                                                Label {
+                                                    text: "X:"
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                }
+                                                TextField {
+                                                    id: accelCoefX
+                                                    height: 30
+                                                    width: 300
+                                                    placeholderText: "введите значение"
+                                                }
                                             }
-                                            TextField {
-                                                id: accelCoefY
-                                                height: 30
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 15
-                                                width: 300
-                                                placeholderText: "введите значение"
+                                            Row {
+                                                spacing: 10
+                                                Label {
+                                                    text: "Y:"
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                }
+                                                TextField {
+                                                    id: accelCoefY
+                                                    height: 30
+                                                    width: 300
+                                                    placeholderText: "введите значение"
+                                                }
                                             }
-                                            TextField {
-                                                id: accelCoefZ
-                                                height: 30
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 15
-                                                width: 300
-                                                placeholderText: "введите значение"
+                                            Row {
+                                                spacing: 10
+                                                Label {
+                                                    text: "Z:"
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                }
+                                                TextField {
+                                                    id: accelCoefZ
+                                                    height: 30
+                                                    width: 300
+                                                    placeholderText: "введите значение"
+                                                }
                                             }
                                         }
                                     }

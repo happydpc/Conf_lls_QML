@@ -6,9 +6,8 @@
 
 DevicesFactory::DevicesFactory() {
     this->devShedullerTimer = new QTimer();
-    this->devShedullerTimer->start(devShedullerControlInterval);
+    this->devShedullerTimer->start(100);
     this->devMutex = new QMutex();
-
     connect(this->devShedullerTimer, SIGNAL(timeout()), this, SLOT(devShedullerSlot()));
 }
 
@@ -199,7 +198,8 @@ void DevicesFactory::devShedullerSlot() {
         if(!commandList.isEmpty()) {
             devShedullerTimer->stop();
             emit writeData(commandList.first().commandOptionData);
-            QTimer::singleShot(delayAfterSendCommandMs, Qt::PreciseTimer, [&] {
+            QTimer::singleShot(commandList.first().isNeedIncreasedDelay ? delayIncreasedCommandMs : delayTypicalCommandMs,
+                               Qt::PreciseTimer, [&] {
                 emit readReplyData();
             });
         } else {
@@ -220,8 +220,6 @@ void DevicesFactory::devShedullerSlot() {
                 case DeviceAbstract::STATE_DISCONNECTED:
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         command = dev.second->getCommandToCheckConnected();
-                        command.isNeedAckMessage = false;
-                        command.operationHeader = "check dev is connected";
                         dev.second->makeDataToCommand(command);
                         commandList.push_back(command);
                     }
@@ -230,8 +228,6 @@ void DevicesFactory::devShedullerSlot() {
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         if(dev.second->getPriority() == 0) { // TODO: loop need priority
                             command = dev.second->getCommandToGetType();
-                            command.isNeedAckMessage = false;
-                            command.operationHeader = "get dev type";
                             dev.second->makeDataToCommand(command);
                             commandList.push_back(command);
                         }
@@ -240,8 +236,6 @@ void DevicesFactory::devShedullerSlot() {
                 case DeviceAbstract::STATE_CHECK_PASSWORD:
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         command = dev.second->getCommandtoCheckPassword();
-                        command.isNeedAckMessage = false;
-                        command.operationHeader = "check dev password";
                         dev.second->makeDataToCommand(command);
                         commandList.push_back(command);
                     }
@@ -250,8 +244,6 @@ void DevicesFactory::devShedullerSlot() {
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         for(sizeCommand=0; sizeCommand!= dev.second->getCommandListToInit().size(); sizeCommand++) {
                             command = dev.second->getCommandListToInit().at(sizeCommand);
-                            command.operationHeader = "init dev after connecting";
-                            command.isNeedAckMessage = false;
                             dev.second->makeDataToCommand(command);
                             commandList.push_back(command);
                         }
@@ -261,8 +253,6 @@ void DevicesFactory::devShedullerSlot() {
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         for(sizeCommand=0; sizeCommand != dev.second->getCommandListToCurrentData().size(); sizeCommand++) {
                             command = dev.second->getCommandListToCurrentData().at(sizeCommand);
-                            command.operationHeader = "typical command get current data";
-                            command.isNeedAckMessage = false;
                             dev.second->makeDataToCommand(command);
                             commandList.push_back(command);
                         }
@@ -284,7 +274,7 @@ void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
     }
     commandList.pop_front();
     //-- start sheduller after reply
-    devShedullerTimer->start(devShedullerControlInterval);
+    devShedullerTimer->start();
 }
 
 // сюда приходят все сигналы от девайсов (смена состояние и рез кастомных команд)

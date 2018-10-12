@@ -858,6 +858,8 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
 CommandController::sCommandData Progress_tmk24::getCommandToCheckConnected() {
     CommandController::sCommandData command;
     command.deviceIdent = getUniqIdent();
+    command.isNeedAckMessage = false;
+    command.operationHeader = "check dev is connected";
     command.devCommand = (int)Progress_tmk24Data::lls_read_errors;
     return command;
 }
@@ -865,6 +867,8 @@ CommandController::sCommandData Progress_tmk24::getCommandToCheckConnected() {
 CommandController::sCommandData Progress_tmk24::getCommandtoCheckPassword() {
     CommandController::sCommandData command;
     command.deviceIdent = getUniqIdent();
+    command.isNeedAckMessage = false;
+    command.operationHeader = "check dev password";
     command.devCommand = (int)Progress_tmk24Data::lls_check_address_and_pass;
     return command;
 }
@@ -873,6 +877,8 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandListToInit() {
     QList<CommandController::sCommandData> listCommand;
     CommandController::sCommandData command;
     command.deviceIdent = getUniqIdent();
+    command.operationHeader = "init dev after connecting";
+    command.isNeedAckMessage = false;
     command.devCommand = (int)Progress_tmk24Data::lls_read_settings;
     listCommand.push_back(command);
     command.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
@@ -891,6 +897,8 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandListToInit() {
 CommandController::sCommandData Progress_tmk24::getCommandToGetType() {
     CommandController::sCommandData command;
     command.deviceIdent = getUniqIdent();
+    command.isNeedAckMessage = false;
+    command.operationHeader = "get dev type";
     command.devCommand = (int)Progress_tmk24Data::lls_read_settings;
     return command;
 }
@@ -992,6 +1000,8 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandListToCurrentDa
     CommandController::sCommandData command;
     command.commandOptionData.clear();
     command.deviceIdent = getUniqIdent();
+    command.operationHeader = "typical command get current data";
+    command.isNeedAckMessage = false;
     command.devCommand = (int)Progress_tmk24Data::lls_read_lvl_once;
     listCommand.push_back(command);
     command.devCommand = (int)Progress_tmk24Data::lls_read_cnt;

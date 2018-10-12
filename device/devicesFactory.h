@@ -103,8 +103,8 @@ private:
 
     int indexProcessedDev = 0;
 
-    const int delayAfterSendCommandMs = 150;
-    const int devShedullerControlInterval = 1;
+    const int delayTypicalCommandMs = 180;
+    const int delayIncreasedCommandMs = 300;
 };
 
 #endif // DEVICESFACTORY_H
