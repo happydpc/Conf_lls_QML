@@ -24,11 +24,11 @@ public:
 
 public slots:
 
-    bool addConnection(QString typeConnection, QString name, QStringList param);
+    bool addConnection(QString typeName, QString name, QPair<QStringList,QStringList> param);
     void removeConnection(QString name);
     void removeConnection(int index);
 
-    QStringList getAvailableName();
+    QStringList getAvailableName(QString typeName);
 
     int getCountConnection();
 

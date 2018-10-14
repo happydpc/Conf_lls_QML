@@ -60,7 +60,7 @@ Rectangle {
             id: addDevButton
             text: qsTr("Добавить устройство")
             onClicked: {
-                var list = viewController.getAvailableDeviceNameToSerialPort()
+                var list = viewController.getDeviceAvailableType()
                 console.log("addDeviceToSerialPort-" + list)
                 addDeviceDialog.setListAvailableDevices(list)
                 addDeviceDialog.open()
@@ -71,5 +71,7 @@ Rectangle {
     AddDeviceDialog {
         id:addDeviceDialog
         visible: false
+        x: window.x / 2
+        y: window.y / 2
     }
 }

@@ -15,7 +15,7 @@ public:
 public slots:
 
     void initInterface() override;
-    bool openInterface(QString name, QStringList arg) override;
+    bool openInterface() override;
     bool isOpen() override;
     void closeInterface() override;
     bool sendData(QByteArray &pData) override;

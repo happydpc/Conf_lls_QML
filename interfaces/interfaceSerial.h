@@ -12,12 +12,12 @@ class InterfaceSerial : public interfacesAbstract
 {
     Q_OBJECT
 public:
-    InterfaceSerial(QString devName, QStringList arg);
+    InterfaceSerial(QString name, QPair<QStringList,QStringList>param);
     ~InterfaceSerial();
 public slots:
 
     void initInterface() override;
-    bool openInterface(QString name, QStringList arg) override;
+    bool openInterface() override;
     bool isOpen() override;
     void closeInterface() override;
     bool sendData(QByteArray &pData) override;
@@ -43,10 +43,12 @@ private slots:
 
 private:
 
-    static constexpr char* typeName = "Serial";
+    static constexpr char* typeName = "serial";
 
     QSerialPort *portHandler = nullptr;
 
+    QString name;
+    QPair<QStringList,QStringList>param;
 };
 
 #endif // INTERFACESERIAL_H

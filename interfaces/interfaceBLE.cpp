@@ -5,10 +5,6 @@ InterfaceBLE::InterfaceBLE()
 
 }
 
-//InterfaceBLE::InterfaceBLE(const InterfaceBLE & it) {
-
-//}
-
 InterfaceBLE::~InterfaceBLE() {
 
 }
@@ -17,7 +13,7 @@ void InterfaceBLE::initInterface()  {
 
 }
 
-bool InterfaceBLE::openInterface(QString name, QStringList arg) {}
+bool InterfaceBLE::openInterface() {}
 
 void InterfaceBLE::closeInterface() {
 }

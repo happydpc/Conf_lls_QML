@@ -20,6 +20,7 @@ public:
 
     void addDeviceToConnection(QString nameConnection, QString nameDevice, bool deviceStatus);
     void removeDeviceToConnection(int indexConnection, int indexDevice);
+    void changeDeviceHeader(QString nameConnection, QString nameDevice, QString devHeader);
 
     int getDevIndex();
     int getIoIndex();

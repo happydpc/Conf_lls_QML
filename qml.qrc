@@ -1,13 +1,10 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/logo/logo_progress.png</file>
         <file>qml/app.qml</file>
         <file>qml/DevPropertySerialPort.qml</file>
         <file>qml/MainMenuBar.qml</file>
         <file>qml/ProjectMainStack.qml</file>
         <file>qml/ProjectStartScreen.qml</file>
-        <file>qml/SerialPort.qml</file>
-        <file>qml/SerialPortForm.ui.qml</file>
         <file>qml/View.qml</file>
         <file>qml/AddDeviceDialog.qml</file>
         <file>qml/DevPropertyProgressTmk4ux.qml</file>
@@ -29,6 +26,7 @@
         <file>qml/ChangeDevIdName.qml</file>
         <file>awesome_900.ttf</file>
         <file>qml/DevPropertyNozzle_v_0_00.qml</file>
+        <file>qml/AddSerialPort.qml</file>
     </qresource>
     <qresource prefix="/new/icons">
         <file>images/logo/ico.png</file>
@@ -36,7 +34,6 @@
         <file>images/logo/icon_prg.ico</file>
         <file>images/logo/logo_gls.png</file>
         <file>images/logo/logo_progress.png</file>
-        <file>images/icon/user.png</file>
     </qresource>
     <qresource prefix="/controls"/>
 </RCC>

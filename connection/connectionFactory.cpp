@@ -7,36 +7,39 @@ ConnectionFactory::ConnectionFactory() {
 }
 ConnectionFactory::~ConnectionFactory() {}
 
-bool ConnectionFactory::addConnection(QString typeConnection, QString name, QStringList param) {
+bool ConnectionFactory::addConnection(QString typeName, QString name, QPair<QStringList,QStringList> param) {
     bool res = false;
     lockInterface->lock();
-
-    if(typeConnection.toUpper() == QString("Serial").toUpper()) {
+    if(typeName.toLower() == QString("serial")) {
         interfacesAbstract* pInterface = new InterfaceSerial(name, param);
-        res  = pInterface->openInterface(name, param);
-        if(res) { // TODO: !!! // connect(pInterface, SIGNAL(errorConnection(interfacesAbstract::eInterfaceTypes, QString)), this, SLOT(errorFromConnection(QString, QString)));
+        res  = pInterface->openInterface();
+        if(res) {
+            // TODO: !!! // connect(pInterface, SIGNAL(errorConnection(interfacesAbstract::eInterfaceTypes, QString)), this, SLOT(errorFromConnection(QString, QString)));
             interfaceList.push_back(std::move(pInterface));
             emit updateTree(ConnectionFactory::Type_Update_Add);
         } else {
             delete pInterface;
             qDebug() << "ConnectionFactory: addConnection -ERR " + name;
         }
-    } else if(typeConnection.toUpper() == QString("Ethernet").toUpper()) {
+    } else if(typeName.toLower() == QString("ethernet")) {
 
-    } else if(typeConnection.toUpper() == QString("BLE").toUpper()) {
+    } else if(typeName.toLower() == QString("ble")) {
 
     } else {
         qDebug() << "Error type create connection";
     }
+    if(!res) qDebug() << "Error type create connection";
     lockInterface->unlock();
     return res;
 }
 
-QStringList ConnectionFactory::getAvailableName() {
+QStringList ConnectionFactory::getAvailableName(QString typeName) {
     QStringList interfaceList;
-    interfacesAbstract* pInterface = new InterfaceSerial("", QStringList("")); // TODO: it work only serialPort
-    interfaceList = pInterface->getAvailableList();
-    delete pInterface;
+    if(typeName == "serial") {
+        interfacesAbstract* pInterface = new InterfaceSerial("", QPair<QStringList,QStringList>());
+        interfaceList = pInterface->getAvailableList();
+        delete pInterface;
+    }
     return interfaceList;
 }
 
@@ -53,11 +56,14 @@ void ConnectionFactory::removeConnection(QString name) {
 
 void ConnectionFactory::removeConnection(int index) {
     lockInterface->lock();
-    auto it = interfaceList.begin();
-    (*it)->closeInterface();
-    interfaceList.erase(it+= index);
+    if(!interfaceList.isEmpty()) {
+        if(index <= interfaceList.size()-1) {
+            interfaceList[index]->closeInterface();
+            interfaceList.erase(interfaceList.begin() + index);
+            emit updateTree(ConnectionFactory::Type_Update_Removed);
+        }
+    }
     lockInterface->unlock();
-    emit updateTree(ConnectionFactory::Type_Update_Removed);
 }
 
 int ConnectionFactory::getCountConnection() {

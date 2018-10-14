@@ -9,7 +9,7 @@ class ServiceDevicesAbstract : public QObject
 public:
     ServiceDevicesAbstract();
 
-    QString getTypeOwnDeviceName();
+    QString getDeviceType();
 
 signals:
 

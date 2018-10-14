@@ -43,6 +43,9 @@ void TreeItem::addChildItem(TreeItem *childItem){
 
 void TreeItem::removeChildByIndexChild(int index) {
     m_childItems.removeAt(index);
+    if(!m_childItems.empty()) {
+        m_childItems.first()->setIsCurrent(true);
+    }
     emit contentChanged();
     emit childItemsChanged();
     emit hasChildChanged();

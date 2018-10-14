@@ -12,21 +12,19 @@ class ViewController : public QObject
 public:
     explicit ViewController(Model *pInterfaceModel, QObject *parent = nullptr);
 
-    Q_INVOKABLE bool addConnectionSerialPort(QString name, QString baudrate);
-
+    Q_INVOKABLE bool addConnection(QString typeName, QString name, QStringList keyParam, QStringList valueParam);
     Q_INVOKABLE void removeActiveInterface();
+    Q_INVOKABLE QStringList getInterfaceAvailableToAdd(QString typeName);
+
+    Q_INVOKABLE bool addDeviceToConnection(QString devTypeName, QStringList keyParam, QStringList valueParam);
+    Q_INVOKABLE QStringList getDeviceAvailableType();
     Q_INVOKABLE void removeActiveDevice();
-
-    Q_INVOKABLE QStringList getAvailableNameToSerialPort();
-    Q_INVOKABLE QStringList getAvailableDeviceNameToSerialPort();
-
-    Q_INVOKABLE bool addDeviceToConnection(QString devTypeName, QString idNum, QString password);
 
     Q_INVOKABLE QList<int> getCurrentDevChart();
     Q_INVOKABLE QList<QString> getCurrentDevPeriodicDataKey();
     Q_INVOKABLE QList<QString> getCurrentDevPeriodicDataValue();
 
-    Q_INVOKABLE QString getCurrentInterfaceNameToSerial();
+    Q_INVOKABLE QString getCurrentInterfaceName();
 
     Q_INVOKABLE int getDeviceCount();
     Q_INVOKABLE QStringList getDeviceHeaderByIndex(int index);
@@ -34,24 +32,23 @@ public:
     Q_INVOKABLE QStringList getCurrentDevPropertyKey();
     Q_INVOKABLE QStringList getCurrentDevPropertyValue();
 
-//    Q_INVOKABLE void setCurrentDevNewIdAddress(QString newId, QString password, QString currentId);
-//    Q_INVOKABLE void setCurrentDevLevelAsEmpty();
-//    Q_INVOKABLE void setCurrentDevLevelAsFull();
-
     Q_INVOKABLE void getCurrentDevCustomCommand(QString typeCommand);
     Q_INVOKABLE void getCurrentDevCustomCommandWithoutAckDialog(QString typeCommand, QStringList keys, QStringList values);
 
+    Q_INVOKABLE void setCurrentDevCustomCommand(QString typeCommand, QStringList keys, QStringList values);
+    Q_INVOKABLE void setCurrentDevCustomCommandWithoutAckDialog(QString typeCommand, QStringList keys, QStringList values);
+
+    DeviceAbstract *getCurrentDeviceToAbstract();
+
+//    Q_INVOKABLE void setCurrentDevNewIdAddress(QString newId, QString password, QString currentId);
+//    Q_INVOKABLE void setCurrentDevLevelAsEmpty();
+//    Q_INVOKABLE void setCurrentDevLevelAsFull();
 //    Q_INVOKABLE void setCurrentDevSettings(QStringList key, QStringList values);
 //    Q_INVOKABLE void getCurrentDevErrors();
 
 //    Q_INVOKABLE void getCurrentDevTarTable();
 
 //    Q_INVOKABLE void setCurrentDevChangeId(QString password, QString uniqNameIdNew, QString uniqNameIdCurrent);
-
-    Q_INVOKABLE void setCurrentDevCustomCommand(QString typeCommand, QStringList keys, QStringList values);
-    Q_INVOKABLE void setCurrentDevCustomCommandWithoutAckDialog(QString typeCommand, QStringList keys, QStringList values);
-
-    DeviceAbstract *getCurrentDeviceToAbstract();
 
     //********************* TARING *********************//
 //    Q_INVOKABLE void setTableFromFrontEnd(QString uniqNameId, QStringList valuesLiters, QStringList valuesFuelLevel);
@@ -99,9 +96,7 @@ signals:
 
     void interfaceSetActiveProperty(QString ioType);
     void setActiveDeviceProperty(QString devType);
-
     void interfaceAndDeviceListIsEmpty();
-
     void interfaceReadyProperties(QString ioType, QStringList properties);
 
     void addConnectionFail(QString devName);
@@ -109,7 +104,7 @@ signals:
 
     void devConnected(QString typeDev);
     void devDisconnected(QString typeDev);
-
+    void devSetActiveDeviceProperty(QString devType);
     void devReadyProperties(QString typeDev, QStringList data);
     void devReadyPeriodicData(QString typeDev);
     void devErrorOperation(QString message);

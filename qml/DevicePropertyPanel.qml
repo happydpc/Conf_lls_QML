@@ -12,6 +12,10 @@ Rectangle {
     property DevPropertyProgressTmk24 devPropertyProgressTmk24: devPropertyProgressTmk24
     property DevPropertyNozzle_v_0_00 devPropertyNozzle_v_0_00: devPropertyNozzle
 
+    function setActiveLogoPanel() {
+        devicePropertieslistModel1.setCurrentIndex(0)
+    }
+
     function setActiveInterfacePanelType(ioType) {
         switch(ioType.toLowerCase()) {
         case "serial":

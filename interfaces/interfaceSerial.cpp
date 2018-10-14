@@ -1,30 +1,33 @@
 #include "./interfaces/interfaceSerial.h"
 #include "QDebug"
 
-InterfaceSerial::InterfaceSerial(QString devName, QStringList arg) {
+InterfaceSerial::InterfaceSerial(QString name, QPair<QStringList,QStringList>param) {
     this->deviceFactory = new DevicesFactory();
     this->portHandler = new QSerialPort();
+    this->name = name;
+    this->param = param;
 }
 InterfaceSerial::~InterfaceSerial() {}
 void InterfaceSerial::initInterface()  {}
 
-bool InterfaceSerial::openInterface(QString name, QStringList arg) {
-    if(arg.size() > 0) {
-        portHandler->setPortName(name);
-        portHandler->setBaudRate(arg.at(0).toInt());
-        portHandler->setDataBits(QSerialPort::Data8);
-        portHandler->setParity(QSerialPort::NoParity);
-        portHandler->setStopBits(QSerialPort::OneStop);
-        portHandler->setFlowControl(QSerialPort::NoFlowControl);
-
-        connect(portHandler, SIGNAL(errorInterface(QString)), SLOT(errorInterface(QString)));
-        connect(deviceFactory, SIGNAL(writeData(QByteArray)),
-                this, SLOT(writeData(QByteArray)));
-        connect(deviceFactory, SIGNAL(readReplyData()), this, SLOT(readData()));
-
-        return portHandler->open(QIODevice::ReadWrite);
+bool InterfaceSerial::openInterface() {
+    QString baudrate;
+    for(int key=0; key<param.second.size(); key++) {
+        if(param.first[key] == "baudrate") {
+            baudrate = param.second[key];
+        }
     }
-    return false;
+    portHandler->setPortName(name);
+    portHandler->setBaudRate(baudrate.toInt());
+    portHandler->setDataBits(QSerialPort::Data8);
+    portHandler->setParity(QSerialPort::NoParity);
+    portHandler->setStopBits(QSerialPort::OneStop);
+    portHandler->setFlowControl(QSerialPort::NoFlowControl);
+    connect(portHandler, SIGNAL(errorInterface(QString)), SLOT(errorInterface(QString)));
+    connect(deviceFactory, SIGNAL(writeData(QByteArray)),
+            this, SLOT(writeData(QByteArray)));
+    connect(deviceFactory, SIGNAL(readReplyData()), this, SLOT(readData()));
+    return portHandler->open(QIODevice::ReadWrite);
 }
 
 bool InterfaceSerial::isOpen() {

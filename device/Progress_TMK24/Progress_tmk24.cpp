@@ -3,12 +3,18 @@
 #include "other/crc.h"
 #include <QList>
 
-Progress_tmk24::Progress_tmk24(QString uniqIdentId, QString passwordSession, ServiceDevicesAbstract *pServiceAbstract) {
+Progress_tmk24::Progress_tmk24(QString uniqIdentId, QPair<QStringList,QStringList>param, ServiceDevicesAbstract *pServiceAbstract) {
     this->chartData = new QList<int>();
     this->uniqIdentId = uniqIdentId;
     this->state = STATE_DISCONNECTED;
-    this->lls_data.password.session.value = passwordSession;
-    this->lls_data.password.session.isValid = true;
+    int paramCounter = 0;
+    for(auto paramIter:param.first) {
+        if(paramIter == "password") {
+            this->lls_data.password.session.value = param.second[paramCounter];
+            this->lls_data.password.session.isValid = true;
+        }
+        paramCounter++;
+    }
     this->serviceAbstact = pServiceAbstract;
     setDefaultValues();
 }

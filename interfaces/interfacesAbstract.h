@@ -14,7 +14,7 @@ public:
 public slots:
 
     virtual void initInterface() = 0;
-    virtual bool openInterface(QString name, QStringList arg) = 0;
+    virtual bool openInterface() = 0;
     virtual bool isOpen() = 0;
     virtual void closeInterface() = 0;
     virtual bool sendData(QByteArray &pData) = 0;

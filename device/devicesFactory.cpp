@@ -13,33 +13,44 @@ DevicesFactory::DevicesFactory() {
 
 DevicesFactory::~DevicesFactory() {}
 
-bool DevicesFactory::addNewDevice(E_DeviceType type, QString uniqDevName, QStringList parameters, ServiceDevicesAbstract *pDevService) {
+bool DevicesFactory::addNewDevice(E_DeviceType type, QPair<QStringList,QStringList>param,
+                                  ServiceDevicesAbstract *pDevService) {
     bool res = false;
-    if(type == Type_Progress_Tmk24) {
-        if(findDeviceByUnicIdent(uniqDevName) == nullptr) {
-            lockMutextDevMap();
-            deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk24(uniqDevName, parameters.at(0), pDevService)));
-            unlockMutextDevMap();
-            emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
-            res = true;
+    bool uniqDevNameIsFinded = false;
+    QString uniqDevName;
+    for(int i=0; i<param.first.size(); i++) {
+        if(param.first[i] == "uniqDevName") {
+            uniqDevNameIsFinded = true;
+            uniqDevName = param.second[i];
         }
-    } else if(type == Type_Progress_tmk4UX) {
-    } else if(type == Type_Nozzle_rev_0_00) {
-        if(findDeviceByUnicIdent(uniqDevName) == nullptr) {
-            lockMutextDevMap();
-            deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Nozzle_Revision_0_00_Oct_2018(uniqDevName)));
-            unlockMutextDevMap();
-            emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
-            res = true;
-        }
-    } else {
-        throw QString("undefined class");
     }
+    if(uniqDevNameIsFinded) {
+        if(type == Type_Progress_Tmk24) {
+            if(findDeviceByUnicIdent(uniqDevName) == nullptr) {
+                lockMutextDevMap();
+                deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk24(uniqDevName, param, pDevService)));
+                unlockMutextDevMap();
+                emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
+                res = true;
+            }
+        } else if(type == Type_Progress_tmk4UX) {
+        } else if(type == Type_Nozzle_rev_0_00) {
+            if(findDeviceByUnicIdent(uniqDevName) == nullptr) {
+                lockMutextDevMap();
+                deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Nozzle_Revision_0_00_Oct_2018(uniqDevName)));
+                unlockMutextDevMap();
+                emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
+                res = true;
+            }
+        } else {
+            throw QString("undefined class");
+        }
 
-    // TODO: может быть лучше как-то подругому перехватывать указатаель?
-    connect(findDeviceByUnicIdent(uniqDevName)->second,
-            SIGNAL(eventDeviceUpdateState(DeviceAbstract::E_DeviceEvent,QString,int,QString,QStringList, CommandController::sCommandData)),
-            this, SLOT(deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEvent,QString,int,QString,QStringList, CommandController::sCommandData)));
+        // TODO: может быть лучше как-то подругому перехватывать указатаель?
+        connect(findDeviceByUnicIdent(uniqDevName)->second,
+                SIGNAL(eventDeviceUpdateState(DeviceAbstract::E_DeviceEvent,QString,int,QString,QStringList, CommandController::sCommandData)),
+                this, SLOT(deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEvent,QString,int,QString,QStringList, CommandController::sCommandData)));
+    }
     return res;
 }
 

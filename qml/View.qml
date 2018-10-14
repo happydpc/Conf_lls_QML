@@ -16,7 +16,9 @@ Item {
         onInterfaceReadyProperties: {
             projectPanel.devicePanel.devicePropertyPanel.setInterfaceProperites(ioType, properties)
         }
-        onInterfaceAndDeviceListIsEmpty: {}
+        onInterfaceAndDeviceListIsEmpty: {
+            projectPanel.devicePanel.devicePropertyPanel.setActiveLogoPanel()
+        }
         onDevReadyProperties: {
             projectPanel.devicePanel.devicePropertyPanel.setReadyProperties(typeDev)
         }
@@ -111,18 +113,22 @@ Item {
         anchors.bottom: parent.bottom
 
         devicePanel.onAddNewConnection: {
-            var list = viewController.getAvailableNameToSerialPort()
+            var list = viewController.getInterfaceAvailableToAdd("serial")
             console.log("Available interface-" + list)
-            serialPort.setListInterfaces(list)
-            serialPort.open()
+            addInterface.setListInterfaces(list)
+            addInterface.open()
         }
     }
 
-    SerialPort {
-        id:serialPort
+    AddSerialPort {
+        id:addInterface
         onAcceptConnectReady: {
-            var res = viewController.addConnectionSerialPort(name, baudrate)
-            console.log("addConnectionSerialPort=" + res)
+            var paramList = []
+            var keyList = []
+            keyList.push("baudrate")
+            paramList.push(baudrate)
+            var res = viewController.addConnection("serial", name, keyList, paramList)
+            console.log("addConnectionaddInterface=" + res)
             if(res) {
                 close()
             }

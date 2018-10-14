@@ -16,7 +16,7 @@ void InterfaceEthernet::initInterface() {
 
 }
 
-bool InterfaceEthernet::openInterface(QString name, QStringList arg)  {
+bool InterfaceEthernet::openInterface()  {
     return false;
 }
 

@@ -2,6 +2,6 @@
 
 ServiceDevicesAbstract::ServiceDevicesAbstract() {}
 
-QString ServiceDevicesAbstract::getTypeOwnDeviceName() {
+QString ServiceDevicesAbstract::getDeviceType() {
     return ownDeviceName;
 }

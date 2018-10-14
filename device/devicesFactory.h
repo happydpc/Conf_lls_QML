@@ -33,7 +33,7 @@ public:
 
 public slots:
 
-    bool addNewDevice(E_DeviceType type, QString uniqDevName, QStringList parameters, ServiceDevicesAbstract *pDevService);
+    bool addNewDevice(E_DeviceType type, QPair<QStringList,QStringList>param, ServiceDevicesAbstract *pDevService);
     bool removeDevice(QString uniqDevName);
     bool removeDeviceByIndex(int index);
     bool removeDeviceAll();
