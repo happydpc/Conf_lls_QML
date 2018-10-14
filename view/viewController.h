@@ -19,6 +19,7 @@ public:
     Q_INVOKABLE bool addDeviceToConnection(QString devTypeName, QStringList keyParam, QStringList valueParam);
     Q_INVOKABLE QStringList getDeviceAvailableType();
     Q_INVOKABLE void removeActiveDevice();
+    Q_INVOKABLE void setDeviceFindConnected(QString devType);
 
     Q_INVOKABLE QList<int> getCurrentDevChart();
     Q_INVOKABLE QList<QString> getCurrentDevPeriodicDataKey();
@@ -44,7 +45,6 @@ public:
 //    Q_INVOKABLE void setCurrentDevLevelAsEmpty();
 //    Q_INVOKABLE void setCurrentDevLevelAsFull();
 //    Q_INVOKABLE void setCurrentDevSettings(QStringList key, QStringList values);
-//    Q_INVOKABLE void getCurrentDevErrors();
 
 //    Q_INVOKABLE void getCurrentDevTarTable();
 

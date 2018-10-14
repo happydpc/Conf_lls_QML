@@ -120,6 +120,10 @@ QStringList ViewController::getDeviceAvailableType() {
     return getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getAvailableDeviceTypes();
 }
 
+// TODO: find devices
+void ViewController::setDeviceFindConnected(QString devType) {
+}
+
 QString ViewController::getCurrentInterfaceName() {
     QString name = connFactory->getInteraceNameFromIndex(interfaceTree->getIoIndex());
     return name;
@@ -227,10 +231,6 @@ void ViewController::setCurrentDevCustomCommandWithoutAckDialog(QString typeComm
 //}
 //void ViewController::setCurrentDevSettings(QStringList keys, QStringList values) {
 //    getDeviceFactoryByIndex(interfaceTree->getIoIndex())->sendCustomCommadToDev(interfaceTree->getDevIndex(), "set current dev settings", keys, values);
-//}
-
-//void ViewController::getCurrentDevErrors() {
-//    getDeviceFactoryByIndex(interfaceTree->getIoIndex())->sendCustomCommadToDev(interfaceTree->getDevIndex(), "read current dev errors");
 //}
 
 //************************************************************************/

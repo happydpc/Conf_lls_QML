@@ -21,6 +21,7 @@ Rectangle {
     }
     function setReady() {
         devPropertyProgressTmk24.isReady = true
+        setWriteSettingsIsAvailable()
     }
 
     function devShowMessage(messageHeader, message) {
@@ -33,7 +34,6 @@ Rectangle {
         tabProperty.setCurrentIndex(0)
         stackSubProperty.setCurrentIndex(0)
         setNoReady()
-        setWriteSettingsIsAvailable()
     }
     function setWriteSettingsIsAvailable() {
         writeSettingsButton_1.enabled = true
@@ -537,50 +537,50 @@ Rectangle {
         running: true
         repeat: true
         onTriggered: {
-//            var devCount = viewController.getStayedDevTarrirCount()
-//            var devId = viewController.getStayedDevTarrir_DevProperty("id")
-//            var colorArray = []
-//            colorArray.push("#f34b4b")
-//            colorArray.push("#4bd5f3")
-//            colorArray.push("#f34be1")
-//            colorArray.push("#4bf3c6")
-//            colorArray.push("#4b4bf3")
-//            colorArray.push("#be4bf3")
-//            colorArray.push("#0d8741")
-//            chartTarCurrentValuesMultiple.removeAllSeries();
+            //            var devCount = viewController.getStayedDevTarrirCount()
+            //            var devId = viewController.getStayedDevTarrir_DevProperty("id")
+            //            var colorArray = []
+            //            colorArray.push("#f34b4b")
+            //            colorArray.push("#4bd5f3")
+            //            colorArray.push("#f34be1")
+            //            colorArray.push("#4bf3c6")
+            //            colorArray.push("#4b4bf3")
+            //            colorArray.push("#be4bf3")
+            //            colorArray.push("#0d8741")
+            //            chartTarCurrentValuesMultiple.removeAllSeries();
 
-//            for(var devIter=0; devIter<devCount; devIter++) {
-//                var res = viewController.getTarCurrentDeviceData(devIter)
-//                var dataArray = tarListDevice.model.get(devIter)
-//                if(dataArray !== undefined) {
-//                    dataArray["valueCnt"] = res[0]
-//                    dataArray["valueFuelLevel"] = res[2]
-//                    tarListDevice.model.set(devIter, dataArray)
-//                }
-//                //-- chart
-//                var chartArray = viewController.getTarCurrentDeviceChartData(devIter)
+            //            for(var devIter=0; devIter<devCount; devIter++) {
+            //                var res = viewController.getTarCurrentDeviceData(devIter)
+            //                var dataArray = tarListDevice.model.get(devIter)
+            //                if(dataArray !== undefined) {
+            //                    dataArray["valueCnt"] = res[0]
+            //                    dataArray["valueFuelLevel"] = res[2]
+            //                    tarListDevice.model.set(devIter, dataArray)
+            //                }
+            //                //-- chart
+            //                var chartArray = viewController.getTarCurrentDeviceChartData(devIter)
 
-//                var line = chartTarCurrentValuesMultiple.createSeries(ChartView.SeriesTypeLine, "ID" + devId[devIter], currentTarChartAxisXMultiple, currentTarChartAxisYMultiple);
-//                line.color = colorArray[devIter]
+            //                var line = chartTarCurrentValuesMultiple.createSeries(ChartView.SeriesTypeLine, "ID" + devId[devIter], currentTarChartAxisXMultiple, currentTarChartAxisYMultiple);
+            //                line.color = colorArray[devIter]
 
-//                chartTarCurrentValuesMultiple.graphLength = chartArray.length
-//                chartTarCurrentValuesMultiple.graphAmplitudeMax = 0
+            //                chartTarCurrentValuesMultiple.graphLength = chartArray.length
+            //                chartTarCurrentValuesMultiple.graphAmplitudeMax = 0
 
-//                for(var chartIter=0; chartIter<chartArray.length; chartIter++) {
-//                    if(chartTarCurrentValuesMultiple.graphAmplitudeMax < chartArray[chartIter]) {
-//                        chartTarCurrentValuesMultiple.graphAmplitudeMax = chartArray[chartIter];
-//                    }
-//                }
+            //                for(var chartIter=0; chartIter<chartArray.length; chartIter++) {
+            //                    if(chartTarCurrentValuesMultiple.graphAmplitudeMax < chartArray[chartIter]) {
+            //                        chartTarCurrentValuesMultiple.graphAmplitudeMax = chartArray[chartIter];
+            //                    }
+            //                }
 
-//                currentTarChartAxisXMultiple.min = 0;
-//                currentTarChartAxisXMultiple.max = chartArray.length
-//                currentTarChartAxisYMultiple.min = 0;
-//                currentTarChartAxisYMultiple.max = chartTarCurrentValuesMultiple.graphAmplitudeMax
+            //                currentTarChartAxisXMultiple.min = 0;
+            //                currentTarChartAxisXMultiple.max = chartArray.length
+            //                currentTarChartAxisYMultiple.min = 0;
+            //                currentTarChartAxisYMultiple.max = chartTarCurrentValuesMultiple.graphAmplitudeMax
 
-//                for(chartIter=0; chartIter<chartArray.length; chartIter++) {
-//                    line.append(chartIter, parseInt(chartArray[chartIter]));
-//                }
-//            }
+            //                for(chartIter=0; chartIter<chartArray.length; chartIter++) {
+            //                    line.append(chartIter, parseInt(chartArray[chartIter]));
+            //                }
+            //            }
         }
     }
 
@@ -1047,7 +1047,7 @@ Rectangle {
 
                                         enabled: devPropertyProgressTmk24.isReady
                                         onClicked: {
-                                            viewController.getCurrentDevErrors()
+                                            viewController.getCurrentDevCustomCommand("read current dev errors")
                                         }
                                     }
 
@@ -1349,26 +1349,28 @@ Rectangle {
                         Controls_1_4.TableViewColumn{width: 30 }
                     }
                     onCurrentIndexChanged: {
-                        if(stackSubProperty.currentItem == itemDevTarir) {
-                            console.log("tarDev item -active")
-                            // сперва добавить всем роли
-                            // TODO: hack!!!
-                            var connDevId = viewController.getAvailableDevTarrirAdd_DevId()
-                            var connDevType = viewController.getAvailableDevTarrirAdd_DevType()
-                            for(var i=0; i<connDevId.length; i++) {
-                                viewController.addTarrirDev(connDevType[i], connDevId[i])
+                        if(devPropertyProgressTmk24.isReady) {
+                            if(stackSubProperty.currentItem == itemDevTarir) {
+                                console.log("tarDev item -active")
+                                // сперва добавить всем роли
+                                // TODO: hack!!!
+                                var connDevId = viewController.getAvailableDevTarrirAdd_DevId()
+                                var connDevType = viewController.getAvailableDevTarrirAdd_DevType()
+                                for(var i=0; i<connDevId.length; i++) {
+                                    viewController.addTarrirDev(connDevType[i], connDevId[i])
+                                }
+                                addTarStepValue(0)
+                                // clear tar table
+                                var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
+                                var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
+                                var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
+                                for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
+                                    viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
+                                }
+                                var ident = viewController.getCurrentDevProperty()
+                                viewController.addTarrirDev(ident[2], ident[6])
+                                timerAffterChangeTarTable.start()
                             }
-                            addTarStepValue(0)
-                            // clear tar table
-                            var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
-                            var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
-                            var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
-                            for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
-                                viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
-                            }
-                            var ident = viewController.getCurrentDevProperty()
-                            viewController.addTarrirDev(ident[2], ident[6])
-                            timerAffterChangeTarTable.start()
                         }
                     }
                     Timer {
@@ -1459,6 +1461,7 @@ Rectangle {
                                         anchors.top: readSetingsButton_1.bottom
                                         anchors.topMargin: 15
                                         layer.enabled: true
+                                        enabled: false
                                         layer.effect: DropShadow {
                                             transparentBorder: true
                                             horizontalOffset: 0
@@ -1467,7 +1470,6 @@ Rectangle {
                                             samples: 10
                                             radius: 20
                                         }
-                                        enabled: devPropertyProgressTmk24.isReady
                                         onClicked: {
                                             writeSettings()
                                         }
@@ -1856,7 +1858,6 @@ Rectangle {
                                             anchors.leftMargin: 15
                                             anchors.top: buttonFull.bottom
                                             anchors.topMargin: 10
-                                            enabled: false //devPropertyProgressTmk24.isReady
                                         }
                                         layer.effect: DropShadow {
                                             transparentBorder: true
@@ -1898,6 +1899,7 @@ Rectangle {
                                         anchors.top: readSetingsButton_2.bottom
                                         anchors.topMargin: 15
                                         layer.enabled: true
+                                        enabled: false
                                         layer.effect: DropShadow {
                                             transparentBorder: true
                                             horizontalOffset: 0
@@ -1906,7 +1908,6 @@ Rectangle {
                                             samples: 10
                                             radius: 20
                                         }
-                                        enabled: devPropertyProgressTmk24.isReady
                                         onClicked: {
                                             writeSettings()
                                         }
@@ -2038,6 +2039,7 @@ Rectangle {
                                         anchors.top: readSetingsButton_3.bottom
                                         anchors.topMargin: 15
                                         layer.enabled: true
+                                        enabled: false
                                         layer.effect: DropShadow {
                                             transparentBorder: true
                                             horizontalOffset: 0
@@ -2046,7 +2048,6 @@ Rectangle {
                                             samples: 10
                                             radius: 20
                                         }
-                                        enabled: devPropertyProgressTmk24.isReady
                                         onClicked: {
                                             writeSettings()
                                         }
@@ -2367,6 +2368,7 @@ Rectangle {
                                         anchors.leftMargin: 15
                                         anchors.top: readSetingsButton_4.bottom
                                         anchors.topMargin: 15
+                                        enabled: false
                                         layer.enabled: true
                                         layer.effect: DropShadow {
                                             transparentBorder: true
@@ -2376,7 +2378,6 @@ Rectangle {
                                             samples: 10
                                             radius: 20
                                         }
-                                        enabled: devPropertyProgressTmk24.isReady
                                         onClicked: {
                                             writeSettings()
                                         }
@@ -2599,6 +2600,7 @@ Rectangle {
                                         anchors.leftMargin: 15
                                         anchors.top: readSetingsButton_5.bottom
                                         anchors.topMargin: 15
+                                        enabled: false
                                         layer.enabled: true
                                         layer.effect: DropShadow {
                                             transparentBorder: true
@@ -2608,7 +2610,6 @@ Rectangle {
                                             samples: 10
                                             radius: 20
                                         }
-                                        enabled: devPropertyProgressTmk24.isReady
                                         onClicked: {
                                             writeSettings()
                                         }
