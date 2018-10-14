@@ -28,10 +28,6 @@ public slots:
     QString getType() override;
     DevicesFactory* getDeviceFactory() override;
 
-    void startFindDevices(QStringList keyParam, QStringList valParam) override;
-    eFindDeviceStatus getFindDevicesStatus() override;
-    QPair<QStringList,QStringList> getFindDeviceResult() override;
-
 private slots:
     bool writeData(QByteArray data);
     void readData();
@@ -51,7 +47,6 @@ private:
     QSerialPort *portHandler = nullptr;
     QString name;
     QPair<QStringList,QStringList>param;
-    eFindDeviceStatus findStatus;
 };
 
 #endif // INTERFACESERIAL_H

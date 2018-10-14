@@ -11,12 +11,6 @@ class interfacesAbstract : public QObject
 public:
     explicit interfacesAbstract(QObject *parent = nullptr);
 
-    typedef enum {
-        E_Find_off,
-        E_Find_process,
-        E_Find_finished
-    }eFindDeviceStatus;
-
 public slots:
     virtual void initInterface() = 0;
     virtual bool openInterface() = 0;
@@ -29,10 +23,6 @@ public slots:
     virtual QStringList getInterfaceProperty() = 0;
     virtual QStringList getAvailableList() = 0;
     virtual DevicesFactory* getDeviceFactory() = 0;
-
-    virtual void startFindDevices(QStringList keyParam, QStringList valParam);
-    virtual eFindDeviceStatus getFindDevicesStatus();
-    virtual QPair<QStringList,QStringList> getFindDeviceResult();
 
 private slots:
     virtual void aboutClose() = 0;

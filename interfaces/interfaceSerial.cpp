@@ -112,42 +112,6 @@ QStringList InterfaceSerial::getAvailableList() {
     return list;
 }
 
-void InterfaceSerial::startFindDevices(QStringList keyParam, QStringList valParam) {
-    int startId = 0;
-    int endId = 0;
-    for(int i=0; i<keyParam.size(); i++) {
-        if(keyParam.at(i) == "startId") {
-            startId = valParam.at(i).toInt();
-        }
-        if(keyParam.at(i) == "endId") {
-            endId = valParam.at(i).toInt();
-        }
-    }
-    if(startId != 0 && endId != 0) {
-        QTimer *timer = new QTimer();
-        connect(timer, SIGNAL(timeout()), this, SLOT([&] {
-            if(findStatus == E_Find_process) {
-
-            }
-            if(findStatus == E_Find_finished) {
-                timer->stop();
-            }
-        }));
-        timer->start(150);
-        findStatus = E_Find_process;
-    } else {
-        qDebug() << "nothing search!";
-    }
-}
-
-InterfaceSerial::eFindDeviceStatus InterfaceSerial::getFindDevicesStatus() {
-
-}
-
-QPair<QStringList,QStringList> InterfaceSerial::getFindDeviceResult() {
-
-}
-
 void InterfaceSerial::errorInterface(QString errorMessage) {
 }
 
