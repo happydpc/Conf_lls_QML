@@ -922,6 +922,11 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
         tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
         tcommand.devCommand = (int)Progress_tmk24Data::lls_calibrate_min;
         command.push_back(tcommand);
+    } else if(operation == "check device is connected") {
+        tcommand.deviceIdent = getUniqIdent();
+        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.devCommand = (int)Progress_tmk24Data::lls_check_address_and_pass;
+        command.push_back(tcommand);
     } else if(operation == "set current level value as max") {
         tcommand.deviceIdent = getUniqIdent();
         tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)

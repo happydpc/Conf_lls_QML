@@ -35,13 +35,12 @@ Item {
             projectPanel.devicePanel.devicePropertyPanel.dialogAddInterfaceFail.open()
         }
         onAddDeviceFail: {
-            projectPanel.devicePanel.devicePropertyPanel.dialogAddDeviceFail.open()
+            projectPanel.devicePanel.devicePropertyPanel.showDeviceAddError(devName, errorMessage)
         }
 
         onDevShowMessage: {
             projectPanel.devicePanel.devicePropertyPanel.setDevShowMessage(typeDev, messageHeader, message)
         }
-
         onDevCustomCommandExecuted: {
             projectPanel.devicePanel.devicePropertyPanel.setDevCustomCommandExecuted(typeDev, keys, args, ackMessageIsVisible)
         }
@@ -51,40 +50,41 @@ Item {
         }
         onDevUpdateLogDeviceMessage: {
             projectPanel.devicePanel.devicePropertyPanel.addDeviceLog(typeDev, message)
+
         }
-
-//        onDevUpdateWriteSettingExecuted: {
-//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageWriteSettingsOk.open()
-//        }
-//        onDevUpdateReadSettingExecuted: {
-//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readSettings(devNameId, key, settings)
-//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadSettingsOk.open()
-//        }
-//        onDevUpdateReadSettingWithoutRequest: {
-//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readSettings(devNameId, key, settings)
-//        }
-//        onDevUpdateReadErrorsExecuted: {
-//        emit devUpdateReadErrorsExecuted(pDevFactory->getDeviceName(indexDev),
-//                                         pDevFactory->getDeviceErrrors(indexDev));
-//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readErrors(devNameId, errors)
-//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadErrorsOk.open()
-//        }
-//        onDevUpdatePasswordIncorrect: {
-//            projectPanel.devicePanel.devicePropertyPanel.devShowPasswordIncorrect(devType, devNameId)
-//        }
-//        onDevUpdateReadTarTable: {
-//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readTarTable(devCount)
-//        }
-//        onDevUpdateWriteTarTableExecuted: {
-//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadTarTableOk.message = result
-//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadTarTableOk.open()
-//        }
-//        onDevErrorOperation: {
-//            projectPanel.devicePanel.messageOperationError.message = message
-//            projectPanel.devicePanel.messageOperationError.open()
-//        }
-
+        onDevReadyCheckCommand:
+            projectPanel.devicePanel.devicePropertyPanel.devPropertySerialPort.addDeviceDialog.setResultCheckDevice(devTypeName, result)
     }
+    //        onDevUpdateWriteSettingExecuted: {
+    //            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageWriteSettingsOk.open()
+    //        }
+    //        onDevUpdateReadSettingExecuted: {
+    //            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readSettings(devNameId, key, settings)
+    //            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadSettingsOk.open()
+    //        }
+    //        onDevUpdateReadSettingWithoutRequest: {
+    //            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readSettings(devNameId, key, settings)
+    //        }
+    //        onDevUpdateReadErrorsExecuted: {
+    //        emit devUpdateReadErrorsExecuted(pDevFactory->getDeviceName(indexDev),
+    //                                         pDevFactory->getDeviceErrrors(indexDev));
+    //            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readErrors(devNameId, errors)
+    //            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadErrorsOk.open()
+    //        }
+    //        onDevUpdatePasswordIncorrect: {
+    //            projectPanel.devicePanel.devicePropertyPanel.devShowPasswordIncorrect(devType, devNameId)
+    //        }
+    //        onDevUpdateReadTarTable: {
+    //            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readTarTable(devCount)
+    //        }
+    //        onDevUpdateWriteTarTableExecuted: {
+    //            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadTarTableOk.message = result
+    //            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadTarTableOk.open()
+    //        }
+    //        onDevErrorOperation: {
+    //            projectPanel.devicePanel.messageOperationError.message = message
+    //            projectPanel.devicePanel.messageOperationError.open()
+    //        }
 
     Rectangle {
         id:upBar

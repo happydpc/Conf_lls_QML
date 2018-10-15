@@ -16,10 +16,10 @@ public:
     ~DevicesFactory();
 
     typedef enum {
+        Type_Undefined,
         Type_Progress_Tmk24,
         Type_Progress_tmk4UX,
-        Type_Nozzle_rev_0_00,
-        Type_Undefined
+        Type_Nozzle_rev_0_00
     }E_DeviceType;
 
     typedef enum {
@@ -34,6 +34,7 @@ public:
 public slots:
 
     bool addNewDevice(E_DeviceType type, QPair<QStringList,QStringList>param, ServiceDevicesAbstract *pDevService);
+    void checkDeviceIsOnline(E_DeviceType type, QStringList keyParam, QStringList valParam);
     bool removeDevice(QString uniqDevName);
     bool removeDeviceByIndex(int index);
     bool removeDeviceAll();
@@ -66,6 +67,7 @@ public slots:
     void setDeviceReInitByIndex(int index);
     void sendCustomCommadToDev(int indexDev, QString operation, QStringList keys, QStringList values);
     void sendCustomCommadToDev(int indexDev, QString operation);
+    void sendCustomSimpleCommand(E_DeviceType type, QString operation, QStringList keys, QStringList values);
 
 signals:
     void writeData(QByteArray data);
@@ -76,6 +78,7 @@ signals:
     void deviceReadyCurrentDataSignal(DevicesFactory::E_DeviceType, QString uniqNameId);
     void deviceReadyPropertiesSignal(DevicesFactory::E_DeviceType, QString uniqNameId);
     void deviceReadyInitSignal(DevicesFactory::E_DeviceType, QString uniqNameId);
+    void deviceCheckIsReady(DevicesFactory::E_DeviceType type, QString uniqNameId, bool isOnline);
 
     void deviceUpdateTree(DevicesFactory::E_DeviceUpdateType status, int index);
     void deviceReadyCustomCommand(int index, QString message, QStringList customData, CommandController::sCommandData);
@@ -92,17 +95,23 @@ private slots:
 
 private:
     QVector<QPair<QString,DeviceAbstract*>> deviceMap;
-
-    QVector<CommandController::sCommandData> commandList;
-
+    CommandController *commandController;
     QTimer* devShedullerTimer;
-
     QMutex* devMutex;
-
     QList<ServiceDevicesAbstract*> serviceList;
 
-    int indexProcessedDev = 0;
+    E_DeviceType factoryType;
 
+    struct {
+        QString checkedDeviceUniqName;
+        E_DeviceType devType;
+        bool isIdle = true;
+        bool isProcessed = false;
+        bool isReady = false;
+        bool result = false;
+    }checkDeviceStruct;
+
+    int indexProcessedDev = 0;
     const int delayTypicalCommandMs = 180;
     const int delayIncreasedCommandMs = 300;
 };

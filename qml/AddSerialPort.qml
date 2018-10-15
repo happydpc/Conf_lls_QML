@@ -116,7 +116,6 @@ Popup {
                         id: modelBaudrateList
                     }
                 }
-
                 Label {
                     id: baudLabel
                     text: qsTr("Скорость обмена данными")

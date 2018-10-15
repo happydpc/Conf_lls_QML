@@ -105,7 +105,7 @@ Rectangle {
         case "getcardproperty":
             for(i=0; i<keys.length; i++) {
                 if(keys[i].toLowerCase() === "cardnumber"){
-                    cardNumber.text = args[i]
+                    cardNumber.text = args[i].toUpperCase()
                 }
             }
             break;

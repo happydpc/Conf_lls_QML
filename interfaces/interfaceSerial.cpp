@@ -23,7 +23,7 @@ bool InterfaceSerial::openInterface() {
     portHandler->setParity(QSerialPort::NoParity);
     portHandler->setStopBits(QSerialPort::OneStop);
     portHandler->setFlowControl(QSerialPort::NoFlowControl);
-    connect(portHandler, SIGNAL(errorInterface(QString)), SLOT(errorInterface(QString)));
+    //connect(portHandler, SIGNAL(errorInterface(QString)), SLOT(errorInterface(QString)));
     connect(deviceFactory, SIGNAL(writeData(QByteArray)),
             this, SLOT(writeData(QByteArray)));
     connect(deviceFactory, SIGNAL(readReplyData()), this, SLOT(readData()));

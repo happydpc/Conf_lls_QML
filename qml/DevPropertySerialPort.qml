@@ -7,6 +7,8 @@ Rectangle {
     color: "#e7e9eb"
     anchors.fill: parent
 
+    property alias addDeviceDialog: addDeviceDialog
+
     function setPropertyValues(listData) {
         typeDeviceText.text = listData[3]
         information.text = listData[0] + "\r\n" + listData[1]
@@ -61,7 +63,6 @@ Rectangle {
             text: qsTr("Добавить устройство")
             onClicked: {
                 var list = viewController.getDeviceAvailableType()
-                console.log("addDeviceToSerialPort-" + list)
                 addDeviceDialog.setListAvailableDevices(list)
                 addDeviceDialog.open()
             }
@@ -73,5 +74,38 @@ Rectangle {
         visible: false
         x: window.x / 2
         y: window.y / 2
+        onResultMessage: {
+            dialogMessage.message = res
+            dialogMessage.title = "Добавление устройства"
+            dialogMessage.open()
+            timerUntili.start()
+        }
+        Timer {
+            id: timerUntili
+            interval: 2000
+            running: false
+            repeat: false
+            onTriggered: {
+                dialogMessage.close()
+            }
+        }
+    }
+    Dialog {
+        id: dialogMessage
+        visible: false
+        title: ""
+        clip: true
+        standardButtons: StandardButton.Apply
+        property string message: ""
+        Rectangle {
+            color: "transparent"
+            implicitWidth: 400
+            implicitHeight: 200
+            Text {
+                text: dialogMessage.message
+                color: "black"
+                anchors.centerIn: parent
+            }
+        }
     }
 }

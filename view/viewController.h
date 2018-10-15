@@ -17,6 +17,8 @@ public:
     Q_INVOKABLE QStringList getInterfaceAvailableToAdd(QString typeName);
 
     Q_INVOKABLE bool addDeviceToConnection(QString devTypeName, QStringList keyParam, QStringList valueParam);
+    Q_INVOKABLE void checkDeviceFromConnection(QString devTypeName, QStringList keyParam, QStringList valueParam);
+
     Q_INVOKABLE QStringList getDeviceAvailableType();
     Q_INVOKABLE void removeActiveDevice();
     Q_INVOKABLE void setDeviceFindConnected(QString devType);
@@ -100,10 +102,11 @@ signals:
     void interfaceReadyProperties(QString ioType, QStringList properties);
 
     void addConnectionFail(QString devName);
-    void addDeviceFail(QString devName);
+    void addDeviceFail(QString devName, QString errorMessage);
 
     void devConnected(QString typeDev);
     void devDisconnected(QString typeDev);
+    void devReadyCheckCommand(QString devTypeName, bool result);
     void devSetActiveDeviceProperty(QString devType);
     void devReadyProperties(QString typeDev, QStringList data);
     void devReadyPeriodicData(QString typeDev);
@@ -126,6 +129,7 @@ private slots:
     void deviceReadyCurrentData(DevicesFactory::E_DeviceType, QString uniqNameId);
     void deviceReadyProperties(DevicesFactory::E_DeviceType, QString uniqNameId);
     void deviceReadyInit(DevicesFactory::E_DeviceType, QString uniqNameId);
+    void deviceCheckReady(DevicesFactory::E_DeviceType devType,QString devUniqNameId, bool result);
 
     void interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateType type);
     void deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, int index);

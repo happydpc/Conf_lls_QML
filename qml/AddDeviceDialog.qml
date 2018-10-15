@@ -10,6 +10,8 @@ Popup {
     height: 500
     clip: true
 
+    signal resultMessage(var res)
+
     function setListAvailableDevices(list) {
         console.log("AddDevice: " + list);
         typeDeviceList.model.clear()
@@ -17,6 +19,29 @@ Popup {
             typeDeviceList.model.append({text: list[i]})
         }
         typeDeviceList.currentIndex = 0
+    }
+
+    function setResultCheckDevice(devTypeName, result) {
+        if(result === true) {
+            var paramList = []
+            var keyList = []
+            switch(typeDeviceList.currentIndex) {
+            case 0:
+                if(typeDeviceList.currentText.length != 0) {
+                    keyList.push("uniqDevName")
+                    paramList.push(typeDeviceIdProgressTmk24.text)
+                    keyList.push("password")
+                    paramList.push(passwordProgressTmk24.text)
+                    viewController.addDeviceToConnection(typeDeviceList.currentText, keyList, paramList)
+                    close()
+                }
+                break;
+            case 1:
+                break;
+            }
+        } else {
+            resultMessage("Не удалось добавить устройство\nТак как оно не ответило на запрос")
+        }
     }
 
     Rectangle {
@@ -68,13 +93,22 @@ Popup {
                             text: qsTr("ID")
                             anchors.verticalCenter: parent.verticalCenter
                         }
-                        SpinBox {
+                        TextField {
                             id: typeDeviceIdProgressTmk24
                             width: 250
                             height: 40
-                            from: 1
-                            value: 1
-                            to: 255
+                            validator: IntValidator{bottom: 1; top: 255;}
+                            placeholderText: "введите ID  адрес"
+                            text: "1"
+                            onFocusChanged: {
+                                if(typeDeviceIdProgressTmk24.text.length === 0) {
+                                    //                                    if(!typeDeviceIdProgressTmk24.activeFocusOnPress) {
+                                    typeDeviceIdProgressTmk24.text = "1"
+                                    //                                    }
+                                }
+                            }
+                            onTextEdited: {
+                            }
                         }
                     }
                     Row{
@@ -158,6 +192,7 @@ Popup {
                 close()
             }
         }
+
         ButtonRound {
             id: addDevButton
             anchors.top: paramStack.bottom
@@ -176,24 +211,20 @@ Popup {
                 var keyList = []
                 switch(typeDeviceList.currentIndex) {
                 case 0:
-                    if(typeDeviceList.currentText.length != 0) {
-                        keyList.push("uniqDevName")
-                        paramList.push(typeDeviceIdProgressTmk24.value.toString())
-                        keyList.push("password")
-                        paramList.push(passwordProgressTmk24.text)
-                        viewController.addDeviceToConnection(typeDeviceList.currentText, keyList, paramList)
-                        close()
-                    }
+                    keyList.push("uniqIdDevice")
+                    paramList.push(typeDeviceIdProgressTmk24.text)
+                    keyList.push("password")
+                    paramList.push(passwordProgressTmk24.text)
+                    viewController.checkDeviceFromConnection(typeDeviceList.currentText, keyList, paramList)
+                    close()
                     break;
                 case 1:
-                    if(typeDeviceList.currentText.length != 0) {
-                        keyList.push("uniqDevName")
-                        paramList.push(typeDeviceIdNozzle_v0_00.text)
-                        keyList.push("password")
-                        paramList.push(passwordNozzle_v0_00.text)
-                        viewController.addDeviceToConnection(typeDeviceList.currentText, keyList, paramList)
-                        close()
-                    }
+                    keyList.push("uniqDevName")
+                    paramList.push(typeDeviceIdNozzle_v0_00.text)
+                    keyList.push("password")
+                    paramList.push(passwordNozzle_v0_00.text)
+                    viewController.addDeviceToConnection(typeDeviceList.currentText, keyList, paramList)
+                    close()
                     break;
                 }
             }

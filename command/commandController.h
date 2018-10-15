@@ -11,9 +11,16 @@ class CommandController : public QObject
 public:
     explicit CommandController(QObject *parent = nullptr);
 
+    typedef enum {
+        E_CommandType_Typical, // typical for normal poll
+        E_CommandType_OnceSecurityPacket // for check device id before add
+    }eCommandType;
+
     typedef struct {
+        eCommandType commandType;
         // uniqual ident device
         QString deviceIdent;
+        QString deviceTypeName;
         // dev command
         int devCommand;
         // need ack what command executed?
@@ -25,14 +32,13 @@ public:
             QList<QString>key;
             QList<QString>value;
         }args;
-
-        bool isNeedIncreasedDelay;
-
+        bool isNeedIncreasedDelay;       
         QString operationHeader;
     }sCommandData;
 
     bool addCommandToStack(sCommandData commandData);
-    bool getCommandFirstCommandFromStack(sCommandData &devCommandData);
+    QPair<bool, CommandController::sCommandData> getCommandFirstCommand();
+    void removeFirstCommand();
     bool commandsIsEmpty();
 
 private:

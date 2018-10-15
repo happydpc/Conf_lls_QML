@@ -9,13 +9,20 @@ bool CommandController::addCommandToStack(sCommandData devCommandData) {
     return !commandQueue.empty();
 }
 
-bool CommandController::getCommandFirstCommandFromStack(sCommandData &devCommandData) {
+QPair<bool, CommandController::sCommandData> CommandController::getCommandFirstCommand() {
     bool res = false;
+    CommandController::sCommandData tcommand;
     if(!commandQueue.empty()) {
-        devCommandData = commandQueue.dequeue();
+        tcommand = commandQueue.first();
         res = true;
     }
-    return res;
+    return QPair<bool,CommandController::sCommandData>(res, tcommand);
+}
+
+void CommandController::removeFirstCommand() {
+    if(!commandQueue.empty()) {
+        commandQueue.pop_front();
+    }
 }
 
 bool CommandController::commandsIsEmpty() {

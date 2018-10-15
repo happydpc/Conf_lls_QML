@@ -6,11 +6,11 @@ import QtQml.Models 2.11
 
 Rectangle {
     id: projectDevicePanel
-    property alias dialogAddDeviceFail : dialogAddDeviceFail
     property alias dialogAddInterfaceFail: dialogAddInterfaceFail
     property alias messageOperationError: messageOperationError
     property DevPropertyProgressTmk24 devPropertyProgressTmk24: devPropertyProgressTmk24
     property DevPropertyNozzle_v_0_00 devPropertyNozzle_v_0_00: devPropertyNozzle
+    property DevPropertySerialPort devPropertySerialPort: devPropertySerialPort
 
     function setActiveLogoPanel() {
         devicePropertieslistModel1.setCurrentIndex(0)
@@ -49,6 +49,11 @@ Rectangle {
             break;
         default: break;
         }
+    }
+
+    function showDeviceAddError(devTypeName, errorMessage) {
+        dialogAddDeviceFail.message = errorMessage
+        dialogAddDeviceFail.open()
     }
 
     function setPropertyToSerialPort(listData) {
@@ -239,13 +244,14 @@ Rectangle {
             id: dialogAddDeviceFail
             visible: false
             title: "Добавление устройства"
-            standardButtons: StandardButton.Close
+            property string message: ""
+            standardButtons: StandardButton.Accept
             Rectangle {
                 color: "transparent"
                 implicitWidth: 250
                 implicitHeight: 100
                 Text {
-                    text: "Не получилось добавить устройство\nТакой адрес уже используется"
+                    text: dialogAddDeviceFail.message
                     color: "navy"
                     anchors.centerIn: parent
                 }

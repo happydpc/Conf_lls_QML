@@ -5,9 +5,11 @@
 #include "device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.h"
 
 DevicesFactory::DevicesFactory() {
+    this->factoryType = Type_Undefined;
     this->devShedullerTimer = new QTimer();
     this->devShedullerTimer->start(100);
     this->devMutex = new QMutex();
+    this->commandController = new CommandController();
     connect(this->devShedullerTimer, SIGNAL(timeout()), this, SLOT(devShedullerSlot()));
 }
 
@@ -16,42 +18,74 @@ DevicesFactory::~DevicesFactory() {}
 bool DevicesFactory::addNewDevice(E_DeviceType type, QPair<QStringList,QStringList>param,
                                   ServiceDevicesAbstract *pDevService) {
     bool res = false;
-    bool uniqDevNameIsFinded = false;
-    QString uniqDevName;
-    for(int i=0; i<param.first.size(); i++) {
-        if(param.first[i] == "uniqDevName") {
-            uniqDevNameIsFinded = true;
-            uniqDevName = param.second[i];
-        }
+    if(factoryType == Type_Undefined) {
+        factoryType = type;
     }
-    if(uniqDevNameIsFinded) {
-        if(type == Type_Progress_Tmk24) {
-            if(findDeviceByUnicIdent(uniqDevName) == nullptr) {
-                lockMutextDevMap();
-                deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk24(uniqDevName, param, pDevService)));
-                unlockMutextDevMap();
-                emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
-                res = true;
+    if(factoryType == type) {
+        bool uniqDevNameIsFinded = false;
+        QString uniqDevName;
+        for(int i=0; i<param.first.size(); i++) {
+            if(param.first[i] == "uniqDevName") {
+                uniqDevNameIsFinded = true;
+                uniqDevName = param.second[i];
             }
-        } else if(type == Type_Progress_tmk4UX) {
-        } else if(type == Type_Nozzle_rev_0_00) {
-            if(findDeviceByUnicIdent(uniqDevName) == nullptr) {
-                lockMutextDevMap();
-                deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Nozzle_Revision_0_00_Oct_2018(uniqDevName)));
-                unlockMutextDevMap();
-                emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
-                res = true;
-            }
-        } else {
-            throw QString("undefined class");
         }
-
-        // TODO: может быть лучше как-то подругому перехватывать указатаель?
-        connect(findDeviceByUnicIdent(uniqDevName)->second,
-                SIGNAL(eventDeviceUpdateState(DeviceAbstract::E_DeviceEvent,QString,int,QString,QStringList, CommandController::sCommandData)),
-                this, SLOT(deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEvent,QString,int,QString,QStringList, CommandController::sCommandData)));
+        if(uniqDevNameIsFinded) {
+            if(type == Type_Progress_Tmk24) {
+                if(findDeviceByUnicIdent(uniqDevName) == nullptr) {
+                    lockMutextDevMap();
+                    deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk24(uniqDevName, param, pDevService)));
+                    unlockMutextDevMap();
+                    emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
+                    res = true;
+                }
+            } else if(type == Type_Progress_tmk4UX) {
+            } else if(type == Type_Nozzle_rev_0_00) {
+                if(findDeviceByUnicIdent(uniqDevName) == nullptr) {
+                    lockMutextDevMap();
+                    deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Nozzle_Revision_0_00_Oct_2018(uniqDevName)));
+                    unlockMutextDevMap();
+                    emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
+                    res = true;
+                }
+            }
+            // TODO: может быть лучше как-то подругому перехватывать указатаель?
+            connect(findDeviceByUnicIdent(uniqDevName)->second,
+                    SIGNAL(eventDeviceUpdateState(DeviceAbstract::E_DeviceEvent,QString,int,QString,QStringList, CommandController::sCommandData)),
+                    this, SLOT(deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEvent,QString,int,QString,QStringList, CommandController::sCommandData)));
+        }
     }
     return res;
+}
+
+void DevicesFactory::checkDeviceIsOnline(E_DeviceType type, QStringList keyParam, QStringList valParam) {
+    if(checkDeviceStruct.isIdle) {
+        if((factoryType == Type_Undefined) || (factoryType == type)) {
+            if(type == Type_Progress_Tmk24) {
+                sendCustomSimpleCommand(type, "check device is connected", keyParam, valParam);
+                checkDeviceStruct.devType = type;
+                QTimer *tTimer = new QTimer();
+                connect(tTimer, &QTimer::timeout, [=]() {
+                    if(checkDeviceStruct.isReady) {
+                        emit deviceCheckIsReady(checkDeviceStruct.devType,
+                                                checkDeviceStruct.checkedDeviceUniqName,
+                                                checkDeviceStruct.result);
+                        checkDeviceStruct.checkedDeviceUniqName.clear();
+                        checkDeviceStruct.isIdle = true;
+                        checkDeviceStruct.isProcessed = false;
+                        checkDeviceStruct.isReady = false;
+                        checkDeviceStruct.result = false;
+                        tTimer->stop();
+                        disconnect(tTimer, &QTimer::timeout, this, nullptr);
+                        delete tTimer;
+                    }
+                } );
+                tTimer->start(100);
+            } else if(type == Type_Progress_tmk4UX) {
+            } else if(type == Type_Nozzle_rev_0_00) {
+            }
+        }
+    }
 }
 
 bool DevicesFactory::removeDevice(QString uniqDevName) {
@@ -87,7 +121,6 @@ bool DevicesFactory::removeDeviceAll() {
     emit deviceUpdateTree(DevicesFactory::Type_Update_Removed, 0);
     return true;
 }
-
 
 int DevicesFactory::getDeviceCount() {
     return deviceMap.size();
@@ -131,7 +164,7 @@ void DevicesFactory::setDeviceInitCommandByIndex(int index) {
     for(auto i:commands) {
         findDeviceByIndex(index)->second->makeDataToCommand(i);
         i.isNeedAckMessage = false;
-        commandList.push_back(i);
+        commandController->addCommandToStack(i);
     }
 }
 
@@ -204,21 +237,24 @@ DeviceAbstract * DevicesFactory::getDeviceToDeviceAbstract(int index) {
 }
 
 void DevicesFactory::devShedullerSlot() {
-    int sizeCommand = 0;
-    if(!deviceMap.empty()) {
-        if(!commandList.isEmpty()) {
+    CommandController::sCommandData command;
+    if(!commandController->commandsIsEmpty()) {
+        if(commandController->getCommandFirstCommand().first == true) {
             devShedullerTimer->stop();
-            emit writeData(commandList.first().commandOptionData);
-            QTimer::singleShot(commandList.first().isNeedIncreasedDelay ? delayIncreasedCommandMs : delayTypicalCommandMs,
+            emit writeData(commandController->getCommandFirstCommand().second.commandOptionData);
+            QTimer::singleShot(commandController->getCommandFirstCommand().second.isNeedIncreasedDelay
+                               ? delayIncreasedCommandMs : delayTypicalCommandMs,
                                Qt::PreciseTimer, [&] {
                 emit readReplyData();
             });
-        } else {
+        }
+    } else {
+        if(!deviceMap.empty()) {
             if(devMutex->tryLock(100)) {
-                CommandController::sCommandData command;
                 if(indexProcessedDev > deviceMap.size()-1) {
                     indexProcessedDev = 0;
                 }
+                int sizeCommand = 0;
                 auto dev = deviceMap.at(indexProcessedDev);
                 if(!deviceMap.empty()) {
                     if(indexProcessedDev < deviceMap.size()-1) {
@@ -231,32 +267,36 @@ void DevicesFactory::devShedullerSlot() {
                 case DeviceAbstract::STATE_DISCONNECTED:
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         command = dev.second->getCommandToCheckConnected();
+                        command.commandType = CommandController::E_CommandType_Typical;
                         dev.second->makeDataToCommand(command);
-                        commandList.push_back(command);
+                        commandController->addCommandToStack(command);
                     }
                     break;
                 case DeviceAbstract::STATE_GET_TYPE:
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         if(dev.second->getPriority() == 0) { // TODO: loop need priority
                             command = dev.second->getCommandToGetType();
+                            command.commandType = CommandController::E_CommandType_Typical;
                             dev.second->makeDataToCommand(command);
-                            commandList.push_back(command);
+                            commandController->addCommandToStack(command);
                         }
                     }
                     break;
                 case DeviceAbstract::STATE_CHECK_PASSWORD:
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         command = dev.second->getCommandtoCheckPassword();
+                        command.commandType = CommandController::E_CommandType_Typical;
                         dev.second->makeDataToCommand(command);
-                        commandList.push_back(command);
+                        commandController->addCommandToStack(command);
                     }
                     break;
                 case DeviceAbstract::STATE_START_INIT:
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         for(sizeCommand=0; sizeCommand!= dev.second->getCommandListToInit().size(); sizeCommand++) {
                             command = dev.second->getCommandListToInit().at(sizeCommand);
+                            command.commandType = CommandController::E_CommandType_Typical;
                             dev.second->makeDataToCommand(command);
-                            commandList.push_back(command);
+                            commandController->addCommandToStack(command);
                         }
                     }
                     break;
@@ -264,8 +304,9 @@ void DevicesFactory::devShedullerSlot() {
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         for(sizeCommand=0; sizeCommand != dev.second->getCommandListToCurrentData().size(); sizeCommand++) {
                             command = dev.second->getCommandListToCurrentData().at(sizeCommand);
+                            command.commandType = CommandController::E_CommandType_Typical;
                             dev.second->makeDataToCommand(command);
-                            commandList.push_back(command);
+                            commandController->addCommandToStack(command);
                         }
                     }
                     break;
@@ -277,13 +318,29 @@ void DevicesFactory::devShedullerSlot() {
 }
 
 void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
-    for(auto dev: deviceMap) {
-        if(dev.second->getUniqIdent() == commandList.first().deviceIdent) {
-            dev.second->placeDataReplyToCommand(data, commandList.first());
-            break;
+    if(commandController->getCommandFirstCommand().first == true) {
+        auto command = commandController->getCommandFirstCommand().second;
+        if(command.commandType == CommandController::E_CommandType_Typical) {
+            for(auto dev: deviceMap) {
+                if(dev.second->getUniqIdent() == command.deviceIdent) {
+                    dev.second->placeDataReplyToCommand(data, command);
+                    break;
+                }
+            }
+            commandController->removeFirstCommand();
+        } else if(command.commandType == CommandController::E_CommandType_OnceSecurityPacket) {
+            if(command.deviceTypeName == QString(Progress_tmk24::name)) {
+                Progress_tmk24 *pdevice = new Progress_tmk24(
+                            checkDeviceStruct.checkedDeviceUniqName, QPair<QStringList,QStringList>(QStringList(),QStringList()), nullptr);
+                checkDeviceStruct.result = pdevice->placeDataReplyToCommand(data, commandController->getCommandFirstCommand().second);
+                checkDeviceStruct.isReady = true;
+                commandController->removeFirstCommand();
+                delete pdevice;
+            } else if(factoryType == Type_Progress_tmk4UX) {
+            } else if(factoryType == Type_Nozzle_rev_0_00) {
+            }
         }
     }
-    commandList.pop_front();
     //-- start sheduller after reply
     devShedullerTimer->start();
 }
@@ -361,11 +418,9 @@ void DevicesFactory::deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEven
 }
 
 void DevicesFactory::lockMutextDevMap() {
-    //qDebug() << "-lockMutextDevMap";
     devMutex->lock();
 }
 void DevicesFactory::unlockMutextDevMap() {
-    //qDebug() << "-unlockMutextDevMap";
     devMutex->unlock();
 }
 
@@ -375,7 +430,7 @@ void DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation) {
     // что требует подтверждения о выполнении (на форме)
     for(auto cIt: command) {
         findDeviceByIndex(indexDev)->second->makeDataToCommand(cIt);
-        commandList.push_back(cIt);
+        commandController->addCommandToStack(cIt);
     }
 }
 
@@ -390,7 +445,40 @@ void DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation, QStr
     // что требует подтверждения о выполнении (на форме)
     for(auto cIt: command) {
         findDeviceByIndex(indexDev)->second->makeDataToCommand(cIt);
-        commandList.push_back(cIt);
+        commandController->addCommandToStack(cIt);
+    }
+}
+
+void DevicesFactory::sendCustomSimpleCommand(E_DeviceType type, QString operation, QStringList keys, QStringList values) {
+    QList<CommandController::sCommandData> commands;
+    if(type == Type_Progress_Tmk24) {
+        lockMutextDevMap();
+        QString uniqIdDevice;
+        for(int keyCoun = 0; keyCoun<keys.size(); keyCoun++) {
+            if(keys.at(keyCoun) == "uniqIdDevice") {
+                uniqIdDevice = values.at(keyCoun);
+            }
+        }
+        if(uniqIdDevice.length() != 0) {
+            Progress_tmk24 *pdevice = new Progress_tmk24(uniqIdDevice, QPair<QStringList,QStringList>(keys, values), nullptr);
+            checkDeviceStruct.checkedDeviceUniqName = uniqIdDevice;
+            checkDeviceStruct.isProcessed = true;
+            checkDeviceStruct.isIdle = false;
+            checkDeviceStruct.isReady = false;
+            checkDeviceStruct.result = false;
+            unlockMutextDevMap();
+            commands = pdevice->getCommandCustom(operation);
+            for(int i=0; i<commands.size(); i++) {
+                auto tcommand = commands.at(i);
+                tcommand.commandType = CommandController::E_CommandType_OnceSecurityPacket;;
+                tcommand.deviceTypeName = QString(pdevice->name);
+                pdevice->makeDataToCommand(tcommand);
+                commandController->addCommandToStack(tcommand);
+            }
+            delete pdevice;
+        }
+    } else { // TODO:
+
     }
 }
 
