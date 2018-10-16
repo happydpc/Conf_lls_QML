@@ -87,7 +87,7 @@ Rectangle {
     }
 
     function setDevDisconnected(typeDev) {
-        switch(typeDev) {
+        switch(typeDev.toLowerCase()) {
         case "progress tmk24":
             projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setNoReady()
             break;
@@ -98,7 +98,7 @@ Rectangle {
         }
     }
     function setDevConnected(typeDev) {
-        switch(typeDev) {
+        switch(typeDev.toLowerCase()) {
         case "progress tmk24":
             projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setReady()
             break;

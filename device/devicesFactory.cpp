@@ -62,7 +62,7 @@ void DevicesFactory::checkDeviceIsOnline(E_DeviceType type, QStringList keyParam
     if(checkDeviceStruct.isIdle) {
         if((factoryType == Type_Undefined) || (factoryType == type)) {
             if(type == Type_Progress_Tmk24) {
-                sendCustomSimpleCommand(type, "check device is connected", keyParam, valParam);
+                sendCustomCommandUseCallback(type, "check device is connected", keyParam, valParam);
                 checkDeviceStruct.devType = type;
                 QTimer *tTimer = new QTimer();
                 connect(tTimer, &QTimer::timeout, [=]() {
@@ -135,9 +135,10 @@ QString DevicesFactory::getDeviceTypeNameByType(DevicesFactory::E_DeviceType typ
         return QString::fromUtf8(Progress_tmk4UX::name, strlen(Progress_tmk4UX::name));
     } else if(type == DevicesFactory::Type_Progress_Tmk24) {
         return QString::fromUtf8(Progress_tmk24::name, strlen(Progress_tmk24::name));
+    } else if(type == DevicesFactory::Type_Nozzle_rev_0_00) {
+        return QString::fromUtf8(Nozzle_Revision_0_00_Oct_2018::name, strlen(Nozzle_Revision_0_00_Oct_2018::name));
     } else {
         qDebug() << "undefined type name!";
-        throw QString("undefined type name!");
     }
 }
 
@@ -151,7 +152,6 @@ DevicesFactory::E_DeviceType DevicesFactory::getDeviceType(QString typeText) {
     }
     else {
         qDebug() << "undefined type name!";
-        throw QString("undefined type name!");
     }
 }
 
@@ -430,6 +430,7 @@ void DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation) {
     // что требует подтверждения о выполнении (на форме)
     for(auto cIt: command) {
         findDeviceByIndex(indexDev)->second->makeDataToCommand(cIt);
+        cIt.commandType = CommandController::E_CommandType_Typical;
         commandController->addCommandToStack(cIt);
     }
 }
@@ -445,11 +446,12 @@ void DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation, QStr
     // что требует подтверждения о выполнении (на форме)
     for(auto cIt: command) {
         findDeviceByIndex(indexDev)->second->makeDataToCommand(cIt);
+        cIt.commandType = CommandController::E_CommandType_Typical;
         commandController->addCommandToStack(cIt);
     }
 }
 
-void DevicesFactory::sendCustomSimpleCommand(E_DeviceType type, QString operation, QStringList keys, QStringList values) {
+void DevicesFactory::sendCustomCommandUseCallback(E_DeviceType type, QString operation, QStringList keys, QStringList values) {
     QList<CommandController::sCommandData> commands;
     if(type == Type_Progress_Tmk24) {
         lockMutextDevMap();
@@ -470,7 +472,7 @@ void DevicesFactory::sendCustomSimpleCommand(E_DeviceType type, QString operatio
             commands = pdevice->getCommandCustom(operation);
             for(int i=0; i<commands.size(); i++) {
                 auto tcommand = commands.at(i);
-                tcommand.commandType = CommandController::E_CommandType_OnceSecurityPacket;;
+                tcommand.commandType = CommandController::E_CommandType_OnceSecurityPacket;
                 tcommand.deviceTypeName = QString(pdevice->name);
                 pdevice->makeDataToCommand(tcommand);
                 commandController->addCommandToStack(tcommand);

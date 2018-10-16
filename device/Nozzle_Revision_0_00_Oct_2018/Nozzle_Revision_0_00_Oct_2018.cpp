@@ -39,6 +39,7 @@ void Nozzle_Revision_0_00_Oct_2018::setDefaultValues() {
     this->dev_data.settings.get.isValid = false;
     this->dev_data.temperature.isValid = false;
     this->dev_data.networkPassword.isValid = false;
+    this->dev_data.versionFirmware.isValid = false;
 }
 
 QList<int> Nozzle_Revision_0_00_Oct_2018::getChart() {
@@ -61,6 +62,8 @@ QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getPropertyData() 
     res.second.push_back(versionFirmware.isEmpty() ? QString("NA") : versionFirmware);
     res.first.push_back("uniqIdentId");
     res.second.push_back(uniqIdentId);
+    res.first.push_back("versionFirmare");
+    res.second.push_back(dev_data.versionFirmware.isValid ? dev_data.versionFirmware.value : "NA");
     return res;
 }
 
@@ -94,6 +97,10 @@ QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getCurrentData() {
     res.second.push_back(dev_data.powerCurrentResouresAvailable.isValid == true ? QString::number(dev_data.powerCurrentResouresAvailable.value.value_f) : "NA");
     res.first.push_back("powerCurrentResouresAvailableHourse");
     res.second.push_back(dev_data.powerCurrentResouresAvailableHourse.isValid == true ? QString::number(dev_data.powerCurrentResouresAvailableHourse.value.value_f) : "NA");
+    res.first.push_back("powerCurrent");
+    res.second.push_back(dev_data.powerCurrent.isValid == true ? QString::number(dev_data.powerCurrent.value.value_f) : "NA");
+    res.first.push_back("versionFirmare");
+    res.second.push_back(dev_data.versionFirmware.isValid ? dev_data.versionFirmware.value : "NA");
     return res;
 }
 
@@ -172,6 +179,10 @@ bool Nozzle_Revision_0_00_Oct_2018::makeDataToCommand(CommandController::sComman
             res = true;
         }
             break;
+        case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getOtherData: {
+            commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
+            res = true;
+        }
         case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkConfig: {
             commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
             res = true;
@@ -330,6 +341,7 @@ void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(QByteArray data, CommandCo
             // ресурс осталось (часов)
             float  powerCurrentResouresAvailable;
             float  powerCurrentResouresAvailableHourse;
+            float powerCurrent;
         }sOutBatBuff;
         sOutBatBuff *tbuf = (sOutBatBuff*)t_reply->data.data;
         dev_data.powerVoltage.value.value_f = tbuf->powerVoltage;
@@ -338,6 +350,7 @@ void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(QByteArray data, CommandCo
         dev_data.powerCurrentAccumulateHourse.value.value_f = tbuf->powerCurrentAccumulateHourse;
         dev_data.powerCurrentResouresAvailable.value.value_f = tbuf->powerCurrentResouresAvailable;
         dev_data.powerCurrentResouresAvailableHourse.value.value_f = tbuf->powerCurrentResouresAvailableHourse;
+        dev_data.powerCurrent.value.value_f = tbuf->powerCurrent;
         //
         dev_data.powerVoltage.isValid = true;
         dev_data.powertypeBattery.isValid = true;
@@ -345,7 +358,7 @@ void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(QByteArray data, CommandCo
         dev_data.powerCurrentAccumulateHourse.isValid = true;
         dev_data.powerCurrentResouresAvailable.isValid = true;
         dev_data.powerCurrentResouresAvailableHourse.isValid = true;
-
+        dev_data.powerCurrent.isValid = true;
         emit eventDeviceUpdateState(Type_DeviceEvent_CurrentDataUpdated, commandReqData.deviceIdent,
                                     t_reply->commandType, "Update current data", QStringList(""), commandReqData);
         emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
@@ -381,6 +394,19 @@ void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(QByteArray data, CommandCo
         dev_data.accelX.isValid = true;
         dev_data.accelY.isValid = true;
         dev_data.accelZ.isValid = true;
+        emit eventDeviceUpdateState(Type_DeviceEvent_CurrentDataUpdated, commandReqData.deviceIdent,
+                                    t_reply->commandType, "Update current data", QStringList(""), commandReqData);
+        emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
+                                    t_reply->commandType, "Normal", QStringList(""), commandReqData);
+    }
+        break;
+    case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getOtherData: {
+        typedef struct {
+            char version[32];
+        }sOutBatBuff;
+        sOutBatBuff *tbuf = (sOutBatBuff*)t_reply->data.data;
+        dev_data.versionFirmware.value = QString::fromUtf8(tbuf->version);
+        dev_data.versionFirmware.isValid = true;
         emit eventDeviceUpdateState(Type_DeviceEvent_CurrentDataUpdated, commandReqData.deviceIdent,
                                     t_reply->commandType, "Update current data", QStringList(""), commandReqData);
         emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
@@ -511,6 +537,8 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
     listCommand.push_back(command);
     command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkConfig;
     listCommand.push_back(command);
+    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getOtherData;
+    listCommand.push_back(command);
     return listCommand;
 }
 
@@ -613,6 +641,8 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
     command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getCardData;
     listCommand.push_back(command);
     command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkData;
+    listCommand.push_back(command);
+    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getOtherData;
     listCommand.push_back(command);
     return listCommand;
 }

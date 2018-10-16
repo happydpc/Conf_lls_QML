@@ -67,7 +67,7 @@ public slots:
     void setDeviceReInitByIndex(int index);
     void sendCustomCommadToDev(int indexDev, QString operation, QStringList keys, QStringList values);
     void sendCustomCommadToDev(int indexDev, QString operation);
-    void sendCustomSimpleCommand(E_DeviceType type, QString operation, QStringList keys, QStringList values);
+    void sendCustomCommandUseCallback(E_DeviceType type, QString operation, QStringList keys, QStringList values);
 
 signals:
     void writeData(QByteArray data);

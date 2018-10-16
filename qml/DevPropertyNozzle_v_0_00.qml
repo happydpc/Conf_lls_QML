@@ -12,19 +12,20 @@ import QtGraphicalEffects 1.0
 
 Rectangle {
     anchors.fill: parent
+    property bool devIsConnected: false
 
     function setNoReady() {
-        devProperty.isReady = false
+        devIsConnected = false
         setWriteSettingsIsNoAvailable()
     }
     function setReady() {
-        devProperty.isReady = true
+        devIsConnected = true
+        setWriteSettingsIsAvailable()
     }
     function setResetState() {
         tabProperty.setCurrentIndex(0)
         stackSubProperty.setCurrentIndex(0)
         setNoReady()
-        setWriteSettingsIsAvailable()
     }
     function setWriteSettingsIsAvailable() {
         writeSettingsButton_1.enabled = true
@@ -38,13 +39,13 @@ Rectangle {
         var keys = viewController.getCurrentDevPropertyKey()
         var values = viewController.getCurrentDevPropertyValue()
         for(var i=0; i<keys.length; i++) {
-            if(keys[i].toLowerCase() === "devtypename"){
+            if(keys[i] === "devTypeName"){
                 typeDeviceText.text = values[i]
             }
-            if(keys[i].toLowerCase() === "serialnum"){
+            if(keys[i] === "serialNum"){
                 snText.text = values[i]
             }
-            if(keys[i].toLowerCase() === "firmware"){
+            if(keys[i] === "versionFirmare"){
                 versionFirmwareText.text = values[i]
             }
         }
@@ -52,8 +53,15 @@ Rectangle {
 
     function setCustomCommandExecuted(keys, args, ackMessageIsVisible) {
         var i = 0;
-        switch(keys[0].toLowerCase()) {
-        case "getacceldata" :
+        switch(keys[0]) {
+        case "getOtherData" :
+            for(i=0; i<keys.length; i++) {
+                if(keys[i] === "versionFirmare"){
+                    versionFirmwareText.text = args[i]
+                }
+            }
+            break;
+        case "getAccelData" :
             for(i=0; i<keys.length; i++) {
                 if(keys[i].toLowerCase() === "accelx"){
                     accelXProgressBar.value = parseFloat(args[i])
@@ -66,7 +74,7 @@ Rectangle {
                 }
             }
             break;
-        case "getnetworkdata":
+        case "getNetworkData":
             for(i=0; i<keys.length; i++) {
                 if(keys[i].toLowerCase() === "networkparentip"){
                     networkParentIp.text = args[i]
@@ -74,14 +82,14 @@ Rectangle {
             }
             break;
             // it last command to read the settings
-        case "getnetworkconfig":
+        case "getNetworkConfig":
             for(i=0; i<keys.length; i++) {
                 if(keys[i].toLowerCase() === "networkpassword"){
                     networkPassword.text = args[i]
                 }
             }
             break;
-        case "getaccelconfig":
+        case "getAccelConfig":
             for(i=0; i<keys.length; i++) {
                 if(keys[i].toLowerCase() === "accelconfx") {
                     accelCoefX.text = args[i]
@@ -102,27 +110,30 @@ Rectangle {
                 dialogInfoMessage.open()
             }
             break;
-        case "getcardproperty":
+        case "getCardProperty":
             for(i=0; i<keys.length; i++) {
                 if(keys[i].toLowerCase() === "cardnumber"){
                     cardNumber.text = args[i].toUpperCase()
                 }
             }
             break;
-        case "getbatteryproperty":
+        case "getBatteryProperty":
             for(i=0; i<keys.length; i++) {
-                if(keys[i].toLowerCase() === "powervoltage"){
+                if(keys[i] === "powerVoltage"){
                     batteryVoltage.value = parseFloat(args[i])
                 }
-                if(keys[i].toLowerCase() === "powercurrentresouresavailable"){
+                if(keys[i] === "powerCurrentResouresAvailable"){
                     batteryResourseAvailable.value = parseFloat(args[i])
+                }
+                if(keys[i] === "powerCurrent"){
+                    batteryCurrent_mA.value = parseFloat(args[i])
                 }
             }
             break;
-        case "setnetworkpassword":
-        case "setaccelconfig":
-        case "setaccelusecurrentvaluesasnullpoint":
-        case "setnetworkconfig":
+        case "setNetworkPassword":
+        case "setAccelConfig":
+        case "setAccelUseCurrentValuesAsNullPoint":
+        case "setNetworkConfig":
             if(ackMessageIsVisible) {
                 dialogInfoMessage.message = "Настройки успешно записаны"
                 dialogInfoMessage.title = "Настройки"
@@ -134,7 +145,7 @@ Rectangle {
     }
 
     function setUpdatePeriodicValues() {
-        devProperty.isReady = true
+        devIsConnected = true
         var list = viewController.getCurrentDevChart()
         currentChartLines.clear();
         chartCurrentValue.graphLength = list.length
@@ -184,7 +195,6 @@ Rectangle {
 
     Rectangle {
         id: devProperty
-        property bool isReady: true
         anchors.fill: parent
         color: "transparent"
         Rectangle {
@@ -291,7 +301,7 @@ Rectangle {
                                     anchors.leftMargin: 5
                                     anchors.right: parent.right
                                     height: parent.height
-                                    enabled: devProperty.isReady
+                                    enabled: devIsConnected
                                     readOnly: true
                                 }
                             }
@@ -318,7 +328,7 @@ Rectangle {
                                     anchors.right: parent.right
                                     anchors.leftMargin: 5
                                     readOnly: true
-                                    enabled: devProperty.isReady
+                                    enabled: devIsConnected
                                     height: parent.height
                                 }
                             }
@@ -340,11 +350,11 @@ Rectangle {
                                 TextField {
                                     id: versionFirmwareText
                                     text: qsTr("")
-                                    enabled: devProperty.isReady
+                                    readOnly: true
+                                    enabled: devIsConnected
                                     anchors.left: lversionFirmwareText.right
                                     anchors.right: parent.right
                                     anchors.leftMargin: 5
-                                    readOnly: true
                                     height: parent.height
                                 }
                             }
@@ -365,9 +375,10 @@ Rectangle {
                                 spacing: 10
                                 Rectangle {
                                     width: 150
-                                    height: 150
+                                    height: 120
                                     layer.enabled: true
                                     radius: 15
+                                    color: devIsConnected ? "#ffffff" : "#d9d9d9"
                                     Label {
                                         id: batteryVoltageLabel
                                         text: qsTr("Напряжение:")
@@ -380,8 +391,8 @@ Rectangle {
                                     RadialBar {
                                         id: batteryVoltage
                                         anchors.centerIn: parent
-                                        width: 100
-                                        height: 100
+                                        width: 80
+                                        height: 80
                                         penStyle: Qt.RoundCap
                                         dialType: RadialBar.FullDial
                                         progressColor: "#05fff0"
@@ -397,57 +408,20 @@ Rectangle {
                                             italic: false
                                             pointSize: 12
                                         }
-                                        suffixText: "V"
                                         textColor: "#888d91"
-                                        enabled: devProperty.isReady
-                                    }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 10
-                                    }
-                                }
-
-                                Rectangle {
-                                    width: 150
-                                    height: 150
-                                    layer.enabled: true
-                                    radius: 15
-                                    Label {
-                                        id: levelCntLabel
-                                        text: qsTr("Ресурс батареи:")
-                                        anchors.left: parent.left
-                                        color: "#888d91"
-                                        anchors.leftMargin: 15
-                                        anchors.right: parent.right
-                                        anchors.rightMargin: 0
-                                    }
-                                    RadialBar {
-                                        id: batteryResourseAvailable
-                                        anchors.centerIn: parent
-                                        width: 100
-                                        height: 100
-                                        penStyle: Qt.RoundCap
-                                        dialType: RadialBar.FullDial
-                                        progressColor: "#05fff0"
-                                        foregroundColor: "transparent"
-                                        dialWidth: 15
-                                        startAngle: 180
-                                        spanAngle: 70
-                                        minValue: 0
-                                        maxValue: 9999
-                                        value: 0
-                                        textFont {
-                                            family: "Halvetica"
-                                            italic: false
-                                            pointSize: 12
+                                        showText: false
+                                        suffixText: ""
+                                        onValueChanged: {
+                                            batteryVoltageCustomText.text = value + "V"
                                         }
-                                        suffixText: "mA"
-                                        textColor: "#888d91"
-                                        enabled: devProperty.isReady
+                                        Text {
+                                            id:batteryVoltageCustomText
+                                            text:"NA"
+                                            color: parent.textColor
+                                            font.pointSize: (text.length > 6) ? (parent.textFont.pointSize) : (14)
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            anchors.verticalCenter: parent.verticalCenter
+                                        }
                                     }
                                     layer.effect: DropShadow {
                                         transparentBorder: true
@@ -462,9 +436,10 @@ Rectangle {
                                 Rectangle {
                                     id: cardRectangle
                                     width: 200
-                                    height: 150
+                                    height: 120
                                     layer.enabled: true
                                     radius: 15
+                                    color: devIsConnected ? "#ffffff" : "#d9d9d9"
                                     Label {
                                         text: qsTr("Карта")
                                         anchors.left: parent.left
@@ -476,13 +451,14 @@ Rectangle {
 
                                     TextField {
                                         id: cardNumber
-                                        y: 55
+                                        y: 45
                                         text: qsTr("")
                                         anchors.right: parent.right
                                         anchors.rightMargin: 5
                                         anchors.left: parent.left
                                         anchors.leftMargin: 5
                                         placeholderText: "номер карты"
+                                        readOnly: true
                                     }
                                     layer.effect: DropShadow {
                                         transparentBorder: true
@@ -497,9 +473,10 @@ Rectangle {
                                 Rectangle {
                                     id: networkRectangle
                                     width: 200
-                                    height: 150
+                                    height: 120
                                     layer.enabled: true
                                     radius: 15
+                                    color: devIsConnected ? "#ffffff" : "#d9d9d9"
                                     Label {
                                         text: qsTr("Сеть")
                                         anchors.left: parent.left
@@ -511,13 +488,14 @@ Rectangle {
 
                                     TextField {
                                         id: networkParentIp
-                                        y: 55
+                                        y: 45
                                         text: qsTr("")
                                         anchors.right: parent.right
                                         anchors.rightMargin: 5
                                         anchors.left: parent.left
                                         anchors.leftMargin: 5
                                         placeholderText: "ip адрес"
+                                        readOnly: true
                                     }
                                     layer.effect: DropShadow {
                                         transparentBorder: true
@@ -531,8 +509,9 @@ Rectangle {
 
                                 Rectangle {
                                     width: 150
-                                    height: 150
+                                    height: 120
                                     radius: 15
+                                    color: devIsConnected ? "#ffffff" : "#d9d9d9"
                                     layer.effect: DropShadow {
                                         color: "#e0e5ef"
                                         radius: 10
@@ -555,7 +534,7 @@ Rectangle {
                                     Row {
                                         spacing: 10
                                         x: 5
-                                        y: 41
+                                        y: 31
                                         Label {
                                             text: "X:"
                                             anchors.verticalCenter: parent.verticalCenter
@@ -572,7 +551,7 @@ Rectangle {
                                     Row {
                                         spacing: 10
                                         x: 5
-                                        y: 72
+                                        y: 62
                                         Label {
                                             text: "Y:"
                                             anchors.verticalCenter: parent.verticalCenter
@@ -589,7 +568,7 @@ Rectangle {
                                     Row {
                                         spacing: 10
                                         x: 5
-                                        y: 104
+                                        y: 94
                                         Label {
                                             text: "Z:"
                                             anchors.verticalCenter: parent.verticalCenter
@@ -606,56 +585,186 @@ Rectangle {
                             }
                         }
                         Column {
-                            id: column1
                             width: 470
                             height: 250
                             anchors.left: parent.left
                             anchors.leftMargin: 0
                             anchors.right: parent.right
                             anchors.rightMargin: 0
-                            Rectangle {
-                                id: rectangle
-                                height: 250
-                                // - 50
-                                color: "#ffffff"
-                                radius: 0
-                                anchors.fill: parent
-                                ChartView {
-                                    id: chartCurrentValue
-                                    theme: ChartView.ChartThemeLight
-                                    title: "RSSI"
-                                    antialiasing: true
-                                    property int graphLength: 1
-                                    property int graphAmplitudeMax: 1
-                                    height: 250
-                                    anchors.fill: parent
-                                    ValueAxis {
-                                        id: currentChartAxisX
-                                        min: 0
-                                        max: chartCurrentValue.graphLength
-                                        tickCount: 5
+                            Row{
+                                spacing: 10
+                                Rectangle {
+                                    width:  batCurrentRectangle.width
+                                    height: batResourseRectangle.height * 2
+                                    Column {
+                                        spacing: 10
+                                        Rectangle {
+                                            id:batResourseRectangle
+                                            width: 150
+                                            height: 120
+                                            layer.enabled: true
+                                            radius: 15
+                                            color: devIsConnected ? "#ffffff" : "#d9d9d9"
+                                            Label {
+                                                id: levelCntLabel
+                                                text: qsTr("Ресурс батареи:")
+                                                anchors.left: parent.left
+                                                color: "#888d91"
+                                                anchors.leftMargin: 15
+                                                anchors.right: parent.right
+                                                anchors.rightMargin: 0
+                                            }
+                                            RadialBar {
+                                                id: batteryResourseAvailable
+                                                anchors.centerIn: parent
+                                                width: 80
+                                                height: 80
+                                                penStyle: Qt.RoundCap
+                                                dialType: RadialBar.FullDial
+                                                progressColor: "#b254c6"
+                                                foregroundColor: "transparent"
+                                                dialWidth: 15
+                                                startAngle: 180
+                                                spanAngle: 70
+                                                minValue: 0
+                                                maxValue: 9999
+                                                value: 0
+                                                textFont {
+                                                    family: "Halvetica"
+                                                    italic: false
+                                                    pointSize: 12
+                                                }
+                                                textColor: "#888d91"
+                                                enabled: devIsConnected
+                                                showText: false
+                                                suffixText: ""
+                                                onValueChanged: {
+                                                    batteryResouseAvailableCustomText.text = value + "mA"
+                                                }
+                                                Text {
+                                                    id:batteryResouseAvailableCustomText
+                                                    text:"NA"
+                                                    color: parent.textColor
+                                                    font.pointSize: (text.length > 6) ? (parent.textFont.pointSize) : (14)
+                                                    anchors.horizontalCenter: parent.horizontalCenter
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                }
+                                            }
+                                            layer.effect: DropShadow {
+                                                transparentBorder: true
+                                                horizontalOffset: 0
+                                                verticalOffset: 1
+                                                color: "#e0e5ef"
+                                                samples: 10
+                                                radius: 10
+                                            }
+                                        }
+                                        Rectangle {
+                                            id:batCurrentRectangle
+                                            width: 150
+                                            height: 120
+                                            layer.enabled: true
+                                            radius: 15
+                                            color: devIsConnected ? "#ffffff" : "#d9d9d9"
+                                            Label {
+                                                text: qsTr("Ток:")
+                                                anchors.left: parent.left
+                                                color: "#888d91"
+                                                anchors.leftMargin: 15
+                                                anchors.right: parent.right
+                                                anchors.rightMargin: 0
+                                            }
+                                            RadialBar {
+                                                id: batteryCurrent_mA
+                                                anchors.centerIn: parent
+                                                width: 80
+                                                height: 80
+                                                penStyle: Qt.RoundCap
+                                                dialType: RadialBar.FullDial
+                                                progressColor: "#c6b554"
+                                                foregroundColor: "transparent"
+                                                dialWidth: 15
+                                                startAngle: 180
+                                                spanAngle: 70
+                                                minValue: 0
+                                                maxValue: 9999
+                                                value: 1
+                                                textFont {
+                                                    family: "Halvetica"
+                                                    italic: false
+                                                    pointSize: 12
+                                                }
+                                                textColor: "#888d91"
+                                                enabled: devIsConnected
+                                                showText: false
+                                                suffixText: ""
+                                                onValueChanged: {
+                                                    batteryCurrentCustomText.text = value + "mA"
+                                                }
+                                                Text {
+                                                    id:batteryCurrentCustomText
+                                                    text:"NA"
+                                                    color: parent.textColor
+                                                    font.pointSize: (text.length > 6) ? (parent.textFont.pointSize) : (14)
+                                                    anchors.horizontalCenter: parent.horizontalCenter
+                                                    anchors.verticalCenter: parent.verticalCenter
+                                                }
+                                            }
+                                            layer.effect: DropShadow {
+                                                transparentBorder: true
+                                                horizontalOffset: 0
+                                                verticalOffset: 1
+                                                color: "#e0e5ef"
+                                                samples: 10
+                                                radius: 10
+                                            }
+                                        }
                                     }
-                                    ValueAxis {
-                                        id: currentChartAxisY
-                                        min: -0.1
-                                        max: chartCurrentValue.graphAmplitudeMax
-                                        tickCount: 5
-                                    }
-                                    LineSeries {
-                                        id: currentChartLines
-                                        axisX: currentChartAxisX
-                                        axisY: currentChartAxisY
-                                    }
-                                    enabled: devProperty.isReady
                                 }
-                                layer.enabled: true
-                                layer.effect: DropShadow {
-                                    transparentBorder: true
-                                    horizontalOffset: 0
-                                    verticalOffset: 1
-                                    color: "#e0e5ef"
-                                    samples: 10
-                                    radius: 10
+
+                                Rectangle {
+                                    id: rectangle
+                                    height: 250
+                                    width: 750
+                                    radius: 15
+                                    color: devIsConnected ? "#ffffff" : "#d9d9d9"
+                                    ChartView {
+                                        id: chartCurrentValue
+                                        theme: ChartView.ChartThemeLight
+                                        title: "RSSI"
+                                        antialiasing: true
+                                        property int graphLength: 1
+                                        property int graphAmplitudeMax: 1
+                                        anchors.fill: parent
+                                        backgroundColor: devIsConnected ? "#ffffff" : "#d9d9d9"
+                                        ValueAxis {
+                                            id: currentChartAxisX
+                                            min: 0
+                                            max: chartCurrentValue.graphLength
+                                            tickCount: 5
+                                        }
+                                        ValueAxis {
+                                            id: currentChartAxisY
+                                            min: -0.1
+                                            max: chartCurrentValue.graphAmplitudeMax
+                                            tickCount: 5
+                                        }
+                                        LineSeries {
+                                            id: currentChartLines
+                                            axisX: currentChartAxisX
+                                            axisY: currentChartAxisY
+                                        }
+                                        enabled: devIsConnected
+                                    }
+                                    layer.enabled: true
+                                    layer.effect: DropShadow {
+                                        transparentBorder: true
+                                        horizontalOffset: 0
+                                        verticalOffset: 1
+                                        color: "#e0e5ef"
+                                        samples: 10
+                                        radius: 10
+                                    }
                                 }
                             }
                         }
@@ -731,12 +840,6 @@ Rectangle {
                     anchors.right: parent.right
                     clip: true
                     anchors.top: subBarup.bottom
-                    onCurrentIndexChanged: {
-                        //                        if(stackSubProperty.currentItem == settingsStackData) {
-                        //                            viewController.getCurrentDevCustomCommand("get current dev settings witout dialog")
-                        //                        }
-                    }
-
                     Item {
                         id: currentStackData
                         ScrollView {
@@ -871,7 +974,7 @@ Rectangle {
                                         }
                                         anchors.leftMargin: 25
                                         layer.enabled: true
-                                        enabled: devProperty.isReady
+                                        enabled: devIsConnected
                                         onClicked: {
                                             viewController.getCurrentDevCustomCommand("get current dev settings")
                                         }
@@ -895,7 +998,6 @@ Rectangle {
                                         }
                                         anchors.leftMargin: 25
                                         layer.enabled: true
-                                        enabled: devProperty.isReady
                                         onClicked: {
                                             writeAccelConfig()
                                         }
@@ -972,7 +1074,7 @@ Rectangle {
                                         }
                                         anchors.leftMargin: 25
                                         layer.enabled: true
-                                        enabled: devProperty.isReady
+                                        enabled: devIsConnected
                                         onClicked: {
                                             viewController.getCurrentDevCustomCommand("get current dev settings")
                                         }
@@ -996,7 +1098,6 @@ Rectangle {
                                         }
                                         anchors.leftMargin: 25
                                         layer.enabled: true
-                                        enabled: devProperty.isReady
                                         onClicked: {
                                             writeNetworkConfig()
                                         }

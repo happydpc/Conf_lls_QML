@@ -102,12 +102,8 @@ Popup {
                             text: "1"
                             onFocusChanged: {
                                 if(typeDeviceIdProgressTmk24.text.length === 0) {
-                                    //                                    if(!typeDeviceIdProgressTmk24.activeFocusOnPress) {
                                     typeDeviceIdProgressTmk24.text = "1"
-                                    //                                    }
                                 }
-                            }
-                            onTextEdited: {
                             }
                         }
                     }
@@ -152,6 +148,13 @@ Popup {
                             width: 250
                             height: 40
                             placeholderText: "введите id номер"
+                            validator: IntValidator{bottom: 1; top: 255;}
+                            text: "1"
+                            onFocusChanged: {
+                                if(typeDeviceIdNozzle_v0_00.text.length === 0) {
+                                    typeDeviceIdNozzle_v0_00.text = "1"
+                                }
+                            }
                         }
                     }
                     Row{

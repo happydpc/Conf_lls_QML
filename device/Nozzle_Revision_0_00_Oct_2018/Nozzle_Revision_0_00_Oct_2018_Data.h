@@ -38,6 +38,7 @@ public:
         E_ConsoleCommandType_getNetworkConfig,
         E_ConsoleCommandType_getIsReadyCommand,
         // current data
+        E_ConsoleCommandType_getOtherData,
         E_ConsoleCommandType_getAccelData,
         E_ConsoleCommandType_getNetworkData,
         E_ConsoleCommandType_getCardData,
@@ -148,12 +149,15 @@ typedef struct{
         // ресурс осталось (часов)
         sValue powerCurrentResouresAvailable;
         sValue powerCurrentResouresAvailableHourse;
+        sValue powerCurrent;
 
         sValue temperature;
 
         sValue accelX;
         sValue accelY;
         sValue accelZ;
+
+        sValueText versionFirmware;
 
         sValueText networkParentIp;
         sValue rssi;
