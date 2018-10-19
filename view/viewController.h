@@ -113,7 +113,6 @@ signals:
     void devErrorOperation(QString message);
 
     void devWrongTypeIncorrect(QString typeDev, QString devNameId);
-    void devShowMessage(QString typeDev, QString messageHeader, QStringList messageList);
     void devUpdateLogMessage(int codeMessage, QString message);
     void devUpdateLogDeviceMessage(QString typeDev, QString message);
     void devCustomCommandExecuted(QString typeDev, QStringList keys, QStringList args, bool ackMessageIsVisible);

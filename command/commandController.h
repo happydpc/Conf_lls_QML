@@ -12,8 +12,9 @@ public:
     explicit CommandController(QObject *parent = nullptr);
 
     typedef enum {
-        E_CommandType_Typical, // typical for normal poll
-        E_CommandType_OnceSecurityPacket // for check device id before add
+        E_CommandType_send_typical_request,
+        E_CommandType_send_security_request,
+        E_CommandType_command_without_request
     }eCommandType;
 
     typedef struct {

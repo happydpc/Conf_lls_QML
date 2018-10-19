@@ -36,7 +36,7 @@ public:
     virtual QPair<QStringList,QStringList> getCurrentData() = 0;
     virtual QString getUniqIdent() = 0;
     virtual QPair<QStringList,QStringList> getSettings() = 0;
-    virtual QStringList getErrors() = 0;
+    virtual QPair<QStringList,QStringList> getErrors() = 0;
     virtual E_State getState() = 0;
     virtual void setState(DeviceAbstract::E_State) = 0;
     virtual bool makeDataToCommand(CommandController::sCommandData &commandData) = 0;

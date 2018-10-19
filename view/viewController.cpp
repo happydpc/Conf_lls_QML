@@ -22,11 +22,11 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
     this->serviceList.push_back(new Nozzle_Rev_0_00_Service("Nozzle Revision 0.00 Oct 2018"));
 
     QTimer::singleShot(500, Qt::CoarseTimer, [&] {
-        addConnection("serial", "ttyUSB0", QStringList("baudrate"), QStringList("19200"));
-        addConnection("serial", "ttyACM0", QStringList("baudrate"), QStringList("115200"));
-        //        addDeviceToConnection("PROGRESS TMK24", QStringList("uniqDevName"), QStringList("2"));
+//        addConnection("serial", "ttyUSB1", QStringList("baudrate"), QStringList("19200"));
+                addConnection("serial", "ttyACM0", QStringList("baudrate"), QStringList("115200"));
+//        addDeviceToConnection("PROGRESS TMK24", QStringList("uniqDevName"), QStringList("1"));
         //        addDeviceToConnection("PROGRESS TMK24", QStringList("uniqDevName"), QStringList("55"));
-        addDeviceToConnection("Nozzle Revision 0.00 Oct 2018", QStringList("uniqDevName"), QStringList("1"));
+                addDeviceToConnection("Nozzle Revision 0.00 Oct 2018", QStringList("uniqDevName"), QStringList("1"));
         //        addDeviceToConnection("Nozzle Revision 0.00 Oct 2018", QStringList("uniqDevName"), QStringList("2"));
     });
 }
@@ -616,62 +616,31 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
         switch(pDevFactory->getDeviceType(pDevFactory->getDeviceName(indexDev))) {
         case DevicesFactory::Type_Progress_Tmk24: {
             if(commmandData.devCommand == Progress_tmk24Data::lls_calibrate_max) {
-                if (message == "Normal") {
-                    emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Задание границы измерения"),
-                                        QStringList(tr("Задание границы измерения успешно выполнено")));
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
-                                                  QStringList("lls_calibrate_max"), QStringList("normal"), commmandData.isNeedAckMessage);
-                } else {
-                    emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Задание границы измерения"),
-                                        QStringList(tr("Задание границы измерения не выполнено!")));
-                }
+                keys << "lls_calibrate_max" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
+                values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Progress_tmk24Data::lls_calibrate_min) {
-                if (message == "Normal") {
-                    emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Задание границы измерения"),
-                                        QStringList(tr("Задание границы измерения успешно выполнено")));
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
-                                                  QStringList("lls_calibrate_mix"), QStringList("normal"), commmandData.isNeedAckMessage);
-                } else {
-                    emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Задание границы измерения"),
-                                        QStringList(tr("Задание границы измерения не выполнено")));
-                }
+                keys << "lls_calibrate_min" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
+                values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Progress_tmk24Data::lls_read_settings) {
-                if (message == "Normal") {
-                    emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Чтение настроек"),
-                                        QStringList(tr("Чтение настроек успешно выполнено")));
-                    keys << "lls_read_settings" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).first;
-                    values << "normal" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).second;
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
-                } else {
-                    emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Чтение настроек"),
-                                        QStringList(tr("Чтение настроек не выполнено")));
-                }
+                keys << "lls_read_settings" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).first;
+                values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).second;
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Progress_tmk24Data::lls_read_errors) {
-                if (message == "Normal") {
-                    emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Чтение ошибок"),
-                                        QStringList(tr("Чтение ошибок успешно выполнено")));
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
-                                                  QStringList("lls_read_errors"), QStringList("normal"), commmandData.isNeedAckMessage);
-                } else {
-                    emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Чтение ошибок"),
-                                        QStringList(tr("Чтение ошибок не выполнено")));
-                }
+                keys << "lls_read_errors" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceErrrors(interfaceTree->getDevIndex()).first;
+                values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceErrrors(interfaceTree->getDevIndex()).second;
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Progress_tmk24Data::lls_read_cal_table) {
                 Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(pDevFactory->getDeviceToDeviceAbstract(indexDev)->getServiceAbstract());
                 pService->placeTableFromDevice(commmandData.deviceIdent, argList);
-                if (message == "Normal") {
-                    emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Чтение таблицы"),
-                                        QStringList(tr("Чтение таблицы успешно выполнено")));
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
-                                                  QStringList("lls_read_cal_table"), QStringList("normal"), commmandData.isNeedAckMessage);
-                } else {
-                    emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Чтение таблицы"),
-                                        QStringList(tr("Чтение таблицы не выполнено")));
-                }
+                keys << "lls_read_cal_table" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
+                values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Progress_tmk24Data::lls_write_cal_table) {
                 Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(pDevFactory->getDeviceToDeviceAbstract(indexDev)->getServiceAbstract());
@@ -687,21 +656,21 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
                                                                              (QString("Устройство отвергло данные")) :
                                                                              QString("Нет ответа")));
                     }
-                    emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Запись таблицы"), resWrite);
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
-                                                  QStringList("lls_write_cal_table"), QStringList("normal"), commmandData.isNeedAckMessage);
+                    keys << "lls_write_cal_table" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
+                    values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
+                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
                 }
             }
+            if(commmandData.devCommand == Progress_tmk24Data::lls_read_lvl_all) {
+                keys << "lls_read_lvl_all" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
+                values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
+            }
+
             if(commmandData.devCommand == Progress_tmk24Data::lls_write_settings) {
-                if (message == "Normal") {
-                    emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Запись настроек"),
-                                        QStringList(tr("Запись настроек успешно выполнена")));
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
-                                                  QStringList("lls_write_settings"), QStringList("normal"), commmandData.isNeedAckMessage);
-                } else {
-                    emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(), tr("Запись настроек"),
-                                        QStringList(tr("Запись настроек не выполнена")));
-                }
+                keys << "lls_write_settings" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
+                values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
             }
         }
             break;
@@ -711,82 +680,68 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
             // init
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getPassword) {
                 emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
-                                              QStringList("getBatteryProperty"), QStringList("normal"), commmandData.isNeedAckMessage);
+                                              QStringList("getPassword"), QStringList("normal"), commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getAccelConfig) { // settings
-                if(message.toLower() == "normal") {
-                    keys << "getAccelConfig" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).first;
-                    values << "normal" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).second;
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
-                }
+                keys << "getAccelConfig" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).first;
+                values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).second;
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkConfig) { // settings
-                if(message.toLower() == "normal") {
-                    keys << "getNetworkConfig" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).first;
-                    values << "normal" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).second;
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
-                }
+                keys << "getNetworkConfig" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).first;
+                values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).second;
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getIsReadyCommand) {}
             // current data
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getAccelData) { // current data
-                if(message.toLower() == "normal") {
-                    keys << "getAccelData" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
-                    values << "normal" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
-                }
+                keys << "getAccelData" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
+                values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkData) { // current data
-                if(message.toLower() == "normal") {
-                    keys << "getNetworkData" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
-                    values << "normal" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
-                }
+                keys << "getNetworkData" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
+                values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getOtherData) { // current data
-                if(message.toLower() == "normal") {
-                    keys << "getOtherData" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
-                    values << "normal" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
-                }
+                keys << "getOtherData" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
+                values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getCardData) { // current data
-                if(message.toLower() == "normal") {
-                    keys << "getCardProperty" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
-                    values << "normal" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
-                }
+                keys << "getCardProperty" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
+                values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getBatteryData) { // current data
-                if(message.toLower() == "normal") {
-                    keys << "getBatteryProperty" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
-                    values << "normal" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
-                }
+                keys << "getBatteryProperty" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
+                values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setPassword) { // reply exec
-                if(message.toLower() == "normal") {
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
-                                                  QStringList("setNetworkPassword"), QStringList("normal"), commmandData.isNeedAckMessage);
-                }
+                keys << "E_ConsoleCommandType_setPassword" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
+                values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              QStringList("setNetworkPassword"), QStringList("normal"), commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setAccelConfig) { // reply exec
-                if(message.toLower() == "normal") {
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
-                                                  QStringList("setAccelConfig"), QStringList("normal"), commmandData.isNeedAckMessage);
-                }
+                keys << "E_ConsoleCommandType_setAccelConfig" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
+                values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              QStringList("setAccelConfig"), QStringList("normal"), commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setAccelUseCurrentValuesAsNullPoint) { // reply exec
-                if(message.toLower() == "normal") {
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
-                                                  QStringList("setAccelUseCurrentValuesAsNullPoint"), QStringList("normal"), commmandData.isNeedAckMessage);
-                }
+                keys << "E_ConsoleCommandType_setAccelUseCurrentValuesAsNullPoint" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
+                values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              QStringList("setAccelUseCurrentValuesAsNullPoint"), QStringList("normal"), commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setNetworkConfig) { // reply exec
-                if(message.toLower() == "normal") {
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
-                                                  QStringList("setNetworkConfig"), QStringList("normal"), commmandData.isNeedAckMessage);
-                }
+                keys << "E_ConsoleCommandType_setNetworkConfig" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
+                values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              QStringList("setNetworkConfig"), QStringList("normal"), commmandData.isNeedAckMessage);
             }
         }
             break;
@@ -802,15 +757,13 @@ void ViewController::deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, 
             interfaceTree->setDevStatusByIndex(indexDev, getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceStatusByIndex(indexDev));
         }
         break;
-    case DevicesFactory::Type_Update_RamakeAfterChangeInterface:
-    case DevicesFactory::Type_Update_Removed:
-    case DevicesFactory::Type_Update_Added:
-        break;
+    case DevicesFactory::Type_Update_RamakeAfterChangeInterface: break;
+    case DevicesFactory::Type_Update_Removed: break;
+    case DevicesFactory::Type_Update_Added: break;
     case DevicesFactory::Type_Update_PasswordIncorrect:
-        emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(),
-                            "Смена пароля",
-                            QStringList(QString("Пароль не верный [Тип=%1]")
-                                        .arg(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev))));
+//        emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(),
+//                            "Смена пароля", QStringList(QString("Пароль не верный [Тип=%1]").
+//                                                        arg(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev))));
         emit devUpdateLogMessage(2, QString("Не правильный пароль [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
         break;
     case DevicesFactory::Type_Update_TypeIncorrect:

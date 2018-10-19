@@ -19,6 +19,7 @@ Rectangle {
         devPropertyProgressTmk24.isReady = false
         setWriteSettingsIsNoAvailable()
     }
+
     function setReady() {
         devPropertyProgressTmk24.isReady = true
         setWriteSettingsIsAvailable()
@@ -35,6 +36,7 @@ Rectangle {
         stackSubProperty.setCurrentIndex(0)
         setNoReady()
     }
+
     function setWriteSettingsIsAvailable() {
         writeSettingsButton_1.enabled = true
         writeSettingsButton_2.enabled = true
@@ -42,6 +44,7 @@ Rectangle {
         writeSettingsButton_4.enabled = true
         writeSettingsButton_5.enabled = true
     }
+
     function setWriteSettingsIsNoAvailable() {
         writeSettingsButton_1.enabled = false
         writeSettingsButton_2.enabled = false
@@ -49,102 +52,220 @@ Rectangle {
         writeSettingsButton_4.enabled = false
         writeSettingsButton_5.enabled = false
     }
-    function setDevProperty(listProperty) {
-        typeDeviceText.text = listProperty[2]
-        snText.text = listProperty[0]
-        //netIdText.text = listProperty[1]
-        versionFirmwareText.text = listProperty[3]
-        // give settings without request to device (copy allready readed)
-        viewController.getCurrentDevSettingsWithoutRequest()
-    }
-    function setUpdatePeriodicValues(data) {
-        devPropertyProgressTmk24.isReady = true
-        var values = viewController.getCurrentDevPeriodicData()
-        if(values.length >0) {
-            //levelValue.text = values[0]
-            levelProgress.value = values[1]
-            levelCnt.value = parseInt(values[2])
-            levelFreq.value = values[3]
-            levelTemp.value = values[4]
-        }
-        //-- noise detect
-        if(values[5] == true) {
-            if(chartTarCurrentValuesMultiple.animateColorUp.running == false
-                    & chartTarCurrentValuesMultiple.animateColorDown.running == false) {
-                chartTarCurrentValuesMultiple.animateColorUp.start()
-            }
-        }
-        //-- chart
-        var list = viewController.getCurrentDevChart()
-        currentChartLines.clear();
-        chartCurrentValue.graphLength = list.length
-        chartCurrentValue.graphAmplitudeMax = 0
 
-        for(var i=0; i<list.length; i++) {
-            if(chartCurrentValue.graphAmplitudeMax < list[i]) {
-                chartCurrentValue.graphAmplitudeMax = list[i];
+    function setCustomCommandExecuted(keys, args, ackMessageIsVisible) {
+        var i = 0;
+        switch(keys[0]) {
+        case "lls_read_settings":
+            if(ackMessageIsVisible) {
+                messageDialog.title = "Чтение настроек"
+                messageDialog.message = "Настройки успешно считаны"
+                messageDialog.open()
+            }
+            for(i=0; i<keys.length; i++) {
+                if(keys[i] === "k1_value") {
+                    k1.text = args[i]
+                } else if(keys[i] === "k2_value") {
+                    k2.text = args[i]
+                } else if(keys[i] === "typeTempCompensation_value") {
+                    typeTempCompensation.currentIndex = args[i]
+                } else if(keys[i] === "periodicSendType_value") {
+                    periodicSendType.currentIndex = args[i]
+                } else if(keys[i] === "periodicSendTime_value") {
+                    periodicSendTime.value = args[i]
+                } else if(keys[i] === "typeOutMessage_value") {
+                    typeOutMessage.currentIndex = args[i]
+                } else if(keys[i] === "typeInterpolation_value") {
+                    typeInterpolation.currentIndex = args[i]
+                } else if(keys[i] === "typeFiltration_value") {
+                    typeFiltration.currentIndex = args[i]
+                } else if(keys[i] === "filterLenghtMediana_value") {
+                    filterLenghtMediana.value = args[i]
+                } else if(keys[i] === "filterAvarageValueSec_value") {
+                    filterAvarageValueSec.value = args[i]
+                } else if(keys[i] === "filterValueR_value") {
+                    filterValueR.value= args[i]
+                } else if(keys[i] === "filterValueQ_value") {
+                    filterValueQ.value = args[i]
+                } else if(keys[i] === "minLevelValue_value") {
+                    minLevelValue.value = args[i]
+                } else if(keys[i] === "maxLevelValue_value") {
+                    maxLevelValue.value = args[i]
+                } else if(keys[i] === "masterSlaveModes_value") {
+                    masterSlaveModes.currentIndex = args[i]
+                } else if(keys[i] === "baudrateRs232Values_value") {
+                    baudrateRs232Values.currentIndex = args[i]
+                } else if(keys[i] === "baudrateRs485Values_value") {
+                    baudrateRs485Values.currentIndex = args[i]
+                } else if(keys[i] === "masterSlaveFullCountes_value") {
+                    masterSlaveFullCountes.value = args[i]
+                } else if(keys[i] === "masterSlaveSlaveId_1_value") {
+                    masterSlaveSlaveId_1.value = args[i]
+                } else if(keys[i] === "masterSlaveSlaveId_2_value") {
+                    masterSlaveSlaveId_2.value = args[i]
+                } else if(keys[i] === "masterSlaveSlaveId_3_value") {
+                    masterSlaveSlaveId_3.value = args[i]
+                } else if(keys[i] === "masterSlaveSlaveId_4_value") {
+                    masterSlaveSlaveId_4.value = args[i]
+                }
+            }
+            break;
+        case "lls_write_settings":
+            if(ackMessageIsVisible) {
+                messageDialog.title = "Запись настроек"
+                messageDialog.message = "Настройки успешно записаны"
+                messageDialog.open()
+            }
+            break;
+        case "lls_read_errors":
+            if(ackMessageIsVisible) {
+                messageDialog.title = "Чтение ошибок"
+                messageDialog.message = "Ошибки успешно считаны"
+                messageDialog.open()
+            }
+            for(i=0; i<keys.length; i++) {
+                if(keys[i] === "GenFreq0") {
+                    error4Label.error4 = args[i]
+                } else if(keys[i] === "MaxFreqOut") {
+                    error2Label.error2 = args[i]
+                } else if(keys[i] === "MinFreqOut") {
+                    error3Label.error3 = args[i]
+                } else if(keys[i] === "NotCalibrated") {
+                    error1Label.error1 = args[i]
+                } else if(keys[i] === "QeueManagerError") {
+                    periodicSendTime.value = args[i]
+                } else if(keys[i] === "ReplayNotComeRs232") {
+                    typeOutMessage.currentIndex = args[i]
+                } else if(keys[i] === "ReplayNotComeRs485") {
+                    typeInterpolation.currentIndex = args[i]
+                } else if(keys[i] === "Rs232Error") {
+                    typeFiltration.currentIndex = args[i]
+                } else if(keys[i] === "Rs485Error") {
+                    filterLenghtMediana.value = args[i]
+                } else if(keys[i] === "Slave1Error") {
+                    error5Label.error5 = args[i]
+                } else if(keys[i] === "Slave2Error") {
+                    error6Label.error6 = args[i]
+                } else if(keys[i] === "Slave3Error") {
+                    error7Label.error7 = args[i]
+                } else if(keys[i] === "Slave4Error") {
+                    error8Label.error8 = args[i]
+                }
+            }
+            break;
+
+        case "lls_read_lvl_all":
+            if(keys.length > 0) {
+                devPropertyProgressTmk24.isReady = true
+                for(i=0; i<keys.length; i++) {
+                    if(keys[i] === "fuelProcent") {
+                        fuelLevelProgress.value = args[i]
+                    } else if(keys[i] === "fuelProcent") {
+                        error2Label.error2 = args[i]
+                    } else if(keys[i] === "cnt") {
+                        levelCnt.value = args[i]
+                    } else if(keys[i] === "freq") {
+                        levelFreq.value = args[i]
+                    } else if(keys[i] === "temp") {
+                        levelTemp.value = args[i]
+                    } else if(keys[i] === "noiseDetected") {
+                        if((chartTarCurrentValuesMultiple.animateColorUp.running == false
+                            & (chartTarCurrentValuesMultiple.animateColorDown.running == false))) {
+                            if(args[i] == true) {
+                                chartTarCurrentValuesMultiple.animateColorUp.start()
+                            }
+                        }
+                    } else if(keys[i] === "ReplayNotComeRs485") {
+                        typeInterpolation.currentIndex = args[i]
+                    } else if(keys[i] === "Rs232Error") {
+                        typeFiltration.currentIndex = args[i]
+                    } else if(keys[i] === "Rs485Error") {
+                        filterLenghtMediana.value = args[i]
+                    } else if(keys[i] === "Slave1Error") {
+                        error5Label.error5 = args[i]
+                    } else if(keys[i] === "Slave2Error") {
+                        error6Label.error6 = args[i]
+                    } else if(keys[i] === "Slave3Error") {
+                        error7Label.error7 = args[i]
+                    } else if(keys[i] === "Slave4Error") {
+                        error8Label.error8 = args[i]
+                    }
+                }
+
+                //-- noise detect
+                //-- chart
+                var list = viewController.getCurrentDevChart()
+                currentChartLines.clear();
+                chartCurrentValue.graphLength = list.length
+                chartCurrentValue.graphAmplitudeMax = 0
+
+                for(var i=0; i<list.length; i++) {
+                    if(chartCurrentValue.graphAmplitudeMax < list[i]) {
+                        chartCurrentValue.graphAmplitudeMax = list[i];
+                    }
+                }
+                for(i=0; i<list.length; i++) {
+                    currentChartLines.append(i, list[i]);
+                }
+                logListView.positionViewAtEnd()
+            }
+            break;
+        case "lls_calibrate_max":
+            if(ackMessageIsVisible) {
+                messageDialog.title = "Калибровка"
+                messageDialog.message = "Калибровка верхнего уровня\nуспешно успешно произведена"
+                messageDialog.open()
+            }
+            break;
+        case "lls_calibrate_min":
+            if(ackMessageIsVisible) {
+                messageDialog.title = "Калибровка"
+                messageDialog.message = "Калибровка нижнего уровня\nуспешно успешно произведена"
+                messageDialog.open()
+            }
+            break;
+        case "lls_read_cal_table":
+            if(ackMessageIsVisible) {
+                messageDialog.title = "Тарировочная таблица"
+                messageDialog.message = "Тарировочная таблица успешно считана"
+                messageDialog.open()
+            }
+            break;
+        case "lls_write_cal_table":
+            if(ackMessageIsVisible) {
+                messageDialog.title = "Тарировочная таблица"
+                messageDialog.message = "Тарировочная таблица успешно записана"
+                messageDialog.open()
+            }
+            break;
+        case "lls_read_lvl_all": break;
+        default: break;
+        }
+    }
+
+    function setDevProperty() {
+        var keys = viewController.getCurrentDevPropertyKey()
+        var values = viewController.getCurrentDevPropertyValue()
+        for(var i=0; i<keys.length; i++) {
+            if(keys[i] === "devTypeName"){
+                typeDeviceText.text = values[i]
+            }
+            if(keys[i] === "serialNum"){
+                snText.text = values[i]
+            }
+            if(keys[i] === "versionFirmare"){
+                versionFirmwareText.text = values[i]
             }
         }
-        for(i=0; i<list.length; i++) {
-            currentChartLines.append(i, list[i]);
-        }
-        logListView.positionViewAtEnd()
     }
+
     function addLogMessage(codeMessage, message) {
         if(logListView.model.length > 1000) {
             logListView.model.clear()
         }
         logListView.model.append({"message":message,"status":codeMessage})
     }
-    function readSettings(devName, key, settings) {
-        for(var i=0; i<settings.length; i++) {
-            if(key[i] === "k1_value") {
-                k1.text = settings[i]
-            } else if(key[i] === "k2_value") {
-                k2.text = settings[i]
-            } else if(key[i] === "typeTempCompensation_value") {
-                typeTempCompensation.currentIndex = settings[i]
-            } else if(key[i] === "periodicSendType_value") {
-                periodicSendType.currentIndex = settings[i]
-            } else if(key[i] === "periodicSendTime_value") {
-                periodicSendTime.value = settings[i]
-            } else if(key[i] === "typeOutMessage_value") {
-                typeOutMessage.currentIndex = settings[i]
-            } else if(key[i] === "typeInterpolation_value") {
-                typeInterpolation.currentIndex = settings[i]
-            } else if(key[i] === "typeFiltration_value") {
-                typeFiltration.currentIndex = settings[i]
-            } else if(key[i] === "filterLenghtMediana_value") {
-                filterLenghtMediana.value = settings[i]
-            } else if(key[i] === "filterAvarageValueSec_value") {
-                filterAvarageValueSec.value = settings[i]
-            } else if(key[i] === "filterValueR_value") {
-                filterValueR.value= settings[i]
-            } else if(key[i] === "filterValueQ_value") {
-                filterValueQ.value = settings[i]
-            } else if(key[i] === "minLevelValue_value") {
-                minLevelValue.value = settings[i]
-            } else if(key[i] === "maxLevelValue_value") {
-                maxLevelValue.value = settings[i]
-            } else if(key[i] === "masterSlaveModes_value") {
-                masterSlaveModes.currentIndex = settings[i]
-            } else if(key[i] === "baudrateRs232Values_value") {
-                baudrateRs232Values.currentIndex = settings[i]
-            } else if(key[i] === "baudrateRs485Values_value") {
-                baudrateRs485Values.currentIndex = settings[i]
-            } else if(key[i] === "masterSlaveFullCountes_value") {
-                masterSlaveFullCountes.value = settings[i]
-            } else if(key[i] === "masterSlaveSlaveId_1_value") {
-                masterSlaveSlaveId_1.value = settings[i]
-            } else if(key[i] === "masterSlaveSlaveId_2_value") {
-                masterSlaveSlaveId_2.value = settings[i]
-            } else if(key[i] === "masterSlaveSlaveId_3_value") {
-                masterSlaveSlaveId_3.value = settings[i]
-            } else if(key[i] === "masterSlaveSlaveId_4_value") {
-                masterSlaveSlaveId_4.value = settings[i]
-            }
-        }
-    }
+
     function writeSettings() {
         var settings = [];
         var key = [];
@@ -192,19 +313,9 @@ Rectangle {
         settings.push(masterSlaveSlaveId_3.value)
         key.push("masterSlaveSlaveId_4_value")
         settings.push(masterSlaveSlaveId_4.value)
+        viewController.setCurrentDevCustomCommand("set current dev settings", key, settings)
+    }
 
-        viewController.setCurrentDevSettings(key, settings)
-    }
-    function readErrors(devName, errors) {
-        error1Label.error1 = errors[0]
-        error2Label.error2 = errors[1]
-        error3Label.error3 = errors[2]
-        error4Label.error4 = errors[3]
-        error5Label.error5 = errors[4]
-        error6Label.error6 = errors[5]
-        error7Label.error7 = errors[6]
-        error8Label.error8 = errors[7]
-    }
     function remakeTarTableChart() {
         chartTarTableMultiple.removeAllSeries();
         var colorArray = []
@@ -257,6 +368,7 @@ Rectangle {
             }
         }
     }
+
     function addTarStepValue(rowIndex) {
         if(rowIndex === -1) {
             rowIndex = 0
@@ -754,8 +866,8 @@ Rectangle {
                             Row{
                                 spacing: 10
                                 Rectangle{
-                                    width: 200
-                                    height: 200
+                                    width: 150
+                                    height: 150
                                     layer.enabled: true
                                     radius: 15
                                     Label {
@@ -768,13 +880,10 @@ Rectangle {
                                         anchors.rightMargin: 0
                                     }
                                     RadialBar {
-                                        id:levelProgress
-                                        anchors.top: levelValueLabel.bottom
-                                        anchors.topMargin: 15
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 20
-                                        width: 150
-                                        height: 150
+                                        id:fuelLevelProgress
+                                        width: 110
+                                        height: 110
+                                        anchors.centerIn: parent
                                         penStyle: Qt.RoundCap
                                         dialType: RadialBar.FullDial
                                         progressColor: "#05fff0"
@@ -788,7 +897,7 @@ Rectangle {
                                         textFont {
                                             family: "Halvetica"
                                             italic: false
-                                            pointSize: 16
+                                            pointSize: 12
                                         }
                                         suffixText: "%"
                                         textColor: "#888d91"
@@ -805,8 +914,8 @@ Rectangle {
                                 }
 
                                 Rectangle{
-                                    width: 200
-                                    height: 200
+                                    width: 150
+                                    height: 150
                                     layer.enabled: true
                                     radius: 15
                                     Label {
@@ -820,12 +929,9 @@ Rectangle {
                                     }
                                     RadialBar {
                                         id:levelCnt
-                                        anchors.top: levelCntLabel.bottom
-                                        anchors.topMargin: 15
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 20
-                                        width: 150
-                                        height: 150
+                                        anchors.centerIn: parent
+                                        width: 110
+                                        height: 110
                                         penStyle: Qt.RoundCap
                                         dialType: RadialBar.FullDial
                                         progressColor: "#1dc58f"
@@ -840,7 +946,7 @@ Rectangle {
                                         textFont {
                                             family: "Halvetica"
                                             italic: false
-                                            pointSize: 16
+                                            pointSize: 12
                                         }
                                         suffixText: ""
                                         textColor: "#888d91"
@@ -852,7 +958,7 @@ Rectangle {
                                             id:levelCntValueCustom
                                             text:"NA"
                                             color: parent.textColor
-                                            font.pointSize: (text.length > 6) ? (parent.textFont.pointSize) : (16)
+                                            font.pointSize: 12
                                             anchors.horizontalCenter: parent.horizontalCenter
                                             anchors.verticalCenter: parent.verticalCenter
                                         }
@@ -868,8 +974,8 @@ Rectangle {
                                 }
 
                                 Rectangle{
-                                    width: 200
-                                    height: 200
+                                    width: 150
+                                    height: 150
                                     layer.enabled: true
                                     radius: 15
                                     Label {
@@ -883,12 +989,9 @@ Rectangle {
                                     }
                                     RadialBar {
                                         id:levelTemp
-                                        anchors.top: levelTempLabel.bottom
-                                        anchors.topMargin: 15
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 20
-                                        width: 150
-                                        height: 150
+                                        anchors.centerIn: parent
+                                        width: 110
+                                        height: 110
                                         penStyle: Qt.RoundCap
                                         dialType: RadialBar.FullDial
                                         progressColor: "#f329b8"
@@ -902,7 +1005,7 @@ Rectangle {
                                         textFont {
                                             family: "Halvetica"
                                             italic: false
-                                            pointSize: 16
+                                            pointSize: 12
                                         }
                                         suffixText: "°C"
                                         textColor: "#888d91"
@@ -919,8 +1022,8 @@ Rectangle {
                                 }
 
                                 Rectangle{
-                                    width: 200
-                                    height: 200
+                                    width: 150
+                                    height: 150
                                     layer.enabled: true
                                     radius: 15
                                     Label {
@@ -934,12 +1037,9 @@ Rectangle {
                                     }
                                     RadialBar {
                                         id:levelFreq
-                                        anchors.top: levelFreqLabel.bottom
-                                        anchors.topMargin: 15
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 20
-                                        width: 150
-                                        height: 150
+                                        anchors.centerIn: parent
+                                        width: 110
+                                        height: 110
                                         penStyle: Qt.RoundCap
                                         dialType: RadialBar.FullDial
                                         progressColor: "#f3c129"
@@ -953,7 +1053,7 @@ Rectangle {
                                         textFont {
                                             family: "Halvetica"
                                             italic: false
-                                            pointSize: 16
+                                            pointSize: 12
                                         }
                                         suffixText: "Hz"
                                         textColor: "#888d91"
@@ -989,6 +1089,7 @@ Rectangle {
                                         min: 0
                                         max: chartCurrentValue.graphLength
                                         tickCount: 5
+                                        labelsVisible: false
                                     }
                                     ValueAxis {
                                         id: currentChartAxisY
@@ -1351,9 +1452,9 @@ Rectangle {
                     onCurrentIndexChanged: {
                         if(devPropertyProgressTmk24.isReady) {
                             if(stackSubProperty.currentItem == itemDevTarir) {
-                                console.log("tarDev item -active")
                                 // сперва добавить всем роли
-                                // TODO: hack!!!
+                                viewController.getCurrentDevCustomCommand("get get available dev tarrir id")
+
                                 var connDevId = viewController.getAvailableDevTarrirAdd_DevId()
                                 var connDevType = viewController.getAvailableDevTarrirAdd_DevType()
                                 for(var i=0; i<connDevId.length; i++) {
@@ -1448,7 +1549,7 @@ Rectangle {
                                         }
                                         enabled: devPropertyProgressTmk24.isReady
                                         onClicked: {
-                                            viewController.getCurrentDevSettings()
+                                            viewController.getCurrentDevCustomCommand("get current dev settings")
                                         }
                                     }
                                     Button {
@@ -1886,7 +1987,7 @@ Rectangle {
                                         }
                                         enabled: devPropertyProgressTmk24.isReady
                                         onClicked: {
-                                            viewController.getCurrentDevSettings()
+                                            viewController.getCurrentDevCustomCommand("get current dev settings")
                                         }
                                     }
                                     Button {
@@ -2026,7 +2127,7 @@ Rectangle {
                                         }
                                         enabled: devPropertyProgressTmk24.isReady
                                         onClicked: {
-                                            viewController.getCurrentDevSettings()
+                                            viewController.getCurrentDevCustomCommand("get current dev settings")
                                         }
                                     }
                                     Button {
@@ -2356,7 +2457,7 @@ Rectangle {
                                         }
                                         enabled: devPropertyProgressTmk24.isReady
                                         onClicked: {
-                                            viewController.getCurrentDevSettings()
+                                            viewController.getCurrentDevCustomCommand("get current dev settings")
                                         }
                                     }
                                     Button {
@@ -2588,7 +2689,7 @@ Rectangle {
                                         }
                                         enabled: devPropertyProgressTmk24.isReady
                                         onClicked: {
-                                            viewController.getCurrentDevSettings()
+                                            viewController.getCurrentDevCustomCommand("get current dev settings")
                                         }
                                     }
                                     Button {

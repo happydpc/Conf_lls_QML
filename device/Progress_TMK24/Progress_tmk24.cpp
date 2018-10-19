@@ -61,7 +61,6 @@ void Progress_tmk24::setDefaultValues() {
     this->lls_data.temp.isValid = false;
     this->lls_data.cnt.isValid = false;
     this->lls_data.firmware.isValid = false;
-    this->lls_data.typeIsValid = false;
 }
 
 ServiceDevicesAbstract* Progress_tmk24::getServiceAbstract() {
@@ -80,8 +79,8 @@ QPair<QStringList,QStringList> Progress_tmk24::getPropertyData() {
     res.second.push_back((lls_data.serialNum.value.isEmpty() || lls_data.serialNum.value.at(0) > 0x255) ? QString("Не присвоен") : lls_data.serialNum.value);
     res.first.push_back("netAddress");
     res.second.push_back(QString::number(settings.netAddress));
-    res.first.push_back("firmware");
-    res.second.push_back(lls_data.firmware.value);
+    res.first.push_back("versionFirmare");
+    res.second.push_back(lls_data.firmware.isValid ? lls_data.firmware.value : "NA");
     res.first.push_back("authIsNormal");
     res.second.push_back(QString::number(lls_data.password.get.authIsNormal));
     res.first.push_back("password");
@@ -113,6 +112,8 @@ QPair<QStringList,QStringList> Progress_tmk24::getSettings() {
     if(lls_data.settings.get.isValid) {
         res.first.push_back("device_value");
         res.second.push_back(getDevTypeName());
+        res.first.push_back("versionFirmare");
+        res.second.push_back(lls_data.firmware.isValid ? lls_data.firmware.value : "NA");
         res.first.push_back("k1_value");
         res.second.push_back(QString::number(lls_data.settings.get.value.k1, 'f'));
         res.first.push_back("k2_value");
@@ -161,22 +162,35 @@ QPair<QStringList,QStringList> Progress_tmk24::getSettings() {
     return res;
 }
 
-QStringList Progress_tmk24::getErrors() {
-    QStringList ret;
+QPair<QStringList,QStringList> Progress_tmk24::getErrors() {
+    QPair<QStringList,QStringList> ret;
     if(lls_data.errors.isValid) {
-        ret << QString::number(lls_data.errors.errors.GenFreq0);
-        ret << QString::number(lls_data.errors.errors.MaxFreqOut);
-        ret << QString::number(lls_data.errors.errors.MinFreqOut);
-        ret << QString::number(lls_data.errors.errors.NotCalibrated);
-        ret << QString::number(lls_data.errors.errors.QeueManagerError);
-        ret << QString::number(lls_data.errors.errors.ReplayNotComeRs232);
-        ret << QString::number(lls_data.errors.errors.ReplayNotComeRs485);
-        ret << QString::number(lls_data.errors.errors.Rs232Error);
-        ret << QString::number(lls_data.errors.errors.Rs485Error);
-        ret << QString::number(lls_data.errors.errors.Slave1Error);
-        ret << QString::number(lls_data.errors.errors.Slave2Error);
-        ret << QString::number(lls_data.errors.errors.Slave3Error);
-        ret << QString::number(lls_data.errors.errors.Slave4Error);
+        ret.first.push_back("GenFreq0");
+        ret.second.push_back(QString::number(lls_data.errors.errors.GenFreq0));
+        ret.first.push_back("MaxFreqOut");
+        ret.second.push_back(QString::number(lls_data.errors.errors.MaxFreqOut));
+        ret.first.push_back("MinFreqOut");
+        ret.second.push_back(QString::number(lls_data.errors.errors.MinFreqOut));
+        ret.first.push_back("NotCalibrated");
+        ret.second.push_back(QString::number(lls_data.errors.errors.NotCalibrated));
+        ret.first.push_back("QeueManagerError");
+        ret.second.push_back(QString::number(lls_data.errors.errors.QeueManagerError));
+        ret.first.push_back("ReplayNotComeRs232");
+        ret.second.push_back(QString::number(lls_data.errors.errors.ReplayNotComeRs232));
+        ret.first.push_back("ReplayNotComeRs485");
+        ret.second.push_back(QString::number(lls_data.errors.errors.ReplayNotComeRs485));
+        ret.first.push_back("Rs232Error");
+        ret.second.push_back(QString::number(lls_data.errors.errors.Rs232Error));
+        ret.first.push_back("Rs485Error");
+        ret.second.push_back(QString::number(lls_data.errors.errors.Rs485Error));
+        ret.first.push_back("Slave1Error");
+        ret.second.push_back(QString::number(lls_data.errors.errors.Slave1Error));
+        ret.first.push_back("Slave2Error");
+        ret.second.push_back(QString::number(lls_data.errors.errors.Slave2Error));
+        ret.first.push_back("Slave3Error");
+        ret.second.push_back(QString::number(lls_data.errors.errors.Slave3Error));
+        ret.first.push_back("Slave4Error");
+        ret.second.push_back(QString::number(lls_data.errors.errors.Slave4Error));
     }
     return ret;
 }
@@ -315,19 +329,19 @@ bool Progress_tmk24::makeDataToCommand(CommandController::sCommandData &commandD
                 commandData.commandOptionData.insert(commandData.commandOptionData.size(), passArray);
                 commandData.commandOptionData.push_back((uint8_t)commandData.args.value.size());
 
-//                for(uint8_t i=0; i<(Progress_tmk24Data::TAR_TABLE_SIZE); i++) {
-//                    if(i < commandData.args.value.size()) {
-//                        commandData.commandOptionData.push_back((uint32_t)commandData.args.key.at(i).toUInt() & 0xFF);
-//                        commandData.commandOptionData.push_back(((uint32_t)commandData.args.key.at(i).toUInt() & 0xFF00) >> 8);
-//                        commandData.commandOptionData.push_back((uint32_t)commandData.args.value.at(i) & 0xFF);
-//                        commandData.commandOptionData.push_back(((uint32_t)commandData.args.value.at(i) & 0xFF00) >> 8);
-//                    } else {
-//                        commandData.commandOptionData.push_back((char)0);
-//                        commandData.commandOptionData.push_back((char)0);
-//                        commandData.commandOptionData.push_back((char)0);
-//                        commandData.commandOptionData.push_back((char)0);
-//                    }
-//                }
+                //                for(uint8_t i=0; i<(Progress_tmk24Data::TAR_TABLE_SIZE); i++) {
+                //                    if(i < commandData.args.value.size()) {
+                //                        commandData.commandOptionData.push_back((uint32_t)commandData.args.key.at(i).toUInt() & 0xFF);
+                //                        commandData.commandOptionData.push_back(((uint32_t)commandData.args.key.at(i).toUInt() & 0xFF00) >> 8);
+                //                        commandData.commandOptionData.push_back((uint32_t)commandData.args.value.at(i) & 0xFF);
+                //                        commandData.commandOptionData.push_back(((uint32_t)commandData.args.value.at(i) & 0xFF00) >> 8);
+                //                    } else {
+                //                        commandData.commandOptionData.push_back((char)0);
+                //                        commandData.commandOptionData.push_back((char)0);
+                //                        commandData.commandOptionData.push_back((char)0);
+                //                        commandData.commandOptionData.push_back((char)0);
+                //                    }
+                //                }
             }
                 break;
             case Progress_tmk24Data::lls_calibrate_min:
@@ -419,35 +433,33 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
             // возможно обращение к несуществующему элементу
             // если ожидаемая команда совпадает с пакетом
             if(commandReqData.devCommand == (uint8_t)commandArrayReplyData.at(2)) {
-                if(lls_data.typeIsValid) {
-                    lls_data.temp.value.value_i = (int8_t)(0xFF & commandArrayReplyData.at(3));
-                    lls_data.temp.isValid = true;
-                    value = 0;
-                    value = 0xFF & commandArrayReplyData.at(5);
-                    value = value << 8;
-                    value |= 0xFF & commandArrayReplyData.at(4);
-                    frequency = 0xFF & commandArrayReplyData.at(7);
-                    frequency = frequency << 8;
-                    frequency |= 0xFF & commandArrayReplyData.at(6);
-                    lls_data.fuelLevel.value.value_u32 = value;
-                    if(lls_data.settings.get.isValid) {
-                        lls_data.fuelProcent.value.value_u32 = ((float)((float)value/lls_data.settings.get.value.maxLevel)*100);
-                        lls_data.fuelProcent.isValid = true;
-                    } else {
-                        lls_data.fuelProcent.value.value_u32 = 0;
-                    }
-                    lls_data.fuelLevel.isValid = true;
-                    lls_data.freq.value.value_u32  = frequency;
-                    lls_data.freq.isValid = true;
-                    // TODO: random ok?
-                    chartData->push_back(lls_data.fuelLevel.value.value_u32 + (rand()%1));
-                    while(chartData->size() > 50) {
-                        chartData->pop_front();
-                    }
-                    emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_CurrentDataUpdated, getUniqIdent(),
-                                                commandReqData.devCommand, QString("Ready current data"), QStringList(), commandReqData);
-                    res = true;
+                lls_data.temp.value.value_i = (int8_t)(0xFF & commandArrayReplyData.at(3));
+                lls_data.temp.isValid = true;
+                value = 0;
+                value = 0xFF & commandArrayReplyData.at(5);
+                value = value << 8;
+                value |= 0xFF & commandArrayReplyData.at(4);
+                frequency = 0xFF & commandArrayReplyData.at(7);
+                frequency = frequency << 8;
+                frequency |= 0xFF & commandArrayReplyData.at(6);
+                lls_data.fuelLevel.value.value_u32 = value;
+                if(lls_data.settings.get.isValid) {
+                    lls_data.fuelProcent.value.value_u32 = ((float)((float)value/lls_data.settings.get.value.maxLevel)*100);
+                    lls_data.fuelProcent.isValid = true;
+                } else {
+                    lls_data.fuelProcent.value.value_u32 = 0;
                 }
+                lls_data.fuelLevel.isValid = true;
+                lls_data.freq.value.value_u32  = frequency;
+                lls_data.freq.isValid = true;
+                // TODO: random ok?
+                chartData->push_back(lls_data.fuelLevel.value.value_u32 + (rand()%1));
+                while(chartData->size() > 50) {
+                    chartData->pop_front();
+                }
+                emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_CurrentDataUpdated, getUniqIdent(),
+                                            commandReqData.devCommand, QString("Ready current data"), QStringList(), commandReqData);
+                res = true;
             }
         } else {
             // здесь не нужно ничего
@@ -466,37 +478,39 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
             // возможно обращение к несуществующему элементу
             // если ожидаемая команда совпадает с пакетом
             if(commandReqData.devCommand == (uint8_t)commandArrayReplyData.at(2)) {
-                if(lls_data.typeIsValid) {
-                    lls_data.llssValues.values.slave_count = (0xFF & commandArrayReplyData.at(3));
-                    lls_data.llssValues.values.summed_volume = (0xFF & commandArrayReplyData.at(5));
-                    lls_data.llssValues.values.summed_volume = lls_data.llssValues.values.summed_volume << 8;
-                    lls_data.llssValues.values.summed_volume |= (0xFF & commandArrayReplyData.at(4));
-                    //
-                    lls_data.llssValues.values.send_value = 0xFF & commandArrayReplyData.at(8);
-                    lls_data.llssValues.values.send_value = lls_data.llssValues.values.send_value << 8;
-                    lls_data.llssValues.values.send_value |= (0xFF & commandArrayReplyData.at(7));
-                    //
-                    int offset_counter = 11;
-                    for(uint8_t i=0; i<4; i++) {
-                        lls_data.llssValues.values.Temperature[i] = (int8_t)(0xFF & commandArrayReplyData.at(offset_counter));
-                        offset_counter++;
-                        //--
-                        lls_data.llssValues.values.Level[i] = 0xFF & commandArrayReplyData.at(offset_counter);
-                        offset_counter++;
-                        //--
-                        lls_data.llssValues.values.Level[i] |= (0xFF & commandArrayReplyData.at(offset_counter)) << 8;
-                        offset_counter++;
-                        //--
-                        lls_data.llssValues.values.Frequency[i] = 0xFF & commandArrayReplyData.at(offset_counter);
-                        lls_data.llssValues.values.Frequency[i] = lls_data.llssValues.values.Frequency[i] << 8;
-                        offset_counter++;
-                        lls_data.llssValues.values.Frequency[i] |= (0xFF & commandArrayReplyData.at(offset_counter));
-                        lls_data.llssValues.values.Frequency[i] = lls_data.llssValues.values.Frequency[i] << 8;
-                        offset_counter++;
-                    }
-                    lls_data.llssValues.isValid = true;
-                    res = true;
+                lls_data.llssValues.values.slave_count = (0xFF & commandArrayReplyData.at(3));
+                lls_data.llssValues.values.summed_volume = (0xFF & commandArrayReplyData.at(5));
+                lls_data.llssValues.values.summed_volume = lls_data.llssValues.values.summed_volume << 8;
+                lls_data.llssValues.values.summed_volume |= (0xFF & commandArrayReplyData.at(4));
+                //
+                lls_data.llssValues.values.send_value = 0xFF & commandArrayReplyData.at(8);
+                lls_data.llssValues.values.send_value = lls_data.llssValues.values.send_value << 8;
+                lls_data.llssValues.values.send_value |= (0xFF & commandArrayReplyData.at(7));
+                //
+                int offset_counter = 11;
+                for(uint8_t i=0; i<4; i++) {
+                    lls_data.llssValues.values.Temperature[i] = (int8_t)(0xFF & commandArrayReplyData.at(offset_counter));
+                    offset_counter++;
+                    //--
+                    lls_data.llssValues.values.Level[i] = 0xFF & commandArrayReplyData.at(offset_counter);
+                    offset_counter++;
+                    //--
+                    lls_data.llssValues.values.Level[i] |= (0xFF & commandArrayReplyData.at(offset_counter)) << 8;
+                    offset_counter++;
+                    //--
+                    lls_data.llssValues.values.Frequency[i] = 0xFF & commandArrayReplyData.at(offset_counter);
+                    lls_data.llssValues.values.Frequency[i] = lls_data.llssValues.values.Frequency[i] << 8;
+                    offset_counter++;
+                    lls_data.llssValues.values.Frequency[i] |= (0xFF & commandArrayReplyData.at(offset_counter));
+                    lls_data.llssValues.values.Frequency[i] = lls_data.llssValues.values.Frequency[i] << 8;
+                    offset_counter++;
                 }
+                emit eventDeviceUpdateState(Type_DeviceEvent_CurrentDataUpdated, commandReqData.deviceIdent,
+                                            commandReqData.commandType, "Update current data", QStringList(""), commandReqData);
+                emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
+                                            commandReqData.commandType, "Normal", QStringList(""), commandReqData);
+                lls_data.llssValues.isValid = true;
+                res = true;
             }
         } else {
             // здесь не нужно ничего
@@ -522,7 +536,6 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
 
                     // проверка типа
                     if(commandArrayReplyData.at(3) == Progress_tmk24Data::type_lls_tmk24) {
-                        lls_data.typeIsValid = true;
                         Progress_tmk24Data::T_settings *pSettings = (Progress_tmk24Data::T_settings*)(commandArrayReplyData.data() + 34);
                         if(pSettings->netAddress == commandArrayReplyData.at(Progress_tmk24Data::param_id_address)) {
                             lls_data.settings.get.value = *pSettings;
@@ -537,7 +550,6 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                                                     commandReqData.devCommand, QString("Normal"), QStringList(), commandReqData);
 
                     } else {
-                        lls_data.typeIsValid = false;
                         emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_TypeError, getUniqIdent(),
                                                     commandReqData.devCommand, QString("Type Error!"), QStringList(), commandReqData);
                     }
@@ -557,13 +569,11 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
             // возможно обращение к несуществующему элементу
             // если ожидаемая команда совпадает с пакетом
             if(commandReqData.devCommand == (uint8_t)commandArrayReplyData.at(2)) {
-                if(lls_data.typeIsValid) {
-                    if(commandArrayReplyData.size() > 4) {
-                        if(commandArrayReplyData.at(3) == 0) {
-                            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                                        commandReqData.devCommand, QString("Normal"), QStringList(), commandReqData);
-                            res = true;
-                        }
+                if(commandArrayReplyData.size() > 4) {
+                    if(commandArrayReplyData.at(3) == 0) {
+                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
+                                                    commandReqData.devCommand, QString("Normal"), QStringList(), commandReqData);
+                        res = true;
                     }
                 }
             }
@@ -617,18 +627,16 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
             // возможно обращение к несуществующему элементу
             // если ожидаемая команда совпадает с пакетом
             if(commandReqData.devCommand == (uint8_t)commandArrayReplyData.at(2)) {
-                if(lls_data.typeIsValid) {
-                    if(commandArrayReplyData.size() > 4) {
-                        res = true;
-                        if(commandArrayReplyData.at(3) == 0) {
-                            if(commandReqData.isNeedAckMessage) {
-                                emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                                            commandReqData.devCommand, QString("Normal"), QStringList(), commandReqData);
-                            }
-                        } else {
+                if(commandArrayReplyData.size() > 4) {
+                    res = true;
+                    if(commandArrayReplyData.at(3) == 0) {
+                        if(commandReqData.isNeedAckMessage) {
                             emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                                        commandReqData.devCommand, QString("Data no valid"), QStringList(), commandReqData);
+                                                        commandReqData.devCommand, QString("Normal"), QStringList(), commandReqData);
                         }
+                    } else {
+                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
+                                                    commandReqData.devCommand, QString("Data no valid"), QStringList(), commandReqData);
                     }
                 }
             }
@@ -665,13 +673,11 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
             // возможно обращение к несуществующему элементу
             // если ожидаемая команда совпадает с пакетом
             if(commandReqData.devCommand == (uint8_t)commandArrayReplyData.at(2)) {
-                if(lls_data.typeIsValid) {
-                    if(commandArrayReplyData.size() > 3) {
-                        if(commandArrayReplyData.at(3) == 0) {
-                            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                                        commandReqData.devCommand, QString("Normal"), QStringList(), commandReqData);
-                            res = true;
-                        }
+                if(commandArrayReplyData.size() > 3) {
+                    if(commandArrayReplyData.at(3) == 0) {
+                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
+                                                    commandReqData.devCommand, QString("Normal"), QStringList(), commandReqData);
+                        res = true;
                     }
                 }
             }
@@ -688,16 +694,14 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
         if(!commandArrayReplyData.isEmpty()) { // TODO: проверка только на пустоту
             // возможно обращение к несуществующему элементу
             if(commandReqData.devCommand == (uint8_t)commandArrayReplyData.at(2)) {
-                if(lls_data.typeIsValid) {
-                    if(commandArrayReplyData.size() > 5) { // TODO: 10?
-                        Progress_tmk24Data::T_errors t_erros;
-                        memcpy(&t_erros, (commandArrayReplyData.data() + 3), sizeof(t_erros));
-                        memcpy(&lls_data.errors, &t_erros, sizeof(lls_data.errors));
-                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                                    commandReqData.devCommand, QString("Normal"), QStringList(), commandReqData);
-                        lls_data.errors.isValid = true;
-                        res = true;
-                    }
+                if(commandArrayReplyData.size() > 5) { // TODO: 10?
+                    Progress_tmk24Data::T_errors t_erros;
+                    memcpy(&t_erros, (commandArrayReplyData.data() + 3), sizeof(t_erros));
+                    memcpy(&lls_data.errors, &t_erros, sizeof(lls_data.errors));
+                    emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
+                                                commandReqData.devCommand, QString("Normal"), QStringList(), commandReqData);
+                    lls_data.errors.isValid = true;
+                    res = true;
                 }
             }
         }
@@ -713,14 +717,12 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
         if(!commandArrayReplyData.isEmpty()) { // TODO: проверка только на пустоту
             // возможно обращение к несуществующему элементу
             if(commandReqData.devCommand == (uint8_t)commandArrayReplyData.at(2)) {
-                if(lls_data.typeIsValid) {
-                    if(commandArrayReplyData.size() > 22) {
-                        lls_data.serialNum.value = QString::fromUtf8((commandArrayReplyData.data() + 3),
-                                                                     Progress_tmk24Data::SERIALNUMBER_STRING_SIZE);
-                        lls_data.serialNum.isValid = true;
-                    }
-                    res = true;
+                if(commandArrayReplyData.size() > 22) {
+                    lls_data.serialNum.value = QString::fromUtf8((commandArrayReplyData.data() + 3),
+                                                                 Progress_tmk24Data::SERIALNUMBER_STRING_SIZE);
+                    lls_data.serialNum.isValid = true;
                 }
+                res = true;
             }
         }
         if(!res) {
@@ -933,6 +935,11 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
         tcommand.devCommand = (int)Progress_tmk24Data::lls_calibrate_max;
         command.push_back(tcommand);
     } else if(operation == "get current dev settings") {
+        tcommand.deviceIdent = getUniqIdent();
+        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;
+        command.push_back(tcommand);
+    } else if(operation == "get get available dev tarrir id") {
         tcommand.deviceIdent = getUniqIdent();
         tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
         tcommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;

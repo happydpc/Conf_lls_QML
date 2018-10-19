@@ -34,6 +34,9 @@
         <file>images/logo/icon_prg.ico</file>
         <file>images/logo/logo_gls.png</file>
         <file>images/logo/logo_progress.png</file>
+        <file>images/icon/user.png</file>
+        <file>images/icon/4372.png</file>
+        <file>images/icon/4149.png</file>
     </qresource>
     <qresource prefix="/controls"/>
 </RCC>

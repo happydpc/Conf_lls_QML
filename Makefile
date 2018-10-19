@@ -844,7 +844,10 @@ qrc_qml.cpp: qml.qrc \
 		images/logo/logo_progress.png \
 		images/logo/icon_prg.ico \
 		images/logo/icon_gls.ico \
-		images/logo/logo_gls.png
+		images/logo/logo_gls.png \
+		images/icon/4372.png \
+		images/icon/4149.png \
+		images/icon/user.png
 	/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/rcc -name qml qml.qrc -o qrc_qml.cpp
 
 compiler_moc_predefs_make_all: moc_predefs.h
@@ -3243,8 +3246,9 @@ viewController.o: view/viewController.cpp view/viewController.h \
 		device/Progress_TMK24/Progress_tmk24Service.h \
 		device/Progress_TMK4UX/Progress_tmk4UX.h \
 		device/Progress_TMK4UX/Progress_tmk4UXData.h \
-		device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.h \
-		device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.h
+		device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.h \
+		device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.h \
+		device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o viewController.o view/viewController.cpp
 
 commandController.o: command/commandController.cpp command/commandController.h \

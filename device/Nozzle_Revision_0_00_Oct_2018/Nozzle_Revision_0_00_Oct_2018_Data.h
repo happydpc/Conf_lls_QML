@@ -159,7 +159,7 @@ typedef struct{
 
         sValueText versionFirmware;
 
-        sValueText networkParentIp;
+        sValueText networkCurrentIp;
         sValue rssi;
         sValue networkState;
 

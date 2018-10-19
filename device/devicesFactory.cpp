@@ -199,7 +199,7 @@ QPair<QStringList,QStringList> DevicesFactory::getDeviceSettigns(int indexDev) {
     return findDeviceByIndex(indexDev)->second->getSettings();
 }
 
-QStringList DevicesFactory::getDeviceErrrors(int indexDev) {
+QPair<QStringList,QStringList> DevicesFactory::getDeviceErrrors(int indexDev) {
     return findDeviceByIndex(indexDev)->second->getErrors();
 }
 
@@ -267,7 +267,7 @@ void DevicesFactory::devShedullerSlot() {
                 case DeviceAbstract::STATE_DISCONNECTED:
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         command = dev.second->getCommandToCheckConnected();
-                        command.commandType = CommandController::E_CommandType_Typical;
+                        command.commandType = CommandController::E_CommandType_send_typical_request;
                         dev.second->makeDataToCommand(command);
                         commandController->addCommandToStack(command);
                     }
@@ -276,7 +276,7 @@ void DevicesFactory::devShedullerSlot() {
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         if(dev.second->getPriority() == 0) { // TODO: loop need priority
                             command = dev.second->getCommandToGetType();
-                            command.commandType = CommandController::E_CommandType_Typical;
+                            command.commandType = CommandController::E_CommandType_send_typical_request;
                             dev.second->makeDataToCommand(command);
                             commandController->addCommandToStack(command);
                         }
@@ -285,7 +285,7 @@ void DevicesFactory::devShedullerSlot() {
                 case DeviceAbstract::STATE_CHECK_PASSWORD:
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         command = dev.second->getCommandtoCheckPassword();
-                        command.commandType = CommandController::E_CommandType_Typical;
+                        command.commandType = CommandController::E_CommandType_send_typical_request;
                         dev.second->makeDataToCommand(command);
                         commandController->addCommandToStack(command);
                     }
@@ -294,7 +294,7 @@ void DevicesFactory::devShedullerSlot() {
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         for(sizeCommand=0; sizeCommand!= dev.second->getCommandListToInit().size(); sizeCommand++) {
                             command = dev.second->getCommandListToInit().at(sizeCommand);
-                            command.commandType = CommandController::E_CommandType_Typical;
+                            command.commandType = CommandController::E_CommandType_send_typical_request;
                             dev.second->makeDataToCommand(command);
                             commandController->addCommandToStack(command);
                         }
@@ -304,7 +304,7 @@ void DevicesFactory::devShedullerSlot() {
                     if(dev.second->getPriority() == 0) { // TODO: loop need priority
                         for(sizeCommand=0; sizeCommand != dev.second->getCommandListToCurrentData().size(); sizeCommand++) {
                             command = dev.second->getCommandListToCurrentData().at(sizeCommand);
-                            command.commandType = CommandController::E_CommandType_Typical;
+                            command.commandType = CommandController::E_CommandType_send_typical_request;
                             dev.second->makeDataToCommand(command);
                             commandController->addCommandToStack(command);
                         }
@@ -320,7 +320,7 @@ void DevicesFactory::devShedullerSlot() {
 void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
     if(commandController->getCommandFirstCommand().first == true) {
         auto command = commandController->getCommandFirstCommand().second;
-        if(command.commandType == CommandController::E_CommandType_Typical) {
+        if(command.commandType == CommandController::E_CommandType_send_typical_request) {
             for(auto dev: deviceMap) {
                 if(dev.second->getUniqIdent() == command.deviceIdent) {
                     dev.second->placeDataReplyToCommand(data, command);
@@ -328,7 +328,7 @@ void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
                 }
             }
             commandController->removeFirstCommand();
-        } else if(command.commandType == CommandController::E_CommandType_OnceSecurityPacket) {
+        } else if(command.commandType == CommandController::E_CommandType_send_security_request) {
             if(command.deviceTypeName == QString(Progress_tmk24::name)) {
                 Progress_tmk24 *pdevice = new Progress_tmk24(
                             checkDeviceStruct.checkedDeviceUniqName, QPair<QStringList,QStringList>(QStringList(),QStringList()), nullptr);
@@ -430,7 +430,7 @@ void DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation) {
     // что требует подтверждения о выполнении (на форме)
     for(auto cIt: command) {
         findDeviceByIndex(indexDev)->second->makeDataToCommand(cIt);
-        cIt.commandType = CommandController::E_CommandType_Typical;
+        cIt.commandType = CommandController::E_CommandType_send_typical_request;
         commandController->addCommandToStack(cIt);
     }
 }
@@ -446,7 +446,7 @@ void DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation, QStr
     // что требует подтверждения о выполнении (на форме)
     for(auto cIt: command) {
         findDeviceByIndex(indexDev)->second->makeDataToCommand(cIt);
-        cIt.commandType = CommandController::E_CommandType_Typical;
+        cIt.commandType = CommandController::E_CommandType_send_typical_request;
         commandController->addCommandToStack(cIt);
     }
 }
@@ -472,7 +472,7 @@ void DevicesFactory::sendCustomCommandUseCallback(E_DeviceType type, QString ope
             commands = pdevice->getCommandCustom(operation);
             for(int i=0; i<commands.size(); i++) {
                 auto tcommand = commands.at(i);
-                tcommand.commandType = CommandController::E_CommandType_OnceSecurityPacket;
+                tcommand.commandType = CommandController::E_CommandType_send_security_request;
                 tcommand.deviceTypeName = QString(pdevice->name);
                 pdevice->makeDataToCommand(tcommand);
                 commandController->addCommandToStack(tcommand);

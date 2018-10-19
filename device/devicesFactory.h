@@ -49,7 +49,7 @@ public slots:
     QStringList getDeviceHeaderByIndex(int index);
     QString getDeviceIdTextByIndex(int index);
     QPair<QStringList,QStringList> getDeviceSettigns(int indexDev);
-    QStringList getDeviceErrrors(int indexDev);
+    QPair<QStringList,QStringList> getDeviceErrrors(int indexDev);
     int getDeviceStatusByIndex(int index);
     QList<int> getDeviceChartByIndex(int index);
     QPair<QStringList,QStringList> getDeviceCurrentDataByIndex(int index);

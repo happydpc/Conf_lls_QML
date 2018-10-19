@@ -31,9 +31,8 @@ QPair<QStringList,QStringList> Progress_tmk4UX::getCurrentData() {
     return QPair<QStringList,QStringList>();
 }
 
-QStringList Progress_tmk4UX::getErrors() {
-    QStringList ret;
-    return ret;
+QPair<QStringList,QStringList> Progress_tmk4UX::getErrors() {
+    return QPair<QStringList,QStringList>();
 }
 
 DeviceAbstract::E_State Progress_tmk4UX::getState() {

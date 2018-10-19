@@ -182,8 +182,6 @@ public:
             bool isValid;
         }llssValues;
 
-        bool typeIsValid;
-
         bool noiseDetected;
 
     }S_lls_data;

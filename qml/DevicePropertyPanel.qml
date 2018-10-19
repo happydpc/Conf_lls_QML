@@ -75,15 +75,15 @@ Rectangle {
         }
     }
     function setReadyPeriodicData(typeDev) {
-        switch(typeDev.toLowerCase()) {
-        case "progress tmk24":
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setUpdatePeriodicValues()
-            break;
-        case "nozzle revision 0.00 oct 2018":
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setUpdatePeriodicValues()
-            break;
-        default: break;
-        }
+//        switch(typeDev.toLowerCase()) {
+//        case "progress tmk24":
+//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setUpdatePeriodicValues()
+//            break;
+//        case "nozzle revision 0.00 oct 2018":
+//            projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setUpdatePeriodicValues()
+//            break;
+//        default: break;
+//        }
     }
 
     function setDevDisconnected(typeDev) {

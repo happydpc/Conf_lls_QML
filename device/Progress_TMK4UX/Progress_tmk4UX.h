@@ -21,7 +21,7 @@ public:
     DeviceAbstract::E_State getState() override;
     void setState(DeviceAbstract::E_State) override;
     QPair<QStringList,QStringList> getSettings() override;
-    QStringList getErrors() override;
+    QPair<QStringList,QStringList> getErrors() override;
     QString getUniqIdent() override;
     bool makeDataToCommand(CommandController::sCommandData &commandData) override;
     bool placeDataReplyToCommand(QByteArray &commandArrayReplyData, CommandController::sCommandData commandReqData) override;

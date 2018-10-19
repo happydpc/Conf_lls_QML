@@ -2,6 +2,7 @@
 #include "Nozzle_Revision_0_00_Oct_2018.h"
 #include "other/crc.h"
 #include <QList>
+#include <qmath.h>
 
 Nozzle_Revision_0_00_Oct_2018::Nozzle_Revision_0_00_Oct_2018(QString devName) {
     this->chartData = new QList<int>();
@@ -28,7 +29,7 @@ void Nozzle_Revision_0_00_Oct_2018::setDefaultValues() {
     this->dev_data.accelZ.isValid = false;
     this->dev_data.cardNumber.isValid = false;
     this->dev_data.cardState.isValid = false;
-    this->dev_data.networkParentIp.isValid = false;
+    this->dev_data.networkCurrentIp.isValid = false;
     this->dev_data.networkState.isValid = false;
     this->dev_data.powerCurrentAccumulate.isValid = false;
     this->dev_data.powerCurrentAccumulateHourse.isValid = false;
@@ -79,8 +80,8 @@ QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getCurrentData() {
     res.second.push_back(dev_data.cardNumber.isValid == true ? dev_data.cardNumber.value : "NA");
     res.first.push_back("cardState");
     res.second.push_back(dev_data.cardState.isValid == true ? QString::number(dev_data.cardState.value.value_i) : "NA");
-    res.first.push_back("networkParentIp");
-    res.second.push_back(dev_data.networkParentIp.isValid == true ? dev_data.networkParentIp.value : "NA");
+    res.first.push_back("networkCurrentIp");
+    res.second.push_back(dev_data.networkCurrentIp.isValid == true ? dev_data.networkCurrentIp.value : "NA");
     res.first.push_back("networkState");
     res.second.push_back(dev_data.networkState.isValid == true ? (dev_data.networkState.value.value_i == true ? "Подключено" : "Не подключено") : "NA");
     res.first.push_back("temperature");
@@ -101,6 +102,8 @@ QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getCurrentData() {
     res.second.push_back(dev_data.powerCurrent.isValid == true ? QString::number(dev_data.powerCurrent.value.value_f) : "NA");
     res.first.push_back("versionFirmare");
     res.second.push_back(dev_data.versionFirmware.isValid ? dev_data.versionFirmware.value : "NA");
+    res.first.push_back("rssiValue");
+    res.second.push_back(dev_data.rssi.isValid ? QString::number(dev_data.rssi.value.value_i) : "NA");
     return res;
 }
 
@@ -112,16 +115,15 @@ QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getSettings() {
     res.second.push_back(dev_data.settings.get.isValid == true ? QString::number(dev_data.settings.get.value.accelConfig.thresholdY) : "NA");
     res.first.push_back("accelConfZ");
     res.second.push_back(dev_data.settings.get.isValid == true ? QString::number(dev_data.settings.get.value.accelConfig.thresholdZ) : "NA");
-    res.first.push_back("accelConfDelta");
+    res.first.push_back("accelAngle");
     res.second.push_back(dev_data.settings.get.isValid == true ? QString::number(dev_data.settings.get.value.accelConfig.delta) : "NA");
     res.first.push_back("networkPassword");
     res.second.push_back(dev_data.networkPassword.isValid == true ? dev_data.networkPassword.value : "NA");
     return res;
 }
 
-QStringList Nozzle_Revision_0_00_Oct_2018::getErrors() {
-    QStringList ret;
-    return ret;
+QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getErrors() {
+    return QPair<QStringList,QStringList>();
 }
 
 DeviceAbstract::E_State Nozzle_Revision_0_00_Oct_2018::getState() {
@@ -190,25 +192,29 @@ bool Nozzle_Revision_0_00_Oct_2018::makeDataToCommand(CommandController::sComman
             break;
         case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setAccelConfig: {
             typedef struct {
-                int thresholdX;
-                int thresholdY;
-                int thresholdZ;
-                int delta;
+                int x;
+                int y;
+                int z;
+                int angle;
+                int deltaPower2;
             }sOutBatBuff;
+
             sOutBatBuff tbuf;
             for(int keyCount=0; keyCount<commandData.args.key.size(); keyCount++) {
                 if(commandData.args.key[keyCount] == "accelConfX") {
-                    tbuf.thresholdX = (int)commandData.args.value[keyCount].toInt();
+                    tbuf.x = (int)commandData.args.value[keyCount].toInt();
                 }
                 if(commandData.args.key[keyCount] == "accelConfY") {
-                    tbuf.thresholdY = (int)commandData.args.value[keyCount].toInt();
+                    tbuf.y = (int)commandData.args.value[keyCount].toInt();
                 }
                 if(commandData.args.key[keyCount] == "accelConfZ") {
-                    tbuf.thresholdZ = (int)commandData.args.value[keyCount].toInt();
+                    tbuf.z = (int)commandData.args.value[keyCount].toInt();
                 }
-                if(commandData.args.key[keyCount] == "accelConfDelta") {
-                    tbuf.delta  = (int)commandData.args.value[keyCount].toInt();
+                if(commandData.args.key[keyCount] == "accelAngle") {
+                    tbuf.angle  = (int)commandData.args.value[keyCount].toInt();
                 }
+                const int mG = 9810;
+                tbuf.deltaPower2 = qPow((2*mG*sin((tbuf.angle*M_PI/180)/2)), 2);
             }
             memcpy(tCommand.data.data, (uint8_t*)&tbuf, sizeof(tbuf));
             commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
@@ -278,8 +284,6 @@ QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QBy
                 endIndexBuf = value.second.second;
                 res.push_back(QPair<QString,QByteArray>("commandData", QByteArray(data.mid(startIndexBuf, endIndexBuf - startIndexBuf))));
                 data.remove(0, endIndexBuf + QString::fromUtf8(Nozzle_Revision_0_00_Oct_2018_Data::logCommandEnd).length());
-            } else {
-                qDebug() << "prepareReply -tag not found";
             }
         }
     }
@@ -289,6 +293,9 @@ QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QBy
 bool Nozzle_Revision_0_00_Oct_2018::placeDataReplyToCommand(QByteArray &commandArray, CommandController::sCommandData commandReqData) {
     bool res = false;
     if(!commandArray.isEmpty()) {
+
+        qDebug() << "placeDataReplyToCommand_2=" << commandArray.data();
+
         commandArrayReplyData += commandArray;
         auto res = prepareReply(commandArrayReplyData);
         for(auto it:res) {
@@ -310,7 +317,7 @@ bool Nozzle_Revision_0_00_Oct_2018::placeDataReplyToCommand(QByteArray &commandA
     return res;
 }
 
-void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(QByteArray data, CommandController::sCommandData commandReqData) {
+void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(QByteArray data, CommandController::sCommandData commandReqData) {    
     Nozzle_Revision_0_00_Oct_2018_Data::sConsoleReplyBuff *t_reply =
             (Nozzle_Revision_0_00_Oct_2018_Data::sConsoleReplyBuff*)(data.data());
     qDebug() << "placeDataReplyToCommand - logCommand = "
@@ -417,9 +424,10 @@ void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(QByteArray data, CommandCo
         typedef struct {
             int status;
             char cardNumber[64];
+            uint16_t len;
         }sOutBatBuff;
         sOutBatBuff *tbuf = (sOutBatBuff*)t_reply->data.data;
-        dev_data.cardNumber.value = QString::fromUtf8(tbuf->cardNumber);
+        dev_data.cardNumber.value = QString::fromUtf8(tbuf->cardNumber, tbuf->len);
         dev_data.cardState.value.value_i = tbuf->status;
         dev_data.cardNumber.isValid = true;
         dev_data.cardState.isValid = true;
@@ -431,13 +439,13 @@ void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(QByteArray data, CommandCo
         break;
     case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkData: {
         typedef struct {
-            char networkParentIp[64];
+            char networkCurrentIp[64];
             bool status;
             int rssi;
         }sOutBatBuff;
         sOutBatBuff *tbuf = (sOutBatBuff*)t_reply->data.data;
-        dev_data.networkParentIp.value = QString::fromUtf8(tbuf->networkParentIp);
-        dev_data.networkParentIp.isValid = true;
+        dev_data.networkCurrentIp.value = QString::fromUtf8(tbuf->networkCurrentIp);
+        dev_data.networkCurrentIp.isValid = true;
         dev_data.rssi.value.value_i = tbuf->rssi;
         dev_data.rssi.history.push_back(tbuf->rssi);
         dev_data.rssi.isValid = true;
