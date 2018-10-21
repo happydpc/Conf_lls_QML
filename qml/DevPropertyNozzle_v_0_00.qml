@@ -107,24 +107,24 @@ Rectangle {
             // it last command to read the settings
         case "getNetworkConfig":
             for(i=0; i<keys.length; i++) {
-                if(keys[i].toLowerCase() === "networkpassword"){
+                if(keys[i] === "networkPassword"){
                     networkPassword.text = args[i]
                 }
             }
             break;
         case "getAccelConfig":
             for(i=0; i<keys.length; i++) {
-                if(keys[i].toLowerCase() === "accelconfx") {
+                if(keys[i] === "accelConfX") {
                     accelCoefX.text = args[i]
                 }
-                if(keys[i].toLowerCase() === "accelconfy") {
+                if(keys[i ]=== "accelConfY") {
                     accelCoefY.text = args[i]
                 }
-                if(keys[i].toLowerCase() === "accelconfz") {
+                if(keys[i] === "accelConfZ") {
                     accelCoefZ.text = args[i]
                 }
-                if(keys[i].toLowerCase() === "accelAngle") {
-                    accelCoeDeltaX.text = args[i]
+                if(keys[i] === "accelAngle") {
+                    accelAngle.text = args[i]
                 }
             }
             if(ackMessageIsVisible) {
@@ -135,7 +135,7 @@ Rectangle {
             break;
         case "getCardProperty":
             for(i=0; i<keys.length; i++) {
-                if(keys[i].toLowerCase() === "cardnumber"){
+                if(keys[i] === "cardNumber"){
                     cardNumber.text = args[i].toUpperCase()
                 }
             }
@@ -157,6 +157,7 @@ Rectangle {
         case "setAccelConfig":
         case "setAccelUseCurrentValuesAsNullPoint":
         case "setNetworkConfig":
+        case "setBatteryNewAccum":
             if(ackMessageIsVisible) {
                 dialogInfoMessage.message = "Настройки успешно записаны"
                 dialogInfoMessage.title = "Настройки"
@@ -172,7 +173,7 @@ Rectangle {
     }
 
     function addDeviceLogMessage(message) {
-        if(devMessageLog.length > 2048) {
+        if(devMessageLog.length > 4096) {
             devMessageLog.remove(0, message.length + 100)
         }
         if(devMessageAutoScrollSwitch.checked) {
@@ -257,11 +258,11 @@ Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-            onCurrentIndexChanged: {
-                if(devStackParam.currentItem == settingsItem) {
-                    viewController.getCurrentDevCustomCommand("get current dev settings witout dialog")
-                }
-            }
+//            onCurrentIndexChanged: {
+//                if(devStackParam.currentItem == settingsItem) {
+//                    viewController.getCurrentDevCustomCommand("get current dev settings witout dialog")
+//                }
+//            }
 
             Item {
                 ScrollView {
@@ -834,9 +835,15 @@ Rectangle {
                             useIcon: true
                             iconCode: "\\uF015  "
                         }
-
                         TabButtonUp {
                             name: "Сеть"
+                            textLine: 1
+                            widthBody: 120
+                            useIcon: true
+                            iconCode: "\\uF492  "
+                        }
+                        TabButtonUp {
+                            name: "Питание"
                             textLine: 1
                             widthBody: 120
                             useIcon: true
@@ -943,7 +950,7 @@ Rectangle {
                                             Row {
                                                 spacing: 10
                                                 Label {
-                                                    text: "Угол отклонения:"
+                                                    text: "Угол\nотклонения:"
                                                     anchors.verticalCenter: parent.verticalCenter
                                                 }
                                                 TextField {
@@ -1131,6 +1138,62 @@ Rectangle {
                                         layer.enabled: true
                                         onClicked: {
                                             writeNetworkConfig()
+                                        }
+                                    }
+                                }
+                            }
+                            anchors.fill: parent
+                            clip: true
+                        }
+                    }
+
+                    Item {
+                        id: settingsBattery
+                        ScrollView {
+                            Column {
+                                spacing: 10
+                                anchors.top: parent.top
+                                Row {
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 15
+                                    width: 500
+                                    height: 100
+                                    Rectangle {
+                                        id: networlBatteryRect
+                                        width: 500
+                                        height: 80
+                                        color: "#fdfdfb"
+                                        anchors.left: parent.left
+                                        layer.effect: DropShadow {
+                                            color: "#e0e5ef"
+                                            radius: 20
+                                            transparentBorder: true
+                                            samples: 10
+                                            verticalOffset: 1
+                                            horizontalOffset: 0
+                                        }
+                                        anchors.leftMargin: 15
+                                        layer.enabled: true
+                                        Column {
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 0
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            spacing: 10
+                                            anchors.top: parent.top
+                                            anchors.topMargin: 30
+                                            Button {
+                                                id: batterySetNewAccumulate
+                                                height: 30
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                width: 200
+                                                text: "Новая батарея"
+                                                onClicked: {
+                                                    var keys = []
+                                                    var values = []
+                                                    viewController.setCurrentDevCustomCommandWithoutAckDialog("set new battery", keys, values)
+                                                }
+                                            }
                                         }
                                     }
                                 }

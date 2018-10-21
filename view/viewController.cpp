@@ -743,6 +743,12 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message, QSt
                 emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
                                               QStringList("setNetworkConfig"), QStringList("normal"), commmandData.isNeedAckMessage);
             }
+            if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setBatteryNewAccum) { // reply exec
+                keys << "E_ConsoleCommandType_setBatteryNewAccum" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
+                values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              QStringList("setBatteryNewAccum"), QStringList("normal"), commmandData.isNeedAckMessage);
+            }
         }
             break;
         case DevicesFactory::Type_Undefined: break;

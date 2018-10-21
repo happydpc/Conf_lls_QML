@@ -47,7 +47,8 @@ public:
         E_ConsoleCommandType_setPassword,
         E_ConsoleCommandType_setAccelConfig,
         E_ConsoleCommandType_setAccelUseCurrentValuesAsNullPoint,
-        E_ConsoleCommandType_setNetworkConfig
+        E_ConsoleCommandType_setNetworkConfig,
+        E_ConsoleCommandType_setBatteryNewAccum
     }eConsoleCommandType;
 
 #pragma pack(1)
@@ -141,15 +142,12 @@ typedef struct{
 
     typedef struct {
         sValue powerVoltage;
+        sValue powerCurrent;
         sValueText powertypeBattery;
         // тока потребленно
-        sValue powerCurrentAccumulate;
-        // тока потребленно (часов)
-        sValue powerCurrentAccumulateHourse;
-        // ресурс осталось (часов)
-        sValue powerCurrentResouresAvailable;
-        sValue powerCurrentResouresAvailableHourse;
-        sValue powerCurrent;
+        sValue powerCurrentAccumulate_mA;
+        // ресурс осталось
+        sValue powerCurrentResouresAvailable_mA;
 
         sValue temperature;
 

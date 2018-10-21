@@ -31,12 +31,11 @@ void Nozzle_Revision_0_00_Oct_2018::setDefaultValues() {
     this->dev_data.cardState.isValid = false;
     this->dev_data.networkCurrentIp.isValid = false;
     this->dev_data.networkState.isValid = false;
-    this->dev_data.powerCurrentAccumulate.isValid = false;
-    this->dev_data.powerCurrentAccumulateHourse.isValid = false;
-    this->dev_data.powerCurrentResouresAvailable.isValid = false;
-    this->dev_data.powerCurrentResouresAvailableHourse.isValid = false;
-    this->dev_data.powertypeBattery.isValid = false;
+    this->dev_data.powerCurrent.isValid = false;
     this->dev_data.powerVoltage.isValid = false;
+    this->dev_data.powertypeBattery.isValid = false;
+    this->dev_data.powerCurrentAccumulate_mA.isValid = false;
+    this->dev_data.powerCurrentResouresAvailable_mA.isValid = false;
     this->dev_data.settings.get.isValid = false;
     this->dev_data.temperature.isValid = false;
     this->dev_data.networkPassword.isValid = false;
@@ -91,13 +90,9 @@ QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getCurrentData() {
     res.first.push_back("powertypeBattery");
     res.second.push_back(dev_data.powertypeBattery.isValid == true ? dev_data.powertypeBattery.value : "NA");
     res.first.push_back("powerCurrentAccumulate");
-    res.second.push_back(dev_data.powerCurrentAccumulate.isValid == true ? QString::number(dev_data.powerCurrentAccumulate.value.value_f) : "NA");
-    res.first.push_back("powerCurrentAccumulateHourse");
-    res.second.push_back(dev_data.powerCurrentAccumulateHourse.isValid == true ? QString::number(dev_data.powerCurrentAccumulateHourse.value.value_f) : "NA");
+    res.second.push_back(dev_data.powerCurrentAccumulate_mA.isValid == true ? QString::number(dev_data.powerCurrentAccumulate_mA.value.value_f) : "NA");
     res.first.push_back("powerCurrentResouresAvailable");
-    res.second.push_back(dev_data.powerCurrentResouresAvailable.isValid == true ? QString::number(dev_data.powerCurrentResouresAvailable.value.value_f) : "NA");
-    res.first.push_back("powerCurrentResouresAvailableHourse");
-    res.second.push_back(dev_data.powerCurrentResouresAvailableHourse.isValid == true ? QString::number(dev_data.powerCurrentResouresAvailableHourse.value.value_f) : "NA");
+    res.second.push_back(dev_data.powerCurrentResouresAvailable_mA.isValid == true ? QString::number(dev_data.powerCurrentResouresAvailable_mA.value.value_f) : "NA");
     res.first.push_back("powerCurrent");
     res.second.push_back(dev_data.powerCurrent.isValid == true ? QString::number(dev_data.powerCurrent.value.value_f) : "NA");
     res.first.push_back("versionFirmare");
@@ -252,6 +247,17 @@ bool Nozzle_Revision_0_00_Oct_2018::makeDataToCommand(CommandController::sComman
             res = true;
         }
             break;
+        case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setBatteryNewAccum: {
+            typedef struct {
+                bool normal;
+            }sOutBatBuff;
+            sOutBatBuff tbuf;
+            tbuf.normal = true;
+            memcpy(tCommand.data.data, (uint8_t*)&tbuf, sizeof(tbuf));
+            commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
+            res = true;
+        }
+            break;
         default : break;
         }
     } catch(...) {
@@ -340,32 +346,22 @@ void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(QByteArray data, CommandCo
     case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getBatteryData: {
         typedef struct {
             float powerVoltage;
-            char powertypeBattery[32];
-            // тока потребленно
-            float powerCurrentAccumulate;
-            // тока потребленно (часов)
-            float  powerCurrentAccumulateHourse;
-            // ресурс осталось (часов)
-            float  powerCurrentResouresAvailable;
-            float  powerCurrentResouresAvailableHourse;
             float powerCurrent;
+            // тока потребленно
+            float powerCurrentAccumulate_mA;
+            // ресурс осталось
+            float  powerCurrentResouresAvailable_mA;
         }sOutBatBuff;
         sOutBatBuff *tbuf = (sOutBatBuff*)t_reply->data.data;
         dev_data.powerVoltage.value.value_f = tbuf->powerVoltage;
-        dev_data.powertypeBattery.value = QString::fromUtf8(tbuf->powertypeBattery);
-        dev_data.powerCurrentAccumulate.value.value_f = tbuf->powerCurrentAccumulate;
-        dev_data.powerCurrentAccumulateHourse.value.value_f = tbuf->powerCurrentAccumulateHourse;
-        dev_data.powerCurrentResouresAvailable.value.value_f = tbuf->powerCurrentResouresAvailable;
-        dev_data.powerCurrentResouresAvailableHourse.value.value_f = tbuf->powerCurrentResouresAvailableHourse;
         dev_data.powerCurrent.value.value_f = tbuf->powerCurrent;
-        //
+        dev_data.powerCurrentAccumulate_mA.value.value_f = tbuf->powerCurrentAccumulate_mA;
+        dev_data.powerCurrentResouresAvailable_mA.value.value_f = tbuf->powerCurrentResouresAvailable_mA;
         dev_data.powerVoltage.isValid = true;
         dev_data.powertypeBattery.isValid = true;
-        dev_data.powerCurrentAccumulate.isValid = true;
-        dev_data.powerCurrentAccumulateHourse.isValid = true;
-        dev_data.powerCurrentResouresAvailable.isValid = true;
-        dev_data.powerCurrentResouresAvailableHourse.isValid = true;
         dev_data.powerCurrent.isValid = true;
+        dev_data.powerCurrentAccumulate_mA.isValid = true;
+        dev_data.powerCurrentResouresAvailable_mA.isValid = true;
         emit eventDeviceUpdateState(Type_DeviceEvent_CurrentDataUpdated, commandReqData.deviceIdent,
                                     t_reply->commandType, "Update current data", QStringList(""), commandReqData);
         emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
@@ -490,6 +486,10 @@ void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(QByteArray data, CommandCo
                                     t_reply->commandType, "Normal", QStringList(""), commandReqData);
         break;
     case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setPassword:
+        emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
+                                    t_reply->commandType, "Normal", QStringList(""), commandReqData);
+        break;
+    case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setBatteryNewAccum:
         emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
                                     t_reply->commandType, "Normal", QStringList(""), commandReqData);
         break;
@@ -629,6 +629,12 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
         for(auto i:data.second) {
             tcommand.args.value.push_back(i);
         }
+        command.push_back(tcommand);
+    } else if(operation == "set new battery") {
+        tcommand.deviceIdent = getUniqIdent();
+        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setBatteryNewAccum;
+        tcommand.isNeedIncreasedDelay = true;
         command.push_back(tcommand);
     } else {
         qDebug() << "getCommandCustom -type unknown!";
