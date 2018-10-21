@@ -1,42 +1,31 @@
 <RCC>
     <qresource prefix="/">
         <file>qml/app.qml</file>
-        <file>qml/DevPropertySerialPort.qml</file>
-        <file>qml/MainMenuBar.qml</file>
-        <file>qml/ProjectMainStack.qml</file>
-        <file>qml/ProjectStartScreen.qml</file>
         <file>qml/View.qml</file>
-        <file>qml/AddDeviceDialog.qml</file>
-        <file>qml/DevPropertyProgressTmk4ux.qml</file>
-        <file>qml/DevPropertyProgressTmk24.qml</file>
-        <file>qml/SearchDevice.qml</file>
-        <file>qml/InterfaceItemView.qml</file>
-        <file>qml/DeviceTree.qml</file>
-        <file>qml/DeviceItemEmpty.qml</file>
-        <file>qml/StartPanel.qml</file>
-        <file>qml/LogoPanel.qml</file>
-        <file>qml/DevicePropertyPanel.qml</file>
-        <file>qml/DevicePanel.qml</file>
-        <file>qml/TabButtonUp.qml</file>
-        <file>qml/ButtonRound.qml</file>
-        <file>qml/AddDeviceTarirDialog.qml</file>
-        <file>qml/TestUi.qml</file>
-        <file>qml/TestUiForm.ui.qml</file>
-        <file>qml/DevPropertyProgressTmk24TarTableDelegate.qml</file>
-        <file>qml/ChangeDevIdName.qml</file>
-        <file>awesome_900.ttf</file>
-        <file>qml/DevPropertyNozzle_v_0_00.qml</file>
-        <file>qml/AddSerialPort.qml</file>
+        <file>qml/devices/AddDeviceDialog.qml</file>
+        <file>qml/devices/AddDeviceTarirDialog.qml</file>
+        <file>qml/devices/ChangeDevIdName.qml</file>
+        <file>qml/devices/DevPropertyNozzle_v_0_00.qml</file>
+        <file>qml/devices/DevPropertyProgressTmk4ux.qml</file>
+        <file>qml/devices/DevPropertyProgressTmk24.qml</file>
+        <file>qml/devices/DevPropertyProgressTmk24TarTableDelegate.qml</file>
+        <file>qml/devices/SearchDevice.qml</file>
+        <file>qml/devTree/DeviceItem.qml</file>
+        <file>qml/devTree/DeviceItemEmpty.qml</file>
+        <file>qml/devTree/DeviceTree.qml</file>
+        <file>qml/devTree/InterfaceItemView.qml</file>
+        <file>qml/interfaces/AddSerialPort.qml</file>
+        <file>qml/interfaces/DevPropertySerialPort.qml</file>
+        <file>qml/miscElems/AnimatedAreaSeries.qml</file>
+        <file>qml/miscElems/Button.qml</file>
+        <file>qml/miscElems/ButtonRound.qml</file>
+        <file>qml/miscElems/TabButtonUp.qml</file>
+        <file>qml/projectPanel/DevicePropertyPanel.qml</file>
+        <file>qml/projectPanel/LogoPanel.qml</file>
+        <file>qml/projectPanel/MainMenuBar.qml</file>
+        <file>qml/projectPanel/ProjectMainStack.qml</file>
+        <file>qml/projectPanel/ProjectStartScreen.qml</file>
+        <file>qml/projectPanel/StartPanel.qml</file>
+        <file>qml/devTree/DevListPanel.qml</file>
     </qresource>
-    <qresource prefix="/new/icons">
-        <file>images/logo/ico.png</file>
-        <file>images/logo/icon_gls.ico</file>
-        <file>images/logo/icon_prg.ico</file>
-        <file>images/logo/logo_gls.png</file>
-        <file>images/logo/logo_progress.png</file>
-        <file>images/icon/user.png</file>
-        <file>images/icon/4372.png</file>
-        <file>images/icon/4149.png</file>
-    </qresource>
-    <qresource prefix="/controls"/>
 </RCC>

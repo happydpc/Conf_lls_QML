@@ -10,6 +10,8 @@ import QtQuick.Controls.Styles 1.4
 import CustomControls 1.0
 import QtGraphicalEffects 1.0
 
+import "qrc:/qml/miscElems"
+
 Rectangle {
     anchors.fill: parent
 

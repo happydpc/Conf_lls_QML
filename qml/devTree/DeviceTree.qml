@@ -66,5 +66,5 @@ Column{
         }
     }
 
-    FontLoader { id: customFont; source: "qrc:/awesome_900.ttf" }
+    FontLoader { id: customFont; source: "qrc:/font/fonts/awesome_900.ttf" }
 }

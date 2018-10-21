@@ -1,9 +1,14 @@
 import QtQuick 2.9
 import QtQuick.Controls 2.4
 
+import "qrc:/qml/devices"
+import "qrc:/qml/devTree"
+import "qrc:/qml/interfaces"
+import "qrc:/qml/miscElems"
+import "qrc:/qml/projectPanel"
+
 Item {
     id: root
-
     Connections {
         target: viewController
 
@@ -87,54 +92,81 @@ Item {
     //        }
 
     Rectangle {
-        id:upBar
-        color: "#404558"
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        height: 50
-        width: parent.width
-        Image {
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.topMargin: -65
-            source: "/new/icons/images/logo/ico.png"
-            width: 256
-            height: 160
-            visible: false //!!!
-        }
-    }
+        id: rootPanel
+        color: "#e4dbdb"
+        anchors.fill: parent
 
-    StartPanel {
-        id:projectPanel
-        anchors.top: upBar.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
+        StackView {
+            id: projectStack
+            anchors.fill: parent
+            initialItem: projectStartSceen
 
-        devicePanel.onAddNewConnection: {
-            var list = viewController.getInterfaceAvailableToAdd("serial")
-            console.log("Available interface-" + list)
-            addInterface.setListInterfaces(list)
-            addInterface.open()
-        }
-    }
+            ProjectStartScreen {
+                id: projectStartSceen
+            }
 
-    AddSerialPort {
-        id:addInterface
-        onAcceptConnectReady: {
-            var paramList = []
-            var keyList = []
-            keyList.push("baudrate")
-            paramList.push(baudrate)
-            var res = viewController.addConnection("serial", name, keyList, paramList)
-            console.log("addConnectionaddInterface=" + res)
-            if(res) {
-                close()
+            Item {
+                id: projectDeviceScreen
+                Rectangle {
+                    id:upBar
+                    color: "#404558"
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    height: 50
+                    width: parent.width
+                    Image {
+                        anchors.left: parent.left
+                        anchors.top: parent.top
+                        anchors.topMargin: -65
+                        source: "logo.png"
+                        width: 256
+                        height: 160
+                        visible: false //!!!
+                    }
+                }
+                StartPanel {
+                    id:projectPanel
+                    anchors.top: upBar.bottom
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.bottom: parent.bottom
+
+                    devicePanel.onAddNewConnection: {
+                        var list = viewController.getInterfaceAvailableToAdd("serial")
+                        console.log("Available interface-" + list)
+                        addInterface.setListInterfaces(list)
+                        addInterface.open()
+                    }
+                }
+                AddSerialPort {
+                    visible: false
+                    id:addInterface
+                    onAcceptConnectReady: {
+                        var paramList = []
+                        var keyList = []
+                        keyList.push("baudrate")
+                        paramList.push(baudrate)
+                        var res = viewController.addConnection("serial", name, keyList, paramList)
+                        console.log("addConnectionaddInterface=" + res)
+                        if(res) {
+                            close()
+                        }
+                    }
+                    onAbortConnectButton: {
+                        close()
+                    }
+                }
             }
         }
-        onAbortConnectButton: {
-            close()
+    }
+    Timer {
+        id: timerStartScreen
+        interval: 100
+        running: true
+        repeat: false
+        onTriggered: {
+            projectStack.push(projectDeviceScreen)
         }
     }
 }

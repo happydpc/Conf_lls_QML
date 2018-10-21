@@ -4,6 +4,9 @@ import Qt.labs.platform 1.0
 import QtQuick.Dialogs 1.2
 import QtQml.Models 2.11
 
+import "qrc:/qml/devices"
+import "qrc:/qml/interfaces"
+
 Rectangle {
     id: projectDevicePanel
     property alias dialogAddInterfaceFail: dialogAddInterfaceFail

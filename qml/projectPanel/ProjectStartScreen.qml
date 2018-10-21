@@ -3,15 +3,12 @@ import QtQuick.Layouts 1.3
 import QtQuick.Controls 2.4
 
 Component {
-    id:projectStartScreen
     Rectangle {
-//        color: "#ffffff"
-                color: "transparent"
+        color: "#ffffff"
         anchors.fill: parent
-
         Image {
             id: logo
-            source: "/images/logo/logo_progress.png"
+            source: "qrc:/logo/images/logo/logo_progress.png"
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             anchors.left: parent.left
@@ -24,8 +21,3 @@ Component {
 
     }
 }
-
-/*##^## Designer {
-    D{i:0;autoSize:true;height:480;width:640}
-}
- ##^##*/

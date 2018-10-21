@@ -3,6 +3,8 @@ import QtQuick.Controls 2.3
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 
+import "qrc:/qml/miscElems"
+
 Popup {
     id: addDeviceDialog
     modal: true

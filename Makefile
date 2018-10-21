@@ -78,6 +78,8 @@ SOURCES       = main.cpp \
 		device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.cpp \
 		device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.cpp \
 		device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.cpp qrc_qml.cpp \
+		qrc_images.cpp \
+		qrc_font.cpp \
 		moc_connectionFactory.cpp \
 		moc_deviceAbstract.cpp \
 		moc_devicesFactory.cpp \
@@ -128,6 +130,8 @@ OBJECTS       = main.o \
 		Nozzle_Revision_0_00_Oct_2018.o \
 		Nozzle_Revision_0_00_Service.o \
 		qrc_qml.o \
+		qrc_images.o \
+		qrc_font.o \
 		moc_connectionFactory.o \
 		moc_deviceAbstract.o \
 		moc_devicesFactory.o \
@@ -573,6 +577,8 @@ Makefile: Lls_QML_conf.pro /opt/qt/5.11.0/gcc_64/mkspecs/linux-g++/qmake.conf /o
 		/opt/qt/5.11.0/gcc_64/mkspecs/features/lex.prf \
 		Lls_QML_conf.pro \
 		qml.qrc \
+		images.qrc \
+		font.qrc \
 		/opt/qt/5.11.0/gcc_64/lib/libQt5Quick.prl \
 		/opt/qt/5.11.0/gcc_64/lib/libQt5Charts.prl \
 		/opt/qt/5.11.0/gcc_64/lib/libQt5Widgets.prl \
@@ -762,6 +768,8 @@ Makefile: Lls_QML_conf.pro /opt/qt/5.11.0/gcc_64/mkspecs/linux-g++/qmake.conf /o
 /opt/qt/5.11.0/gcc_64/mkspecs/features/lex.prf:
 Lls_QML_conf.pro:
 qml.qrc:
+images.qrc:
+font.qrc:
 /opt/qt/5.11.0/gcc_64/lib/libQt5Quick.prl:
 /opt/qt/5.11.0/gcc_64/lib/libQt5Charts.prl:
 /opt/qt/5.11.0/gcc_64/lib/libQt5Widgets.prl:
@@ -784,7 +792,7 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents qml.qrc $(DISTDIR)/
+	$(COPY_FILE) --parents qml.qrc images.qrc font.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /opt/qt/5.11.0/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents connection/connectionFactory.h device/deviceAbstract.h device/devicesFactory.h interfaces/interfaceBLE.h interfaces/interfaceEthernet.h interfaces/interfacesAbstract.h interfaces/interfaceSerial.h settings/settings.h view/viewController.h command/commandController.h other/crc.h tests/testDevReply.h view/interfaceListControll/model.h view/interfaceListControll/treeitem.h view/radialbar.h device/Progress_TMK24/Progress_tmk24Data.h device/Progress_TMK24/Progress_tmk24.h device/Progress_TMK4UX/Progress_tmk4UXData.h device/Progress_TMK4UX/Progress_tmk4UX.h device/Progress_Base/Progress_Base_Data.h device/Progress_Base/Progress_BaseData.h device/Progress_Base/Progress_Base.h device/service/serviceDevicesAbstract.h device/Progress_TMK24/Progress_tmk24Service.h device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.h device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.h device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.h $(DISTDIR)/
 	$(COPY_FILE) --parents main.cpp connection/connectionFactory.cpp device/deviceAbstract.cpp device/devicesFactory.cpp interfaces/interfaceBLE.cpp interfaces/interfaceEthernet.cpp interfaces/interfacesAbstract.cpp interfaces/interfaceSerial.cpp settings/settings.cpp view/viewController.cpp command/commandController.cpp other/crc.cpp tests/testDevReply.cpp view/interfaceListControll/treeitem.cpp view/interfaceListControll/model.cpp view/radialbar.cpp device/Progress_TMK24/Progress_tmk24Data.cpp device/Progress_TMK24/Progress_tmk24.cpp device/Progress_TMK4UX/Progress_tmk4UXData.cpp device/Progress_TMK4UX/Progress_tmk4UX.cpp device/Progress_Base/Progress_BaseData.cpp device/Progress_Base/progress_base_data.cpp device/Progress_Base/Progress_Base.cpp device/service/serviceDevicesAbstract.cpp device/Progress_TMK24/Progress_tmk24Service.cpp device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.cpp device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.cpp device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.cpp $(DISTDIR)/
@@ -811,47 +819,55 @@ check: first
 
 benchmark: first
 
-compiler_rcc_make_all: qrc_qml.cpp
+compiler_rcc_make_all: qrc_qml.cpp qrc_images.cpp qrc_font.cpp
 compiler_rcc_clean:
-	-$(DEL_FILE) qrc_qml.cpp
+	-$(DEL_FILE) qrc_qml.cpp qrc_images.cpp qrc_font.cpp
 qrc_qml.cpp: qml.qrc \
 		/opt/qt/5.11.0/gcc_64/bin/rcc \
-		awesome_900.ttf \
-		qml/InterfaceItemView.qml \
 		qml/app.qml \
-		qml/StartPanel.qml \
-		qml/DevicePropertyPanel.qml \
-		qml/DeviceItemEmpty.qml \
 		qml/View.qml \
-		qml/MainMenuBar.qml \
-		qml/TestUi.qml \
-		qml/DevPropertySerialPort.qml \
-		qml/DevPropertyProgressTmk4ux.qml \
-		qml/ProjectStartScreen.qml \
-		qml/DevPropertyProgressTmk24.qml \
-		qml/SearchDevice.qml \
-		qml/DevPropertyProgressTmk24TarTableDelegate.qml \
-		qml/ButtonRound.qml \
-		qml/AddSerialPort.qml \
-		qml/LogoPanel.qml \
-		qml/TabButtonUp.qml \
-		qml/AddDeviceTarirDialog.qml \
-		qml/ChangeDevIdName.qml \
-		qml/DeviceTree.qml \
-		qml/ProjectMainStack.qml \
-		qml/TestUiForm.ui.qml \
-		qml/AddDeviceDialog.qml \
-		qml/DevicePanel.qml \
-		qml/DevPropertyNozzle_v_0_00.qml \
+		qml/interfaces/AddSerialPort.qml \
+		qml/interfaces/DevPropertySerialPort.qml \
+		qml/devTree/DeviceItemEmpty.qml \
+		qml/devTree/DeviceTree.qml \
+		qml/devTree/DevListPanel.qml \
+		qml/devTree/DeviceItem.qml \
+		qml/devTree/InterfaceItemView.qml \
+		qml/projectPanel/LogoPanel.qml \
+		qml/projectPanel/StartPanel.qml \
+		qml/projectPanel/MainMenuBar.qml \
+		qml/projectPanel/DevicePropertyPanel.qml \
+		qml/projectPanel/ProjectMainStack.qml \
+		qml/projectPanel/ProjectStartScreen.qml \
+		qml/devices/DevPropertyNozzle_v_0_00.qml \
+		qml/devices/AddDeviceDialog.qml \
+		qml/devices/DevPropertyProgressTmk4ux.qml \
+		qml/devices/AddDeviceTarirDialog.qml \
+		qml/devices/ChangeDevIdName.qml \
+		qml/devices/DevPropertyProgressTmk24TarTableDelegate.qml \
+		qml/devices/SearchDevice.qml \
+		qml/devices/DevPropertyProgressTmk24.qml \
+		qml/miscElems/Button.qml \
+		qml/miscElems/AnimatedAreaSeries.qml \
+		qml/miscElems/ButtonRound.qml \
+		qml/miscElems/TabButtonUp.qml
+	/opt/qt/5.11.0/gcc_64/bin/rcc -name qml qml.qrc -o qrc_qml.cpp
+
+qrc_images.cpp: images.qrc \
+		/opt/qt/5.11.0/gcc_64/bin/rcc \
 		images/logo/ico.png \
 		images/logo/logo_progress.png \
 		images/logo/icon_prg.ico \
 		images/logo/icon_gls.ico \
 		images/logo/logo_gls.png \
 		images/icon/4372.png \
-		images/icon/4149.png \
-		images/icon/user.png
-	/opt/qt/5.11.0/gcc_64/bin/rcc -name qml qml.qrc -o qrc_qml.cpp
+		images/icon/4149.png
+	/opt/qt/5.11.0/gcc_64/bin/rcc -name images images.qrc -o qrc_images.cpp
+
+qrc_font.cpp: font.qrc \
+		/opt/qt/5.11.0/gcc_64/bin/rcc \
+		fonts/awesome_900.ttf
+	/opt/qt/5.11.0/gcc_64/bin/rcc -name font font.qrc -o qrc_font.cpp
 
 compiler_moc_predefs_make_all: moc_predefs.h
 compiler_moc_predefs_clean:
@@ -4414,6 +4430,12 @@ Nozzle_Revision_0_00_Service.o: device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revi
 
 qrc_qml.o: qrc_qml.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_qml.o qrc_qml.cpp
+
+qrc_images.o: qrc_images.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_images.o qrc_images.cpp
+
+qrc_font.o: qrc_font.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_font.o qrc_font.cpp
 
 moc_connectionFactory.o: moc_connectionFactory.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_connectionFactory.o moc_connectionFactory.cpp

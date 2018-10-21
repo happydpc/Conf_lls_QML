@@ -3,6 +3,8 @@ import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 
+import "qrc:/qml/miscElems"
+
 Popup {
     id: addDeviceTarirDialog
 

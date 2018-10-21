@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/logo">
+        <file>images/logo/ico.png</file>
+        <file>images/logo/icon_gls.ico</file>
+        <file>images/logo/icon_prg.ico</file>
+        <file>images/logo/logo_gls.png</file>
+        <file>images/logo/logo_progress.png</file>
+    </qresource>
+    <qresource prefix="/icon">
+        <file>images/icon/4149.png</file>
+        <file>images/icon/4372.png</file>
+    </qresource>
+</RCC>

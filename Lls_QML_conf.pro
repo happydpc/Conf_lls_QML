@@ -45,7 +45,9 @@ SOURCES += \
     device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.cpp
 
 RESOURCES += \
-    qml.qrc
+    qml.qrc \
+    images.qrc \
+    font.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =

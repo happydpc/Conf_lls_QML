@@ -10,6 +10,8 @@ import QtQuick.Controls.Styles 1.4
 import CustomControls 1.0
 import QtGraphicalEffects 1.0
 
+import "qrc:/qml/miscElems" as MiscElements
+
 Rectangle {
     anchors.fill: parent
     property bool devIsConnected: false
@@ -215,21 +217,21 @@ Rectangle {
                 currentIndex: devStackParam.currentIndex
                 font.pointSize: 8
 
-                TabButtonUp {
+                MiscElements.TabButtonUp {
                     name: "Текущее состояние"
                     textLine: 1
                     widthBody: 155
                     useIcon: true
                     iconCode: "\uF274  "
                 }
-                TabButtonUp {
+                MiscElements.TabButtonUp {
                     name: "Журнал"
                     textLine: 1
                     widthBody: 155
                     useIcon: true
                     iconCode: "\uF54A  "
                 }
-                TabButtonUp {
+                MiscElements.TabButtonUp {
                     name: "Настройка"
                     textLine: 1
                     widthBody: 155
@@ -828,21 +830,21 @@ Rectangle {
                         height: 25
                         anchors.left: parent.left
                         anchors.leftMargin: 30
-                        TabButtonUp {
+                        MiscElements.TabButtonUp {
                             name: "Акселерометр"
                             textLine: 1
                             widthBody: 130
                             useIcon: true
                             iconCode: "\\uF015  "
                         }
-                        TabButtonUp {
+                        MiscElements.TabButtonUp {
                             name: "Сеть"
                             textLine: 1
                             widthBody: 120
                             useIcon: true
                             iconCode: "\\uF492  "
                         }
-                        TabButtonUp {
+                        MiscElements.TabButtonUp {
                             name: "Питание"
                             textLine: 1
                             widthBody: 120
