@@ -30,7 +30,7 @@ Popup {
             switch(typeDeviceList.currentIndex) {
             case 0:
                 if(typeDeviceList.currentText.length != 0) {
-                    keyList.push("uniqDevName")
+                    keyList.push("devId")
                     paramList.push(typeDeviceIdProgressTmk24.text)
                     keyList.push("password")
                     paramList.push(passwordProgressTmk24.text)
@@ -224,7 +224,7 @@ Popup {
                     close()
                     break;
                 case 1:
-                    keyList.push("uniqDevName")
+                    keyList.push("devId")
                     paramList.push(typeDeviceIdNozzle_v0_00.text)
                     keyList.push("password")
                     paramList.push(passwordNozzle_v0_00.text)

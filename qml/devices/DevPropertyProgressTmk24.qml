@@ -9,21 +9,27 @@ import QtQuick.Controls 1.4 as Controls_1_4
 import QtQuick.Controls.Styles 1.4
 import CustomControls 1.0
 import QtGraphicalEffects 1.0
-
-import "qrc:/qml/miscElems"
+import "qrc:/qml/miscElems" as MiscElems
 
 Rectangle {
     anchors.fill: parent
 
     property bool isNoiseDetected: false
+    property bool devIsConnected: false
 
     function setNoReady() {
-        devPropertyProgressTmk24.isReady = false
+        devIsConnected = false
         setWriteSettingsIsNoAvailable()
+        fuelLevelProgress.value = 0
+        levelCnt.value = 0
+        levelFreq.value = 0
+        levelTemp.value = 0
+        chartCurrentValueLines.clear();
+        chartCurrentValue.dataList = []
     }
 
     function setReady() {
-        devPropertyProgressTmk24.isReady = true
+        devIsConnected = true
         setWriteSettingsIsAvailable()
     }
 
@@ -158,12 +164,11 @@ Rectangle {
 
         case "lls_read_lvl_all":
             if(keys.length > 0) {
-                devPropertyProgressTmk24.isReady = true
+                devIsConnected = true
                 for(i=0; i<keys.length; i++) {
                     if(keys[i] === "fuelProcent") {
                         fuelLevelProgress.value = args[i]
                     } else if(keys[i] === "fuelProcent") {
-                        error2Label.error2 = args[i]
                     } else if(keys[i] === "cnt") {
                         levelCnt.value = args[i]
                     } else if(keys[i] === "freq") {
@@ -191,25 +196,27 @@ Rectangle {
                         error7Label.error7 = args[i]
                     } else if(keys[i] === "Slave4Error") {
                         error8Label.error8 = args[i]
+                    } else if(keys[i] === "chartValue") {
+                        chartCurrentValue.dataList.push(args[i])
+                        chartCurrentValueLines.clear();
+                        chartCurrentValue.graphLength = chartCurrentValue.dataList.length
+                        chartCurrentValue.graphAmplitudeMax = 0
+                        for(var i=0; i<chartCurrentValue.dataList.length; i++) {
+                            if(chartCurrentValue.dataList[i] > chartCurrentValue.graphAmplitudeMax) {
+                                chartCurrentValue.graphAmplitudeMax = chartCurrentValue.dataList[i];
+                            }
+                            if(chartCurrentValue.dataList[i] < chartCurrentValue.graphAmplitudeMin) {
+                                chartCurrentValue.graphAmplitudeMin = chartCurrentValue.dataList[i];
+                            }
+                        }
+                        for(i=0; i<chartCurrentValue.dataList.length; i++) {
+                            chartCurrentValueLines.append(i, chartCurrentValue.dataList[i]);
+                        }
+                        if(chartCurrentValue.dataList.length > 50) {
+                            chartCurrentValue.dataList.pop()
+                        }
                     }
                 }
-
-                //-- noise detect
-                //-- chart
-                var list = viewController.getCurrentDevChart()
-                currentChartLines.clear();
-                chartCurrentValue.graphLength = list.length
-                chartCurrentValue.graphAmplitudeMax = 0
-
-                for(var i=0; i<list.length; i++) {
-                    if(chartCurrentValue.graphAmplitudeMax < list[i]) {
-                        chartCurrentValue.graphAmplitudeMax = list[i];
-                    }
-                }
-                for(i=0; i<list.length; i++) {
-                    currentChartLines.append(i, list[i]);
-                }
-                logListView.positionViewAtEnd()
             }
             break;
         case "lls_calibrate_max":
@@ -232,6 +239,7 @@ Rectangle {
                 messageDialog.message = "Тарировочная таблица успешно считана"
                 messageDialog.open()
             }
+            readTarTable()
             break;
         case "lls_write_cal_table":
             if(ackMessageIsVisible) {
@@ -437,6 +445,7 @@ Rectangle {
     }
 
     function remakeTarTable() {
+        //        viewController.setCurrentDevCustomCommand("read current dev tar table", [], [])
         tarTabViewMultiple.model.clear()
         tarListDevice.model.clear()
         for(var index = tarTabViewMultiple.columnCount-1; index>=0; index--) {
@@ -483,6 +492,7 @@ Rectangle {
             console.log("addeted2 =" + tableViewColumn.role)
         }
     }
+
     function writeTarTable() {
         var devCount = viewController.getStayedDevTarrirCount()
         var devType = []
@@ -579,7 +589,8 @@ Rectangle {
         viewController.sendReqExportTarrirAllDevToCsv(pathFile)
     }
 
-    function readTarTable(devCount) {
+    function readTarTable() {
+        var devCount = viewController.getStayedDevTarrirCount()
         console.log("readTarTable = " + devCount)
         var jsonArray = []
         var tarStepMax = viewController.getTarMaxCountStep()
@@ -587,7 +598,7 @@ Rectangle {
             jsonArray.push({});
             tarStepMax--
         }
-        // пока не переберем все уст-ва
+         // пока не переберем все уст-ва
         for(var devIndex=0; devIndex<devCount; devIndex++) {
             var table = viewController.getTableAtDevice(devIndex)
             var parity = 0
@@ -597,7 +608,7 @@ Rectangle {
             var valueLiters = 0
             var stepCount = viewController.getTarMaxCountStep() *2 // it pair
             if(stepCount === 0 | stepCount === undefined) {
-                messageReadTarTableEmpty.open()
+                //messageReadTarTableEmpty.open()
             }
             console.log("getTable =" + table.length)
 
@@ -646,55 +657,57 @@ Rectangle {
     }
 
     Timer {
-        id: timerTestRepeat
+        id: timerUpdateRepeat
         interval: 1000
         running: true
         repeat: true
         onTriggered: {
-            //            var devCount = viewController.getStayedDevTarrirCount()
-            //            var devId = viewController.getStayedDevTarrir_DevProperty("id")
-            //            var colorArray = []
-            //            colorArray.push("#f34b4b")
-            //            colorArray.push("#4bd5f3")
-            //            colorArray.push("#f34be1")
-            //            colorArray.push("#4bf3c6")
-            //            colorArray.push("#4b4bf3")
-            //            colorArray.push("#be4bf3")
-            //            colorArray.push("#0d8741")
-            //            chartTarCurrentValuesMultiple.removeAllSeries();
+            if(devIsConnected) {
+                var devCount = viewController.getStayedDevTarrirCount()
+                var devId = viewController.getStayedDevTarrir_DevProperty("id")
+                var colorArray = []
+                colorArray.push("#f34b4b")
+                colorArray.push("#4bd5f3")
+                colorArray.push("#f34be1")
+                colorArray.push("#4bf3c6")
+                colorArray.push("#4b4bf3")
+                colorArray.push("#be4bf3")
+                colorArray.push("#0d8741")
+                chartTarCurrentValuesMultiple.removeAllSeries();
 
-            //            for(var devIter=0; devIter<devCount; devIter++) {
-            //                var res = viewController.getTarCurrentDeviceData(devIter)
-            //                var dataArray = tarListDevice.model.get(devIter)
-            //                if(dataArray !== undefined) {
-            //                    dataArray["valueCnt"] = res[0]
-            //                    dataArray["valueFuelLevel"] = res[2]
-            //                    tarListDevice.model.set(devIter, dataArray)
-            //                }
-            //                //-- chart
-            //                var chartArray = viewController.getTarCurrentDeviceChartData(devIter)
+                for(var devIter=0; devIter<devCount; devIter++) {
+                    var res = viewController.getTarCurrentDeviceData(devIter)
+                    var dataArray = tarListDevice.model.get(devIter)
+                    if(dataArray !== undefined) {
+                        dataArray["valueCnt"] = res[0]
+                        dataArray["valueFuelLevel"] = res[2]
+                        tarListDevice.model.set(devIter, dataArray)
+                    }
+                    //-- chart
+                    var chartArray = viewController.getTarCurrentDeviceChartData(devIter)
 
-            //                var line = chartTarCurrentValuesMultiple.createSeries(ChartView.SeriesTypeLine, "ID" + devId[devIter], currentTarChartAxisXMultiple, currentTarChartAxisYMultiple);
-            //                line.color = colorArray[devIter]
+                    var line = chartTarCurrentValuesMultiple.createSeries(ChartView.SeriesTypeLine, "ID" + devId[devIter], currentTarChartAxisXMultiple, currentTarChartAxisYMultiple);
+                    line.color = colorArray[devIter]
 
-            //                chartTarCurrentValuesMultiple.graphLength = chartArray.length
-            //                chartTarCurrentValuesMultiple.graphAmplitudeMax = 0
+                    chartTarCurrentValuesMultiple.graphLength = chartArray.length
+                    chartTarCurrentValuesMultiple.graphAmplitudeMax = 0
 
-            //                for(var chartIter=0; chartIter<chartArray.length; chartIter++) {
-            //                    if(chartTarCurrentValuesMultiple.graphAmplitudeMax < chartArray[chartIter]) {
-            //                        chartTarCurrentValuesMultiple.graphAmplitudeMax = chartArray[chartIter];
-            //                    }
-            //                }
+                    for(var chartIter=0; chartIter<chartArray.length; chartIter++) {
+                        if(chartTarCurrentValuesMultiple.graphAmplitudeMax < chartArray[chartIter]) {
+                            chartTarCurrentValuesMultiple.graphAmplitudeMax = chartArray[chartIter];
+                        }
+                    }
 
-            //                currentTarChartAxisXMultiple.min = 0;
-            //                currentTarChartAxisXMultiple.max = chartArray.length
-            //                currentTarChartAxisYMultiple.min = 0;
-            //                currentTarChartAxisYMultiple.max = chartTarCurrentValuesMultiple.graphAmplitudeMax
+                    currentTarChartAxisXMultiple.min = 0;
+                    currentTarChartAxisXMultiple.max = chartArray.length
+                    currentTarChartAxisYMultiple.min = 0;
+                    currentTarChartAxisYMultiple.max = chartTarCurrentValuesMultiple.graphAmplitudeMax
 
-            //                for(chartIter=0; chartIter<chartArray.length; chartIter++) {
-            //                    line.append(chartIter, parseInt(chartArray[chartIter]));
-            //                }
-            //            }
+                    for(chartIter=0; chartIter<chartArray.length; chartIter++) {
+                        line.append(chartIter, parseInt(chartArray[chartIter]));
+                    }
+                }
+            }
         }
     }
 
@@ -721,14 +734,14 @@ Rectangle {
                 currentIndex: devStackParam.currentIndex
                 font.pointSize: 8
 
-                TabButtonUp {
+                MiscElems.TabButtonUp {
                     name: "Текущее состояние"
                     textLine:1
                     widthBody: 155
                     useIcon: true
                     iconCode: "\uF274  "
                 }
-                TabButtonUp {
+                MiscElems.TabButtonUp {
                     name: "Конфигурирование"
                     textLine:1
                     widthBody: 155
@@ -762,7 +775,6 @@ Rectangle {
                 ScrollView {
                     clip: true
                     anchors.fill: parent
-
                     Column {
                         anchors.left: parent.left
                         anchors.leftMargin: 15
@@ -795,7 +807,7 @@ Rectangle {
                                     anchors.leftMargin: 5
                                     anchors.right: parent.right
                                     height: parent.height
-                                    enabled: devPropertyProgressTmk24.isReady
+                                    enabled: devIsConnected
                                     readOnly: true
                                 }
                             }
@@ -822,7 +834,7 @@ Rectangle {
                                     anchors.right: parent.right
                                     anchors.leftMargin: 5
                                     readOnly: true
-                                    enabled: devPropertyProgressTmk24.isReady
+                                    enabled: devIsConnected
                                     height: parent.height
                                 }
                             }
@@ -844,7 +856,7 @@ Rectangle {
                                 TextField {
                                     id: versionFirmwareText
                                     text: qsTr("")
-                                    enabled: devPropertyProgressTmk24.isReady
+                                    enabled: devIsConnected
                                     anchors.left: lversionFirmwareText.right
                                     anchors.right: parent.right
                                     anchors.leftMargin: 5
@@ -872,6 +884,7 @@ Rectangle {
                                     height: 150
                                     layer.enabled: true
                                     radius: 15
+                                    color: devIsConnected ? "#ffffff" : "#d9d9d9"
                                     Label {
                                         id: levelValueLabel
                                         text: qsTr("Уровень/Объем:")
@@ -903,7 +916,7 @@ Rectangle {
                                         }
                                         suffixText: "%"
                                         textColor: "#888d91"
-                                        enabled: devPropertyProgressTmk24.isReady
+                                        enabled: devIsConnected
                                     }
                                     layer.effect: DropShadow {
                                         transparentBorder: true
@@ -920,6 +933,7 @@ Rectangle {
                                     height: 150
                                     layer.enabled: true
                                     radius: 15
+                                    color: devIsConnected ? "#ffffff" : "#d9d9d9"
                                     Label {
                                         id: levelCntLabel
                                         text: qsTr("CNT значение:")
@@ -952,7 +966,7 @@ Rectangle {
                                         }
                                         suffixText: ""
                                         textColor: "#888d91"
-                                        enabled: devPropertyProgressTmk24.isReady
+                                        enabled: devIsConnected
                                         onValueChanged: {
                                             levelCntValueCustom.text = value
                                         }
@@ -980,6 +994,7 @@ Rectangle {
                                     height: 150
                                     layer.enabled: true
                                     radius: 15
+                                    color: devIsConnected ? "#ffffff" : "#d9d9d9"
                                     Label {
                                         id: levelTempLabel
                                         text: qsTr("Температура:")
@@ -1011,7 +1026,7 @@ Rectangle {
                                         }
                                         suffixText: "°C"
                                         textColor: "#888d91"
-                                        enabled: devPropertyProgressTmk24.isReady
+                                        enabled: devIsConnected
                                     }
                                     layer.effect: DropShadow {
                                         transparentBorder: true
@@ -1028,6 +1043,7 @@ Rectangle {
                                     height: 150
                                     layer.enabled: true
                                     radius: 15
+                                    color: devIsConnected ? "#ffffff" : "#d9d9d9"
                                     Label {
                                         id: levelFreqLabel
                                         text: qsTr("Частота:")
@@ -1059,7 +1075,7 @@ Rectangle {
                                         }
                                         suffixText: "Hz"
                                         textColor: "#888d91"
-                                        enabled: devPropertyProgressTmk24.isReady
+                                        enabled: devIsConnected
                                     }
                                     layer.effect: DropShadow {
                                         transparentBorder: true
@@ -1076,35 +1092,37 @@ Rectangle {
                             Rectangle {
                                 height: 300
                                 width: column.width// - 50
-                                color: "#ffffff"
                                 radius: 15
+                                color: devIsConnected ? "#ffffff" : "#d9d9d9"
                                 ChartView {
                                     id: chartCurrentValue
                                     anchors.fill: parent
                                     theme: ChartView.ChartThemeLight
                                     title: "Уровень/Объем"
+                                    backgroundColor: devIsConnected ? "#ffffff" : "#d9d9d9"
                                     antialiasing: true
                                     property int graphLength: 1
                                     property int graphAmplitudeMax: 1
+                                    property var dataList: []
                                     ValueAxis {
-                                        id: currentChartAxisX
+                                        id: chartCurrentValueLinesX
                                         min: 0
                                         max: chartCurrentValue.graphLength
                                         tickCount: 5
                                         labelsVisible: false
                                     }
                                     ValueAxis {
-                                        id: currentChartAxisY
+                                        id: chartCurrentValueLinesY
                                         min: -0.1
                                         max: chartCurrentValue.graphAmplitudeMax
                                         tickCount: 5
                                     }
                                     LineSeries {
-                                        id: currentChartLines
-                                        axisX: currentChartAxisX
-                                        axisY: currentChartAxisY
+                                        id: chartCurrentValueLines
+                                        axisX: chartCurrentValueLinesX
+                                        axisY: chartCurrentValueLinesY
                                     }
-                                    enabled: devPropertyProgressTmk24.isReady
+                                    enabled: devIsConnected
                                 }
                                 layer.enabled: true
                                 layer.effect: DropShadow {
@@ -1124,10 +1142,10 @@ Rectangle {
                                 id:errorRectangle
                                 height: 400
                                 width: column.width
-                                color: "#ffffff"
                                 layer.enabled: true
                                 radius: 15
-                                enabled: devPropertyProgressTmk24.isReady
+                                enabled: devIsConnected
+                                color: devIsConnected ? "#ffffff" : "#d9d9d9"
                                 Column {
                                     anchors.left: parent.left
                                     anchors.leftMargin: 15
@@ -1140,7 +1158,7 @@ Rectangle {
                                         color: "#888d91"
                                     }
 
-                                    ButtonRound {
+                                    MiscElems.ButtonRound {
                                         id:readErrors
                                         textLine: 1
                                         widthBody: 150
@@ -1148,9 +1166,9 @@ Rectangle {
                                         iconCode: "\uf12a  "
                                         useIcon: true
 
-                                        enabled: devPropertyProgressTmk24.isReady
+                                        enabled: devIsConnected
                                         onClicked: {
-                                            viewController.getCurrentDevCustomCommand("read current dev errors")
+                                            viewController.setCurrentDevCustomCommand("read current dev errors", [], [])
                                         }
                                     }
 
@@ -1167,7 +1185,7 @@ Rectangle {
                                             width: 32
                                             anchors.left: parent.right
                                             anchors.leftMargin: 20
-                                            source: error1Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                            source: error1Label.error1 === true ? "qrc:/icon/images/icon/bad.png" : "qrc:/icon/images/icon/normal.png"
                                         }
                                     }
                                     Row{
@@ -1183,7 +1201,7 @@ Rectangle {
                                             width: 32
                                             anchors.left: parent.right
                                             anchors.leftMargin: 20
-                                            source: error2Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                            source: error2Label.error1 === true ? "qrc:/icon/images/icon/bad.png" : "qrc:/icon/images/icon/normal.png"
                                         }
                                     }
                                     Row{
@@ -1199,7 +1217,7 @@ Rectangle {
                                             width: 32
                                             anchors.left: parent.right
                                             anchors.leftMargin: 20
-                                            source: error3Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                            source: error3Label.error1 === true ? "qrc:/icon/images/icon/bad.png" : "qrc:/icon/images/icon/normal.png"
                                         }
                                     }
                                     Row{
@@ -1215,7 +1233,7 @@ Rectangle {
                                             width: 32
                                             anchors.left: parent.right
                                             anchors.leftMargin: 20
-                                            source: error4Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                            source: error4Label.error1 === true ? "qrc:/icon/images/icon/bad.png" : "qrc:/icon/images/icon/normal.png"
                                         }
                                     }
                                     Row{
@@ -1231,7 +1249,7 @@ Rectangle {
                                             width: 32
                                             anchors.left: parent.right
                                             anchors.leftMargin: 20
-                                            source: error5Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                            source: error5Label.error1 === true ? "qrc:/icon/images/icon/bad.png" : "qrc:/icon/images/icon/normal.png"
                                         }
                                     }
 
@@ -1248,7 +1266,7 @@ Rectangle {
                                             width: 32
                                             anchors.left: parent.right
                                             anchors.leftMargin: 20
-                                            source: error6Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                            source: error6Label.error1 === true ? "qrc:/icon/images/icon/bad.png" : "qrc:/icon/images/icon/normal.png"
                                         }
                                     }
                                     Row{
@@ -1264,7 +1282,7 @@ Rectangle {
                                             width: 32
                                             anchors.left: parent.right
                                             anchors.leftMargin: 20
-                                            source: error7Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                            source: error7Label.error1 === true ? "qrc:/icon/images/icon/4149.png" : "qrc:/icon/images/icon/normal.png"
                                         }
                                     }
                                     Row{
@@ -1280,7 +1298,7 @@ Rectangle {
                                             width: 32
                                             anchors.left: parent.right
                                             anchors.leftMargin: 20
-                                            source: error8Label.error1 !== true ? "/new/icons/images/icon/4149.png" : "/new/icons/images/icon/4372.png"
+                                            source: error8Label.error1 === true ? "qrc:/icon/images/icon/4149.png" : "qrc:/icon/images/icon/normal.png"
                                         }
                                     }
                                 }
@@ -1331,7 +1349,7 @@ Rectangle {
                                                 anchors.left: parent.left
                                                 anchors.leftMargin: 1
                                                 height: logItemDelegate.height
-                                                color: "transparent"//colorCode
+                                                color: "transparent"
                                                 Label {
                                                     id:logMessageText
                                                     text: model.message
@@ -1393,42 +1411,42 @@ Rectangle {
                             color: "transparent"
                         }
 
-                        TabButtonUp {
+                        MiscElems.TabButtonUp {
                             name: "Общее"
                             textLine:1
                             widthBody: 100
                             useIcon: true
                             iconCode: "\uF015  "
                         }
-                        TabButtonUp {
+                        MiscElems.TabButtonUp {
                             name: "Калибровка\nMinMax"
                             textLine:2
                             widthBody: 120
                             useIcon: true
                             iconCode: "\uF492  "
                         }
-                        TabButtonUp {
+                        MiscElems.TabButtonUp {
                             name: "Фильтрация"
                             textLine:1
                             widthBody: 115
                             useIcon: true
                             iconCode: "\uF0B0  "
                         }
-                        TabButtonUp {
+                        MiscElems.TabButtonUp {
                             name: "Температурная\nкомпенсация"
                             textLine:2
                             widthBody: 135
                             useIcon: true
                             iconCode: "\uF2C9  "
                         }
-                        TabButtonUp {
+                        MiscElems.TabButtonUp {
                             name: "Ведущий\nведомый"
                             textLine:2
                             widthBody: 110
                             useIcon: true
                             iconCode: "\uf5ee  "
                         }
-                        TabButtonUp {
+                        MiscElems.TabButtonUp {
                             name: "Тарировка"
                             textLine:1
                             widthBody: 110
@@ -1452,28 +1470,37 @@ Rectangle {
                         Controls_1_4.TableViewColumn{width: 30 }
                     }
                     onCurrentIndexChanged: {
-                        if(devPropertyProgressTmk24.isReady) {
-                            if(stackSubProperty.currentItem == itemDevTarir) {
-                                // сперва добавить всем роли
-                                viewController.getCurrentDevCustomCommand("get get available dev tarrir id")
-
-                                var connDevId = viewController.getAvailableDevTarrirAdd_DevId()
-                                var connDevType = viewController.getAvailableDevTarrirAdd_DevType()
-                                for(var i=0; i<connDevId.length; i++) {
-                                    viewController.addTarrirDev(connDevType[i], connDevId[i])
-                                }
-                                addTarStepValue(0)
-                                // clear tar table
-                                var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
-                                var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
-                                var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
-                                for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
-                                    viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
-                                }
-                                var ident = viewController.getCurrentDevProperty()
-                                viewController.addTarrirDev(ident[2], ident[6])
-                                timerAffterChangeTarTable.start()
+                        if(stackSubProperty.currentItem == itemDevTarir) {
+                            console.log("tarDev item -active")
+                            // сперва добавить всем роли
+                            // TODO: hack!!!
+                            var connDevId = viewController.getAvailableDevTarrirAdd_DevId()
+                            var connDevType = viewController.getAvailableDevTarrirAdd_DevType()
+                            for(var i=0; i<connDevId.length; i++) {
+                                viewController.addTarrirDev(connDevType[i], connDevId[i])
                             }
+                            addTarStepValue(0)
+                            // clear tar table
+                            var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
+                            var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
+                            var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
+                            for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
+                                viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
+                            }
+                            var keys = viewController.getCurrentDevPropertyKey()
+                            var values = viewController.getCurrentDevPropertyValue()
+                            var devType = ""
+                            var devId = ""
+                            for(var i=0; i<keys.length; i++) {
+                                if(keys[i] === "devTypeName"){
+                                    devType = values[i]
+                                }
+                                if(keys[i] === "id"){
+                                    devId = values[i]
+                                }
+                            }
+                            viewController.addTarrirDev(devType, devId)
+                            timerAffterChangeTarTable.start()
                         }
                     }
                     Timer {
@@ -1519,7 +1546,7 @@ Rectangle {
                                             anchors.left: parent.left
                                             anchors.leftMargin: 15
                                             anchors.verticalCenter: parent.verticalCenter
-                                            enabled: devPropertyProgressTmk24.isReady
+                                            enabled: devIsConnected
                                             onClicked: {
                                                 changeDeviceUniqId()
                                             }
@@ -1549,9 +1576,9 @@ Rectangle {
                                             samples: 10
                                             radius: 20
                                         }
-                                        enabled: devPropertyProgressTmk24.isReady
+                                        enabled: devIsConnected
                                         onClicked: {
-                                            viewController.getCurrentDevCustomCommand("get current dev settings")
+                                            viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
                                         }
                                     }
                                     Button {
@@ -1909,6 +1936,7 @@ Rectangle {
                                             text: "Пустой"
                                             width: 300
                                             height: 30
+                                            enabled: devIsConnected
                                             anchors.left: parent.left
                                             anchors.leftMargin: 15
                                             anchors.top: emptyFullLabel.bottom
@@ -1916,7 +1944,26 @@ Rectangle {
                                             onClicked: {
                                                 dialogLevelSetEmpty.open()
                                             }
-                                            enabled: devPropertyProgressTmk24.isReady
+                                            Dialog {
+                                                id: dialogLevelSetEmpty
+                                                visible: false
+                                                title: "Смена уровня Min-Max"
+                                                standardButtons: StandardButton.Close | StandardButton.Apply
+                                                Rectangle {
+                                                    color: "transparent"
+                                                    implicitWidth: 250
+                                                    implicitHeight: 100
+                                                    Text {
+                                                        text: "Присвоить уровень \"Минимум\""
+                                                        color: "black"
+                                                        anchors.centerIn: parent
+                                                    }
+                                                }
+                                                onApply: {
+                                                    viewController.setCurrentDevCustomCommand("set current level value as min", [], [])
+                                                    close()
+                                                }
+                                            }
                                         }
                                         Button {
                                             id: buttonFull
@@ -1927,7 +1974,7 @@ Rectangle {
                                             anchors.topMargin: 10
                                             anchors.left: parent.left
                                             anchors.leftMargin: 15
-
+                                            enabled: devIsConnected
                                             onClicked: {
                                                 dialogLevelSetFull.open()
                                             }
@@ -1947,7 +1994,7 @@ Rectangle {
                                                     }
                                                 }
                                                 onApply: {
-                                                    viewController.setCurrentDevLevelAsFull()
+                                                    viewController.setCurrentDevCustomCommand("set current level value as max", [], [])
                                                     close()
                                                 }
                                             }
@@ -1961,6 +2008,7 @@ Rectangle {
                                             anchors.leftMargin: 15
                                             anchors.top: buttonFull.bottom
                                             anchors.topMargin: 10
+                                            enabled: false
                                         }
                                         layer.effect: DropShadow {
                                             transparentBorder: true
@@ -1987,9 +2035,9 @@ Rectangle {
                                             samples: 10
                                             radius: 20
                                         }
-                                        enabled: devPropertyProgressTmk24.isReady
+                                        enabled: devIsConnected
                                         onClicked: {
-                                            viewController.getCurrentDevCustomCommand("get current dev settings")
+                                            viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
                                         }
                                     }
                                     Button {
@@ -2127,9 +2175,9 @@ Rectangle {
                                             samples: 10
                                             radius: 20
                                         }
-                                        enabled: devPropertyProgressTmk24.isReady
+                                        enabled: devIsConnected
                                         onClicked: {
-                                            viewController.getCurrentDevCustomCommand("get current dev settings")
+                                            viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
                                         }
                                     }
                                     Button {
@@ -2457,9 +2505,9 @@ Rectangle {
                                             samples: 10
                                             radius: 20
                                         }
-                                        enabled: devPropertyProgressTmk24.isReady
+                                        enabled: devIsConnected
                                         onClicked: {
-                                            viewController.getCurrentDevCustomCommand("get current dev settings")
+                                            viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
                                         }
                                     }
                                     Button {
@@ -2689,9 +2737,9 @@ Rectangle {
                                             samples: 10
                                             radius: 20
                                         }
-                                        enabled: devPropertyProgressTmk24.isReady
+                                        enabled: devIsConnected
                                         onClicked: {
-                                            viewController.getCurrentDevCustomCommand("get current dev settings")
+                                            viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
                                         }
                                     }
                                     Button {
@@ -3017,7 +3065,7 @@ Rectangle {
                                                         max: chartCurrentValue.graphAmplitudeMax
                                                         tickCount: 5
                                                     }
-                                                    enabled: devPropertyProgressTmk24.isReady
+                                                    enabled: devIsConnected
                                                 }
                                             }
                                         }
@@ -3038,14 +3086,14 @@ Rectangle {
                                                 radius: 10
                                             }
                                             Row{
-                                                ButtonRound {
+                                                MiscElems.ButtonRound {
                                                     id:tarBatButtonsMultiple
                                                     textLine:2
                                                     widthBody: 150
                                                     name: qsTr("Добавить\nтекущее значение")
                                                     useIcon: true
                                                     iconCode: "\uF0FE  "
-                                                    enabled: devPropertyProgressTmk24.isReady
+                                                    enabled: devIsConnected
                                                     onClicked: {
                                                         if(!isNoiseDetected) {
                                                             addTarStepValue(tarTabViewMultiple.currentRow)
@@ -3074,7 +3122,7 @@ Rectangle {
                                                         }
                                                     }
                                                 }
-                                                ButtonRound {
+                                                MiscElems.ButtonRound {
                                                     id:tarTabRemoveStepMultiple
                                                     textLine:2
                                                     widthBody: 100
@@ -3108,7 +3156,7 @@ Rectangle {
                                                         }
                                                     }
                                                 }
-                                                ButtonRound {
+                                                MiscElems.ButtonRound {
                                                     id:tarTabRemoveAddDeviceMultiple
                                                     textLine:2
                                                     widthBody: 165
@@ -3147,13 +3195,13 @@ Rectangle {
                                                         }
                                                     }
                                                 }
-                                                ButtonRound {
+                                                MiscElems.ButtonRound {
                                                     id:tarTabReadTableMultiple
                                                     textLine: 2
                                                     name:"Считать\nтаблицу"
                                                     useIcon: true
                                                     iconCode: "\uF093  "
-                                                    enabled: devPropertyProgressTmk24.isReady
+                                                    enabled: devIsConnected
                                                     onClicked: {
                                                         dialogReadTarTableMultiple.open()
                                                     }
@@ -3179,13 +3227,13 @@ Rectangle {
                                                         }
                                                     }
                                                 }
-                                                ButtonRound {
+                                                MiscElems.ButtonRound {
                                                     id:tarTabWriteTableMultiple
                                                     textLine: 2
                                                     name:"Записать\nтаблицу"
                                                     useIcon: true
                                                     iconCode: "\uF0C7  "
-                                                    enabled: devPropertyProgressTmk24.isReady
+                                                    enabled: devIsConnected
                                                     Dialog {
                                                         id: dialogWriteTarTableMultipleRequest
                                                         visible: false
@@ -3256,7 +3304,7 @@ Rectangle {
                                                         }
                                                     }
                                                 }
-                                                ButtonRound {
+                                                MiscElems.ButtonRound {
                                                     id:tarTabTableExportMultiple
                                                     textLine: 2
                                                     name:"Выгрузить\n.csv"
@@ -3305,7 +3353,7 @@ Rectangle {
         property string message: "Ожидание ответа..."
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        visible: devPropertyProgressTmk24.isReady ? false : true
+        visible: devIsConnected ? false : true
         BusyIndicator {
             id:waitReadyIndicator
             width: 96
@@ -3332,27 +3380,6 @@ Rectangle {
 
     ChangeDevIdName {
         id:changeDevId
-    }
-
-    Dialog {
-        id: dialogLevelSetEmpty
-        visible: false
-        title: "Смена уровня Min-Max"
-        standardButtons: StandardButton.Close | StandardButton.Apply
-        Rectangle {
-            color: "transparent"
-            implicitWidth: 250
-            implicitHeight: 100
-            Text {
-                text: "Присвоить уровень \"Минимум\""
-                color: "black"
-                anchors.centerIn: parent
-            }
-        }
-        onApply: {
-            viewController.setCurrentDevLevelAsEmpty()
-            close()
-        }
     }
 
     Dialog {

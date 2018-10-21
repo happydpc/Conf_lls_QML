@@ -17,11 +17,15 @@ QString Progress_tmk4UX::getDevTypeName() {
     return QString::fromLocal8Bit(Progress_tmk4UX::name, strlen(Progress_tmk4UX::name));
 }
 
-void Progress_tmk4UX::setDefaultValues() {}
-
-QList<int> Progress_tmk4UX::getChart() {
-    return *chartData;
+QString Progress_tmk4UX::getDevHeader() {
+    return "undefined";
 }
+
+void Progress_tmk4UX::setDevHeader(QString header) {
+
+}
+
+void Progress_tmk4UX::setDefaultValues() {}
 
 QPair<QStringList,QStringList> Progress_tmk4UX::getPropertyData() {
     return QPair<QStringList,QStringList>();
@@ -50,7 +54,7 @@ void Progress_tmk4UX::setState(DeviceAbstract::E_State value) {
     }
 }
 
-QString Progress_tmk4UX::getUniqIdent() {
+QString Progress_tmk4UX::getUniqId() {
     return uniqIdentId;
 }
 
@@ -66,14 +70,14 @@ bool Progress_tmk4UX::placeDataReplyToCommand(QByteArray &commandArrayReplyData,
 
 CommandController::sCommandData Progress_tmk4UX::getCommandToCheckConnected() {
     CommandController::sCommandData command;
-    command.deviceIdent = getUniqIdent();
+    command.deviceIdent = getUniqId();
     command.devCommand = (int)Progress_tmk4UXData::lls_read_errors;
     return command;
 }
 
 CommandController::sCommandData Progress_tmk4UX::getCommandtoCheckPassword() {
     CommandController::sCommandData command;
-    command.deviceIdent = getUniqIdent();
+    command.deviceIdent = getUniqId();
     command.devCommand = (int)Progress_tmk4UXData::lls_check_address_and_pass;
     return command;
 }
@@ -81,39 +85,18 @@ CommandController::sCommandData Progress_tmk4UX::getCommandtoCheckPassword() {
 QList<CommandController::sCommandData> Progress_tmk4UX::getCommandListToInit() {
     QList<CommandController::sCommandData> listCommand;
     CommandController::sCommandData command;
-    command.deviceIdent = getUniqIdent();
-    command.devCommand = (int)Progress_tmk4UXData::lls_read_cal_table;
-    listCommand.push_back(command);
-    command.devCommand = (int)Progress_tmk4UXData::lls_check_address_and_pass;
-    listCommand.push_back(command);
-    command.devCommand = (int)Progress_tmk4UXData::lls_read_errors;
-    listCommand.push_back(command);
-    command.devCommand = (int)Progress_tmk4UXData::lls_read_settings;
-    listCommand.push_back(command);
-    command.devCommand = (int)Progress_tmk4UXData::lls_read_lvl_all;
-    listCommand.push_back(command);
     return listCommand;
 }
 
 CommandController::sCommandData Progress_tmk4UX::getCommandToGetType() {
     CommandController::sCommandData command;
-    command.deviceIdent = getUniqIdent();
+    command.deviceIdent = getUniqId();
     command.devCommand = (int)Progress_tmk4UXData::lls_read_settings;
     return command;
 }
 
 QList<CommandController::sCommandData> Progress_tmk4UX::getCommandCustom(QString operation, QPair<QStringList, QStringList> data) {
     QList <CommandController::sCommandData> command;
-//    command.deviceIdent = getUniqIdent();
-//    command.devCommand = (int)Progress_tmk4UXData::lls_read_settings;
-
-//    if(operation == "set current level value as min") {
-//        command.devCommand = (int)Progress_tmk4UXData::lls_calibrate_min;
-//    } else if(operation == "set current level value as max") {
-//        command.devCommand = (int)Progress_tmk4UXData::lls_calibrate_max;
-//    } else {
-//        qDebug() << "getCommandCustom -type unknown!";
-//    }
     return command;
 }
 
@@ -121,12 +104,11 @@ QList<CommandController::sCommandData> Progress_tmk4UX::getCommandCustom(QString
 
 }
 
-
 QList<CommandController::sCommandData> Progress_tmk4UX::getCommandListToCurrentData() {
     QList<CommandController::sCommandData> listCommand;
     CommandController::sCommandData command;
     command.commandOptionData.clear();
-    command.deviceIdent = getUniqIdent();
+    command.deviceIdent = getUniqId();
     command.devCommand = (int)Progress_tmk4UXData::lls_read_lvl_once;
     listCommand.push_back(command);
     command.devCommand = (int)Progress_tmk4UXData::lls_read_lvl_all;

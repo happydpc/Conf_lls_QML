@@ -21,78 +21,67 @@ public:
 
     Q_INVOKABLE QStringList getDeviceAvailableType();
     Q_INVOKABLE void removeActiveDevice();
-    Q_INVOKABLE void setDeviceFindConnected(QString devType);
-
-    Q_INVOKABLE QList<int> getCurrentDevChart();
     Q_INVOKABLE QList<QString> getCurrentDevPeriodicDataKey();
     Q_INVOKABLE QList<QString> getCurrentDevPeriodicDataValue();
 
     Q_INVOKABLE QString getCurrentInterfaceName();
 
     Q_INVOKABLE int getDeviceCount();
-    Q_INVOKABLE QStringList getDeviceHeaderByIndex(int index);
-
     Q_INVOKABLE QStringList getCurrentDevPropertyKey();
     Q_INVOKABLE QStringList getCurrentDevPropertyValue();
 
-    Q_INVOKABLE void getCurrentDevCustomCommand(QString typeCommand);
-    Q_INVOKABLE void getCurrentDevCustomCommandWithoutAckDialog(QString typeCommand, QStringList keys, QStringList values);
-
-    Q_INVOKABLE void setCurrentDevCustomCommand(QString typeCommand, QStringList keys, QStringList values);
-    Q_INVOKABLE void setCurrentDevCustomCommandWithoutAckDialog(QString typeCommand, QStringList keys, QStringList values);
+    Q_INVOKABLE bool setCurrentDevCustomCommand(QString typeCommand, QStringList keys, QStringList values);
 
     DeviceAbstract *getCurrentDeviceToAbstract();
 
+
+    //****************** Only PROGRESS TMK24 ***********//
 //    Q_INVOKABLE void setCurrentDevNewIdAddress(QString newId, QString password, QString currentId);
 //    Q_INVOKABLE void setCurrentDevLevelAsEmpty();
 //    Q_INVOKABLE void setCurrentDevLevelAsFull();
 //    Q_INVOKABLE void setCurrentDevSettings(QStringList key, QStringList values);
-
-//    Q_INVOKABLE void getCurrentDevTarTable();
-
-//    Q_INVOKABLE void setCurrentDevChangeId(QString password, QString uniqNameIdNew, QString uniqNameIdCurrent);
-
+    Q_INVOKABLE void getCurrentDevTarTable();
+    Q_INVOKABLE void setCurrentDevChangeId(QString password, QString uniqNameIdNew, QString uniqNameIdCurrent);
     //********************* TARING *********************//
-//    Q_INVOKABLE void setTableFromFrontEnd(QString uniqNameId, QStringList valuesLiters, QStringList valuesFuelLevel);
-//    Q_INVOKABLE void sendReqWriteTarrirAllDev();
-//    //
-//    Q_INVOKABLE int getTarMaxCountStep();
+    Q_INVOKABLE void setTableFromFrontEnd(QString uniqNameId, QStringList valuesLiters, QStringList valuesFuelLevel);
+    Q_INVOKABLE void sendReqWriteTarrirAllDev();
+    //
+    Q_INVOKABLE int getTarMaxCountStep();
 
-//    Q_INVOKABLE void sendReqExportTarrirAllDevToCsv(QString pathFile);
+    Q_INVOKABLE void sendReqExportTarrirAllDevToCsv(QString pathFile);
 
-//    // какие устройства доступны для добавления в множественную таррировку
-//    // устройство с вкладки которого это начинают
-//    // уже должно быть туда добавленно, type, id, sn
-//    Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevType();
-//    Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevId();
-//    Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevSerialNumber();
+    // какие устройства доступны для добавления в множественную таррировку
+    // устройство с вкладки которого это начинают
+    // уже должно быть туда добавленно, type, id, sn
+    Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevType();
+    Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevId();
+    Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevSerialNumber();
 
-//    Q_INVOKABLE QStringList getTarCurrentDeviceDataKey(int index);
-//    Q_INVOKABLE QStringList getTarCurrentDeviceDataValue(int index);
-//    Q_INVOKABLE QList<int> getTarCurrentDeviceChartData(int index);
+    Q_INVOKABLE QStringList getTarCurrentDeviceData(int index);
+    Q_INVOKABLE QList<int> getTarCurrentDeviceChartData(int index);
 
-//    // возвразщает кол-во уже добавленных уст-в
-//    Q_INVOKABLE int getStayedDevTarrirCount();
+    // возвразщает кол-во уже добавленных уст-в
+    Q_INVOKABLE int getStayedDevTarrirCount();
 
-//    // возвращает устройства добавленные в структуру тарировки (но без значений), type, id, sn
-//    Q_INVOKABLE QStringList getStayedDevTarrir_DevProperty(QString propertyName);
+    // возвращает устройства добавленные в структуру тарировки (но без значений), type, id, sn
+    Q_INVOKABLE QStringList getStayedDevTarrir_DevProperty(QString propertyName);
 
-//    // добавляем датчики в таблицу тарировки
-//    Q_INVOKABLE bool addTarrirDev(QString devTypeName, QString devId);
-//    Q_INVOKABLE void removeTarrirDev(QString devTypeName, QString devId);
+    // добавляем датчики в таблицу тарировки
+    Q_INVOKABLE bool addTarrirDev(QString devTypeName, QString devId);
+    Q_INVOKABLE void removeTarrirDev(QString devTypeName, QString devId);
 
-//    // добавляет текущее значение в таблицу
-//    Q_INVOKABLE void setLastRealTimeValuesToStep(int indexStep);
+    // добавляет текущее значение в таблицу
+    Q_INVOKABLE void setLastRealTimeValuesToStep(int indexStep);
 
-//    //1) считать таблицу с добавленных устройств
-//            // отправляем в контроллер список dev с id
-//            // указываем что считать таблицу
-//            // ожидаем ответа по очереди
-//            // когда последний опрошен, отсылаем результат в qml
-//            // если ответа небыло, значение выделить красным и вывести message
-//    Q_INVOKABLE void sendReqGetTarrirAllDev();
-//    Q_INVOKABLE QStringList getTableAtDevice(int index);
-//    Q_INVOKABLE int getTableCountReady();
+    //1) считать таблицу с добавленных устройств
+            // отправляем в контроллер список dev с id
+            // указываем что считать таблицу
+            // ожидаем ответа по очереди
+            // когда последний опрошен, отсылаем результат в qml
+            // если ответа небыло, значение выделить красным и вывести message
+    Q_INVOKABLE void sendReqGetTarrirAllDev();
+    Q_INVOKABLE QStringList getTableAtDevice(int index);
+    Q_INVOKABLE int getTableCountReady();
 
 signals:
 
@@ -132,7 +121,9 @@ private slots:
 
     void interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateType type);
     void deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, int index);
-    void deviceReadyCustomCommand(int index, QString message, QStringList customData, CommandController::sCommandData commmandData);
+    void deviceReadyCustomCommand(int index, QString message,
+                                  QStringList keyCustomData, QStringList valueCustomData,
+                                  CommandController::sCommandData commmandData);
     void deviceLogMessage(int indexDev, QStringList message);
 
     bool isCurrentDevice(QString uniqNameId);

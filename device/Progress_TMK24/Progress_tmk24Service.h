@@ -18,7 +18,7 @@ public:
 
     // запрос для считывание таблицы со всех уст-в
     QList<QString> requestGetTableFromAllDevice();
-    void placeTableFromDevice(QString deviceIdentName, QStringList table);
+    void placeTableFromDevice(QString deviceIdentName, QStringList keys, QStringList values);
     bool readTableAllDeviceIsReady();
 
     QList<QString> requestWriteTableToAllDevice();

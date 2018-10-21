@@ -15,11 +15,22 @@ const QString &TreeItem::content() const{
     return m_content;
 }
 
-void TreeItem::setContent(const QString &content){
+void TreeItem::setContent(const QString &content) {
     if(content != m_content){
         m_content = content;
         emit contentChanged();
     }
+}
+
+void TreeItem::setHeader(const QString &header) {
+    if(header != m_header){
+        m_header = header;
+        emit headerChanged();
+    }
+}
+
+const QString &TreeItem::header() const{
+    return m_header;
 }
 
 const QList<TreeItem *> &TreeItem::childItems() const{

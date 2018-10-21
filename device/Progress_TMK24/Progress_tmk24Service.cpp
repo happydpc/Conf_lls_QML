@@ -65,19 +65,16 @@ QList<QString> Progress_tmk24Service::requestGetTableFromAllDevice() {
 }
 
 
-void Progress_tmk24Service::placeTableFromDevice(QString deviceIdentName, QStringList table) {
+void Progress_tmk24Service::placeTableFromDevice(QString deviceIdentName, QStringList keys, QStringList values) {
     for(auto it: devList) {
         if(it->first.devId == deviceIdentName) {
-            bool paritybit = false;
             it->second->clear();
             sDevValues tDevValues;
-            for(int i=0; i<table.size(); i++) {
-                if(!paritybit) {
-                    paritybit = true;
-                    tDevValues.valueFuelLevel = QString(table.at(i)).toUInt();
-                } else {
-                    tDevValues.valueLiters = QString(table.at(i)).toUInt();
-                    paritybit = false;
+            for(int i=0; i<keys.size(); i++) {
+                if(keys[i] == "y") {
+                    tDevValues.valueFuelLevel = values[i].toUInt();
+                } else if (keys[i] == "x") {
+                    tDevValues.valueLiters = values[i].toUInt();
                     it->second->push_back(tDevValues);
                 }
             }
@@ -131,8 +128,8 @@ void Progress_tmk24Service::placeCurrenDataFromDevice(QString deviceIdentName, Q
                 if(data.first.indexOf("fuelLevel") >= 0) {
                     it->first.currData.fuelLevel = data.second.at(data.first.indexOf("fuelLevel")).toUInt();
                 }
-                if(data.first.indexOf("cntValue") >= 0) {
-                    it->first.currData.cntValue = data.second.at(data.first.indexOf("cntValue")).toUInt();
+                if(data.first.indexOf("cnt") >= 0) {
+                    it->first.currData.cntValue = data.second.at(data.first.indexOf("cnt")).toUInt();
                 }
                 it->first.currData.liters = 0; // TODO: liters  не известны и заносятся юзером
                 it->first.currData.isValid = true;
@@ -153,14 +150,14 @@ void Progress_tmk24Service::placeCurrentChartDataFromDevice(QString deviceIdentN
 
 QStringList Progress_tmk24Service::getCurrentDataDevice(int index) {
     QStringList res;
-//    if(devList.at(index)->first.currData.isValid) {
-//        res << QString::number(devList.at(index)->first.currData.fuelLevel);
-//        res << QString::number(devList.at(index)->first.currData.liters);
-//        res << QString::number(devList.at(index)->first.currData.cntValue);
-//    } else {
-//        res << "0";
-//        res << "0";
-//    }
+    if(devList.at(index)->first.currData.isValid) {
+        res << QString::number(devList.at(index)->first.currData.fuelLevel);
+        res << QString::number(devList.at(index)->first.currData.liters);
+        res << QString::number(devList.at(index)->first.currData.cntValue);
+    } else {
+        res << "0";
+        res << "0";
+    }
     return res;
 }
 

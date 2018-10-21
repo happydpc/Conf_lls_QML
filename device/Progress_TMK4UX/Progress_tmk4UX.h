@@ -16,13 +16,16 @@ public:
     static constexpr char *name = "PROGRESS TMK4UX";
 
     QString getDevTypeName() override;
+    QString getDevHeader() override;
+    void setDevHeader(QString header) override;
+
     QPair<QStringList,QStringList> getPropertyData() override;
     QPair<QStringList,QStringList> getCurrentData() override;
     DeviceAbstract::E_State getState() override;
     void setState(DeviceAbstract::E_State) override;
     QPair<QStringList,QStringList> getSettings() override;
     QPair<QStringList,QStringList> getErrors() override;
-    QString getUniqIdent() override;
+    QString getUniqId() override;
     bool makeDataToCommand(CommandController::sCommandData &commandData) override;
     bool placeDataReplyToCommand(QByteArray &commandArrayReplyData, CommandController::sCommandData commandReqData) override;
 
@@ -33,8 +36,6 @@ public:
     QList<CommandController::sCommandData> getCommandListToCurrentData() override;
     QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList> data) override;
     QList<CommandController::sCommandData> getCommandCustom(QString operation) override;
-
-    QList<int> getChart() override;
 
 #ifdef USE_TEST_DEV_REPLY
     bool makeDataRequestReply(QByteArray request, QByteArray &reply);

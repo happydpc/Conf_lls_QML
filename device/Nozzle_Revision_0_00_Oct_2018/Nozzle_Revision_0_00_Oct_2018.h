@@ -10,19 +10,21 @@
 class Nozzle_Revision_0_00_Oct_2018 : public DeviceAbstract
 {
 public:
-    Nozzle_Revision_0_00_Oct_2018(QString nameDevice);
+    Nozzle_Revision_0_00_Oct_2018(QString devId, QString header);
     ~Nozzle_Revision_0_00_Oct_2018();
 
     static constexpr char* name = "Nozzle Revision 0.00 Oct 2018";
 
     QString getDevTypeName() override;
+    QString getDevHeader() override;
+    QString getUniqId() override;
+    void setDevHeader(QString header) override;
     QPair<QStringList,QStringList> getPropertyData() override;
     QPair<QStringList,QStringList> getCurrentData() override;
     DeviceAbstract::E_State getState() override;
     void setState(DeviceAbstract::E_State) override;
     QPair<QStringList,QStringList> getSettings() override;
     QPair<QStringList,QStringList> getErrors() override;
-    QString getUniqIdent() override;
     bool makeDataToCommand(CommandController::sCommandData &commandData) override;
     bool placeDataReplyToCommand(QByteArray &commandArray, CommandController::sCommandData commandReqData) override;
 
@@ -33,7 +35,6 @@ public:
     QList<CommandController::sCommandData> getCommandListToCurrentData() override;
     QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList> data) override;
     QList<CommandController::sCommandData> getCommandCustom(QString operation) override;
-    QList<int> getChart() override;
     ServiceDevicesAbstract* getServiceAbstract() override;
 
     QList<QString>getCurrentOtherData();
@@ -48,9 +49,12 @@ private:
     Nozzle_Revision_0_00_Oct_2018_Data::S_dev_data dev_data;
     QString serialNumber;
     QString versionFirmware;
-    QList<int> *chartData;
-    QString uniqIdentId;
     QByteArray commandArrayReplyData;
+
+    struct {
+        QString id;
+        QString header;
+    }deviceIdent;
 };
 
 #endif // NOZZLE_REV_0_00_H

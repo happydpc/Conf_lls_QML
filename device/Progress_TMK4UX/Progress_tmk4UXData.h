@@ -51,7 +51,7 @@ public:
         lls_upload_settings		=	0x6C,
         lls_clear_settings		=	0x6D,
         lls_flash_unprotect		=	0x6F
-    }E_type_operation;
+    }E_type_request_operation;
 };
 
 #endif // Progress_tmk4UXData_H

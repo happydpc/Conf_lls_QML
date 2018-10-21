@@ -3,9 +3,10 @@
 #include "other/crc.h"
 #include <QList>
 
-Progress_tmk24::Progress_tmk24(QString uniqIdentId, QPair<QStringList,QStringList>param, ServiceDevicesAbstract *pServiceAbstract) {
-    this->chartData = new QList<int>();
-    this->uniqIdentId = uniqIdentId;
+Progress_tmk24::Progress_tmk24(QString devId, QString header,
+                               QPair<QStringList,QStringList>param, ServiceDevicesAbstract *pServiceAbstract) {
+    this->deviceIdent.id = devId;
+    this->deviceIdent.header = header;
     this->state = STATE_DISCONNECTED;
     int paramCounter = 0;
     for(auto paramIter:param.first) {
@@ -27,10 +28,18 @@ QString Progress_tmk24::getDevTypeName() {
     return QString::fromLocal8Bit(Progress_tmk24::name, strlen(Progress_tmk24::name));
 }
 
+QString Progress_tmk24::getDevHeader() {
+    return deviceIdent.header;
+}
+
+void Progress_tmk24::setDevHeader(QString header) {
+    deviceIdent.header = header;
+}
+
 void Progress_tmk24::setDefaultValues() {
     this->settings.k1 = 0;
     this->settings.k2 = 0;
-    this->settings.netAddress = uniqIdentId.toInt();
+    this->settings.netAddress = (uint8_t)deviceIdent.id.toInt();
     this->settings.thermoCompensationType = 0;
     this->settings.periodicSendType = 0;
     this->settings.periodicSendTime = 0;
@@ -55,7 +64,6 @@ void Progress_tmk24::setDefaultValues() {
     this->calibrationTable.TableSize = 0;
     memset(this->calibrationTable.x,0, sizeof(this->calibrationTable.x));
     memset(this->calibrationTable.y,0, sizeof(this->calibrationTable.y));
-    this->newSettings = this->settings;
     this->lls_data.fuelLevel.isValid = false;
     this->lls_data.freq.isValid = false;
     this->lls_data.temp.isValid = false;
@@ -65,10 +73,6 @@ void Progress_tmk24::setDefaultValues() {
 
 ServiceDevicesAbstract* Progress_tmk24::getServiceAbstract() {
     return serviceAbstact;
-}
-
-QList<int> Progress_tmk24::getChart() {
-    return *chartData;
 }
 
 QPair<QStringList,QStringList> Progress_tmk24::getPropertyData() {
@@ -85,8 +89,10 @@ QPair<QStringList,QStringList> Progress_tmk24::getPropertyData() {
     res.second.push_back(QString::number(lls_data.password.get.authIsNormal));
     res.first.push_back("password");
     res.second.push_back(lls_data.password.get.value.value);
-    res.first.push_back("uniqIdentId");
-    res.second.push_back(uniqIdentId);
+    res.first.push_back("id");
+    res.second.push_back(deviceIdent.id);
+    res.first.push_back("header");
+    res.second.push_back(deviceIdent.header);
     return res;
 }
 
@@ -104,6 +110,8 @@ QPair<QStringList,QStringList> Progress_tmk24::getCurrentData() {
     res.second.push_back(lls_data.temp.isValid ? QString::number(lls_data.temp.value.value_i) : QString::number(0));
     res.first.push_back("noiseDetected");
     res.second.push_back(QString::number(lls_data.noiseDetected));
+    res.first.push_back("chartValue");
+    res.second.push_back(lls_data.fuelLevel.isValid == true ? QString::number(lls_data.fuelLevel.value.value_u32) : QString::number(0));
     return res;
 }
 
@@ -206,8 +214,8 @@ void Progress_tmk24::setState(DeviceAbstract::E_State value) {
     }
 }
 
-QString Progress_tmk24::getUniqIdent() {
-    return uniqIdentId;
+QString Progress_tmk24::getUniqId() {
+    return deviceIdent.id;
 }
 
 bool Progress_tmk24::makeDataToCommand(CommandController::sCommandData &commandData) {
@@ -328,20 +336,19 @@ bool Progress_tmk24::makeDataToCommand(CommandController::sCommandData &commandD
                 }
                 commandData.commandOptionData.insert(commandData.commandOptionData.size(), passArray);
                 commandData.commandOptionData.push_back((uint8_t)commandData.args.value.size());
-
-                //                for(uint8_t i=0; i<(Progress_tmk24Data::TAR_TABLE_SIZE); i++) {
-                //                    if(i < commandData.args.value.size()) {
-                //                        commandData.commandOptionData.push_back((uint32_t)commandData.args.key.at(i).toUInt() & 0xFF);
-                //                        commandData.commandOptionData.push_back(((uint32_t)commandData.args.key.at(i).toUInt() & 0xFF00) >> 8);
-                //                        commandData.commandOptionData.push_back((uint32_t)commandData.args.value.at(i) & 0xFF);
-                //                        commandData.commandOptionData.push_back(((uint32_t)commandData.args.value.at(i) & 0xFF00) >> 8);
-                //                    } else {
-                //                        commandData.commandOptionData.push_back((char)0);
-                //                        commandData.commandOptionData.push_back((char)0);
-                //                        commandData.commandOptionData.push_back((char)0);
-                //                        commandData.commandOptionData.push_back((char)0);
-                //                    }
-                //                }
+                for(uint8_t i=0; i<(Progress_tmk24Data::TAR_TABLE_SIZE); i++) {
+                    if(i < commandData.args.value.size()) {
+                        commandData.commandOptionData.push_back((uint32_t)commandData.args.key.at(i).toUInt() & 0xFF);
+                        commandData.commandOptionData.push_back(((uint32_t)commandData.args.key.at(i).toUInt() & 0xFF00) >> 8);
+                        commandData.commandOptionData.push_back((uint32_t)commandData.args.value.at(i).toUInt() & 0xFF);
+                        commandData.commandOptionData.push_back(((uint32_t)commandData.args.value.at(i).toUInt() & 0xFF00) >> 8);
+                    } else {
+                        commandData.commandOptionData.push_back((char)0);
+                        commandData.commandOptionData.push_back((char)0);
+                        commandData.commandOptionData.push_back((char)0);
+                        commandData.commandOptionData.push_back((char)0);
+                    }
+                }
             }
                 break;
             case Progress_tmk24Data::lls_calibrate_min:
@@ -370,14 +377,6 @@ bool Progress_tmk24::makeDataToCommand(CommandController::sCommandData &commandD
             case Progress_tmk24Data::lls_read_personal: break;
             case Progress_tmk24Data::lls_set_new_password: {
                 if(!commandData.commandOptionData.isEmpty()) {
-                    //                // сперва заносим текущий пароль для разрешения доступа
-                    //                for(uint8_t i=0; i<sizeof(password_session); i++) {
-                    //                    array.push_back(password_session[i]);
-                    //                }
-                    //                // потом новый пароль
-                    //                for(uint8_t i=0; i<sizeof(password_session); i++) {
-                    //                    array.push_back(tcommand.data.new_passw[i]);
-                    //                }
                 }
             }
                 break;
@@ -452,13 +451,9 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                 lls_data.fuelLevel.isValid = true;
                 lls_data.freq.value.value_u32  = frequency;
                 lls_data.freq.isValid = true;
-                // TODO: random ok?
-                chartData->push_back(lls_data.fuelLevel.value.value_u32 + (rand()%1));
-                while(chartData->size() > 50) {
-                    chartData->pop_front();
-                }
-                emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_CurrentDataUpdated, getUniqIdent(),
-                                            commandReqData.devCommand, QString("Ready current data"), QStringList(), commandReqData);
+                emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_CurrentDataUpdated, getUniqId(),
+                                            commandReqData.devCommand, QString("Ready current data"),
+                                            QStringList(), QStringList(), commandReqData);
                 res = true;
             }
         } else {
@@ -506,9 +501,11 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                     offset_counter++;
                 }
                 emit eventDeviceUpdateState(Type_DeviceEvent_CurrentDataUpdated, commandReqData.deviceIdent,
-                                            commandReqData.commandType, "Update current data", QStringList(""), commandReqData);
+                                            commandReqData.commandType, "Update current data",
+                                            QStringList(),QStringList(), commandReqData);
                 emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
-                                            commandReqData.commandType, "Normal", QStringList(""), commandReqData);
+                                            commandReqData.commandType, "Normal",
+                                            QStringList(), QStringList(), commandReqData);
                 lls_data.llssValues.isValid = true;
                 res = true;
             }
@@ -544,22 +541,26 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                         if(getState() == STATE_GET_TYPE) {
                             setState(DeviceAbstract::STATE_CHECK_PASSWORD);
                         }
-                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                                    commandReqData.devCommand, QString("Normal"), QStringList(), commandReqData);
-                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ReadyReadProperties, getUniqIdent(),
-                                                    commandReqData.devCommand, QString("Normal"), QStringList(), commandReqData);
+                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqId(),
+                                                    commandReqData.devCommand, QString("Normal"),
+                                                    QStringList(), QStringList(), commandReqData);
+                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ReadyReadProperties, getUniqId(),
+                                                    commandReqData.devCommand, QString("Normal"),
+                                                    QStringList(), QStringList(), commandReqData);
 
                     } else {
-                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_TypeError, getUniqIdent(),
-                                                    commandReqData.devCommand, QString("Type Error!"), QStringList(), commandReqData);
+                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_TypeError, getUniqId(),
+                                                    commandReqData.devCommand, QString("Type Error!"),
+                                                    QStringList(), QStringList(), commandReqData);
                     }
                     res = true;
                 }
             }
         }
         if(!res) {
-            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                        commandReqData.devCommand, QString("Error"), QStringList(), commandReqData);
+            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqId(),
+                                        commandReqData.devCommand, QString("Error"),
+                                        QStringList(), QStringList(), commandReqData);
         }
     }
         break;
@@ -571,16 +572,16 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
             if(commandReqData.devCommand == (uint8_t)commandArrayReplyData.at(2)) {
                 if(commandArrayReplyData.size() > 4) {
                     if(commandArrayReplyData.at(3) == 0) {
-                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                                    commandReqData.devCommand, QString("Normal"), QStringList(), commandReqData);
+                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqId(),
+                                                    commandReqData.devCommand, QString("Normal"), QStringList(), QStringList(), commandReqData);
                         res = true;
                     }
                 }
             }
         }
         if(!res) {
-            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                        commandReqData.devCommand, QString("Error"), QStringList(), commandReqData);
+            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqId(),
+                                        commandReqData.devCommand, QString("Error"), QStringList(), QStringList(), commandReqData);
         }
         break;
 
@@ -590,7 +591,8 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
             // если ожидаемая команда совпадает с пакетом
             if(commandReqData.devCommand == (uint8_t)commandArrayReplyData.at(2)) {
                 if(commandArrayReplyData.size() > 45) {
-                    QStringList tableList;
+                    QStringList keys;
+                    QStringList values;
                     memset(&lls_data.calibrateTable.get.table, 0, sizeof(Progress_tmk24Data::T_calibrationTable));
                     lls_data.calibrateTable.get.table.TableSize = commandArrayReplyData.at(3);
                     int index = 0;
@@ -603,21 +605,23 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                         index++;
                         lls_data.calibrateTable.get.table.y[i] |= ((0xFF & commandArrayReplyData.at(index+4)) << 8);
                         index++;
-                        tableList.push_back(QString::number(lls_data.calibrateTable.get.table.y[i]));
-                        tableList.push_back(QString::number(lls_data.calibrateTable.get.table.x[i]));
+                        keys.push_back("y");
+                        values.push_back(QString::number(lls_data.calibrateTable.get.table.y[i]));
+                        keys.push_back("x");
+                        values.push_back(QString::number(lls_data.calibrateTable.get.table.x[i]));
                     }
                     lls_data.calibrateTable.get.isValid = true;
                     if(commandReqData.isNeedAckMessage) {
-                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                                    commandReqData.devCommand, QString("Normal"), tableList, commandReqData);
+                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqId(),
+                                                    commandReqData.devCommand, QString("Normal"), keys, values, commandReqData);
                     }
                     res = true;
                 }
             }
         }
         if(!res) {
-            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                        commandReqData.devCommand, QString("Error"), QStringList(), commandReqData);
+            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqId(),
+                                        commandReqData.devCommand, QString("Error"), QStringList(), QStringList(), commandReqData);
         }
     }
         break;
@@ -631,19 +635,19 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                     res = true;
                     if(commandArrayReplyData.at(3) == 0) {
                         if(commandReqData.isNeedAckMessage) {
-                            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                                        commandReqData.devCommand, QString("Normal"), QStringList(), commandReqData);
+                            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqId(),
+                                                        commandReqData.devCommand, QString("Normal"), QStringList(), QStringList(), commandReqData);
                         }
                     } else {
-                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                                    commandReqData.devCommand, QString("Data no valid"), QStringList(), commandReqData);
+                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqId(),
+                                                    commandReqData.devCommand, QString("Data no valid"), QStringList(), QStringList(), commandReqData);
                     }
                 }
             }
         }
         if(!res) {
-            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                        commandReqData.devCommand, QString("Error"), QStringList(), commandReqData);
+            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqId(),
+                                        commandReqData.devCommand, QString("Error"), QStringList(), QStringList(), commandReqData);
         }
     }
         break;
@@ -654,16 +658,16 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
             if(commandReqData.devCommand == (uint8_t)commandArrayReplyData.at(2)) {
                 if(commandArrayReplyData.size() > 3) {
                     if(commandArrayReplyData.at(3) == 0) {
-                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                                    commandReqData.devCommand, QString("Normal"), QStringList(), commandReqData);
+                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqId(),
+                                                    commandReqData.devCommand, QString("Normal"), QStringList(), QStringList(), commandReqData);
                     }
                     res = true;
                 }
             }
         }
         if(!res) {
-            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                        commandReqData.devCommand, QString("Error"), QStringList(), commandReqData);
+            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqId(),
+                                        commandReqData.devCommand, QString("Error"), QStringList(), QStringList(), commandReqData);
         }
     }
         break;
@@ -675,16 +679,16 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
             if(commandReqData.devCommand == (uint8_t)commandArrayReplyData.at(2)) {
                 if(commandArrayReplyData.size() > 3) {
                     if(commandArrayReplyData.at(3) == 0) {
-                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                                    commandReqData.devCommand, QString("Normal"), QStringList(), commandReqData);
+                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqId(),
+                                                    commandReqData.devCommand, QString("Normal"), QStringList(), QStringList(), commandReqData);
                         res = true;
                     }
                 }
             }
         }
         if(!res) {
-            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                        commandReqData.devCommand, QString("Error"), QStringList(), commandReqData);
+            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqId(),
+                                        commandReqData.devCommand, QString("Error"), QStringList(), QStringList(), commandReqData);
         }
     }
         break;
@@ -698,16 +702,16 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                     Progress_tmk24Data::T_errors t_erros;
                     memcpy(&t_erros, (commandArrayReplyData.data() + 3), sizeof(t_erros));
                     memcpy(&lls_data.errors, &t_erros, sizeof(lls_data.errors));
-                    emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                                commandReqData.devCommand, QString("Normal"), QStringList(), commandReqData);
+                    emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqId(),
+                                                commandReqData.devCommand, QString("Normal"), QStringList(), QStringList(), commandReqData);
                     lls_data.errors.isValid = true;
                     res = true;
                 }
             }
         }
         if(!res) {
-            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                        commandReqData.devCommand, QString("Error"), QStringList(), commandReqData);
+            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqId(),
+                                        commandReqData.devCommand, QString("Error"), QStringList(), QStringList(), commandReqData);
         }
     }
         break;
@@ -726,8 +730,8 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
             }
         }
         if(!res) {
-            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                        commandReqData.devCommand, QString("Error"), QStringList(), commandReqData);
+            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqId(),
+                                        commandReqData.devCommand, QString("Error"), QStringList(), QStringList(), commandReqData);
         }
     }
         break;
@@ -760,8 +764,8 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                     } else {
                         lls_data.password.get.value.isValid = true;
                         lls_data.password.get.authIsNormal = false;
-                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_PasswordError, getUniqIdent(),
-                                                    commandReqData.devCommand, QString("Password error"), QStringList(), commandReqData);
+                        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_PasswordError, getUniqId(),
+                                                    commandReqData.devCommand, QString("Password error"), QStringList(), QStringList(), commandReqData);
                     }
                     if(getState() == STATE_CHECK_PASSWORD) {
                         setState(STATE_START_INIT);
@@ -771,8 +775,8 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
             }
         }
         if(!res) {
-            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                        commandReqData.devCommand, QString("Error"), QStringList(), commandReqData);
+            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqId(),
+                                        commandReqData.devCommand, QString("Error"), QStringList(), QStringList(), commandReqData);
         }
     }
         break;
@@ -816,15 +820,15 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                     }
                     lls_data.cnt.value.value_u32 = cnt;
                     lls_data.cnt.isValid = true;
-                    emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                                commandReqData.devCommand, QString("Normal"), QStringList(), commandReqData);
+                    emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqId(),
+                                                commandReqData.devCommand, QString("Normal"), QStringList(), QStringList(), commandReqData);
                     res = true;
                 }
             }
         }
         if(!res) {
-            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqIdent(),
-                                        commandReqData.devCommand, QString("Error"), QStringList(), commandReqData);
+            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqId(),
+                                        commandReqData.devCommand, QString("Error"), QStringList(), QStringList(), commandReqData);
         }
     }
         break;
@@ -833,22 +837,22 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
 
     if(!commandArrayReplyData.isEmpty() && res == true) {
         if(getState() == STATE_DISCONNECTED) { // если что-то есть в ответе - меняем статус на Connected
-            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Connected, getUniqIdent(),
-                                        commandReqData.devCommand, QString("Connected"), QStringList(), commandReqData);
+            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Connected, getUniqId(),
+                                        commandReqData.devCommand, QString("Connected"), QStringList(), QStringList(), commandReqData);
             setState(DeviceAbstract::STATE_GET_TYPE);
         }
 
         crcRes = crc.crc8_dallas(commandArrayReplyData.data(), commandArrayReplyData.length()-1);
         if(crcRes != (0xff & commandArrayReplyData.at(commandArrayReplyData.length()-1))) {
-            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Disconnected, getUniqIdent(),
-                                        commandReqData.devCommand, QString("Disconnected"), QStringList(), commandReqData);
+            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Disconnected, getUniqId(),
+                                        commandReqData.devCommand, QString("Disconnected"), QStringList(), QStringList(), commandReqData);
             setState(DeviceAbstract::STATE_DISCONNECTED);
             return false;
         }
     } else {
         state = STATE_DISCONNECTED;
-        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Disconnected, getUniqIdent(),
-                                    commandReqData.devCommand, QString("Status disconnected"), QStringList(), commandReqData);
+        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Disconnected, getUniqId(),
+                                    commandReqData.devCommand, QString("Status disconnected"), QStringList(), QStringList(), commandReqData);
     }
 
     if(getState() == STATE_START_INIT) {
@@ -856,8 +860,8 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                 && (lls_data.password.get.value.isValid) && (lls_data.calibrateTable.get.isValid)
                 && (lls_data.llssValues.isValid)) {
             setState(DeviceAbstract::STATE_NORMAL_READY);
-            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Inited, getUniqIdent(),
-                                        commandReqData.devCommand, QString("Inited"), QStringList(), commandReqData);
+            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Inited, getUniqId(),
+                                        commandReqData.devCommand, QString("Inited"), QStringList(), QStringList(), commandReqData);
         }
     }
     return res;
@@ -865,7 +869,7 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
 
 CommandController::sCommandData Progress_tmk24::getCommandToCheckConnected() {
     CommandController::sCommandData command;
-    command.deviceIdent = getUniqIdent();
+    command.deviceIdent = getUniqId();
     command.isNeedAckMessage = false;
     command.operationHeader = "check dev is connected";
     command.devCommand = (int)Progress_tmk24Data::lls_read_errors;
@@ -874,7 +878,7 @@ CommandController::sCommandData Progress_tmk24::getCommandToCheckConnected() {
 
 CommandController::sCommandData Progress_tmk24::getCommandtoCheckPassword() {
     CommandController::sCommandData command;
-    command.deviceIdent = getUniqIdent();
+    command.deviceIdent = getUniqId();
     command.isNeedAckMessage = false;
     command.operationHeader = "check dev password";
     command.devCommand = (int)Progress_tmk24Data::lls_check_address_and_pass;
@@ -884,7 +888,7 @@ CommandController::sCommandData Progress_tmk24::getCommandtoCheckPassword() {
 QList<CommandController::sCommandData> Progress_tmk24::getCommandListToInit() {
     QList<CommandController::sCommandData> listCommand;
     CommandController::sCommandData command;
-    command.deviceIdent = getUniqIdent();
+    command.deviceIdent = getUniqId();
     command.operationHeader = "init dev after connecting";
     command.isNeedAckMessage = false;
     command.devCommand = (int)Progress_tmk24Data::lls_read_settings;
@@ -904,7 +908,7 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandListToInit() {
 
 CommandController::sCommandData Progress_tmk24::getCommandToGetType() {
     CommandController::sCommandData command;
-    command.deviceIdent = getUniqIdent();
+    command.deviceIdent = getUniqId();
     command.isNeedAckMessage = false;
     command.operationHeader = "get dev type";
     command.devCommand = (int)Progress_tmk24Data::lls_read_settings;
@@ -920,38 +924,39 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
     CommandController::sCommandData tcommand;
     tcommand.operationHeader = operation;
     if(operation == "set current level value as min") {
-        tcommand.deviceIdent = getUniqIdent();
+        tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
         tcommand.devCommand = (int)Progress_tmk24Data::lls_calibrate_min;
         command.push_back(tcommand);
     } else if(operation == "check device is connected") {
-        tcommand.deviceIdent = getUniqIdent();
-        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.deviceIdent = getUniqId();
+        tcommand.isNeedAckMessage = true;
+        tcommand.commandType = CommandController::E_CommandType_command_without_request;
         tcommand.devCommand = (int)Progress_tmk24Data::lls_check_address_and_pass;
         command.push_back(tcommand);
     } else if(operation == "set current level value as max") {
-        tcommand.deviceIdent = getUniqIdent();
-        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.deviceIdent = getUniqId();
+        tcommand.isNeedAckMessage = true;
         tcommand.devCommand = (int)Progress_tmk24Data::lls_calibrate_max;
         command.push_back(tcommand);
     } else if(operation == "get current dev settings") {
-        tcommand.deviceIdent = getUniqIdent();
-        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.deviceIdent = getUniqId();
+        tcommand.isNeedAckMessage = true;
         tcommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;
         command.push_back(tcommand);
     } else if(operation == "get get available dev tarrir id") {
-        tcommand.deviceIdent = getUniqIdent();
-        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.deviceIdent = getUniqId();
+        tcommand.isNeedAckMessage = true;
         tcommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;
         command.push_back(tcommand);
     } else if(operation == "get current dev settings without ack dialog") {
-        tcommand.deviceIdent = getUniqIdent();
+        tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = false;
         tcommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;
         command.push_back(tcommand);
     } else if(operation == "set current dev settings") {
-        tcommand.deviceIdent = getUniqIdent();
-        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.deviceIdent = getUniqId();
+        tcommand.isNeedAckMessage = true;
         tcommand.devCommand = (int)Progress_tmk24Data::lls_write_settings;
         // key
         for(auto i:data.first) {
@@ -963,13 +968,13 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
         }
         command.push_back(tcommand);
     } else if(operation == "read current dev errors") {
-        tcommand.deviceIdent = getUniqIdent();
-        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.deviceIdent = getUniqId();
+        tcommand.isNeedAckMessage = true;
         tcommand.devCommand = (int)Progress_tmk24Data::lls_read_errors;
         command.push_back(tcommand);
     } else if(operation == "set current dev tar table") {
-        tcommand.deviceIdent = getUniqIdent();
-        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.deviceIdent = getUniqId();
+        tcommand.isNeedAckMessage = true;
         tcommand.devCommand = (int)Progress_tmk24Data::lls_write_cal_table;
         // key
         for(auto i:data.first) { // string index
@@ -981,13 +986,13 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
         }
         command.push_back(tcommand);
     } else if(operation == "read current dev tar table") {
-        tcommand.deviceIdent = getUniqIdent();
-        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.deviceIdent = getUniqId();
+        tcommand.isNeedAckMessage = true;
         tcommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
         command.push_back(tcommand);
     } else if(operation == "change current dev id") {
         // first read settings
-        tcommand.deviceIdent = getUniqIdent();
+        tcommand.deviceIdent = getUniqId();
         tcommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;
         tcommand.isNeedAckMessage = false;
         tcommand.args.key.clear();
@@ -995,9 +1000,9 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
         tcommand.commandOptionData.clear();
         command.push_back(tcommand);
         // потоm запись id
-        tcommand.deviceIdent = getUniqIdent();
+        tcommand.deviceIdent = getUniqId();
         tcommand.devCommand = (int)Progress_tmk24Data::lls_write_settings;
-        tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
+        tcommand.isNeedAckMessage = true;
         // key
         for(auto i:data.first) { // string index
             tcommand.args.key.push_back(i);
@@ -1017,7 +1022,7 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandListToCurrentDa
     QList<CommandController::sCommandData> listCommand;
     CommandController::sCommandData command;
     command.commandOptionData.clear();
-    command.deviceIdent = getUniqIdent();
+    command.deviceIdent = getUniqId();
     command.operationHeader = "typical command get current data";
     command.isNeedAckMessage = false;
     command.devCommand = (int)Progress_tmk24Data::lls_read_lvl_once;

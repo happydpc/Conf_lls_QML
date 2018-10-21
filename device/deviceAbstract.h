@@ -32,9 +32,12 @@ public:
     }E_DeviceEvent;
 
     virtual QString getDevTypeName() = 0;
+    virtual QString getDevHeader() = 0;
+    virtual void setDevHeader(QString header) = 0;
+
     virtual QPair<QStringList,QStringList> getPropertyData() = 0;
     virtual QPair<QStringList,QStringList> getCurrentData() = 0;
-    virtual QString getUniqIdent() = 0;
+    virtual QString getUniqId() = 0;
     virtual QPair<QStringList,QStringList> getSettings() = 0;
     virtual QPair<QStringList,QStringList> getErrors() = 0;
     virtual E_State getState() = 0;
@@ -49,7 +52,6 @@ public:
     virtual QList<CommandController::sCommandData> getCommandListToCurrentData() = 0;
     virtual QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList>) = 0;
     virtual QList<CommandController::sCommandData> getCommandCustom(QString operation) = 0;
-    virtual QList<int> getChart() = 0;
 
     virtual ServiceDevicesAbstract* getServiceAbstract() = 0;
 
@@ -61,7 +63,9 @@ public:
 
 signals:
     void eventDeviceUpdateState(DeviceAbstract::E_DeviceEvent typeEvent, QString deviceUniqueId,
-                                int operation, QString operationResult, QStringList customData, CommandController::sCommandData commandData);
+                                int operation, QString operationResult,
+                                QStringList keyCustomData, QStringList valueCustomData,
+                                CommandController::sCommandData commandData);
 private:
     int priority = 0;
 };

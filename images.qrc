@@ -7,7 +7,7 @@
         <file>images/logo/logo_progress.png</file>
     </qresource>
     <qresource prefix="/icon">
-        <file>images/icon/4149.png</file>
-        <file>images/icon/4372.png</file>
+        <file>images/icon/bad.png</file>
+        <file>images/icon/normal.png</file>
     </qresource>
 </RCC>

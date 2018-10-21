@@ -260,12 +260,6 @@ Rectangle {
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
-//            onCurrentIndexChanged: {
-//                if(devStackParam.currentItem == settingsItem) {
-//                    viewController.getCurrentDevCustomCommand("get current dev settings witout dialog")
-//                }
-//            }
-
             Item {
                 ScrollView {
                     clip: true
@@ -1009,7 +1003,7 @@ Rectangle {
                                             layer.enabled: true
                                             enabled: devIsConnected
                                             onClicked: {
-                                                viewController.getCurrentDevCustomCommand("get current dev settings")
+                                                viewController.setCurrentDevCustomCommand("get current dev settings")
                                             }
                                         }
                                         Button {
@@ -1116,7 +1110,7 @@ Rectangle {
                                         layer.enabled: true
                                         enabled: devIsConnected
                                         onClicked: {
-                                            viewController.getCurrentDevCustomCommand("get current dev settings")
+                                            viewController.setCurrentDevCustomCommand("get current dev settings")
                                         }
                                     }
 

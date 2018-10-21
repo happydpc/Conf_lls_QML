@@ -13,6 +13,10 @@ public:
     const QString & content() const;
     void setContent(const QString & content);
 
+    Q_PROPERTY(QString header READ header NOTIFY headerChanged)
+    const QString & header() const;
+    void setHeader(const QString & header);
+
     Q_PROPERTY(QList<QObject*> childItems READ childItemsAsQObject NOTIFY childItemsChanged)
     const QList<TreeItem *> &childItems() const;
     const QList<QObject *> childItemsAsQObject() const;
@@ -40,6 +44,7 @@ public:
 
 signals:
     void contentChanged();
+    void headerChanged();
     void currentIndexIsChanged(bool isParent, TreeItem *pSender);
 
     void childItemsChanged();
@@ -52,6 +57,7 @@ signals:
 public slots:
 private:
     QString m_content;
+    QString m_header;
     QList<TreeItem *> m_childItems;
 
     bool m_isParent;

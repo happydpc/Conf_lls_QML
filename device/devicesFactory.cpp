@@ -18,41 +18,51 @@ DevicesFactory::~DevicesFactory() {}
 bool DevicesFactory::addNewDevice(E_DeviceType type, QPair<QStringList,QStringList>param,
                                   ServiceDevicesAbstract *pDevService) {
     bool res = false;
-    if(factoryType == Type_Undefined) {
-        factoryType = type;
-    }
-    if(factoryType == type) {
-        bool uniqDevNameIsFinded = false;
-        QString uniqDevName;
+    QString devId;
+    QString devHeader;
+    // TODO: устройства на интерфейсе только одного типа
+    if((factoryType == Type_Undefined) || (factoryType == type)) {
+        if(factoryType == Type_Undefined) {
+            factoryType = type;
+        }
         for(int i=0; i<param.first.size(); i++) {
-            if(param.first[i] == "uniqDevName") {
-                uniqDevNameIsFinded = true;
-                uniqDevName = param.second[i];
+            if(param.first[i] == "devId") {
+                devId = param.second[i];
+            }
+            if(param.first[i] == "devHeader") {
+                devHeader = param.second[i];
             }
         }
-        if(uniqDevNameIsFinded) {
+        if(!devId.isEmpty()) {
             if(type == Type_Progress_Tmk24) {
-                if(findDeviceByUnicIdent(uniqDevName) == nullptr) {
+                if(findDeviceByUnicIdent(devId) == nullptr) {
+                    if(devHeader.isEmpty()) {
+                        devHeader = QString("lls_num_%2").arg(deviceMap.size());
+                    }
                     lockMutextDevMap();
-                    deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Progress_tmk24(uniqDevName, param, pDevService)));
+                    deviceMap.push_back(QPair<QString, DeviceAbstract*>(devId,
+                                                                        new Progress_tmk24(devId, devHeader, param, pDevService)));
                     unlockMutextDevMap();
                     emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
                     res = true;
                 }
             } else if(type == Type_Progress_tmk4UX) {
             } else if(type == Type_Nozzle_rev_0_00) {
-                if(findDeviceByUnicIdent(uniqDevName) == nullptr) {
+                if(findDeviceByUnicIdent(devId) == nullptr) {
+                    if(devHeader.isEmpty()) {
+                        devHeader = QString("%1 [%2]").arg(Nozzle_Revision_0_00_Oct_2018::name).arg(devId);
+                    }
                     lockMutextDevMap();
-                    deviceMap.push_back(QPair<QString, DeviceAbstract*>(uniqDevName, new Nozzle_Revision_0_00_Oct_2018(uniqDevName)));
+                    deviceMap.push_back(QPair<QString, DeviceAbstract*>(devId, new Nozzle_Revision_0_00_Oct_2018(devId, devHeader)));
                     unlockMutextDevMap();
                     emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
                     res = true;
                 }
             }
             // TODO: может быть лучше как-то подругому перехватывать указатаель?
-            connect(findDeviceByUnicIdent(uniqDevName)->second,
-                    SIGNAL(eventDeviceUpdateState(DeviceAbstract::E_DeviceEvent,QString,int,QString,QStringList, CommandController::sCommandData)),
-                    this, SLOT(deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEvent,QString,int,QString,QStringList, CommandController::sCommandData)));
+            connect(findDeviceByUnicIdent(devId)->second,
+                    SIGNAL(eventDeviceUpdateState(DeviceAbstract::E_DeviceEvent,QString,int,QString,QStringList,QStringList, CommandController::sCommandData)),
+                    this, SLOT(deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEvent,QString,int,QString,QStringList,QStringList, CommandController::sCommandData)));
         }
     }
     return res;
@@ -94,6 +104,9 @@ bool DevicesFactory::removeDevice(QString uniqDevName) {
     QPair<QString,DeviceAbstract*>* pDev = findDeviceByUnicIdent(uniqDevName);
     if(pDev != nullptr) {
         deviceMap.erase(pDev); // TOOD: 0
+        if(deviceMap.empty()) {
+            factoryType = Type_Undefined;
+        }
         res = true;
     }
     unlockMutextDevMap();
@@ -130,6 +143,18 @@ QString DevicesFactory::getDeviceName(int index) {
     return findDeviceByIndex(index)->second->getDevTypeName();
 }
 
+QString DevicesFactory::getDeviceNameWithId(int index) {
+    return QString("%1[%2]").arg(findDeviceByIndex(index)->second->getDevTypeName()).arg(findDeviceByIndex(index)->second->getUniqId());
+}
+
+QString DevicesFactory::getDeviceHeader(int index) {
+    return findDeviceByIndex(index)->second->getDevHeader();
+}
+
+void DevicesFactory::setDeviceHeader(int index, QString header) {
+    return findDeviceByIndex(index)->second->setDevHeader(header);
+}
+
 QString DevicesFactory::getDeviceTypeNameByType(DevicesFactory::E_DeviceType type) {
     if(type == DevicesFactory::Type_Progress_tmk4UX) {
         return QString::fromUtf8(Progress_tmk4UX::name, strlen(Progress_tmk4UX::name));
@@ -160,24 +185,16 @@ DevicesFactory::E_DeviceType DevicesFactory::getDeviceType(int index) {
 }
 
 void DevicesFactory::setDeviceInitCommandByIndex(int index) {
-    QList<CommandController::sCommandData>commands = findDeviceByIndex(index)->second->getCommandListToInit();
-    for(auto i:commands) {
-        findDeviceByIndex(index)->second->makeDataToCommand(i);
-        i.isNeedAckMessage = false;
-        commandController->addCommandToStack(i);
+    if(getDeviceCount() != 0) {
+        if(getDeviceCount()-1 >= index) {
+            QList<CommandController::sCommandData>commands = findDeviceByIndex(index)->second->getCommandListToInit();
+            for(auto i:commands) {
+                findDeviceByIndex(index)->second->makeDataToCommand(i);
+                i.isNeedAckMessage = false;
+                commandController->addCommandToStack(i);
+            }
+        }
     }
-}
-
-QStringList DevicesFactory::getDeviceHeaderByIndex(int index) {
-    if(deviceMap.empty()) {return QStringList("");}
-    return QStringList(QString("%1 [%2]")
-                       .arg(getDeviceName(index))
-                       .arg(getDeviceIdTextByIndex(index)));
-}
-
-QList<int> DevicesFactory::getDeviceChartByIndex(int index) {
-    if(deviceMap.empty()) {return QList<int>();}
-    return findDeviceByIndex(index)->second->getChart();
 }
 
 QPair<QStringList,QStringList> DevicesFactory::getDeviceCurrentDataByIndex(int index) {
@@ -322,7 +339,7 @@ void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
         auto command = commandController->getCommandFirstCommand().second;
         if(command.commandType == CommandController::E_CommandType_send_typical_request) {
             for(auto dev: deviceMap) {
-                if(dev.second->getUniqIdent() == command.deviceIdent) {
+                if(dev.second->getUniqId() == command.deviceIdent) {
                     dev.second->placeDataReplyToCommand(data, command);
                     break;
                 }
@@ -331,7 +348,7 @@ void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
         } else if(command.commandType == CommandController::E_CommandType_send_security_request) {
             if(command.deviceTypeName == QString(Progress_tmk24::name)) {
                 Progress_tmk24 *pdevice = new Progress_tmk24(
-                            checkDeviceStruct.checkedDeviceUniqName, QPair<QStringList,QStringList>(QStringList(),QStringList()), nullptr);
+                            checkDeviceStruct.checkedDeviceUniqName, "tHeader", QPair<QStringList,QStringList>(QStringList(),QStringList()), nullptr);
                 checkDeviceStruct.result = pdevice->placeDataReplyToCommand(data, commandController->getCommandFirstCommand().second);
                 checkDeviceStruct.isReady = true;
                 commandController->removeFirstCommand();
@@ -347,7 +364,8 @@ void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
 
 // сюда приходят все сигналы от девайсов (смена состояние и рез кастомных команд)
 void DevicesFactory::deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEvent eventType, QString devUniqueId,
-                                                    int command, QString operationResult, QStringList customData,
+                                                    int command, QString operationResult,
+                                                    QStringList keyCustomData, QStringList valueCustomData,
                                                     CommandController::sCommandData commandData) {
     switch (eventType) {
     case DeviceAbstract::Type_DeviceEvent_Connected:
@@ -408,10 +426,10 @@ void DevicesFactory::deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEven
         removeDeviceByIndex(findDeviceIndex(devUniqueId));
         break;
     case DeviceAbstract::Type_DeviceEvent_LogMessage:
-        emit deviceReadyLog(findDeviceIndex(devUniqueId), customData);
+        emit deviceReadyLog(findDeviceIndex(devUniqueId), valueCustomData);
         break;
     case DeviceAbstract::Type_DeviceEvent_ExectCustomCommand:
-        emit deviceReadyCustomCommand(findDeviceIndex(devUniqueId), operationResult, customData, commandData);
+        emit deviceReadyCustomCommand(findDeviceIndex(devUniqueId), operationResult, keyCustomData, valueCustomData, commandData);
         break;
     default: break;
     }
@@ -424,20 +442,24 @@ void DevicesFactory::unlockMutextDevMap() {
     devMutex->unlock();
 }
 
-void DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation) {
+bool DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation) {
     QList<CommandController::sCommandData> command;
+    bool res = false;
     command = findDeviceByIndex(indexDev)->second->getCommandCustom(operation);
     // что требует подтверждения о выполнении (на форме)
     for(auto cIt: command) {
         findDeviceByIndex(indexDev)->second->makeDataToCommand(cIt);
         cIt.commandType = CommandController::E_CommandType_send_typical_request;
         commandController->addCommandToStack(cIt);
+        res = true;
     }
+    return res;
 }
 
-void DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation, QStringList keys, QStringList values) {
+bool DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation, QStringList keys, QStringList values) {
     QList<CommandController::sCommandData> command;
     QPair<QStringList,QStringList> arguments;
+    bool res = false;
     for(int i=0; i<keys.size(); i++) {
         arguments.first.push_back(keys.at(i));
         arguments.second.push_back(values.at(i));
@@ -448,7 +470,9 @@ void DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation, QStr
         findDeviceByIndex(indexDev)->second->makeDataToCommand(cIt);
         cIt.commandType = CommandController::E_CommandType_send_typical_request;
         commandController->addCommandToStack(cIt);
+        res = true;
     }
+    return res;
 }
 
 void DevicesFactory::sendCustomCommandUseCallback(E_DeviceType type, QString operation, QStringList keys, QStringList values) {
@@ -462,7 +486,7 @@ void DevicesFactory::sendCustomCommandUseCallback(E_DeviceType type, QString ope
             }
         }
         if(uniqIdDevice.length() != 0) {
-            Progress_tmk24 *pdevice = new Progress_tmk24(uniqIdDevice, QPair<QStringList,QStringList>(keys, values), nullptr);
+            Progress_tmk24 *pdevice = new Progress_tmk24(uniqIdDevice, "tHeader", QPair<QStringList,QStringList>(keys, values), nullptr);
             checkDeviceStruct.checkedDeviceUniqName = uniqIdDevice;
             checkDeviceStruct.isProcessed = true;
             checkDeviceStruct.isIdle = false;

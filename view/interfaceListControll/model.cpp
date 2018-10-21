@@ -45,10 +45,10 @@ void Model::removeConnection(int indexConnection) {
     treeChanged();
 }
 
-void Model::addDeviceToConnection(QString nameConnection, QString nameDevice, bool deviceStatus) {
+void Model::addDeviceToConnection(QString connName, QString devName) {
     for(auto it: m_tree) {
-        if(it->content() == nameConnection) {
-            TreeItem * tDevItem = createTreeSubItem(nameDevice);
+        if(it->content() == connName) {
+            TreeItem * tDevItem = createTreeSubItem(devName);
             it->addChildItem(std::move(tDevItem));
             it->setIsParent(true);
             setDevIndex(it->childItems().size()-1);
@@ -57,17 +57,36 @@ void Model::addDeviceToConnection(QString nameConnection, QString nameDevice, bo
     }
 }
 
-void Model::changeDeviceHeader(QString nameConnection, QString nameDevice, QString devHeader) {
+bool Model::changeDeviceName(QString nameConnection, QString devName, QString devNewName) {
+    bool res = false;
     for(auto it: m_tree) {
         if(it->content() == nameConnection) {
             for(auto devs:it->childItems()) {
-                if(devs->content() == nameDevice) {
-                    devs->setContent(devHeader);
+                if(devs->content() == devName) {
+                    devs->setContent(devNewName);
+                    res = true;
                 }
             }
             treeChanged();
         }
     }
+    return res;
+}
+
+bool Model::changeDeviceHeader(QString nameConnection, QString devName, QString devNewHeader) {
+    bool res = false;
+    for(auto it: m_tree) {
+        if(it->content() == nameConnection) {
+            for(auto devs:it->childItems()) {
+                if(devs->content() == devName) {
+                    devs->setHeader(devNewHeader);
+                    res = true;
+                }
+            }
+            treeChanged();
+        }
+    }
+    return res;
 }
 
 void Model::removeDeviceToConnection(int indexConnection, int indexDevice) {
@@ -151,6 +170,7 @@ void Model::currentIndexIsChanged(bool, TreeItem *pSender) {
             if(it == pSender) {
                 it->setIsCurrent(true);
                 setIoIndex(index);
+                setDevIndex(0);
                 emit currentIndexIsChangedInteface(index);
             } else {
                 it->setIsCurrent(false);

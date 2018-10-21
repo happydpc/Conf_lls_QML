@@ -12,20 +12,24 @@
 class Progress_tmk24 : public DeviceAbstract
 {
 public:
-    Progress_tmk24(QString uniqIdentId, QPair<QStringList,QStringList>param,
+    Progress_tmk24(QString uniqIdentId, QString header,
+                   QPair<QStringList,QStringList>param,
                    ServiceDevicesAbstract *pServiceAbstract);
     ~Progress_tmk24();
 
     static constexpr char* name = "PROGRESS TMK24";
 
     QString getDevTypeName() override;
+    QString getDevHeader() override;
+    void setDevHeader(QString header) override;
+
     QPair<QStringList,QStringList> getPropertyData() override;
     QPair<QStringList,QStringList> getCurrentData() override;
     DeviceAbstract::E_State getState() override;
     void setState(DeviceAbstract::E_State) override;
     QPair<QStringList,QStringList> getSettings() override;
     QPair<QStringList,QStringList> getErrors() override;
-    QString getUniqIdent() override;
+    QString getUniqId() override;
     bool makeDataToCommand(CommandController::sCommandData &commandData) override;
     bool placeDataReplyToCommand(QByteArray &commandArrayReplyData, CommandController::sCommandData commandReqData) override;
 
@@ -36,7 +40,6 @@ public:
     QList<CommandController::sCommandData> getCommandListToCurrentData() override;
     QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList> data) override;
     QList<CommandController::sCommandData> getCommandCustom(QString operation) override;
-    QList<int> getChart() override;
     ServiceDevicesAbstract* getServiceAbstract() override;
 
     QList<QString>getCurrentOtherData();
@@ -49,11 +52,13 @@ private slots:
 
 private:
     Progress_tmk24Data::T_calibrationTable calibrationTable;
-    Progress_tmk24Data::T_settings newSettings;
     Progress_tmk24Data::T_settings settings;
     Progress_tmk24Data::S_lls_data lls_data;
-    QList<int> *chartData;
-    QString uniqIdentId;
+
+    struct {
+        QString id;
+        QString header;
+    }deviceIdent;
 };
 
 #endif // Progress_tmk24_H

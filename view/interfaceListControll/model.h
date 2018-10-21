@@ -18,9 +18,10 @@ public:
     void addConnection(QString name);
     void removeConnection(int index);
 
-    void addDeviceToConnection(QString nameConnection, QString nameDevice, bool deviceStatus);
+    void addDeviceToConnection(QString connName, QString devName);
     void removeDeviceToConnection(int indexConnection, int indexDevice);
-    void changeDeviceHeader(QString nameConnection, QString nameDevice, QString devHeader);
+    bool changeDeviceName(QString nameConnection, QString devName, QString devNewName);
+    bool changeDeviceHeader(QString nameConnection, QString devName, QString devNewHeader);
 
     int getDevIndex();
     int getIoIndex();

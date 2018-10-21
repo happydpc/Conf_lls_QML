@@ -830,6 +830,7 @@ qrc_qml.cpp: qml.qrc \
 		qml/interfaces/DevPropertySerialPort.qml \
 		qml/devTree/DeviceItemEmpty.qml \
 		qml/devTree/DeviceTree.qml \
+		qml/devTree/EditDeviceName.qml \
 		qml/devTree/DevListPanel.qml \
 		qml/devTree/DeviceItem.qml \
 		qml/devTree/InterfaceItemView.qml \
@@ -860,8 +861,8 @@ qrc_images.cpp: images.qrc \
 		images/logo/icon_prg.ico \
 		images/logo/icon_gls.ico \
 		images/logo/logo_gls.png \
-		images/icon/4372.png \
-		images/icon/4149.png
+		images/icon/bad.png \
+		images/icon/normal.png
 	/opt/qt/5.11.0/gcc_64/bin/rcc -name images images.qrc -o qrc_images.cpp
 
 qrc_font.cpp: font.qrc \

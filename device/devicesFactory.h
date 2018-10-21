@@ -40,18 +40,19 @@ public slots:
     bool removeDeviceAll();
 
     QString getDeviceName(int index);
+    QString getDeviceNameWithId(int index);
+    QString getDeviceHeader(int index);
+    void setDeviceHeader(int index, QString header);
     QString getDeviceTypeNameByType(DevicesFactory::E_DeviceType type);
     E_DeviceType getDeviceType(QString typeText);
     E_DeviceType getDeviceType(int index);
     void setDeviceInitCommandByIndex(int index);
     int getDeviceCount();
     QStringList getAvailableDeviceTypes();
-    QStringList getDeviceHeaderByIndex(int index);
     QString getDeviceIdTextByIndex(int index);
     QPair<QStringList,QStringList> getDeviceSettigns(int indexDev);
     QPair<QStringList,QStringList> getDeviceErrrors(int indexDev);
     int getDeviceStatusByIndex(int index);
-    QList<int> getDeviceChartByIndex(int index);
     QPair<QStringList,QStringList> getDeviceCurrentDataByIndex(int index);
     QPair<QStringList,QStringList> getDevicePropertyByIndex(int index);
 
@@ -65,8 +66,8 @@ public slots:
 
     void placeReplyDataFromInterface(QByteArray data);
     void setDeviceReInitByIndex(int index);
-    void sendCustomCommadToDev(int indexDev, QString operation, QStringList keys, QStringList values);
-    void sendCustomCommadToDev(int indexDev, QString operation);
+    bool sendCustomCommadToDev(int indexDev, QString operation, QStringList keys, QStringList values);
+    bool sendCustomCommadToDev(int indexDev, QString operation);
     void sendCustomCommandUseCallback(E_DeviceType type, QString operation, QStringList keys, QStringList values);
 
 signals:
@@ -81,15 +82,16 @@ signals:
     void deviceCheckIsReady(DevicesFactory::E_DeviceType type, QString uniqNameId, bool isOnline);
 
     void deviceUpdateTree(DevicesFactory::E_DeviceUpdateType status, int index);
-    void deviceReadyCustomCommand(int index, QString message, QStringList customData, CommandController::sCommandData);
+    void deviceReadyCustomCommand(int index, QString message, QStringList keyCustomData, QStringList valueCustomData, CommandController::sCommandData);
     void deviceReadyLog(int indexDev, QStringList message);
 
 private slots:
     void devShedullerSlot();
 
-    void deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEvent type,
-                                        QString devUniqueId,
-                                        int commandType, QString,QStringList, CommandController::sCommandData commandData);
+    void deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEvent eventType, QString devUniqueId,
+                                        int command, QString operationResult,
+                                        QStringList keyCustomData, QStringList valueCustomData,
+                                        CommandController::sCommandData commandData);
     void lockMutextDevMap();
     void unlockMutextDevMap();
 
