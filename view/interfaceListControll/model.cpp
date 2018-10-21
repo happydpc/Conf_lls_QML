@@ -187,6 +187,7 @@ void Model::currentIndexIsChanged(bool, TreeItem *pSender) {
                 if(it2 == pSender) {
                     it2->setIsCurrent(true);
                     setDevIndex(indexChild);
+                    setIoIndex(indexParent);
                     emit currentIndexIsChangedDevice(indexParent, indexChild);
                 } else {
                     it2->setIsCurrent(false);

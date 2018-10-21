@@ -192,7 +192,7 @@ Rectangle {
         var values = [];
         keys.push("networkPassword")
         values.push(networkPassword.text)
-        viewController.setCurrentDevCustomCommandWithoutAckDialog("set current dev settings net config", keys, values)
+        viewController.setCurrentDevCustomCommand("set current dev settings net config", keys, values)
     }
 
     Rectangle {
@@ -1032,7 +1032,7 @@ Rectangle {
                                                 values.push(accelCoefZ.text)
                                                 keys.push("accelAngle")
                                                 values.push(accelAngle.text)
-                                                viewController.setCurrentDevCustomCommandWithoutAckDialog("set current dev settings accel config", keys, values)
+                                                viewController.setCurrentDevCustomCommand("set current dev settings accel config", keys, values)
                                             }
                                         }
                                     }
@@ -1187,7 +1187,7 @@ Rectangle {
                                                 onClicked: {
                                                     var keys = []
                                                     var values = []
-                                                    viewController.setCurrentDevCustomCommandWithoutAckDialog("set new battery", keys, values)
+                                                    viewController.setCurrentDevCustomCommand("set new battery", keys, values)
                                                 }
                                             }
                                         }
