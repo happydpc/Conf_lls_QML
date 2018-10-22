@@ -11,12 +11,46 @@ Column{
                 id:rectBase
                 width: 210
                 height: 20
+                Text {
+                    id:iconEditDeviceHeader
+                    text: " \uf1fb"
+                    color: modelData.isConnected === true ? ("#58fce4") : (iconEditMouse.isFocused === true ? "#58fce4" : "#dbd9d9")
+                    font { family: "customFont";}
+                    font.pointSize: 14
+                    anchors.left: parent.left
+                    width: 28
+                    height: 28
+                    MouseArea {
+                        id:iconEditMouse
+                        acceptedButtons: Qt.LeftButton
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        property bool isFocused: false
+                        onEntered: {
+                            isFocused = true
+                        }
+                        onExited: {
+                            isFocused = false
+                        }
+                        onClicked: {
+                            modelData.isCurrent = true
+                            var keys = viewController.getCurrentDevPropertyKey()
+                            var values = viewController.getCurrentDevPropertyValue()
+                            for(var i=0; i<keys.length; i++) {
+                                if(keys[i] === "header"){
+                                    editDeviceName.setDeviceName(values[i])
+                                    editDeviceName.open()
+                                }
+                            }
+                        }
+                    }
+                }
                 MouseArea {
                     id:area
-                    anchors.left: iconDelete.right
+                    anchors.left: iconEditDeviceHeader.right
                     anchors.rightMargin: 5
                     acceptedButtons: Qt.LeftButton
-                    width: 125
+                    width: 160
                     height: 50
                     onClicked: {
                         modelData.isCurrent = true
@@ -54,46 +88,12 @@ Column{
                     }
                 }
                 Text {
-                    id:iconEditDeviceHeader
-                    text: " \uf1fb"
-                    color: modelData.isConnected === true ? ("#58fce4") : (iconEditMouse.isFocused === true ? "#58fce4" : "#dbd9d9")
-                    font { family: "customFont";}
-                    font.pointSize: 14
-                    anchors.left: parent.left
-                    width: 28
-                    height: 28
-                    MouseArea {
-                        id:iconEditMouse
-                        acceptedButtons: Qt.LeftButton
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        property bool isFocused: false
-                        onEntered: {
-                            isFocused = true
-                        }
-                        onExited: {
-                            isFocused = false
-                        }
-                        onClicked: {
-                            modelData.isCurrent = true
-                            var keys = viewController.getCurrentDevPropertyKey()
-                            var values = viewController.getCurrentDevPropertyValue()
-                            for(var i=0; i<keys.length; i++) {
-                                if(keys[i] === "header"){
-                                    editDeviceName.setDeviceName(values[i])
-                                    editDeviceName.open()
-                                }
-                            }
-                        }
-                    }
-                }
-                Text {
                     id:iconDelete
                     text: " \uf1f8"
                     color: iconDeleteMouse.isFocused === true ? "#58fce4" : "#dbd9d9"
                     font { family: "customFont";}
                     font.pointSize: 14
-                    anchors.left: iconEditDeviceHeader.right
+                    anchors.right: area.right
                     width: 28
                     height: 28
                     MouseArea {

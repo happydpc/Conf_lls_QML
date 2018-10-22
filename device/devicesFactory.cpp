@@ -77,9 +77,8 @@ void DevicesFactory::checkDeviceIsOnline(E_DeviceType type, QStringList keyParam
                 QTimer *tTimer = new QTimer();
                 connect(tTimer, &QTimer::timeout, [=]() {
                     if(checkDeviceStruct.isReady) {
-                        emit deviceCheckIsReady(checkDeviceStruct.devType,
-                                                checkDeviceStruct.checkedDeviceUniqName,
-                                                checkDeviceStruct.result);
+                        QString devFindId = checkDeviceStruct.checkedDeviceUniqName;
+                        bool findResult = checkDeviceStruct.result;
                         checkDeviceStruct.checkedDeviceUniqName.clear();
                         checkDeviceStruct.isIdle = true;
                         checkDeviceStruct.isProcessed = false;
@@ -88,6 +87,8 @@ void DevicesFactory::checkDeviceIsOnline(E_DeviceType type, QStringList keyParam
                         tTimer->stop();
                         disconnect(tTimer, &QTimer::timeout, this, nullptr);
                         delete tTimer;
+                        emit deviceCheckIsReady(checkDeviceStruct.devType,
+                                                devFindId, findResult);
                     }
                 } );
                 tTimer->start(100);

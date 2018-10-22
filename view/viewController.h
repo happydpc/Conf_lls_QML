@@ -95,7 +95,7 @@ signals:
 
     void devConnected(QString typeDev);
     void devDisconnected(QString typeDev);
-    void devReadyCheckCommand(QString devTypeName, bool result);
+    void devReadyCheckCommand(QString devTypeName, QString devId, QString devSn, bool result);
     void devSetActiveDeviceProperty(QString devType);
     void devReadyProperties(QString typeDev, QStringList data);
     void devReadyPeriodicData(QString typeDev);

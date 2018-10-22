@@ -151,21 +151,6 @@ Rectangle {
         }
     }
 
-//    function devShowPasswordIncorrect(devType, devNameId) {
-//        console.log("devShowPasswordIncorrect -unrecognise type dev")
-//        dialogPasswordError.messageArg = devNameId
-//        dialogPasswordError.open()
-//        switch(devType.toLowerCase()) {
-//        case "progress tmk24":
-//            devicePropertieslistModel1.currentIndex = 2
-//            devPropertyProgressTmk24.setWriteSettingsIsNoAvailable()
-//            break;
-//        default:
-//            console.log("devShowPasswordIncorrect -unrecognise type dev")
-//            break;
-//        }
-//    }
-
     // TODO: type!
     function devShowTypeIncorrect(typeDev, devNameId) {
         dialogTypeError.messageArg = devNameId
@@ -197,8 +182,8 @@ Rectangle {
                     anchors.bottomMargin: 0
                     anchors.right: parent.right
                     anchors.top: parent.top
-                    anchors.topMargin: 1
-                    anchors.rightMargin: 1
+                    anchors.topMargin: 0
+                    anchors.rightMargin: 0
                     interactive: false
                     clip: true
 

@@ -51,6 +51,7 @@ void Model::addDeviceToConnection(QString connName, QString devName) {
             TreeItem * tDevItem = createTreeSubItem(devName);
             it->addChildItem(std::move(tDevItem));
             it->setIsParent(true);
+            it->setIsOpen(true);
             setDevIndex(it->childItems().size()-1);
             treeChanged();
         }

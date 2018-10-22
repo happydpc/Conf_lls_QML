@@ -40,11 +40,8 @@ Rectangle {
             }
             model: programmModel.tree
             delegate: InterfaceItemView {
-                onEventClickLeft: {
-                    console.log("event left click")
-                }
-                onEventClickRight: {
-                    console.log("event right click")
+                onEventSelectInterface: {}
+                onEventDeleteInterface: {
                     removeInterfaceDialog.open()
                 }
                 Dialog {
@@ -70,7 +67,6 @@ Rectangle {
             }
         }
     }
-
     Rectangle {
         id:spacerList
         anchors.top: interfaceTree.bottom
@@ -90,6 +86,7 @@ Rectangle {
         anchors.bottomMargin: 5
         anchors.topMargin: 5
         anchors.right: interfaceTree.right
+        anchors.rightMargin: 10
         width: 2
         height: parent.height
         color: "#f0f3f6"

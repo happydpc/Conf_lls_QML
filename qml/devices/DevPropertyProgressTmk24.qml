@@ -1400,7 +1400,6 @@ Rectangle {
                         id:tabSubProperty
                         height: 25
                         anchors.left: parent.left
-                        //                        anchors.right: parent.right
                         anchors.top: parent.top
                         anchors.topMargin: 17
                         anchors.leftMargin: 30

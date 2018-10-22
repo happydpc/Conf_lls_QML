@@ -22,8 +22,8 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
     this->serviceList.push_back(new Nozzle_Rev_0_00_Service("Nozzle Rev 0.0"));
 
     QTimer::singleShot(500, Qt::CoarseTimer, [&] {
-//        addConnection("serial", "ttyUSB0", QStringList("baudrate"), QStringList("19200"));
-//        addDeviceToConnection("PROGRESS TMK24", QStringList("devId"), QStringList("3"));
+        addConnection("serial", "ttyUSB0", QStringList("baudrate"), QStringList("19200"));
+        addDeviceToConnection("PROGRESS TMK24", QStringList("devId"), QStringList("3"));
 //        addDeviceToConnection("PROGRESS TMK24", QStringList("devId"), QStringList("5"));
     });
 
@@ -112,7 +112,7 @@ bool ViewController::addDeviceToConnection(QString devTypeName, QStringList keyP
                 emit devUpdateLogMessage(0, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
             } else {
                 emit devUpdateLogMessage(2, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
-                emit addDeviceFail(devTypeName, "Не получилось добавить устройство\nТакой адрес уже используется");
+                emit addDeviceFail(devTypeName, "Не получилось добавить устройство\nВозможные причины:\n - такой адрес уже используется\n - устройство отличается\n от типа уже дообавленных устройств");
             }
         }
     }
@@ -270,13 +270,13 @@ void ViewController::deviceReadyCurrentData(DevicesFactory::E_DeviceType type, Q
 
 void ViewController::deviceCheckReady(DevicesFactory::E_DeviceType devType, QString devUniqNameId, bool result) {
     if(devType == DevicesFactory::Type_Progress_Tmk24) {
-        emit devReadyCheckCommand(QString(Progress_tmk24::name), result);
+        emit devReadyCheckCommand(QString(Progress_tmk24::name), devUniqNameId, "...", result);
     }
     if(devType == DevicesFactory::Type_Progress_tmk4UX) {
-        emit devReadyCheckCommand(QString(Progress_tmk4UX::name), result);
+        emit devReadyCheckCommand(QString(Progress_tmk4UX::name), devUniqNameId, "...", result);
     }
     if(devType == DevicesFactory::Type_Nozzle_rev_0_00) {
-        emit devReadyCheckCommand(QString(Nozzle_Revision_0_00_Oct_2018::name), result);
+        emit devReadyCheckCommand(QString(Nozzle_Revision_0_00_Oct_2018::name), devUniqNameId, "...", result);
     }
 }
 
@@ -289,7 +289,6 @@ void ViewController::deviceReadyProperties(DevicesFactory::E_DeviceType type, QS
 void ViewController::deviceReadyInit(DevicesFactory::E_DeviceType type, QString uniqNameId) {}
 
 void ViewController::interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateType type) {
-        disconnectToDevSignals();
     deviceTreeChanged(DevicesFactory::Type_Update_RamakeAfterChangeInterface, interfaceTree->getDevIndex());
 
     switch(type) {
@@ -303,7 +302,6 @@ void ViewController::interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateT
                                       connFactory->getInterace(interfaceTree->getIoIndex())->getInterfaceProperty());
     }
     emit devUpdateLogMessage(2, QString("Перестроение дерева интерфейсов[%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
-        connectToDevSignals();
 }
 
 void ViewController::deviceLogMessage(int indexDev, QStringList message) {
@@ -508,7 +506,7 @@ void ViewController::disconnectToDevSignals() {
         disconnect(getDeviceFactoryByIndex(i), SIGNAL(deviceReadyLog(int,QStringList)),
                    this, SLOT(deviceLogMessage(int, QStringList)));
         disconnect(getDeviceFactoryByIndex(i), SIGNAL(deviceCheckIsReady(DevicesFactory::E_DeviceType,QString,bool)),
-                   this, SLOT(deviceCheckReady(DevicesFactory::E_DeviceType,QString,bool)));
+                this, SLOT(deviceCheckReady(DevicesFactory::E_DeviceType,QString,bool)));
     }
 }
 

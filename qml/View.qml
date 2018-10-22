@@ -58,38 +58,8 @@ Item {
 
         }
         onDevReadyCheckCommand:
-            projectPanel.devicePanel.devicePropertyPanel.devPropertySerialPort.addDeviceDialog.setResultCheckDevice(devTypeName, result)
+            projectPanel.devicePanel.devicePropertyPanel.devPropertySerialPort.addDeviceDialog.setResultCheckDevice(devTypeName, devId, devSn, result)
     }
-    //        onDevUpdateWriteSettingExecuted: {
-    //            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageWriteSettingsOk.open()
-    //        }
-    //        onDevUpdateReadSettingExecuted: {
-    //            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readSettings(devNameId, key, settings)
-    //            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadSettingsOk.open()
-    //        }
-    //        onDevUpdateReadSettingWithoutRequest: {
-    //            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readSettings(devNameId, key, settings)
-    //        }
-    //        onDevUpdateReadErrorsExecuted: {
-    //        emit devUpdateReadErrorsExecuted(pDevFactory->getDeviceName(indexDev),
-    //                                         pDevFactory->getDeviceErrrors(indexDev));
-    //            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readErrors(devNameId, errors)
-    //            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadErrorsOk.open()
-    //        }
-    //        onDevUpdatePasswordIncorrect: {
-    //            projectPanel.devicePanel.devicePropertyPanel.devShowPasswordIncorrect(devType, devNameId)
-    //        }
-    //        onDevUpdateReadTarTable: {
-    //            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.readTarTable(devCount)
-    //        }
-    //        onDevUpdateWriteTarTableExecuted: {
-    //            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadTarTableOk.message = result
-    //            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.messageReadTarTableOk.open()
-    //        }
-    //        onDevErrorOperation: {
-    //            projectPanel.devicePanel.messageOperationError.message = message
-    //            projectPanel.devicePanel.messageOperationError.open()
-    //        }
 
     Rectangle {
         id: rootPanel
@@ -122,7 +92,7 @@ Item {
                         source: "logo.png"
                         width: 256
                         height: 160
-                        visible: false //!!!
+                        visible: false
                     }
                 }
                 StartPanel {
