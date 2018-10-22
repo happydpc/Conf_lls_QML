@@ -22,14 +22,14 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
     this->serviceList.push_back(new Nozzle_Rev_0_00_Service("Nozzle Rev 0.0"));
 
     QTimer::singleShot(500, Qt::CoarseTimer, [&] {
-        addConnection("serial", "ttyUSB0", QStringList("baudrate"), QStringList("19200"));
-        addDeviceToConnection("PROGRESS TMK24", QStringList("devId"), QStringList("3"));
-        addDeviceToConnection("PROGRESS TMK24", QStringList("devId"), QStringList("5"));
+//        addConnection("serial", "ttyUSB0", QStringList("baudrate"), QStringList("19200"));
+//        addDeviceToConnection("PROGRESS TMK24", QStringList("devId"), QStringList("3"));
+//        addDeviceToConnection("PROGRESS TMK24", QStringList("devId"), QStringList("5"));
     });
 
     QTimer::singleShot(1000, Qt::CoarseTimer, [&] {
-        addConnection("serial", "ttyACM0", QStringList("baudrate"), QStringList("115200"));
-        addDeviceToConnection("Nozzle Rev 0.0", QStringList("devId"), QStringList("1"));
+//        addConnection("serial", "ttyACM0", QStringList("baudrate"), QStringList("115200"));
+//        addDeviceToConnection("Nozzle Rev 0.0", QStringList("devId"), QStringList("1"));
     });
 }
 
