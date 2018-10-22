@@ -3,7 +3,7 @@ import QtQuick.Controls 2.2
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.4
 
-import "qrc:/qml/miscElems"
+import "qrc:/qml/miscElems" as MiscELems
 
 Popup {
     id: addDeviceTarirDialog
@@ -20,7 +20,7 @@ Popup {
         id:rootRectangle
         anchors.fill: parent
 
-        ButtonRound {
+        MiscELems.ButtonRound {
             id:buttonAddChecked
             textLine: 2
             widthBody: 240
@@ -46,7 +46,7 @@ Popup {
                 close()
             }
         }
-        ButtonRound {
+        MiscELems.ButtonRound {
             id:buttonExit
             textLine: 2
             widthBody: 200
@@ -299,7 +299,3 @@ Popup {
         }
     }
 }
-
-// при открытии получить список доступных устройств
-// получить список уст-в из списка тарировки
-// из 1 списка убрать если есть в 2

@@ -19,7 +19,7 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
 
     // TODO: the service need and necessery for other action
     this->serviceList.push_back(new Progress_tmk24Service("PROGRESS TMK24"));
-    this->serviceList.push_back(new Nozzle_Rev_0_00_Service("Nozzle Revision 0.00 Oct 2018"));
+    this->serviceList.push_back(new Nozzle_Rev_0_00_Service("Nozzle Rev 0.0"));
 
     QTimer::singleShot(500, Qt::CoarseTimer, [&] {
         addConnection("serial", "ttyUSB0", QStringList("baudrate"), QStringList("19200"));
@@ -29,7 +29,7 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
 
     QTimer::singleShot(1000, Qt::CoarseTimer, [&] {
         addConnection("serial", "ttyACM0", QStringList("baudrate"), QStringList("115200"));
-        addDeviceToConnection("Nozzle Revision 0.00 Oct 2018", QStringList("devId"), QStringList("1"));
+        addDeviceToConnection("Nozzle Rev 0.0", QStringList("devId"), QStringList("1"));
     });
 }
 

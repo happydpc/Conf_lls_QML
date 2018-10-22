@@ -24,13 +24,12 @@ QString Nozzle_Revision_0_00_Oct_2018::getDevTypeName() {
 }
 
 QString Nozzle_Revision_0_00_Oct_2018::getDevHeader() {
-    return "undefined";
+    return deviceIdent.header;
 }
 
 void Nozzle_Revision_0_00_Oct_2018::setDevHeader(QString header) {
-
+    deviceIdent.header = header;
 }
-
 
 void Nozzle_Revision_0_00_Oct_2018::setDefaultValues() {
     this->dev_data.accelX.isValid = false;
@@ -304,9 +303,7 @@ QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QBy
 bool Nozzle_Revision_0_00_Oct_2018::placeDataReplyToCommand(QByteArray &commandArray, CommandController::sCommandData commandReqData) {
     bool res = false;
     if(!commandArray.isEmpty()) {
-
-        qDebug() << "placeDataReplyToCommand_2=" << commandArray.data();
-
+        qDebug() << "placeDataReplyToCommand=" << commandArray.data();
         commandArrayReplyData += commandArray;
         auto res = prepareReply(commandArrayReplyData);
         for(auto it:res) {
@@ -322,6 +319,7 @@ bool Nozzle_Revision_0_00_Oct_2018::placeDataReplyToCommand(QByteArray &commandA
             }
         }
     } else {
+        qDebug() << "placeDataReplyToCommand=" << "-no reply";
         emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Disconnected, getUniqId(),
                                     commandReqData.devCommand, QString("Status disconnected"), QStringList(), QStringList(), commandReqData);
     }

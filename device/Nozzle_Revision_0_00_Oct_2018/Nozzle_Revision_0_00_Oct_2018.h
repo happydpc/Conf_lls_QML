@@ -13,7 +13,7 @@ public:
     Nozzle_Revision_0_00_Oct_2018(QString devId, QString header);
     ~Nozzle_Revision_0_00_Oct_2018();
 
-    static constexpr char* name = "Nozzle Revision 0.00 Oct 2018";
+    static constexpr char* name = "Nozzle Rev 0.0";
 
     QString getDevTypeName() override;
     QString getDevHeader() override;

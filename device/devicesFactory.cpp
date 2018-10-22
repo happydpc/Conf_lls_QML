@@ -50,7 +50,7 @@ bool DevicesFactory::addNewDevice(E_DeviceType type, QPair<QStringList,QStringLi
             } else if(type == Type_Nozzle_rev_0_00) {
                 if(findDeviceByUnicIdent(devId) == nullptr) {
                     if(devHeader.isEmpty()) {
-                        devHeader = QString("%1 [%2]").arg(Nozzle_Revision_0_00_Oct_2018::name).arg(devId);
+                        devHeader = QString("nozzle_num_%2").arg(deviceMap.size());
                     }
                     lockMutextDevMap();
                     deviceMap.push_back(QPair<QString, DeviceAbstract*>(devId, new Nozzle_Revision_0_00_Oct_2018(devId, devHeader)));

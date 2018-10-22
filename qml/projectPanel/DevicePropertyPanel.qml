@@ -37,7 +37,7 @@ Rectangle {
             devPropertyProgressTmk24.setResetState()
             devicePropertieslistModel1.currentIndex = 2
             break;
-        case "nozzle revision 0.00 oct 2018":
+        case "nozzle rev 0.0":
             devPropertyNozzle.setResetState()
             devicePropertieslistModel1.currentIndex = 3
             break;
@@ -70,23 +70,15 @@ Rectangle {
             devPropertyProgressTmk24.setDevProperty()
             projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setReady()
             break;
-        case "nozzle revision 0.00 oct 2018":
+        case "nozzle rev 0.0":
             devPropertyNozzle.setDevProperty()
             projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setReady()
             break;
         default: break;
         }
     }
+
     function setReadyPeriodicData(typeDev) {
-//        switch(typeDev.toLowerCase()) {
-//        case "progress tmk24":
-//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setUpdatePeriodicValues()
-//            break;
-//        case "nozzle revision 0.00 oct 2018":
-//            projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setUpdatePeriodicValues()
-//            break;
-//        default: break;
-//        }
     }
 
     function setDevDisconnected(typeDev) {
@@ -94,7 +86,7 @@ Rectangle {
         case "progress tmk24":
             projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setNoReady()
             break;
-        case "nozzle revision 0.00 oct 2018":
+        case "nozzle rev 0.0":
             projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setNoReady()
             break;
         default: break;
@@ -105,7 +97,7 @@ Rectangle {
         case "progress tmk24":
             projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setReady()
             break;
-        case "nozzle revision 0.00 oct 2018":
+        case "nozzle rev 0.0":
             projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setReady()
             break;
         default: break;
@@ -113,11 +105,11 @@ Rectangle {
     }
 
     function setDevShowMessage(typeDev, messageHeader, message) {
-        switch(typeDev) {
+        switch(typeDev.toLowerCase()) {
         case "progress tmk24":
             projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.devShowMessage(messageHeader, message)
             break;
-        case "nozzle revision 0.00 oct 2018":
+        case "nozzle rev 0.0":
             projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.devShowMessage(messageHeader, message)
             break;
         default: break;
@@ -129,7 +121,7 @@ Rectangle {
         case "progress tmk24":
             projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setCustomCommandExecuted(keys, args, ackMessageIsVisible)
             break;
-        case "nozzle revision 0.00 oct 2018":
+        case "nozzle rev 0.0":
             projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setCustomCommandExecuted(keys, args, ackMessageIsVisible)
             break;
         default: break;
@@ -141,7 +133,7 @@ Rectangle {
         case "progress tmk24":
             projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.addLogMessage(0, args)
             break;
-        case "nozzle revision 0.00 oct 2018":
+        case "nozzle rev 0.0":
             projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.addDeviceLogMessage(args)
             break;
         default: break;
@@ -153,13 +145,11 @@ Rectangle {
         case "progress tmk24":
             projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.addLogMessage(codeMessage, message)
             break;
-        case "nozzle revision 0.00 oct 2018":
-//            projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.addDeviceLogMessage(args)
+        case "nozzle rev 0.0":
             break;
         default: break;
         }
     }
-
 
 //    function devShowPasswordIncorrect(devType, devNameId) {
 //        console.log("devShowPasswordIncorrect -unrecognise type dev")
