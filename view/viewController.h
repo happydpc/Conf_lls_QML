@@ -82,26 +82,27 @@ public:
 
 signals:
 
-    void interfaceSetActiveProperty(QString ioType);
-    void setActiveDeviceProperty(QString devType);
+    void interfaceSetActiveProperty(int ioIndex, QString ioType);
     void interfaceAndDeviceListIsEmpty();
-    void interfaceReadyProperties(QString ioType, QStringList properties);
+    void interfaceReadyProperties(QString ioType, int ioIndex, QStringList properties);
 
     void addConnectionFail(QString devName);
     void addDeviceFail(QString devName, QString errorMessage);
 
-    void devConnected(QString typeDev);
-    void devDisconnected(QString typeDev);
+    void addDeviceSuccesfull(QString devType, QStringList devKeyProperty, QStringList devValueProperty);
+    void devSetActiveDeviceProperty(int devIndex, QString devType);
+    void devConnected(int devIndex, QString typeDev);
+    void devDisconnected(int devIndex, QString typeDev);
+    void devReady(int devIndex, QString typeDev);
     void devReadyCheckCommand(QString devTypeName, QString devId, QString devSn, bool result);
-    void devSetActiveDeviceProperty(QString devType);
-    void devReadyProperties(QString typeDev, QStringList data);
-    void devReadyPeriodicData(QString typeDev);
+    void devReadyProperties(int devIndex, QString typeDev, QStringList keys, QStringList values);
+    void devReadyPeriodicData(int devIndex, QString typeDev, QStringList keys, QStringList values);
     void devErrorOperation(QString message);
 
     void devWrongTypeIncorrect(QString typeDev, QString devNameId);
-    void devUpdateLogMessage(int codeMessage, QString message);
-    void devUpdateLogDeviceMessage(QString typeDev, QString message);
-    void devCustomCommandExecuted(QString typeDev, QStringList keys, QStringList args, bool ackMessageIsVisible);
+    void devUpdateLogMessage(int devIndex, int codeMessage, QString message);
+    void devCustomCommandExecuted(QString typeDev, int devIndex,
+                                  QStringList keys, QStringList args, bool ackMessageIsVisible);
     void devUpdateTree(QStringList devNames, QList<int>status);
 
 public slots:

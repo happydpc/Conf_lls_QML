@@ -7,11 +7,8 @@ import "qrc:/qml/devices"
 Rectangle {
     id: devPropertySerialPort
     color: "#e7e9eb"
-    anchors.fill: parent
-
     property alias addDeviceDialog: addDeviceDialog
-
-    function setPropertyValues(listData) {
+    function setPropertyValues(properties) {
         typeDeviceText.text = listData[3]
         information.text = listData[0] + "\r\n" + listData[1]
                 + "\r\n" + listData[2] + "\r\n" + listData[4]
@@ -74,8 +71,6 @@ Rectangle {
     AddDeviceDialog {
         id:addDeviceDialog
         visible: false
-        x: window.x / 2
-        y: window.y / 2
         onResultMessage: {
             dialogMessage.message = res
             dialogMessage.title = "Добавление устройства"
@@ -100,7 +95,7 @@ Rectangle {
         standardButtons: StandardButton.Apply
         property string message: ""
         Rectangle {
-            color: "transparent"
+            color: "#ffffff"
             implicitWidth: 400
             implicitHeight: 200
             Text {

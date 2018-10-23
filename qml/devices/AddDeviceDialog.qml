@@ -449,7 +449,7 @@ Popup {
                             color: "#ffffff"
                             SwipeView {
                                 id:typeAddDeviceViewNozzle_v0_0
-                                currentIndex: tabProperty.currentIndex
+                                currentIndex: 0
                                 interactive: false
                                 anchors.fill: parent
                                 clip: true

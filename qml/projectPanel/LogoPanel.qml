@@ -10,7 +10,7 @@ Rectangle {
         anchors.fill: parent
         Image {
             id: logo
-            source: "/images/logo/logo_progress.png"
+            source: "qrc:/logo/images/logo/logo_progress.png"
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             anchors.left: parent.left

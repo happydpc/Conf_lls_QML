@@ -3,55 +3,63 @@ import QtQuick.Controls 2.3
 import Qt.labs.platform 1.0
 import QtQuick.Dialogs 1.2
 import QtQml.Models 2.11
-
 import "qrc:/qml/devices"
 import "qrc:/qml/interfaces"
 
 Rectangle {
     id: projectDevicePanel
+    property var interfaceItemArray: []
+    property var deviceItemArray: []
     property alias dialogAddInterfaceFail: dialogAddInterfaceFail
     property alias messageOperationError: messageOperationError
-    property DevPropertyProgressTmk24 devPropertyProgressTmk24: devPropertyProgressTmk24
-    property DevPropertyNozzle_v_0_00 devPropertyNozzle_v_0_00: devPropertyNozzle
-    property DevPropertySerialPort devPropertySerialPort: devPropertySerialPort
+    property int indexItem_Logo: 0
+    property int indexItem_Intefaces: 1
+    property int indexItem_Devices: 2
 
     function setActiveLogoPanel() {
-        devicePropertieslistModel1.setCurrentIndex(0)
+        modeSelectView.setCurrentIndex(indexItem_Logo)
     }
 
-    function setActiveInterfacePanelType(ioType) {
-        switch(ioType.toLowerCase()) {
-        case "serial":
-            if(devicePropertieslistModel1.currentIndex != 1) { // todo: maybe overink
-                devPropertyProgressTmk24.setResetState()
-                devicePropertieslistModel1.currentIndex = 1
-            }
-            break;
-        default: break;
-        }
-    }
-
-    function setActiveDevicePanelType(devType) {
+    function deviceAdded(devType, devKeyProperty, devValueProperty) {
         switch(devType.toLowerCase()) {
         case "progress tmk24":
-            devPropertyProgressTmk24.setResetState()
-            devicePropertieslistModel1.currentIndex = 2
+            var componentQml = Qt.createComponent("qrc:/qml/devices/DevPropertyProgressTmk24.qml");
+            var item = componentQml.createObject(deviceView)
+            deviceView.addItem(item)
+            deviceItemArray.push(item);
+            modeSelectView.setCurrentIndex(indexItem_Devices)
             break;
         case "nozzle rev 0.0":
-            devPropertyNozzle.setResetState()
-            devicePropertieslistModel1.currentIndex = 3
             break;
         default: break;
         }
     }
 
-    function setInterfaceProperites(ioType, properties) {
+    function setActiveItem(itemType) {
+
+    }
+
+    function setActiveInterfacePanelType(ioType, ioIndex) {
         switch(ioType.toLowerCase()) {
         case "serial":
-            projectPanel.devicePanel.devicePropertyPanel.setPropertyToSerialPort(properties)
+            modeSelectView.setCurrentIndex(indexItem_Intefaces)
             break;
         default: break;
         }
+    }
+
+    function setActiveDevicePanelType(devType, devIndex) {
+        for(var len=0; len<deviceItemArray.length; len++) {
+            deviceItemArray[len].visible = false
+        }
+        deviceItemArray[devIndex].visible = true
+        deviceView.setCurrentIndex(devIndex)
+        modeSelectView.setCurrentIndex(indexItem_Devices)
+    }
+
+    function setInterfaceProperites(ioType, ioIndex, properties) {
+        modeSelectView.setCurrentIndex(indexItem_Intefaces)
+        interfaceView.setCurrentIndex(ioIndex)
     }
 
     function showDeviceAddError(devTypeName, errorMessage) {
@@ -59,49 +67,24 @@ Rectangle {
         dialogAddDeviceFail.open()
     }
 
-    function setPropertyToSerialPort(listData) {
-        console.log("setPropertyToSerialPort")
-        devPropertySerialPort.setPropertyValues(listData)
+    function setReadyProperties(devIndex, typeDev, keys, values) {
+        deviceItemArray[devIndex].setPropertyes(keys, values)
     }
 
-    function setReadyProperties(typeDev) {
-        switch(typeDev.toLowerCase()) {
-        case "progress tmk24":
-            devPropertyProgressTmk24.setDevProperty()
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setReady()
-            break;
-        case "nozzle rev 0.0":
-            devPropertyNozzle.setDevProperty()
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setReady()
-            break;
-        default: break;
-        }
+    function setReadyPeriodicData(devIndex, typeDev, keys, values) {
+        deviceItemArray[devIndex].insertPeriodicData(keys, values)
     }
 
-    function setReadyPeriodicData(typeDev) {
+    function setDevConnected(devIndex, typeDev) {
+        deviceItemArray[devIndex].setConnected()
     }
 
-    function setDevDisconnected(typeDev) {
-        switch(typeDev.toLowerCase()) {
-        case "progress tmk24":
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setNoReady()
-            break;
-        case "nozzle rev 0.0":
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setNoReady()
-            break;
-        default: break;
-        }
+    function setDevReady(devIndex, typeDev) {
+        deviceItemArray[devIndex].setReady()
     }
-    function setDevConnected(typeDev) {
-        switch(typeDev.toLowerCase()) {
-        case "progress tmk24":
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setReady()
-            break;
-        case "nozzle rev 0.0":
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setReady()
-            break;
-        default: break;
-        }
+
+    function setDevDisconnected(devIndex, typeDev) {
+        deviceItemArray[devIndex].setDisconnected()
     }
 
     function setDevShowMessage(typeDev, messageHeader, message) {
@@ -116,28 +99,12 @@ Rectangle {
         }
     }
 
-    function setDevCustomCommandExecuted(typeDev, keys, args, ackMessageIsVisible) {
-        switch(typeDev.toLowerCase()) {
-        case "progress tmk24":
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.setCustomCommandExecuted(keys, args, ackMessageIsVisible)
-            break;
-        case "nozzle rev 0.0":
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.setCustomCommandExecuted(keys, args, ackMessageIsVisible)
-            break;
-        default: break;
-        }
+    function setDevCustomCommandExecuted(typeDev, devIndex, keys, args, ackMessageIsVisible) {
+        deviceItemArray[devIndex].setCustomCommandExecuted(keys, args, ackMessageIsVisible)
     }
 
-    function addDeviceLog(typeDev, args) {
-        switch(typeDev.toLowerCase()) {
-        case "progress tmk24":
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.addLogMessage(0, args)
-            break;
-        case "nozzle rev 0.0":
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.addDeviceLogMessage(args)
-            break;
-        default: break;
-        }
+    function addDeviceLog(devIndex, codeMessage, message) {
+        deviceItemArray[devIndex].addLogMessage(codeMessage, message)
     }
 
     function addLogMessage(codeMessage, message) {
@@ -163,56 +130,48 @@ Rectangle {
         anchors.fill: parent
         anchors.top: parent.top
 
-        StackView {
-            id: portOrDeviceStack
+        Rectangle {
+            color: "#ffffff"
             anchors.fill: parent
+            border.width: 1
+            border.color: "#9899a7"
 
-            Rectangle {
-                id: currentStateRectangle
-                color: "#ffffff"
+            SwipeView {
+                id: modeSelectView
                 anchors.fill: parent
-                border.width: 1
-                border.color: "#9899a7"
+                interactive: false
+                currentIndex: 0
+                clip: true
 
-                SwipeView {
-                    id: devicePropertieslistModel1
-                    anchors.left: parent.left
-                    anchors.leftMargin: 0
-                    anchors.bottom: parent.bottom
-                    anchors.bottomMargin: 0
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    anchors.topMargin: 0
-                    anchors.rightMargin: 0
-                    interactive: false
-                    clip: true
+                Item {
+                    Rectangle {
+                        id: logoSubPanel
+                        anchors.fill: parent
+                        height: 500
+                        width: 500
+                        color: "red"
+                        LogoPanel {
 
-                    Item {
-                        Rectangle {
-                            id: logoSubPanel
-                            anchors.fill: parent
-                            height: 500
-                            width: 500
-                            color: "red"
-                            LogoPanel {
-
-                            }
                         }
                     }
-                    Item {
+                }
+                Item {
+                    SwipeView {
+                        id: interfaceView
+                        interactive: false
+                        anchors.fill: parent
+                        clip: true
                         DevPropertySerialPort {
                             id: devPropertySerialPort
                         }
                     }
-                    Item{
-                        DevPropertyProgressTmk24 {
-                            id: devPropertyProgressTmk24
-                        }
-                    }
-                    Item{
-                        DevPropertyNozzle_v_0_00 {
-                            id: devPropertyNozzle
-                        }
+                }
+                Item {
+                    SwipeView {
+                        id: deviceView
+                        anchors.fill: parent
+                        interactive: false
+                        clip: true
                     }
                 }
             }

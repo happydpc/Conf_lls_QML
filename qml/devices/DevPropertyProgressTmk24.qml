@@ -12,37 +12,40 @@ import QtGraphicalEffects 1.0
 import "qrc:/qml/miscElems" as MiscElems
 
 Rectangle {
-    anchors.fill: parent
+    anchors.top: parent.top
+    anchors.left: parent.left
+    visible: true
 
     property bool isNoiseDetected: false
     property bool devIsConnected: false
+    property bool devIsReady: false
 
-    function setNoReady() {
-        devIsConnected = false
+    function setConnected() {
+        devIsConnected = true
+        devIsReady = falseа
         setWriteSettingsIsNoAvailable()
-        fuelLevelProgress.value = 0
-        levelCnt.value = 0
-        levelFreq.value = 0
-        levelTemp.value = 0
-        chartCurrentValueLines.clear();
-        chartCurrentValue.dataList = []
+    }
+
+    function setDisconnected() {
+        devIsConnected = true
+        devIsReady = false
+        setWriteSettingsIsNoAvailable()
     }
 
     function setReady() {
         devIsConnected = true
+        devIsReady = true
         setWriteSettingsIsAvailable()
+    }
+
+    function setPropertyes(keys, values) {
+        parseInputData(keys, values)
     }
 
     function devShowMessage(messageHeader, message) {
         messageDialog.headerTitile = messageHeader
         messageDialog.message = message
         messageDialog.open()
-    }
-
-    function setResetState() {
-        tabProperty.setCurrentIndex(0)
-        stackSubProperty.setCurrentIndex(0)
-        setNoReady()
     }
 
     function setWriteSettingsIsAvailable() {
@@ -61,61 +64,18 @@ Rectangle {
         writeSettingsButton_5.enabled = false
     }
 
+    function insertPeriodicData(keys, values) {
+        devIsReady = true
+        devIsConnected = true
+        parseInputData(keys, values)
+    }
+
     function setCustomCommandExecuted(keys, args, ackMessageIsVisible) {
         var i = 0;
         switch(keys[0]) {
         case "lls_read_settings":
             if(ackMessageIsVisible) {
-                messageDialog.title = "Чтение настроек"
-                messageDialog.message = "Настройки успешно считаны"
-                messageDialog.open()
-            }
-            for(i=0; i<keys.length; i++) {
-                if(keys[i] === "k1_value") {
-                    k1.text = args[i]
-                } else if(keys[i] === "k2_value") {
-                    k2.text = args[i]
-                } else if(keys[i] === "typeTempCompensation_value") {
-                    typeTempCompensation.currentIndex = args[i]
-                } else if(keys[i] === "periodicSendType_value") {
-                    periodicSendType.currentIndex = args[i]
-                } else if(keys[i] === "periodicSendTime_value") {
-                    periodicSendTime.value = args[i]
-                } else if(keys[i] === "typeOutMessage_value") {
-                    typeOutMessage.currentIndex = args[i]
-                } else if(keys[i] === "typeInterpolation_value") {
-                    typeInterpolation.currentIndex = args[i]
-                } else if(keys[i] === "typeFiltration_value") {
-                    typeFiltration.currentIndex = args[i]
-                } else if(keys[i] === "filterLenghtMediana_value") {
-                    filterLenghtMediana.value = args[i]
-                } else if(keys[i] === "filterAvarageValueSec_value") {
-                    filterAvarageValueSec.value = args[i]
-                } else if(keys[i] === "filterValueR_value") {
-                    filterValueR.value= args[i]
-                } else if(keys[i] === "filterValueQ_value") {
-                    filterValueQ.value = args[i]
-                } else if(keys[i] === "minLevelValue_value") {
-                    minLevelValue.value = args[i]
-                } else if(keys[i] === "maxLevelValue_value") {
-                    maxLevelValue.value = args[i]
-                } else if(keys[i] === "masterSlaveModes_value") {
-                    masterSlaveModes.currentIndex = args[i]
-                } else if(keys[i] === "baudrateRs232Values_value") {
-                    baudrateRs232Values.currentIndex = args[i]
-                } else if(keys[i] === "baudrateRs485Values_value") {
-                    baudrateRs485Values.currentIndex = args[i]
-                } else if(keys[i] === "masterSlaveFullCountes_value") {
-                    masterSlaveFullCountes.value = args[i]
-                } else if(keys[i] === "masterSlaveSlaveId_1_value") {
-                    masterSlaveSlaveId_1.value = args[i]
-                } else if(keys[i] === "masterSlaveSlaveId_2_value") {
-                    masterSlaveSlaveId_2.value = args[i]
-                } else if(keys[i] === "masterSlaveSlaveId_3_value") {
-                    masterSlaveSlaveId_3.value = args[i]
-                } else if(keys[i] === "masterSlaveSlaveId_4_value") {
-                    masterSlaveSlaveId_4.value = args[i]
-                }
+                parseInputData(keys, args)
             }
             break;
         case "lls_write_settings":
@@ -253,17 +213,57 @@ Rectangle {
         }
     }
 
-    function setDevProperty() {
-        var keys = viewController.getCurrentDevPropertyKey()
-        var values = viewController.getCurrentDevPropertyValue()
+    function parseInputData(keys, values) {
         for(var i=0; i<keys.length; i++) {
-            if(keys[i] === "devTypeName"){
+            if(keys[i] === "k1_value") {
+                k1.text = values[i]
+            } else if(keys[i] === "k2_value") {
+                k2.text = values[i]
+            } else if(keys[i] === "typeTempCompensation_value") {
+                typeTempCompensation.currentIndex = values[i]
+            } else if(keys[i] === "periodicSendType_value") {
+                periodicSendType.currentIndex = values[i]
+            } else if(keys[i] === "periodicSendTime_value") {
+                periodicSendTime.value = values[i]
+            } else if(keys[i] === "typeOutMessage_value") {
+                typeOutMessage.currentIndex = values[i]
+            } else if(keys[i] === "typeInterpolation_value") {
+                typeInterpolation.currentIndex = values[i]
+            } else if(keys[i] === "typeFiltration_value") {
+                typeFiltration.currentIndex = values[i]
+            } else if(keys[i] === "filterLenghtMediana_value") {
+                filterLenghtMediana.value = values[i]
+            } else if(keys[i] === "filterAvarageValueSec_value") {
+                filterAvarageValueSec.value = values[i]
+            } else if(keys[i] === "filterValueR_value") {
+                filterValueR.value= values[i]
+            } else if(keys[i] === "filterValueQ_value") {
+                filterValueQ.value = values[i]
+            } else if(keys[i] === "minLevelValue_value") {
+                minLevelValue.value = values[i]
+            } else if(keys[i] === "maxLevelValue_value") {
+                maxLevelValue.value = values[i]
+            } else if(keys[i] === "masterSlaveModes_value") {
+                masterSlaveModes.currentIndex = values[i]
+            } else if(keys[i] === "baudrateRs232Values_value") {
+                baudrateRs232Values.currentIndex = values[i]
+            } else if(keys[i] === "baudrateRs485Values_value") {
+                baudrateRs485Values.currentIndex = values[i]
+            } else if(keys[i] === "masterSlaveFullCountes_value") {
+                masterSlaveFullCountes.value = values[i]
+            } else if(keys[i] === "masterSlaveSlaveId_1_value") {
+                masterSlaveSlaveId_1.value = values[i]
+            } else if(keys[i] === "masterSlaveSlaveId_2_value") {
+                masterSlaveSlaveId_2.value = values[i]
+            } else if(keys[i] === "masterSlaveSlaveId_3_value") {
+                masterSlaveSlaveId_3.value = values[i]
+            } else if(keys[i] === "masterSlaveSlaveId_4_value") {
+                masterSlaveSlaveId_4.value = values[i]
+            } else if(keys[i] === "devTypeName"){
                 typeDeviceText.text = values[i]
-            }
-            if(keys[i] === "serialNum"){
+            } else if(keys[i] === "serialNum"){
                 snText.text = values[i]
-            }
-            if(keys[i] === "versionFirmare"){
+            } else if(keys[i] === "versionFirmare"){
                 versionFirmwareText.text = values[i]
             }
         }
@@ -598,7 +598,7 @@ Rectangle {
             jsonArray.push({});
             tarStepMax--
         }
-         // пока не переберем все уст-ва
+        // пока не переберем все уст-ва
         for(var devIndex=0; devIndex<devCount; devIndex++) {
             var table = viewController.getTableAtDevice(devIndex)
             var parity = 0
@@ -654,61 +654,6 @@ Rectangle {
 
     function changeDeviceUniqId() {
         changeDevId.open()
-    }
-
-    Timer {
-        id: timerUpdateRepeat
-        interval: 1000
-        running: true
-        repeat: true
-        onTriggered: {
-            if(devIsConnected) {
-                var devCount = viewController.getStayedDevTarrirCount()
-                var devId = viewController.getStayedDevTarrir_DevProperty("id")
-                var colorArray = []
-                colorArray.push("#f34b4b")
-                colorArray.push("#4bd5f3")
-                colorArray.push("#f34be1")
-                colorArray.push("#4bf3c6")
-                colorArray.push("#4b4bf3")
-                colorArray.push("#be4bf3")
-                colorArray.push("#0d8741")
-                chartTarCurrentValuesMultiple.removeAllSeries();
-
-                for(var devIter=0; devIter<devCount; devIter++) {
-                    var res = viewController.getTarCurrentDeviceData(devIter)
-                    var dataArray = tarListDevice.model.get(devIter)
-                    if(dataArray !== undefined) {
-                        dataArray["valueCnt"] = res[0]
-                        dataArray["valueFuelLevel"] = res[2]
-                        tarListDevice.model.set(devIter, dataArray)
-                    }
-                    //-- chart
-                    var chartArray = viewController.getTarCurrentDeviceChartData(devIter)
-
-                    var line = chartTarCurrentValuesMultiple.createSeries(ChartView.SeriesTypeLine, "ID" + devId[devIter], currentTarChartAxisXMultiple, currentTarChartAxisYMultiple);
-                    line.color = colorArray[devIter]
-
-                    chartTarCurrentValuesMultiple.graphLength = chartArray.length
-                    chartTarCurrentValuesMultiple.graphAmplitudeMax = 0
-
-                    for(var chartIter=0; chartIter<chartArray.length; chartIter++) {
-                        if(chartTarCurrentValuesMultiple.graphAmplitudeMax < chartArray[chartIter]) {
-                            chartTarCurrentValuesMultiple.graphAmplitudeMax = chartArray[chartIter];
-                        }
-                    }
-
-                    currentTarChartAxisXMultiple.min = 0;
-                    currentTarChartAxisXMultiple.max = chartArray.length
-                    currentTarChartAxisYMultiple.min = 0;
-                    currentTarChartAxisYMultiple.max = chartTarCurrentValuesMultiple.graphAmplitudeMax
-
-                    for(chartIter=0; chartIter<chartArray.length; chartIter++) {
-                        line.append(chartIter, parseInt(chartArray[chartIter]));
-                    }
-                }
-            }
-        }
     }
 
     Rectangle {
@@ -3342,42 +3287,44 @@ Rectangle {
                 }
             }
         }
-    }
-
-    Rectangle {
-        id:busyIndicator
-        width: 350
-        height: 200
-        radius: 20
-        property string message: "Ожидание ответа..."
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        visible: devIsConnected ? false : true
-        BusyIndicator {
-            id:waitReadyIndicator
-            width: 96
-            height: 96
+        Rectangle {
+            id:busyIndicator
+            width: 350
+            height: 200
+            radius: 20
+            property string message: "Ожидание ответа..."
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-        }
-        Label {
-            text: busyIndicator.message
-            anchors.top: waitReadyIndicator.bottom
-            anchors.topMargin: 20
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-        layer.enabled: true
-        layer.effect: DropShadow {
-            transparentBorder: true
-            horizontalOffset: 0
-            verticalOffset: 1
-            color: "#e0e5ef"
-            samples: 10
-            radius: 10
+            visible: ((devIsConnected) && (devIsReady)) ? false : true
+            Column {
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 20
+                BusyIndicator {
+                    id:waitReadyIndicator
+                    width: 96
+                    height: 96
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
+                Label {
+                    text: busyIndicator.message
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
+            }
+            layer.enabled: true
+            layer.effect: DropShadow {
+                transparentBorder: true
+                horizontalOffset: 0
+                verticalOffset: 1
+                color: "#e0e5ef"
+                samples: 10
+                radius: 10
+            }
         }
     }
 
     ChangeDevIdName {
+        visible: false
         id:changeDevId
     }
 
@@ -3401,6 +3348,61 @@ Rectangle {
         }
         onAccepted: {
             close()
+        }
+    }
+
+    Timer {
+        id: timerUpdateRepeat
+        interval: 1000
+        running: true
+        repeat: true
+        onTriggered: {
+            if(devIsConnected) {
+                var devCount = viewController.getStayedDevTarrirCount()
+                var devId = viewController.getStayedDevTarrir_DevProperty("id")
+                var colorArray = []
+                colorArray.push("#f34b4b")
+                colorArray.push("#4bd5f3")
+                colorArray.push("#f34be1")
+                colorArray.push("#4bf3c6")
+                colorArray.push("#4b4bf3")
+                colorArray.push("#be4bf3")
+                colorArray.push("#0d8741")
+                chartTarCurrentValuesMultiple.removeAllSeries();
+
+                for(var devIter=0; devIter<devCount; devIter++) {
+                    var res = viewController.getTarCurrentDeviceData(devIter)
+                    var dataArray = tarListDevice.model.get(devIter)
+                    if(dataArray !== undefined) {
+                        dataArray["valueCnt"] = res[0]
+                        dataArray["valueFuelLevel"] = res[2]
+                        tarListDevice.model.set(devIter, dataArray)
+                    }
+                    //-- chart
+                    var chartArray = viewController.getTarCurrentDeviceChartData(devIter)
+
+                    var line = chartTarCurrentValuesMultiple.createSeries(ChartView.SeriesTypeLine, "ID" + devId[devIter], currentTarChartAxisXMultiple, currentTarChartAxisYMultiple);
+                    line.color = colorArray[devIter]
+
+                    chartTarCurrentValuesMultiple.graphLength = chartArray.length
+                    chartTarCurrentValuesMultiple.graphAmplitudeMax = 0
+
+                    for(var chartIter=0; chartIter<chartArray.length; chartIter++) {
+                        if(chartTarCurrentValuesMultiple.graphAmplitudeMax < chartArray[chartIter]) {
+                            chartTarCurrentValuesMultiple.graphAmplitudeMax = chartArray[chartIter];
+                        }
+                    }
+
+                    currentTarChartAxisXMultiple.min = 0;
+                    currentTarChartAxisXMultiple.max = chartArray.length
+                    currentTarChartAxisYMultiple.min = 0;
+                    currentTarChartAxisYMultiple.max = chartTarCurrentValuesMultiple.graphAmplitudeMax
+
+                    for(chartIter=0; chartIter<chartArray.length; chartIter++) {
+                        line.append(chartIter, parseInt(chartArray[chartIter]));
+                    }
+                }
+            }
         }
     }
 

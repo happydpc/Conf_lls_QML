@@ -24,7 +24,7 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
     QTimer::singleShot(500, Qt::CoarseTimer, [&] {
         addConnection("serial", "ttyUSB0", QStringList("baudrate"), QStringList("19200"));
         addDeviceToConnection("PROGRESS TMK24", QStringList("devId"), QStringList("3"));
-//        addDeviceToConnection("PROGRESS TMK24", QStringList("devId"), QStringList("5"));
+        addDeviceToConnection("PROGRESS TMK24", QStringList("devId"), QStringList("4"));
     });
 
     QTimer::singleShot(1000, Qt::CoarseTimer, [&] {
@@ -40,7 +40,7 @@ void ViewController::closeApplication() {
 QStringList ViewController::getInterfaceAvailableToAdd(QString typeName) {
     QStringList res;
     res = connFactory->getAvailableName(typeName);
-    emit devUpdateLogMessage(0, QString("Получение списка интерфейсов [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+    emit devUpdateLogMessage(interfaceTree->getDevIndex(), 0, QString("Получение списка интерфейсов [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
     return res;
 }
 
@@ -50,8 +50,9 @@ bool ViewController::addConnection(QString typeName, QString name, QStringList k
         res = connFactory->addConnection(typeName, name, QPair<QStringList,QStringList>(keyParam, valueParam));
         if(res) {
             qDebug() << "addConnectionSerialPort -open= "<< res << name;
-            emit devUpdateLogMessage(0, QString("Добавление интерфейса [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
-            emit interfaceSetActiveProperty(connFactory->getInterace(interfaceTree->getIoIndex())->getType());
+            emit devUpdateLogMessage(interfaceTree->getDevIndex(), 0, QString("Добавление интерфейса [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+            emit interfaceSetActiveProperty(interfaceTree->getIoIndex(),
+                    connFactory->getInterace(interfaceTree->getIoIndex())->getType());
             interfaceTree->addConnection(name);
         } else {
             emit addConnectionFail(name);
@@ -61,7 +62,6 @@ bool ViewController::addConnection(QString typeName, QString name, QStringList k
 }
 
 void ViewController::removeActiveInterface() {
-    //    disconnectToDevSignals();
     int indexRemove = interfaceTree->getIoIndex();
     interfaceTree->removeConnection(indexRemove);
     getDeviceFactoryByIndex(indexRemove)->removeDeviceAll();
@@ -69,19 +69,20 @@ void ViewController::removeActiveInterface() {
     if(getInterfaceCount() == 0) {
         emit interfaceAndDeviceListIsEmpty();
     }
-    //    connectToDevSignals();
-    emit devUpdateLogMessage(1, QString("Удаление интерфейса [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+    emit devUpdateLogMessage(interfaceTree->getDevIndex(),1, QString("Удаление интерфейса [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
 }
 
 void ViewController::removeActiveDevice() {
     int indexRemove = interfaceTree->getDevIndex();
     interfaceTree->removeDeviceToConnection(interfaceTree->getIoIndex(), indexRemove);
     getDeviceFactoryByIndex(interfaceTree->getIoIndex())->removeDeviceByIndex(indexRemove);
-    emit devUpdateLogMessage(2, QString("Удаление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+    emit devUpdateLogMessage(interfaceTree->getDevIndex(),2, QString("Удаление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
     if(getDeviceCount() == 0) {
-        emit interfaceSetActiveProperty(connFactory->getInterace(interfaceTree->getIoIndex())->getType());
+        emit interfaceSetActiveProperty(interfaceTree->getIoIndex(),
+            connFactory->getInterace(interfaceTree->getIoIndex())->getType());
     } else{
-        emit devSetActiveDeviceProperty(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(interfaceTree->getDevIndex()));
+        emit devSetActiveDeviceProperty(interfaceTree->getDevIndex(),
+                getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(interfaceTree->getDevIndex()));
     }
 }
 
@@ -113,9 +114,13 @@ bool ViewController::addDeviceToConnection(QString devTypeName, QStringList keyP
                 // make it device - "not ready"
                 // while not read settings
                 pInterface->getDeviceFactory()->setDeviceReInitByIndex(interfaceTree->getDevIndex());
-                emit devUpdateLogMessage(0, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+                emit devUpdateLogMessage(interfaceTree->getDevIndex(),0, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+                emit addDeviceSuccesfull(getDeviceFactoryByIndex(
+                    interfaceTree->getIoIndex())->getDeviceTypeNameByType(
+                                             getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceType(interfaceTree->getDevIndex())),
+                    QStringList(), QStringList());
             } else {
-                emit devUpdateLogMessage(2, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+                emit devUpdateLogMessage(interfaceTree->getDevIndex(),2, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
                 emit addDeviceFail(devTypeName, "Не получилось добавить устройство\nВозможные причины:\n - такой адрес уже используется\n - устройство отличается\n от типа уже дообавленных устройств");
             }
         }
@@ -232,27 +237,34 @@ DeviceAbstract* ViewController::getCurrentDeviceToAbstract() {
 //************************************************************************/
 void ViewController::deviceConnected(DevicesFactory::E_DeviceType type, QString uniqNameId) {
     if(isCurrentDevice(uniqNameId)) {
-        emit devConnected(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(interfaceTree->getDevIndex()));
+        emit devConnected(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId),
+                          getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(interfaceTree->getDevIndex()));
     }
-    emit devUpdateLogMessage(0, QString("Устройста подключено[%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+    emit devUpdateLogMessage(interfaceTree->getDevIndex(),0, QString("Устройста подключено[%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
 }
 
 void ViewController::deviceDisconnected(DevicesFactory::E_DeviceType type, QString uniqNameId) {
     if(isCurrentDevice(uniqNameId)) {
-        emit devDisconnected(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceTypeNameByType(type));
+        emit devDisconnected(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId),
+                             getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceTypeNameByType(type));
     }
-    emit devUpdateLogMessage(2, QString("Устройство потеряно [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+    emit devUpdateLogMessage(interfaceTree->getDevIndex(),2, QString("Устройство потеряно [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
 }
 void ViewController::deviceReadyCurrentData(DevicesFactory::E_DeviceType type, QString uniqNameId) {
     switch(type) {
     case DevicesFactory::Type_Progress_tmk4UX: {
         if(isCurrentDevice(uniqNameId)) {
-            emit devReadyPeriodicData(connFactory->getInterace(interfaceTree->getIoIndex())->getType());
+            emit devReadyPeriodicData(interfaceTree->getDevIndex(), connFactory->getInterace(interfaceTree->getIoIndex())->getType(),
+                                      getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId)).first,
+                                      getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId)).second);
         }
     }
         break;
     case DevicesFactory::Type_Progress_Tmk24: {
-        emit devReadyPeriodicData(connFactory->getInterace(interfaceTree->getIoIndex())->getType());
+        emit devReady(interfaceTree->getDevIndex(), connFactory->getInterace(interfaceTree->getIoIndex())->getType());
+        emit devReadyPeriodicData(interfaceTree->getDevIndex(), connFactory->getInterace(interfaceTree->getIoIndex())->getType(),
+                                  getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId)).first,
+                                  getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId)).second);
         int devIndex = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId);
         if(devIndex >= 0) {
             Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(
@@ -263,13 +275,15 @@ void ViewController::deviceReadyCurrentData(DevicesFactory::E_DeviceType type, Q
         break;
     case DevicesFactory::Type_Nozzle_rev_0_00: {
         if(isCurrentDevice(uniqNameId)) {
-            emit devReadyPeriodicData(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(interfaceTree->getDevIndex()));
+            emit devReadyPeriodicData(interfaceTree->getDevIndex(), connFactory->getInterace(interfaceTree->getIoIndex())->getType(),
+                                      getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId)).first,
+                                      getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId)).second);
         }
     }
         break;
     case DevicesFactory::Type_Undefined: break;
     }
-    emit devUpdateLogMessage(1, QString("Получение данных с устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+    emit devUpdateLogMessage(interfaceTree->getDevIndex(),1, QString("Получение данных с устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
 }
 
 void ViewController::deviceCheckReady(DevicesFactory::E_DeviceType devType, QString devUniqNameId, bool result) {
@@ -286,9 +300,12 @@ void ViewController::deviceCheckReady(DevicesFactory::E_DeviceType devType, QStr
 
 void ViewController::deviceReadyProperties(DevicesFactory::E_DeviceType type, QString uniqNameId) {
     if(isCurrentDevice(uniqNameId)) {
-        emit devReadyProperties(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(interfaceTree->getDevIndex()), QStringList());
+        emit devReadyProperties(interfaceTree->getDevIndex(),
+                                getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(interfaceTree->getDevIndex()),
+                                getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(interfaceTree->getIoIndex()).first,
+                                getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(interfaceTree->getIoIndex()).second);
     }
-    emit devUpdateLogMessage(0, QString("Получение информации с устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+    emit devUpdateLogMessage(interfaceTree->getDevIndex(),0, QString("Получение информации с устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
 }
 void ViewController::deviceReadyInit(DevicesFactory::E_DeviceType type, QString uniqNameId) {}
 
@@ -303,14 +320,15 @@ void ViewController::interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateT
     }
     if(connFactory->getCountConnection() >0) {
         emit interfaceReadyProperties(connFactory->getInterace(interfaceTree->getIoIndex())->getType(),
+                                      interfaceTree->getIoIndex(),
                                       connFactory->getInterace(interfaceTree->getIoIndex())->getInterfaceProperty());
     }
-    emit devUpdateLogMessage(2, QString("Перестроение дерева интерфейсов[%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+    emit devUpdateLogMessage(interfaceTree->getDevIndex(),2, QString("Перестроение дерева интерфейсов[%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
 }
 
 void ViewController::deviceLogMessage(int indexDev, QStringList message) {
     while(!message.empty()) {
-        emit devUpdateLogDeviceMessage(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), message.first());
+        emit devUpdateLogMessage(interfaceTree->getDevIndex(),0, message.first());
         message.pop_front();
     }
 }
@@ -323,28 +341,36 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message,
     QStringList values;
     pDevFactory = getDeviceFactoryByIndex(interfaceTree->getIoIndex());
     if(pDevFactory != nullptr) {
-        emit devUpdateLogMessage(2, QString("Получен ответ с команды [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+        emit devUpdateLogMessage(interfaceTree->getDevIndex(),2, QString("Получен ответ с команды [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
         switch(pDevFactory->getDeviceType(pDevFactory->getDeviceName(indexDev))) {
         case DevicesFactory::Type_Progress_Tmk24: {
             if(commmandData.devCommand == Progress_tmk24Data::lls_calibrate_max) {
                 keys << "lls_calibrate_max" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
                 values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
-                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              interfaceTree->getDevIndex(),
+                                              keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Progress_tmk24Data::lls_calibrate_min) {
                 keys << "lls_calibrate_min" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
                 values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
-                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              interfaceTree->getDevIndex(),
+                                              keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Progress_tmk24Data::lls_read_settings) {
                 keys << "lls_read_settings" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).first;
                 values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).second;
-                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              interfaceTree->getDevIndex(),
+                                              keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Progress_tmk24Data::lls_read_errors) {
                 keys << "lls_read_errors" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceErrrors(interfaceTree->getDevIndex()).first;
                 values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceErrrors(interfaceTree->getDevIndex()).second;
-                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              interfaceTree->getDevIndex(),
+                                              keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Progress_tmk24Data::lls_read_cal_table) {
                 Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(pDevFactory->getDeviceToDeviceAbstract(indexDev)->getServiceAbstract());
@@ -353,7 +379,9 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message,
                     //emit devUpdateReadTarTable(pService->getDeviceCount());
                     keys << "lls_read_cal_table" << keyCustomData;
                     values << message.toLower() << valueCustomData;
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
+                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                                  interfaceTree->getDevIndex(),
+                                                  keys, values, commmandData.isNeedAckMessage);
                 }
             }
             if(commmandData.devCommand == Progress_tmk24Data::lls_write_cal_table) {
@@ -372,19 +400,25 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message,
                     }
                     keys << "lls_write_cal_table" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
                     values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
+                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                                  interfaceTree->getDevIndex(),
+                                                  keys, values, commmandData.isNeedAckMessage);
                 }
             }
             if(commmandData.devCommand == Progress_tmk24Data::lls_read_lvl_all) {
                 keys << "lls_read_lvl_all" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
                 values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
-                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              interfaceTree->getDevIndex(),
+                                              keys, values, commmandData.isNeedAckMessage);
             }
 
             if(commmandData.devCommand == Progress_tmk24Data::lls_write_settings) {
                 keys << "lls_write_settings" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
                 values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
-                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              interfaceTree->getDevIndex(),
+                                              keys, values, commmandData.isNeedAckMessage);
             }
         }
             break;
@@ -394,73 +428,93 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message,
             // init
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getPassword) {
                 emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              interfaceTree->getDevIndex(),
                                               QStringList("getPassword"), QStringList("normal"), commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getAccelConfig) { // settings
                 keys << "getAccelConfig" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).first;
                 values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).second;
-                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              interfaceTree->getDevIndex(),
+                                              keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkConfig) { // settings
                 keys << "getNetworkConfig" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).first;
                 values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).second;
-                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              interfaceTree->getDevIndex(),
+                                              keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getIsReadyCommand) {}
             // current data
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getAccelData) { // current data
                 keys << "getAccelData" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
                 values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
-                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              interfaceTree->getDevIndex(),
+                                              keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkData) { // current data
                 keys << "getNetworkData" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
                 values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
-                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              interfaceTree->getDevIndex(),
+                                              keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getOtherData) { // current data
                 keys << "getOtherData" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
                 values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
-                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              interfaceTree->getDevIndex(),
+                                              keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getCardData) { // current data
                 keys << "getCardProperty" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
                 values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
-                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              interfaceTree->getDevIndex(),
+                                              keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getBatteryData) { // current data
                 keys << "getBatteryProperty" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
                 values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
-                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev), keys, values, commmandData.isNeedAckMessage);
+                emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              interfaceTree->getDevIndex(),
+                                              keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setPassword) { // reply exec
                 keys << "E_ConsoleCommandType_setPassword" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
                 values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
                 emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              interfaceTree->getDevIndex(),
                                               QStringList("setNetworkPassword"), QStringList("normal"), commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setAccelConfig) { // reply exec
                 keys << "E_ConsoleCommandType_setAccelConfig" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
                 values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
                 emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              interfaceTree->getDevIndex(),
                                               QStringList("setAccelConfig"), QStringList("normal"), commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setAccelUseCurrentValuesAsNullPoint) { // reply exec
                 keys << "E_ConsoleCommandType_setAccelUseCurrentValuesAsNullPoint" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
                 values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
                 emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              interfaceTree->getDevIndex(),
                                               QStringList("setAccelUseCurrentValuesAsNullPoint"), QStringList("normal"), commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setNetworkConfig) { // reply exec
                 keys << "E_ConsoleCommandType_setNetworkConfig" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
                 values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
                 emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              interfaceTree->getDevIndex(),
                                               QStringList("setNetworkConfig"), QStringList("normal"), commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setBatteryNewAccum) { // reply exec
                 keys << "E_ConsoleCommandType_setBatteryNewAccum" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
                 values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
                 emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                              interfaceTree->getDevIndex(),
                                               QStringList("setBatteryNewAccum"), QStringList("normal"), commmandData.isNeedAckMessage);
             }
         }
@@ -484,10 +538,10 @@ void ViewController::deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, 
         //        emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(),
         //                            "Смена пароля", QStringList(QString("Пароль не верный [Тип=%1]").
         //                                                        arg(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev))));
-        emit devUpdateLogMessage(2, QString("Не правильный пароль [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+        emit devUpdateLogMessage(interfaceTree->getDevIndex(),2, QString("Не правильный пароль [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
         break;
     case DevicesFactory::Type_Update_TypeIncorrect:
-        emit devUpdateLogMessage(2, QString("Не правильный тип [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+        emit devUpdateLogMessage(interfaceTree->getDevIndex(),2, QString("Не правильный тип [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
         //emit devWrongTypeIncorrect(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
         //                          getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceHeaderByIndex(indexDev).first());
         break;
@@ -536,8 +590,9 @@ void ViewController::setChangedIndexDevice(int interfaceIndex, int devIndex) {
     disconnectToDevSignals();
     connectToDevSignals(); // get interface property
     getDeviceFactoryByIndex(interfaceTree->getIoIndex())->setDeviceInitCommandByIndex(interfaceTree->getDevIndex());
-    emit devUpdateLogMessage(2, QString("Переключение устройства [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
-    emit setActiveDeviceProperty(getDeviceFactoryByIndex(interfaceIndex)->getDeviceName(devIndex));
+    emit devUpdateLogMessage(interfaceTree->getDevIndex(),2, QString("Переключение устройства [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+    emit devSetActiveDeviceProperty(interfaceTree->getDevIndex(),
+                                 getDeviceFactoryByIndex(interfaceIndex)->getDeviceName(devIndex));
 }
 
 void ViewController::setChangedIndexInteface(int interfaceIndex) {
@@ -546,8 +601,9 @@ void ViewController::setChangedIndexInteface(int interfaceIndex) {
     disconnectToDevSignals();
     interfaceTreeChanged(ConnectionFactory::Type_Update_ChangedIndex);
     connectToDevSignals(); // get interface property
-    emit devUpdateLogMessage(1, QString("Переключение интерфейса[%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
-    emit interfaceSetActiveProperty(connFactory->getInterace(interfaceTree->getIoIndex())->getType());
+    emit devUpdateLogMessage(interfaceTree->getDevIndex(),1, QString("Переключение интерфейса[%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+    emit interfaceSetActiveProperty(interfaceTree->getIoIndex(),
+                                    connFactory->getInterace(interfaceTree->getIoIndex())->getType());
 }
 
 

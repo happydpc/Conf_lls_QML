@@ -14,21 +14,29 @@ import "qrc:/qml/miscElems" as MiscElements
 
 Rectangle {
     anchors.fill: parent
+    visible: true
     property bool devIsConnected: false
+    property bool devIsReady: false
 
-    function setNoReady() {
+    function setDisconnected() {
         devIsConnected = false
         setWriteSettingsIsNoAvailable()
     }
-    function setReady() {
+    function setConnected() {
         devIsConnected = true
         setWriteSettingsIsAvailable()
     }
-    function setResetState() {
-        tabProperty.setCurrentIndex(0)
-        stackSubProperty.setCurrentIndex(0)
-        setNoReady()
+
+    function setReady() {
+        devIsConnected = true
+        devIsReady = true
+        setWriteSettingsIsAvailable()
     }
+
+    function setPropertyes(keys, values) {
+
+    }
+
     function setWriteSettingsIsAvailable() {
         writeSettingsButton_1.enabled = true
         writeSettingsButton_2.enabled = true
@@ -51,6 +59,10 @@ Rectangle {
                 versionFirmwareText.text = values[i]
             }
         }
+    }
+
+    function insertPeriodicData(keys, values) {
+
     }
 
     function setCustomCommandExecuted(keys, args, ackMessageIsVisible) {

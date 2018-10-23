@@ -37,10 +37,10 @@ Button {
             }
         }
         Text {
-            anchors.left: textIsCenter!=true ? (rectIcon.right) : null
-            anchors.leftMargin: textIsCenter!=true ? (rectIcon.width /2) : null
+            anchors.left: textIsCenter!=true ? (rectIcon.right) : undefined
+            anchors.leftMargin: textIsCenter!=true ? (rectIcon.width /2) : undefined
             anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: textIsCenter==true ? parent.horizontalCenter : null
+            anchors.horizontalCenter: textIsCenter==true ? parent.horizontalCenter : undefined
             color: button.pressed ? "black" : "#3598fa"
             font.pointSize: 8
             text: qsTr(name)
