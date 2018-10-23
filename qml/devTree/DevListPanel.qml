@@ -91,54 +91,6 @@ Rectangle {
         height: parent.height
         color: "#f0f3f6"
     }
-    ButtonRound {
-        id:addInterfaceButton
-        textLine:2
-        widthBody: interfaceTree.width - 40
-        anchors.top: spacerList.bottom
-        anchors.topMargin: 15
-        anchors.left: parent.left
-        anchors.leftMargin: 20
-        anchors.rightMargin: 20
-        anchors.right: interfaceTree.right
-        name: qsTr("Добавить интерфейс")
-        useIcon: true
-        iconCode: "\uF0FE  "
-        onClicked: {
-            addNewConnection();
-        }
-    }
-    ButtonRound {
-        id:settingsButton
-        textLine:2
-        widthBody: interfaceTree.width - 40
-        anchors.top: addInterfaceButton.bottom
-        anchors.topMargin: 5
-        anchors.left: parent.left
-        anchors.leftMargin: 20
-        anchors.rightMargin: 20
-        anchors.right: interfaceTree.right
-        enabled: false
-        name: qsTr("Настройки")
-        useIcon: true
-        iconCode: "\uF54A  "
-    }
-    ButtonRound {
-        id:supportButton
-        textLine:2
-        widthBody: interfaceTree.width - 40
-        anchors.top: settingsButton.bottom
-        anchors.topMargin: 5
-        anchors.left: parent.left
-        anchors.leftMargin: 20
-        anchors.rightMargin: 20
-        anchors.right: interfaceTree.right
-        enabled: false
-        name: qsTr("Поддержка")
-        useIcon: true
-        iconCode: "\uF0E0  "
-    }
-
     DevicePropertyPanel {
         id: devicePropertyPanel
         visible: true
@@ -146,5 +98,55 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.left: interfaceTree.right
         anchors.right: parent.right
+    }
+    Column {
+        spacing: 5
+        anchors.top: interfaceTree.bottom
+        anchors.topMargin: 25
+        anchors.left: parent.left
+        anchors.leftMargin: 20
+        anchors.rightMargin: 20
+        anchors.right: interfaceTree.right
+
+        ButtonRound {
+            id:addInterfaceButton
+            textLine:2
+            widthBody: interfaceTree.width - 40
+            name: qsTr("Добавить интерфейс")
+            useIcon: true
+            iconCode: "\uF0FE  "
+            onClicked: {
+                addNewConnection();
+            }
+        }
+        ButtonRound {
+            id:settingsButton
+            textLine:2
+            widthBody: interfaceTree.width - 40
+            enabled: false
+            name: qsTr("Настройки")
+            useIcon: true
+            iconCode: "\uF54A  "
+        }
+        ButtonRound {
+            id:supportButton
+            textLine:2
+            widthBody: interfaceTree.width - 40
+            enabled: false
+            name: qsTr("Поддержка")
+            useIcon: true
+            iconCode: "\uF0E0  "
+        }
+        ButtonRound {
+            id:closeButton
+            textLine:2
+            widthBody: interfaceTree.width - 40
+            name: qsTr("Закрыть")
+            useIcon: true
+            iconCode: "\uF0FE  "
+            onClicked: {
+                viewController.closeApplication()
+            }
+        }
     }
 }

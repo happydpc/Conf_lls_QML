@@ -33,6 +33,10 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
     });
 }
 
+void ViewController::closeApplication() {
+    exit(0);
+}
+
 QStringList ViewController::getInterfaceAvailableToAdd(QString typeName) {
     QStringList res;
     res = connFactory->getAvailableName(typeName);

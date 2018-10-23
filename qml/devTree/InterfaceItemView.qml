@@ -23,7 +23,7 @@ Row{
             text: modelData.content
             color: modelData.isCurrent ? "#46e342" : "#3598fa"
             anchors.left: itemRectIcon.left
-            anchors.leftMargin: 50
+            anchors.leftMargin: 30
             MouseArea{
                 id:aread
                 anchors.fill: parent

@@ -48,7 +48,7 @@ Column{
                 MouseArea {
                     id:area
                     anchors.left: iconEditDeviceHeader.right
-                    anchors.rightMargin: 5
+                    anchors.leftMargin: 5
                     acceptedButtons: Qt.LeftButton
                     width: 160
                     height: 50

@@ -12,6 +12,8 @@ class ViewController : public QObject
 public:
     explicit ViewController(Model *pInterfaceModel, QObject *parent = nullptr);
 
+    Q_INVOKABLE void closeApplication();
+
     Q_INVOKABLE bool addConnection(QString typeName, QString name, QStringList keyParam, QStringList valueParam);
     Q_INVOKABLE void removeActiveInterface();
     Q_INVOKABLE QStringList getInterfaceAvailableToAdd(QString typeName);
@@ -34,12 +36,7 @@ public:
 
     DeviceAbstract *getCurrentDeviceToAbstract();
 
-
     //****************** Only PROGRESS TMK24 ***********//
-//    Q_INVOKABLE void setCurrentDevNewIdAddress(QString newId, QString password, QString currentId);
-//    Q_INVOKABLE void setCurrentDevLevelAsEmpty();
-//    Q_INVOKABLE void setCurrentDevLevelAsFull();
-//    Q_INVOKABLE void setCurrentDevSettings(QStringList key, QStringList values);
     Q_INVOKABLE void getCurrentDevTarTable();
     Q_INVOKABLE void setCurrentDevChangeId(QString password, QString uniqNameIdNew, QString uniqNameIdCurrent);
     //********************* TARING *********************//

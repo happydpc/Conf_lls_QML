@@ -1,6 +1,7 @@
 QT += quick
 QT += serialport
 QT += charts qml
+QT += sql
 CONFIG += c++14
 
 # The following define makes your compiler emit warnings if you use
@@ -42,7 +43,8 @@ SOURCES += \
     device/Progress_TMK24/Progress_tmk24Service.cpp \
     device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.cpp \
     device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.cpp \
-    device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.cpp
+    device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.cpp \
+    database/database.cpp
 
 RESOURCES += \
     qml.qrc \
@@ -87,7 +89,8 @@ HEADERS += \
     device/Progress_TMK24/Progress_tmk24Service.h \
     device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.h \
     device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.h \
-    device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.h
+    device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.h \
+    database/database.h
 
 DISTFILES += \
     device/service/serviceDevicesAbstract
