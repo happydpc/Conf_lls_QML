@@ -22,9 +22,9 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
     this->serviceList.push_back(new Nozzle_Rev_0_00_Service("Nozzle Rev 0.0"));
 
     QTimer::singleShot(500, Qt::CoarseTimer, [&] {
-        addConnection("serial", "ttyUSB0", QStringList("baudrate"), QStringList("19200"));
-        addDeviceToConnection("PROGRESS TMK24", QStringList("devId"), QStringList("3"));
-        addDeviceToConnection("PROGRESS TMK24", QStringList("devId"), QStringList("4"));
+//        addConnection("serial", "ttyUSB0", QStringList("baudrate"), QStringList("19200"));
+//        addDeviceToConnection("PROGRESS TMK24", QStringList("devId"), QStringList("3"));
+//        addDeviceToConnection("PROGRESS TMK24", QStringList("devId"), QStringList("4"));
     });
 
     QTimer::singleShot(1000, Qt::CoarseTimer, [&] {
@@ -53,6 +53,8 @@ bool ViewController::addConnection(QString typeName, QString name, QStringList k
             emit devUpdateLogMessage(interfaceTree->getDevIndex(), 0, QString("Добавление интерфейса [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
             emit interfaceSetActiveProperty(interfaceTree->getIoIndex(),
                     connFactory->getInterace(interfaceTree->getIoIndex())->getType());
+            emit addInterfaceSuccesfull(connFactory->getInterace(interfaceTree->getIoIndex())->getType(),
+                                        QStringList("name"), QStringList(name));
             interfaceTree->addConnection(name);
         } else {
             emit addConnectionFail(name);
@@ -66,6 +68,7 @@ void ViewController::removeActiveInterface() {
     interfaceTree->removeConnection(indexRemove);
     getDeviceFactoryByIndex(indexRemove)->removeDeviceAll();
     connFactory->removeConnection(indexRemove);
+    emit deleteInterfaceSuccesfull(indexRemove);
     if(getInterfaceCount() == 0) {
         emit interfaceAndDeviceListIsEmpty();
     }
@@ -77,6 +80,7 @@ void ViewController::removeActiveDevice() {
     interfaceTree->removeDeviceToConnection(interfaceTree->getIoIndex(), indexRemove);
     getDeviceFactoryByIndex(interfaceTree->getIoIndex())->removeDeviceByIndex(indexRemove);
     emit devUpdateLogMessage(interfaceTree->getDevIndex(),2, QString("Удаление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+    emit deleteDeviceSuccesfull(indexRemove);
     if(getDeviceCount() == 0) {
         emit interfaceSetActiveProperty(interfaceTree->getIoIndex(),
             connFactory->getInterace(interfaceTree->getIoIndex())->getType());
@@ -288,13 +292,13 @@ void ViewController::deviceReadyCurrentData(DevicesFactory::E_DeviceType type, Q
 
 void ViewController::deviceCheckReady(DevicesFactory::E_DeviceType devType, QString devUniqNameId, bool result) {
     if(devType == DevicesFactory::Type_Progress_Tmk24) {
-        emit devReadyCheckCommand(QString(Progress_tmk24::name), devUniqNameId, "...", result);
+        emit devReadyCheckCommand(interfaceTree->getIoIndex(), QString(Progress_tmk24::name), devUniqNameId, "...", result);
     }
     if(devType == DevicesFactory::Type_Progress_tmk4UX) {
-        emit devReadyCheckCommand(QString(Progress_tmk4UX::name), devUniqNameId, "...", result);
+        emit devReadyCheckCommand(interfaceTree->getIoIndex(), QString(Progress_tmk4UX::name), devUniqNameId, "...", result);
     }
     if(devType == DevicesFactory::Type_Nozzle_rev_0_00) {
-        emit devReadyCheckCommand(QString(Nozzle_Revision_0_00_Oct_2018::name), devUniqNameId, "...", result);
+        emit devReadyCheckCommand(interfaceTree->getIoIndex(), QString(Nozzle_Revision_0_00_Oct_2018::name), devUniqNameId, "...", result);
     }
 }
 

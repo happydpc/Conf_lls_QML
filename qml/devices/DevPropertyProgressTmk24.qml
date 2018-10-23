@@ -22,7 +22,7 @@ Rectangle {
 
     function setConnected() {
         devIsConnected = true
-        devIsReady = falseа
+        devIsReady = fals
         setWriteSettingsIsNoAvailable()
     }
 

@@ -12,56 +12,59 @@ Item {
     Connections {
         target: viewController
 
+        onAddInterfaceSuccesfull: {
+            projectPanel.devicePropertyPanel.intefaceAdded(ioType, keyProperty, valueProperty)
+        }
+        onDeleteInterfaceSuccesfull: {
+            projectPanel.devicePropertyPanel.intefaceDeleted(ioIndex)
+        }
         onInterfaceSetActiveProperty: {
-            projectPanel.devicePanel.devicePropertyPanel.setActiveInterfacePanelType(ioType, ioIndex)
+            projectPanel.devicePropertyPanel.setActiveInterfacePanelType(ioType, ioIndex)
         }
         onAddDeviceSuccesfull: {
-            projectPanel.devicePanel.devicePropertyPanel.deviceAdded(devType, devKeyProperty, devValueProperty)
+            projectPanel.devicePropertyPanel.deviceAdded(devType, devKeyProperty, devValueProperty)
+        }
+        onDeleteDeviceSuccesfull: {
+            projectPanel.devicePropertyPanel.deviceAdded(devIndex)
         }
         onDevSetActiveDeviceProperty: {
-            projectPanel.devicePanel.devicePropertyPanel.setActiveDevicePanelType(devType, devIndex)
+            projectPanel.devicePropertyPanel.setActiveDevicePanelType(devType, devIndex)
         }
         onInterfaceReadyProperties: {
-            projectPanel.devicePanel.devicePropertyPanel.setInterfaceProperites(ioType, ioIndex, properties)
+            projectPanel.devicePropertyPanel.setInterfaceProperites(ioType, ioIndex, properties)
         }
-//        onInterfaceAndDeviceListIsEmpty: {
-//            projectPanel.devicePanel.devicePropertyPanel.setActiveLogoPanel()
-//        }
         onDevReadyProperties: {
-            projectPanel.devicePanel.devicePropertyPanel.setReadyProperties(devIndex, typeDev, keys, values)
+            projectPanel.devicePropertyPanel.setReadyProperties(devIndex, typeDev, keys, values)
         }
         onDevReadyPeriodicData: {
-            projectPanel.devicePanel.devicePropertyPanel.setReadyPeriodicData(devIndex, typeDev, keys, values)
+            projectPanel.devicePropertyPanel.setReadyPeriodicData(devIndex, typeDev, keys, values)
         }
         onDevConnected: {
-            projectPanel.devicePanel.devicePropertyPanel.setDevConnected(devIndex, typeDev)
+            projectPanel.devicePropertyPanel.setDevConnected(devIndex, typeDev)
         }
         onDevReady: {
-            projectPanel.devicePanel.devicePropertyPanel.setDevReady(devIndex, typeDev)
+            projectPanel.devicePropertyPanel.setDevReady(devIndex, typeDev)
         }
         onDevDisconnected: {
-            projectPanel.devicePanel.devicePropertyPanel.setDevDisconnected(devIndex, typeDev)
+            projectPanel.devicePropertyPanel.setDevDisconnected(devIndex, typeDev)
         }
-//        onDevWrongTypeIncorrect: {
-//            projectPanel.devicePanel.devicePropertyPanel.devShowTypeIncorrect(typeDev, devNameId)
-//        }
         onAddConnectionFail: {
-            projectPanel.devicePanel.devicePropertyPanel.dialogAddInterfaceFail.open()
+            projectPanel.devicePropertyPanel.dialogAddInterfaceFail.open()
         }
         onAddDeviceFail: {
-            projectPanel.devicePanel.devicePropertyPanel.showDeviceAddError(devName, errorMessage)
+            projectPanel.devicePropertyPanel.showDeviceAddError(devName, errorMessage)
         }
         onDevShowMessage: {
-            projectPanel.devicePanel.devicePropertyPanel.setDevShowMessage(typeDev, messageHeader, message)
+            projectPanel.devicePropertyPanel.setDevShowMessage(typeDev, messageHeader, message)
         }
         onDevCustomCommandExecuted: {
-            projectPanel.devicePanel.devicePropertyPanel.setDevCustomCommandExecuted(typeDev, devIndex, keys, args, ackMessageIsVisible)
+            projectPanel.devicePropertyPanel.setDevCustomCommandExecuted(typeDev, devIndex, keys, args, ackMessageIsVisible)
         }
         onDevUpdateLogMessage: {
-            projectPanel.devicePanel.devicePropertyPanel.addDeviceLog(devIndex, codeMessage, message)
+            projectPanel.devicePropertyPanel.addDeviceLog(devIndex, codeMessage, message)
         }
         onDevReadyCheckCommand: {
-            projectPanel.devicePanel.devicePropertyPanel.devPropertySerialPort.addDeviceDialog.setResultCheckDevice(devTypeName, devId, devSn, result)
+            projectPanel.devicePropertyPanel.intefaceSetResultCheckDevice(ioIndex, devTypeName, devId, devSn, result)
         }
     }
 
@@ -99,14 +102,14 @@ Item {
                         visible: false
                     }
                 }
-                StartPanel {
+
+                DevListPanel {
                     id:projectPanel
                     anchors.top: upBar.bottom
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
-
-                    devicePanel.onAddNewConnection: {
+                    onAddNewConnection: {
                         var list = viewController.getInterfaceAvailableToAdd("serial")
                         console.log("Available interface-" + list)
                         addInterface.setListInterfaces(list)

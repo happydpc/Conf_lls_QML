@@ -16,10 +16,42 @@ Rectangle {
     property int indexItem_Intefaces: 1
     property int indexItem_Devices: 2
 
-    function setActiveLogoPanel() {
-        modeSelectView.setCurrentIndex(indexItem_Logo)
+    // *************  interfaces  **************/
+    function intefaceAdded(ioType, keyProperty, valueProperty) {
+        switch(ioType.toLowerCase()) {
+        case "serial":
+            var componentQml = Qt.createComponent("qrc:/qml/interfaces/DevPropertySerialPort.qml");
+            var item = componentQml.createObject(interfaceView)
+            interfaceView.addItem(item)
+            interfaceItemArray.push(item);
+            modeSelectView.setCurrentIndex(indexItem_Intefaces)
+            break;
+        default: break;
+        }
     }
 
+    function intefaceDeleted(ioIndex) {
+        interfaceView.removeItem(ioIndex)
+        interfaceItemArray.splice(ioIndex, ioIndex+1)
+        if(interfaceItemArray.length <=0) {
+            modeSelectView.setCurrentIndex(indexItem_Logo)
+        }
+    }
+
+    function setActiveInterfacePanelType(ioType, ioIndex) {
+        switch(ioType.toLowerCase()) {
+        case "serial":
+            modeSelectView.setCurrentIndex(indexItem_Intefaces)
+            break;
+        default: break;
+        }
+    }
+
+    function intefaceSetResultCheckDevice(ioIndex, devTypeName, devId, devSn, result) {
+        interfaceItemArray[ioIndex].addDeviceDialog.setResultCheckDevice(devTypeName, devId, devSn, result)
+    }
+
+    // *************  devices   **************/
     function deviceAdded(devType, devKeyProperty, devValueProperty) {
         switch(devType.toLowerCase()) {
         case "progress tmk24":
@@ -35,16 +67,14 @@ Rectangle {
         }
     }
 
-    function setActiveItem(itemType) {
-
-    }
-
-    function setActiveInterfacePanelType(ioType, ioIndex) {
-        switch(ioType.toLowerCase()) {
-        case "serial":
+    function deviceDeleted(devIndex) {
+        deviceView.removeItem(devIndex)
+        deviceItemArray.slice(devIndex-1, devIndex)
+        if(deviceItemArray.length <=0) {
             modeSelectView.setCurrentIndex(indexItem_Intefaces)
-            break;
-        default: break;
+        }
+        if(interfaceItemArray.length <=0) {
+            modeSelectView.setCurrentIndex(indexItem_Logo)
         }
     }
 

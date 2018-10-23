@@ -25,7 +25,6 @@
         <file>qml/projectPanel/MainMenuBar.qml</file>
         <file>qml/projectPanel/ProjectMainStack.qml</file>
         <file>qml/projectPanel/ProjectStartScreen.qml</file>
-        <file>qml/projectPanel/StartPanel.qml</file>
         <file>qml/devTree/DevListPanel.qml</file>
         <file>qml/devTree/EditDeviceName.qml</file>
     </qresource>

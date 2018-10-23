@@ -82,6 +82,8 @@ public:
 
 signals:
 
+    void addInterfaceSuccesfull(QString ioType, QStringList keyProperty, QStringList valueProperty);
+    void deleteInterfaceSuccesfull(int ioIndex);
     void interfaceSetActiveProperty(int ioIndex, QString ioType);
     void interfaceAndDeviceListIsEmpty();
     void interfaceReadyProperties(QString ioType, int ioIndex, QStringList properties);
@@ -90,11 +92,12 @@ signals:
     void addDeviceFail(QString devName, QString errorMessage);
 
     void addDeviceSuccesfull(QString devType, QStringList devKeyProperty, QStringList devValueProperty);
+    void deleteDeviceSuccesfull(int devIndex);
     void devSetActiveDeviceProperty(int devIndex, QString devType);
     void devConnected(int devIndex, QString typeDev);
     void devDisconnected(int devIndex, QString typeDev);
     void devReady(int devIndex, QString typeDev);
-    void devReadyCheckCommand(QString devTypeName, QString devId, QString devSn, bool result);
+    void devReadyCheckCommand(int ioIndex, QString devTypeName, QString devId, QString devSn, bool result);
     void devReadyProperties(int devIndex, QString typeDev, QStringList keys, QStringList values);
     void devReadyPeriodicData(int devIndex, QString typeDev, QStringList keys, QStringList values);
     void devErrorOperation(QString message);
