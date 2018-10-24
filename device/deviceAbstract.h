@@ -49,6 +49,7 @@ public:
     virtual CommandController::sCommandData getCommandToGetType() = 0;
     virtual CommandController::sCommandData getCommandtoCheckPassword() = 0;
     virtual QList<CommandController::sCommandData> getCommandListToInit() = 0;
+    virtual QList<CommandController::sCommandData> getCommandListToUpdate() = 0;
     virtual QList<CommandController::sCommandData> getCommandListToCurrentData() = 0;
     virtual QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList>) = 0;
     virtual QList<CommandController::sCommandData> getCommandCustom(QString operation) = 0;

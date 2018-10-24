@@ -20,7 +20,7 @@ public slots:
     virtual bool readData(QByteArray &pData) = 0;
     virtual QString getType() = 0;
     virtual QString getInterfaceName() = 0;
-    virtual QStringList getInterfaceProperty() = 0;
+    virtual QPair<QStringList,QStringList> getInterfaceProperty() = 0;
     virtual QStringList getAvailableList() = 0;
     virtual DevicesFactory* getDeviceFactory() = 0;
 

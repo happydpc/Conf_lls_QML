@@ -548,6 +548,10 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
     return listCommand;
 }
 
+QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommandListToUpdate() {
+    return getCommandListToInit();
+}
+
 CommandController::sCommandData Nozzle_Revision_0_00_Oct_2018::getCommandToGetType() {
     CommandController::sCommandData command;
     command.deviceIdent = getUniqId();

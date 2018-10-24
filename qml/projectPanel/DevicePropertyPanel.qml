@@ -22,6 +22,7 @@ Rectangle {
         case "serial":
             var componentQml = Qt.createComponent("qrc:/qml/interfaces/DevPropertySerialPort.qml");
             var item = componentQml.createObject(interfaceView)
+            item.setPropertyValues(keyProperty, valueProperty)
             interfaceView.addItem(item)
             interfaceItemArray.push(item);
             modeSelectView.setCurrentIndex(indexItem_Intefaces)
@@ -48,7 +49,7 @@ Rectangle {
     }
 
     function intefaceSetResultCheckDevice(ioIndex, devTypeName, devId, devSn, result) {
-        interfaceItemArray[ioIndex].addDeviceDialog.setResultCheckDevice(devTypeName, devId, devSn, result)
+        interfaceItemArray[ioIndex].setResultCheckDevice(devTypeName, devId, devSn, result)
     }
 
     // *************  devices   **************/
@@ -87,9 +88,10 @@ Rectangle {
         modeSelectView.setCurrentIndex(indexItem_Devices)
     }
 
-    function setInterfaceProperites(ioType, ioIndex, properties) {
+    function setInterfaceProperites(ioType, ioIndex, keyProperty, valueProperty) {
         modeSelectView.setCurrentIndex(indexItem_Intefaces)
         interfaceView.setCurrentIndex(ioIndex)
+        interfaceItemArray[ioIndex].setPropertyValues(keyProperty, valueProperty)
     }
 
     function showDeviceAddError(devTypeName, errorMessage) {
@@ -215,8 +217,8 @@ Rectangle {
             standardButtons: StandardButton.Accept
             Rectangle {
                 color: "transparent"
-                implicitWidth: 250
-                implicitHeight: 100
+                implicitWidth: 400
+                implicitHeight: 200
                 Text {
                     text: dialogAddDeviceFail.message
                     color: "navy"

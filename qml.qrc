@@ -27,5 +27,7 @@
         <file>qml/projectPanel/ProjectStartScreen.qml</file>
         <file>qml/devTree/DevListPanel.qml</file>
         <file>qml/devTree/EditDeviceName.qml</file>
+        <file>qml/interfaces/MessageShow.qml</file>
+        <file>qml/projectPanel/Session.qml</file>
     </qresource>
 </RCC>

@@ -31,7 +31,7 @@ Item {
             projectPanel.devicePropertyPanel.setActiveDevicePanelType(devType, devIndex)
         }
         onInterfaceReadyProperties: {
-            projectPanel.devicePropertyPanel.setInterfaceProperites(ioType, ioIndex, properties)
+            projectPanel.devicePropertyPanel.setInterfaceProperites(ioType, ioIndex, keyProperty, valueProperty)
         }
         onDevReadyProperties: {
             projectPanel.devicePropertyPanel.setReadyProperties(devIndex, typeDev, keys, values)

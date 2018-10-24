@@ -198,6 +198,19 @@ void DevicesFactory::setDeviceInitCommandByIndex(int index) {
     }
 }
 
+void DevicesFactory::setDeviceCommandUpdateByIndex(int index) {
+    if(getDeviceCount() != 0) {
+        if(getDeviceCount()-1 >= index) {
+            QList<CommandController::sCommandData>commands = findDeviceByIndex(index)->second->getCommandListToUpdate();
+            for(auto i:commands) {
+                findDeviceByIndex(index)->second->makeDataToCommand(i);
+                i.isNeedAckMessage = false;
+                commandController->addCommandToStack(i);
+            }
+        }
+    }
+}
+
 QPair<QStringList,QStringList> DevicesFactory::getDeviceCurrentDataByIndex(int index) {
     if(deviceMap.empty()) {return QPair<QStringList,QStringList>();}
     return findDeviceByIndex(index)->second->getCurrentData();

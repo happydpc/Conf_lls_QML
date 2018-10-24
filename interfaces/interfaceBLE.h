@@ -22,7 +22,7 @@ public slots:
     bool sendData(QByteArray &pData) override;
     bool readData(QByteArray &pData) override;
     QString getInterfaceName() override;
-    QStringList getInterfaceProperty() override;
+    QPair<QStringList,QStringList> getInterfaceProperty() override;
     QStringList getAvailableList() override;
     QString getType() override;
 

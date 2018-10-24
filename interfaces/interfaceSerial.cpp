@@ -61,12 +61,12 @@ QString InterfaceSerial::getInterfaceName() {
     return portHandler->portName();
 }
 
-QStringList InterfaceSerial::getInterfaceProperty() {
+QPair<QStringList,QStringList> InterfaceSerial::getInterfaceProperty() {
+    QPair<QStringList,QStringList> res;
     QString description;
     QString manufacturer;
     QString serialNumber;
     QString baudrate;
-    QStringList list;
     if(portHandler->isOpen()) {
         const auto infos = QSerialPortInfo::availablePorts();
         for(const QSerialPortInfo &info : infos) {
@@ -77,16 +77,21 @@ QStringList InterfaceSerial::getInterfaceProperty() {
                 if(portHandler->isOpen()) {
                     baudrate = QString::number(portHandler->baudRate());
                 }
-                list << description;
-                list << manufacturer;
-                list << serialNumber;
-                list << info.portName();
-                list << baudrate;
+                res.first.push_back("info.portName()");
+                res.second.push_back(info.portName());
+                res.first.push_back("baudrate");
+                res.second.push_back(baudrate);
+                res.first.push_back("description");
+                res.second.push_back(description);
+                res.first.push_back("manufacturer");
+                res.second.push_back(manufacturer);
+                res.first.push_back("serialNumber");
+                res.second.push_back(serialNumber);
                 break;
             }
         }
     }
-    return list;
+    return res;
 }
 
 bool InterfaceSerial::writeData(QByteArray data) {

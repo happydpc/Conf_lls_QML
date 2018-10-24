@@ -451,9 +451,6 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                 lls_data.fuelLevel.isValid = true;
                 lls_data.freq.value.value_u32  = frequency;
                 lls_data.freq.isValid = true;
-                emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_CurrentDataUpdated, getUniqId(),
-                                            commandReqData.devCommand, QString("Ready current data"),
-                                            QStringList(), QStringList(), commandReqData);
                 res = true;
             }
         } else {
@@ -902,6 +899,17 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandListToInit() {
     command.devCommand = (int)Progress_tmk24Data::lls_read_lvl_all;
     listCommand.push_back(command);
     command.devCommand = (int)Progress_tmk24Data::lls_read_lvl_once;
+    listCommand.push_back(command);
+    return listCommand;
+}
+
+QList<CommandController::sCommandData> Progress_tmk24::getCommandListToUpdate() {
+    QList<CommandController::sCommandData> listCommand;
+    CommandController::sCommandData command;
+    command.deviceIdent = getUniqId();
+    command.operationHeader = "update device";
+    command.isNeedAckMessage = false;
+    command.devCommand = (int)Progress_tmk24Data::lls_read_lvl_all;
     listCommand.push_back(command);
     return listCommand;
 }

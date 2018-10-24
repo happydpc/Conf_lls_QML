@@ -28,7 +28,7 @@ bool InterfaceBLE::readData(QByteArray &pData)  {
 
 QString InterfaceBLE::getInterfaceName() {}
 
-QStringList InterfaceBLE::getInterfaceProperty() {}
+QPair<QStringList,QStringList> InterfaceBLE::getInterfaceProperty() {}
 
 bool InterfaceBLE::isOpen() {}
 

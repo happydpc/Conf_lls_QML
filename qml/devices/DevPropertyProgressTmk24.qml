@@ -22,7 +22,7 @@ Rectangle {
 
     function setConnected() {
         devIsConnected = true
-        devIsReady = fals
+        devIsReady = false
         setWriteSettingsIsNoAvailable()
     }
 
@@ -74,8 +74,11 @@ Rectangle {
         var i = 0;
         switch(keys[0]) {
         case "lls_read_settings":
+            parseInputData(keys, args)
             if(ackMessageIsVisible) {
-                parseInputData(keys, args)
+                messageDialog.title = "Чтение настроек"
+                messageDialog.message = "Настройки успешно считаны"
+                messageDialog.open()
             }
             break;
         case "lls_write_settings":

@@ -88,6 +88,12 @@ QList<CommandController::sCommandData> Progress_tmk4UX::getCommandListToInit() {
     return listCommand;
 }
 
+QList<CommandController::sCommandData> Progress_tmk4UX::getCommandListToUpdate() {
+    QList<CommandController::sCommandData> listCommand;
+    CommandController::sCommandData command;
+    return listCommand;
+}
+
 CommandController::sCommandData Progress_tmk4UX::getCommandToGetType() {
     CommandController::sCommandData command;
     command.deviceIdent = getUniqId();

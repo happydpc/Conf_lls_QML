@@ -109,6 +109,21 @@ Rectangle {
         anchors.right: interfaceTree.right
 
         ButtonRound {
+            id:sessionButton
+            textLine:2
+            widthBody: interfaceTree.width - 40
+            name: qsTr("Сеанс")
+            useIcon: true
+            iconCode: "\uF0FE  "
+            onClicked: {
+                var componentQml = Qt.createComponent("qrc:/qml/projectPanel/Session.qml");
+                var item = componentQml.createObject(devicePropertyPanel)
+                item.x = devicePropertyPanel.height / 6
+                item.y = devicePropertyPanel.width / 6
+                item.open()
+            }
+        }
+        ButtonRound {
             id:addInterfaceButton
             textLine:2
             widthBody: interfaceTree.width - 40
@@ -136,17 +151,6 @@ Rectangle {
             name: qsTr("Поддержка")
             useIcon: true
             iconCode: "\uF0E0  "
-        }
-        ButtonRound {
-            id:closeButton
-            textLine:2
-            widthBody: interfaceTree.width - 40
-            name: qsTr("Закрыть")
-            useIcon: true
-            iconCode: "\uF0FE  "
-            onClicked: {
-                viewController.closeApplication()
-            }
         }
     }
 }

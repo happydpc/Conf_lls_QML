@@ -32,6 +32,7 @@ public:
     CommandController::sCommandData getCommandToGetType() override;
     CommandController::sCommandData getCommandtoCheckPassword() override;
     QList<CommandController::sCommandData> getCommandListToInit() override;
+    QList<CommandController::sCommandData> getCommandListToUpdate() override;
     QList<CommandController::sCommandData> getCommandListToCurrentData() override;
     QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList> data) override;
     QList<CommandController::sCommandData> getCommandCustom(QString operation) override;

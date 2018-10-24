@@ -46,6 +46,7 @@ public slots:
     QString getDeviceTypeNameByType(DevicesFactory::E_DeviceType type);
     E_DeviceType getDeviceType(QString typeText);
     E_DeviceType getDeviceType(int index);
+    void setDeviceCommandUpdateByIndex(int index);
     void setDeviceInitCommandByIndex(int index);
     int getDeviceCount();
     QStringList getAvailableDeviceTypes();

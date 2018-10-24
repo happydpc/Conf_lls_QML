@@ -12,6 +12,12 @@ class ViewController : public QObject
 public:
     explicit ViewController(Model *pInterfaceModel, QObject *parent = nullptr);
 
+    Q_INVOKABLE QStringList getListSession();
+    Q_INVOKABLE QString saveCurrentSession();
+    Q_INVOKABLE QString saveCurrentSessionAs(QString sessionName);
+
+    Q_INVOKABLE bool loadSession(QString sessionName);
+
     Q_INVOKABLE void closeApplication();
 
     Q_INVOKABLE bool addConnection(QString typeName, QString name, QStringList keyParam, QStringList valueParam);
@@ -86,7 +92,7 @@ signals:
     void deleteInterfaceSuccesfull(int ioIndex);
     void interfaceSetActiveProperty(int ioIndex, QString ioType);
     void interfaceAndDeviceListIsEmpty();
-    void interfaceReadyProperties(QString ioType, int ioIndex, QStringList properties);
+    void interfaceReadyProperties(QString ioType, int ioIndex, QStringList keyProperty, QStringList valueProperty);
 
     void addConnectionFail(QString devName);
     void addDeviceFail(QString devName, QString errorMessage);

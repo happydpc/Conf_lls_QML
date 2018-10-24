@@ -13,7 +13,12 @@ Popup {
     clip: true
 
     signal resultMessage(var res)
-    property string mode: "addDevice"
+
+    property string modeFind_idle:          "mode_idle"
+    property string modeFind_add_once:      "mode_add_once"
+    property string modeFind_add_finder:    "mode_add_finder"
+    property string modeFind: modeFind_idle
+
     property bool modeFindAbort: false
 
     function setListAvailableDevices(list) {
@@ -28,30 +33,30 @@ Popup {
     function setResultCheckDevice(devTypeName, devId, devSn, result) {
         var paramList = []
         var keyList = []
-        if(mode === "addDevice") {
-            if(!modeFindAbort) {
-                if(result === true) {
-                    switch(typeDeviceList.currentIndex) {
-                    case 0:
-                        if(typeDeviceList.currentText.length != 0) {
-                            keyList.push("devId")
-                            paramList.push(typeDeviceIdProgressTmk24.text)
-                            keyList.push("password")
-                            paramList.push(typeDevicePasswordProgressTmk24.text)
-                            viewController.addDeviceToConnection(typeDeviceList.currentText, keyList, paramList)
-                            close()
-                        }
-                        break;
-                    case 1:
-                        break;
+        switch(modeFind) {
+        case modeFind_idle: break;
+        case modeFind_add_once:
+            if(result === true) {
+                switch(typeDeviceList.currentIndex) {
+                case 0:
+                    if(typeDeviceList.currentText.length !== 0) {
+                        keyList.push("devId")
+                        paramList.push(typeDeviceIdProgressTmk24.text)
+                        keyList.push("password")
+                        paramList.push(typeDevicePasswordProgressTmk24.text)
+                        viewController.addDeviceToConnection(typeDeviceList.currentText, keyList, paramList)
+                        close()
                     }
-                } else {
-                    resultMessage("Не удалось добавить устройство\nТак как оно не ответило на запрос")
+                    break;
+                case 1:
+                    break;
                 }
             } else {
-                modeFindAbort = false
+                resultMessage("Не удалось добавить устройство\nТак как оно не ответило на запрос")
             }
-        } else if(mode == "findDevice") {
+            break;
+
+        case modeFind_add_finder:
             switch(typeDeviceList.currentIndex) {
             case 0:
                 if(result) {
@@ -74,7 +79,7 @@ Popup {
                         typeFindStopButton.enabled = false
                         typeDeviceIdProgressTmk24FindDown.readOnly = false
                         typeDeviceIdProgressTmk24FindUp.readOnly = false
-                        mode = "addDevice"
+                        //                        mode = "addDevice"
                     } else {
                         viewController.checkDeviceFromConnection(typeDeviceList.currentText, keyList, paramList)
                     }
@@ -91,6 +96,7 @@ Popup {
                 close()
                 break;
             }
+            break;
         }
     }
 
@@ -109,7 +115,7 @@ Popup {
                 id: typeDeviceList
                 width: parent.width - 10
                 height: 40
-                enabled: mode !== "findDevice"
+                enabled: modeFind !== modeFind_add_finder
                 model: ListModel {
                     id: modeltypeDeviceList
                 }
@@ -132,7 +138,7 @@ Popup {
                             spacing: 5
                             currentIndex: typeAddDeviceViewProgressTmk24.currentIndex
                             font.pointSize: 8
-                            enabled: mode !== "findDevice" ? true : false
+                            enabled: modeFind !== modeFind_add_finder
                             MiscElems.TabButtonUp {
                                 name: "Известный адрес"
                                 textLine:1
@@ -290,12 +296,11 @@ Popup {
                                                     onClicked: {
                                                         typeFindStopButton.enabled = true
                                                         typeFindStartButton.enabled = false
-                                                        modeFindAbort = false
                                                         var keyList = []
                                                         var paramList = []
+                                                        modeFind = modeFind_add_finder
                                                         findIdValues = parseInt(typeDeviceIdProgressTmk24FindDown.text)
                                                         findDevListView.model.clear()
-                                                        mode = "findDevice"
                                                         keyList.push("uniqIdDevice")
                                                         paramList.push(findIdValues)
                                                         keyList.push("password")
@@ -315,7 +320,7 @@ Popup {
                                                     onClicked: {
                                                         typeFindStartButton.enabled = true
                                                         typeFindStopButton.enabled = false
-                                                        modeFindAbort = true
+                                                        modeFind = modeFind_idle
                                                     }
                                                 }
                                             }
@@ -525,8 +530,7 @@ Popup {
             y: 128
             anchors.leftMargin: 153
             onClicked: {
-                mode = "addDevice"
-                modeFindAbort = true
+                modeFind = modeFind_add_finder
                 typeDeviceList.currentIndex = 0
                 findDevListView.model.clear()
                 close()
@@ -558,7 +562,7 @@ Popup {
                         keyList.push("password")
                         paramList.push(typeDevicePasswordProgressTmk24.text)
                         viewController.checkDeviceFromConnection(typeDeviceList.currentText, keyList, paramList)
-                        mode = "addDevice"
+                        modeFind = modeFind_add_once
                         close()
                         break;
                     case 1: // find device
@@ -573,9 +577,8 @@ Popup {
                             keyList.push("password")
                             paramList.push("")
                             viewController.addDeviceToConnection(typeDeviceList.currentText, keyList, paramList)
+                            modeFind = modeFind_idle
                         }
-                        mode = "addDevice"
-//                        modeFindAbort = true
                         typeDeviceProgressProgressTmk24.value = 0
                         typeDeviceProgressProgressTmk24.visible = false
                         typeFindStartButton.enabled = true
@@ -593,8 +596,7 @@ Popup {
                     keyList.push("password")
                     paramList.push(typeDevicePasswordNozzle_v0_0.text)
                     viewController.addDeviceToConnection(typeDeviceList.currentText, keyList, paramList)
-                    mode = "addDevice"
-//                    modeFindAbort = true
+                    modeFind = modeFind_idle
                     typeDeviceProgressProgressTmk24.visible = false
                     findDevListView.model.clear()
                     close()
