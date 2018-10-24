@@ -15,7 +15,8 @@ Database::Database(QObject *parent) : QObject(parent) {
 
 Database::~Database() {}
 
-QString query_get_sessions("SELECT * FROM sessions");
+QString query_get_sessions_count("SELECT * FROM sessions");
+QString query_get_sessions_all("SELECT * FROM sessions");
 
 //QString query_get_settings("SELECT sets_id, sets_count_digits, sets_used_minus FROM settings");
 //QString query_set_settings("UPDATE settings SET sets_count_digits=%1, sets_used_minus = %2");
@@ -30,11 +31,25 @@ QString query_get_sessions("SELECT * FROM sessions");
 //                             " JOIN user ON user.user_id = statistics.stats_user_id");
 //QString query_get_version("SELECT * FROM version");
 
+QStringList Database::getSessionsCountAvailable() {
+    QStringList res;
+    QSqlQuery query(database);
+    qDebug() << "Query=" << (database.isOpen() == true ? "open" : "closed");
+    query.exec(query_get_sessions_count);
+    qDebug() << "Query=" << query.lastQuery();
+    qDebug() << "Query=" << query.lastError().text();
+    while(query.next()) {
+        res.push_back(query.value(2).toString());
+        qDebug() << "Query=" << query.value(2).toString();
+    }
+    return res;
+}
+
 bool Database::getSessionsAll(QStringList &jsonResult) {
     bool res = false;
     QSqlQuery query(database);
     qDebug() << "Query=" << (database.isOpen() == true ? "open" : "closed");
-    query.exec(query_get_sessions);
+    query.exec(query_get_sessions_all);
     qDebug() << "Query=" << query.lastQuery();
     qDebug() << "Query=" << query.lastError().text();
     while(query.next()) {

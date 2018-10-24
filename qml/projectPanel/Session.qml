@@ -175,8 +175,15 @@ Popup {
                     iconCode: "\uf12a  "
                     useIcon: true
                     onClicked: {
-                        sessionSelectMode = 1
-                        saveSessionSimpleName.text = viewController.saveCurrentSession()
+                        sessionSelectMode = 1                        
+                        var res = viewController.saveCurrentSession()
+                        if(res.length !==0) {
+                            saveSessionSimpleName.text = res
+                            var timer = Qt.createQmlObject('import QtQuick 2.4;Timer{interval: 1200;running:true;repeat: false;}', parent);
+                            timer.onTriggered.connect(function() {
+                                saveSessionSimpleName.text = ""
+                            });
+                        }
                     }
                 }
                 MiscElems.ButtonRound {

@@ -4,6 +4,7 @@
 #include <QObject>
 #include "session.h"
 #include "database/database.h"
+#include <QList>
 
 class SessionSecurity : public QObject
 {
@@ -12,6 +13,8 @@ public:
     explicit SessionSecurity(QObject *parent = nullptr);
 
     QStringList getAvailableSessions();
+    QList<Session> getSessionAll();
+
     Session* getByName(QString sessionName);
     bool saveByName(QString sessionName);
     bool saveAuto();

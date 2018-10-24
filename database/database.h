@@ -13,6 +13,7 @@ public:
 
     ~Database();
 
+    QStringList getSessionsCountAvailable();
     bool getSessionsAll(QStringList &jsonResult);
 
 //    bool getSettings(QString &version,
