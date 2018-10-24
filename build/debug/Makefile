@@ -58,7 +58,6 @@ SOURCES       = ../../main.cpp \
 		../../interfaces/interfaceEthernet.cpp \
 		../../interfaces/interfacesAbstract.cpp \
 		../../interfaces/interfaceSerial.cpp \
-		../../settings/settings.cpp \
 		../../view/viewController.cpp \
 		../../command/commandController.cpp \
 		../../other/crc.cpp \
@@ -78,9 +77,12 @@ SOURCES       = ../../main.cpp \
 		../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.cpp \
 		../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.cpp \
 		../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.cpp \
-		../../database/database.cpp qrc_qml.cpp \
+		../../database/database.cpp \
+		../../session/session.cpp \
+		../../session/sessionsecurity.cpp qrc_qml.cpp \
 		qrc_images.cpp \
 		qrc_font.cpp \
+		qrc_db.cpp \
 		moc_connectionFactory.cpp \
 		moc_deviceAbstract.cpp \
 		moc_devicesFactory.cpp \
@@ -88,7 +90,6 @@ SOURCES       = ../../main.cpp \
 		moc_interfaceEthernet.cpp \
 		moc_interfacesAbstract.cpp \
 		moc_interfaceSerial.cpp \
-		moc_settings.cpp \
 		moc_viewController.cpp \
 		moc_commandController.cpp \
 		moc_testDevReply.cpp \
@@ -102,7 +103,8 @@ SOURCES       = ../../main.cpp \
 		moc_Progress_Base.cpp \
 		moc_serviceDevicesAbstract.cpp \
 		moc_Nozzle_Revision_0_00_Oct_2018_Data.cpp \
-		moc_database.cpp
+		moc_database.cpp \
+		moc_sessionsecurity.cpp
 OBJECTS       = main.o \
 		connectionFactory.o \
 		deviceAbstract.o \
@@ -111,7 +113,6 @@ OBJECTS       = main.o \
 		interfaceEthernet.o \
 		interfacesAbstract.o \
 		interfaceSerial.o \
-		settings.o \
 		viewController.o \
 		commandController.o \
 		crc.o \
@@ -132,9 +133,12 @@ OBJECTS       = main.o \
 		Nozzle_Revision_0_00_Oct_2018.o \
 		Nozzle_Revision_0_00_Service.o \
 		database.o \
+		session.o \
+		sessionsecurity.o \
 		qrc_qml.o \
 		qrc_images.o \
 		qrc_font.o \
+		qrc_db.o \
 		moc_connectionFactory.o \
 		moc_deviceAbstract.o \
 		moc_devicesFactory.o \
@@ -142,7 +146,6 @@ OBJECTS       = main.o \
 		moc_interfaceEthernet.o \
 		moc_interfacesAbstract.o \
 		moc_interfaceSerial.o \
-		moc_settings.o \
 		moc_viewController.o \
 		moc_commandController.o \
 		moc_testDevReply.o \
@@ -156,7 +159,8 @@ OBJECTS       = main.o \
 		moc_Progress_Base.o \
 		moc_serviceDevicesAbstract.o \
 		moc_Nozzle_Revision_0_00_Oct_2018_Data.o \
-		moc_database.o
+		moc_database.o \
+		moc_sessionsecurity.o
 DIST          = ../../device/service/serviceDevicesAbstract \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/features/spec_pre.prf \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/common/unix.conf \
@@ -342,7 +346,6 @@ DIST          = ../../device/service/serviceDevicesAbstract \
 		../../interfaces/interfaceEthernet.h \
 		../../interfaces/interfacesAbstract.h \
 		../../interfaces/interfaceSerial.h \
-		../../settings/settings.h \
 		../../view/viewController.h \
 		../../command/commandController.h \
 		../../other/crc.h \
@@ -362,7 +365,9 @@ DIST          = ../../device/service/serviceDevicesAbstract \
 		../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.h \
 		../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.h \
 		../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.h \
-		../../database/database.h ../../main.cpp \
+		../../database/database.h \
+		../../session/session.h \
+		../../session/sessionsecurity.h ../../main.cpp \
 		../../connection/connectionFactory.cpp \
 		../../device/deviceAbstract.cpp \
 		../../device/devicesFactory.cpp \
@@ -370,7 +375,6 @@ DIST          = ../../device/service/serviceDevicesAbstract \
 		../../interfaces/interfaceEthernet.cpp \
 		../../interfaces/interfacesAbstract.cpp \
 		../../interfaces/interfaceSerial.cpp \
-		../../settings/settings.cpp \
 		../../view/viewController.cpp \
 		../../command/commandController.cpp \
 		../../other/crc.cpp \
@@ -390,7 +394,9 @@ DIST          = ../../device/service/serviceDevicesAbstract \
 		../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.cpp \
 		../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.cpp \
 		../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.cpp \
-		../../database/database.cpp
+		../../database/database.cpp \
+		../../session/session.cpp \
+		../../session/sessionsecurity.cpp
 QMAKE_TARGET  = Lls_QML_conf
 DESTDIR       = 
 TARGET        = Lls_QML_conf
@@ -583,6 +589,7 @@ Makefile: ../../Lls_QML_conf.pro /media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_6
 		../../qml.qrc \
 		../../images.qrc \
 		../../font.qrc \
+		../../database/db.qrc \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/lib/libQt5Quick.prl \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/lib/libQt5Charts.prl \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/lib/libQt5Widgets.prl \
@@ -774,6 +781,7 @@ Makefile: ../../Lls_QML_conf.pro /media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_6
 ../../qml.qrc:
 ../../images.qrc:
 ../../font.qrc:
+../../database/db.qrc:
 /media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/lib/libQt5Quick.prl:
 /media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/lib/libQt5Charts.prl:
 /media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/lib/libQt5Widgets.prl:
@@ -797,10 +805,10 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents ../../qml.qrc ../../images.qrc ../../font.qrc $(DISTDIR)/
+	$(COPY_FILE) --parents ../../qml.qrc ../../images.qrc ../../font.qrc ../../database/db.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../../connection/connectionFactory.h ../../device/deviceAbstract.h ../../device/devicesFactory.h ../../interfaces/interfaceBLE.h ../../interfaces/interfaceEthernet.h ../../interfaces/interfacesAbstract.h ../../interfaces/interfaceSerial.h ../../settings/settings.h ../../view/viewController.h ../../command/commandController.h ../../other/crc.h ../../tests/testDevReply.h ../../view/interfaceListControll/model.h ../../view/interfaceListControll/treeitem.h ../../view/radialbar.h ../../device/Progress_TMK24/Progress_tmk24Data.h ../../device/Progress_TMK24/Progress_tmk24.h ../../device/Progress_TMK4UX/Progress_tmk4UXData.h ../../device/Progress_TMK4UX/Progress_tmk4UX.h ../../device/Progress_Base/Progress_Base_Data.h ../../device/Progress_Base/Progress_BaseData.h ../../device/Progress_Base/Progress_Base.h ../../device/service/serviceDevicesAbstract.h ../../device/Progress_TMK24/Progress_tmk24Service.h ../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.h ../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.h ../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.h ../../database/database.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../../main.cpp ../../connection/connectionFactory.cpp ../../device/deviceAbstract.cpp ../../device/devicesFactory.cpp ../../interfaces/interfaceBLE.cpp ../../interfaces/interfaceEthernet.cpp ../../interfaces/interfacesAbstract.cpp ../../interfaces/interfaceSerial.cpp ../../settings/settings.cpp ../../view/viewController.cpp ../../command/commandController.cpp ../../other/crc.cpp ../../tests/testDevReply.cpp ../../view/interfaceListControll/treeitem.cpp ../../view/interfaceListControll/model.cpp ../../view/radialbar.cpp ../../device/Progress_TMK24/Progress_tmk24Data.cpp ../../device/Progress_TMK24/Progress_tmk24.cpp ../../device/Progress_TMK4UX/Progress_tmk4UXData.cpp ../../device/Progress_TMK4UX/Progress_tmk4UX.cpp ../../device/Progress_Base/Progress_BaseData.cpp ../../device/Progress_Base/progress_base_data.cpp ../../device/Progress_Base/Progress_Base.cpp ../../device/service/serviceDevicesAbstract.cpp ../../device/Progress_TMK24/Progress_tmk24Service.cpp ../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.cpp ../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.cpp ../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.cpp ../../database/database.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../../connection/connectionFactory.h ../../device/deviceAbstract.h ../../device/devicesFactory.h ../../interfaces/interfaceBLE.h ../../interfaces/interfaceEthernet.h ../../interfaces/interfacesAbstract.h ../../interfaces/interfaceSerial.h ../../view/viewController.h ../../command/commandController.h ../../other/crc.h ../../tests/testDevReply.h ../../view/interfaceListControll/model.h ../../view/interfaceListControll/treeitem.h ../../view/radialbar.h ../../device/Progress_TMK24/Progress_tmk24Data.h ../../device/Progress_TMK24/Progress_tmk24.h ../../device/Progress_TMK4UX/Progress_tmk4UXData.h ../../device/Progress_TMK4UX/Progress_tmk4UX.h ../../device/Progress_Base/Progress_Base_Data.h ../../device/Progress_Base/Progress_BaseData.h ../../device/Progress_Base/Progress_Base.h ../../device/service/serviceDevicesAbstract.h ../../device/Progress_TMK24/Progress_tmk24Service.h ../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.h ../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.h ../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.h ../../database/database.h ../../session/session.h ../../session/sessionsecurity.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../../main.cpp ../../connection/connectionFactory.cpp ../../device/deviceAbstract.cpp ../../device/devicesFactory.cpp ../../interfaces/interfaceBLE.cpp ../../interfaces/interfaceEthernet.cpp ../../interfaces/interfacesAbstract.cpp ../../interfaces/interfaceSerial.cpp ../../view/viewController.cpp ../../command/commandController.cpp ../../other/crc.cpp ../../tests/testDevReply.cpp ../../view/interfaceListControll/treeitem.cpp ../../view/interfaceListControll/model.cpp ../../view/radialbar.cpp ../../device/Progress_TMK24/Progress_tmk24Data.cpp ../../device/Progress_TMK24/Progress_tmk24.cpp ../../device/Progress_TMK4UX/Progress_tmk4UXData.cpp ../../device/Progress_TMK4UX/Progress_tmk4UX.cpp ../../device/Progress_Base/Progress_BaseData.cpp ../../device/Progress_Base/progress_base_data.cpp ../../device/Progress_Base/Progress_Base.cpp ../../device/service/serviceDevicesAbstract.cpp ../../device/Progress_TMK24/Progress_tmk24Service.cpp ../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.cpp ../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.cpp ../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.cpp ../../database/database.cpp ../../session/session.cpp ../../session/sessionsecurity.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -823,9 +831,9 @@ check: first
 
 benchmark: first
 
-compiler_rcc_make_all: qrc_qml.cpp qrc_images.cpp qrc_font.cpp
+compiler_rcc_make_all: qrc_qml.cpp qrc_images.cpp qrc_font.cpp qrc_db.cpp
 compiler_rcc_clean:
-	-$(DEL_FILE) qrc_qml.cpp qrc_images.cpp qrc_font.cpp
+	-$(DEL_FILE) qrc_qml.cpp qrc_images.cpp qrc_font.cpp qrc_db.cpp
 qrc_qml.cpp: ../../qml.qrc \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/rcc \
 		../../qml/app.qml \
@@ -875,15 +883,20 @@ qrc_font.cpp: ../../font.qrc \
 		../../fonts/awesome_900.ttf
 	/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/rcc -name font ../../font.qrc -o qrc_font.cpp
 
+qrc_db.cpp: ../../database/db.qrc \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/rcc \
+		../../database/db
+	/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/rcc -name db ../../database/db.qrc -o qrc_db.cpp
+
 compiler_moc_predefs_make_all: moc_predefs.h
 compiler_moc_predefs_clean:
 	-$(DEL_FILE) moc_predefs.h
 moc_predefs.h: /media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -std=gnu++1y -Wall -W -dM -E -o moc_predefs.h /media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_connectionFactory.cpp moc_deviceAbstract.cpp moc_devicesFactory.cpp moc_interfaceBLE.cpp moc_interfaceEthernet.cpp moc_interfacesAbstract.cpp moc_interfaceSerial.cpp moc_settings.cpp moc_viewController.cpp moc_commandController.cpp moc_testDevReply.cpp moc_model.cpp moc_treeitem.cpp moc_radialbar.cpp moc_Progress_tmk24Data.cpp moc_Progress_tmk4UXData.cpp moc_Progress_Base_Data.cpp moc_Progress_BaseData.cpp moc_Progress_Base.cpp moc_serviceDevicesAbstract.cpp moc_Nozzle_Revision_0_00_Oct_2018_Data.cpp moc_database.cpp
+compiler_moc_header_make_all: moc_connectionFactory.cpp moc_deviceAbstract.cpp moc_devicesFactory.cpp moc_interfaceBLE.cpp moc_interfaceEthernet.cpp moc_interfacesAbstract.cpp moc_interfaceSerial.cpp moc_viewController.cpp moc_commandController.cpp moc_testDevReply.cpp moc_model.cpp moc_treeitem.cpp moc_radialbar.cpp moc_Progress_tmk24Data.cpp moc_Progress_tmk4UXData.cpp moc_Progress_Base_Data.cpp moc_Progress_BaseData.cpp moc_Progress_Base.cpp moc_serviceDevicesAbstract.cpp moc_Nozzle_Revision_0_00_Oct_2018_Data.cpp moc_database.cpp moc_sessionsecurity.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_connectionFactory.cpp moc_deviceAbstract.cpp moc_devicesFactory.cpp moc_interfaceBLE.cpp moc_interfaceEthernet.cpp moc_interfacesAbstract.cpp moc_interfaceSerial.cpp moc_settings.cpp moc_viewController.cpp moc_commandController.cpp moc_testDevReply.cpp moc_model.cpp moc_treeitem.cpp moc_radialbar.cpp moc_Progress_tmk24Data.cpp moc_Progress_tmk4UXData.cpp moc_Progress_Base_Data.cpp moc_Progress_BaseData.cpp moc_Progress_Base.cpp moc_serviceDevicesAbstract.cpp moc_Nozzle_Revision_0_00_Oct_2018_Data.cpp moc_database.cpp
+	-$(DEL_FILE) moc_connectionFactory.cpp moc_deviceAbstract.cpp moc_devicesFactory.cpp moc_interfaceBLE.cpp moc_interfaceEthernet.cpp moc_interfacesAbstract.cpp moc_interfaceSerial.cpp moc_viewController.cpp moc_commandController.cpp moc_testDevReply.cpp moc_model.cpp moc_treeitem.cpp moc_radialbar.cpp moc_Progress_tmk24Data.cpp moc_Progress_tmk4UXData.cpp moc_Progress_Base_Data.cpp moc_Progress_BaseData.cpp moc_Progress_Base.cpp moc_serviceDevicesAbstract.cpp moc_Nozzle_Revision_0_00_Oct_2018_Data.cpp moc_database.cpp moc_sessionsecurity.cpp
 moc_connectionFactory.cpp: /media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
@@ -1387,64 +1400,6 @@ moc_interfaceSerial.cpp: /media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/includ
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/moc
 	/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/linux-g++ -I/media/khomin/66F0D010F0CFE501/PROJECTs/Configure_QML -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCharts -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtWidgets -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtNetwork -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSerialPort -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ../../interfaces/interfaceSerial.h -o moc_interfaceSerial.cpp
 
-moc_settings.cpp: /media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnamespace.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobal.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtcore-config.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsystemdetection.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qprocessordetection.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcompilerdetection.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtypeinfo.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsysinfo.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlogging.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qflags.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbasicatomic.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_bootstrap.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qgenericatomic.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_cxx11.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_msvc.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobalstatic.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmutex.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnumeric.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qversiontagging.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstring.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qchar.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearray.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qrefcount.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qarraydata.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringliteral.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringalgorithms.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringview.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringbuilder.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlist.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qalgorithms.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qiterator.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qhashfunctions.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qpair.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearraylist.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringlist.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qregexp.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringmatcher.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcoreevent.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qscopedpointer.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmetatype.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvarlengtharray.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcontainerfwd.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject_impl.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QVector \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvector.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qpoint.h \
-		../../settings/settings.h \
-		moc_predefs.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/moc
-	/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/linux-g++ -I/media/khomin/66F0D010F0CFE501/PROJECTs/Configure_QML -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCharts -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtWidgets -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtNetwork -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSerialPort -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ../../settings/settings.h -o moc_settings.cpp
-
 moc_viewController.cpp: /media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
@@ -1522,6 +1477,12 @@ moc_viewController.cpp: /media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include
 		../../interfaces/interfaceBLE.h \
 		../../interfaces/interfaceEthernet.h \
 		../../view/interfaceListControll/model.h \
+		../../session/sessionsecurity.h \
+		../../session/session.h \
+		../../database/database.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/QSqlDatabase \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/qsqldatabase.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/qtsqlglobal.h \
 		../../view/viewController.h \
 		moc_predefs.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/moc
@@ -2375,6 +2336,66 @@ moc_database.cpp: /media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCor
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/moc
 	/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/linux-g++ -I/media/khomin/66F0D010F0CFE501/PROJECTs/Configure_QML -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCharts -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtWidgets -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtNetwork -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSerialPort -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ../../database/database.h -o moc_database.cpp
 
+moc_sessionsecurity.cpp: /media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnamespace.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobal.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtcore-config.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsystemdetection.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qprocessordetection.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtypeinfo.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsysinfo.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlogging.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qflags.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbasicatomic.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qgenericatomic.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_msvc.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobalstatic.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmutex.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnumeric.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qversiontagging.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstring.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qchar.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearray.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qrefcount.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qarraydata.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringliteral.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringview.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringbuilder.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlist.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qalgorithms.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qiterator.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qhashfunctions.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qpair.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearraylist.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringlist.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qregexp.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringmatcher.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcoreevent.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qscopedpointer.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmetatype.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject_impl.h \
+		../../session/session.h \
+		../../database/database.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/QSqlDatabase \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/qsqldatabase.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/qtsqlglobal.h \
+		../../session/sessionsecurity.h \
+		moc_predefs.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/moc
+	/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/mkspecs/linux-g++ -I/media/khomin/66F0D010F0CFE501/PROJECTs/Configure_QML -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCharts -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtWidgets -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtGui -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQml -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtNetwork -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSerialPort -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql -I/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ../../session/sessionsecurity.h -o moc_sessionsecurity.cpp
+
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
 compiler_moc_source_make_all:
@@ -2574,6 +2595,12 @@ main.o: ../../main.cpp /media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/
 		../../interfaces/interfaceBLE.h \
 		../../interfaces/interfaceEthernet.h \
 		../../view/interfaceListControll/model.h \
+		../../session/sessionsecurity.h \
+		../../session/session.h \
+		../../database/database.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/QSqlDatabase \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/qsqldatabase.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/qtsqlglobal.h \
 		../../view/radialbar.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick/QQuickPaintedItem \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtQuick/qquickpainteditem.h \
@@ -3134,85 +3161,6 @@ interfaceSerial.o: ../../interfaces/interfaceSerial.cpp ../../interfaces/interfa
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsharedpointer_impl.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o interfaceSerial.o ../../interfaces/interfaceSerial.cpp
 
-settings.o: ../../settings/settings.cpp /media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QJsonDocument \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qjsondocument.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qjsonvalue.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobal.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtcore-config.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsystemdetection.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qprocessordetection.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcompilerdetection.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtypeinfo.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsysinfo.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlogging.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qflags.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbasicatomic.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_bootstrap.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qgenericatomic.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_cxx11.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_msvc.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobalstatic.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmutex.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnumeric.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qversiontagging.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstring.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qchar.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearray.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qrefcount.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnamespace.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qarraydata.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringliteral.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringalgorithms.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringview.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringbuilder.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QJsonArray \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qjsonarray.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qiterator.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QJsonObject \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qjsonobject.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qpair.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QFile \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qfile.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qfiledevice.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qiodevice.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlist.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qalgorithms.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qhashfunctions.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearraylist.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringlist.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qregexp.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringmatcher.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcoreevent.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qscopedpointer.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmetatype.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvarlengtharray.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcontainerfwd.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject_impl.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QDebug \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qdebug.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qhash.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmap.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtextstream.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlocale.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvariant.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qshareddata.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvector.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qpoint.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qset.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcontiguouscache.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsharedpointer.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
-		../../settings/settings.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QVector
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o settings.o ../../settings/settings.cpp
-
 viewController.o: ../../view/viewController.cpp ../../view/viewController.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject.h \
@@ -3291,6 +3239,12 @@ viewController.o: ../../view/viewController.cpp ../../view/viewController.h \
 		../../interfaces/interfaceBLE.h \
 		../../interfaces/interfaceEthernet.h \
 		../../view/interfaceListControll/model.h \
+		../../session/sessionsecurity.h \
+		../../session/session.h \
+		../../database/database.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/QSqlDatabase \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/qsqldatabase.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/qtsqlglobal.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QDebug \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qdebug.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qhash.h \
@@ -4541,9 +4495,11 @@ Nozzle_Revision_0_00_Service.o: ../../device/Nozzle_Revision_0_00_Oct_2018/Nozzl
 		../../device/service/serviceDevicesAbstract.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Nozzle_Revision_0_00_Service.o ../../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.cpp
 
-database.o: ../../database/database.cpp /media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/QSqlQuery \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/qsqlquery.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/qtsqlglobal.h \
+database.o: ../../database/database.cpp ../../database/database.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnamespace.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobal.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig.h \
@@ -4565,19 +4521,16 @@ database.o: ../../database/database.cpp /media/khomin/DATA/Linux_PROGRAMMs/5.11.
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmutex.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnumeric.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qversiontagging.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/qsqldatabase.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstring.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qchar.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearray.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qrefcount.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnamespace.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qarraydata.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringliteral.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringalgorithms.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringview.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringbuilder.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QVariant \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvariant.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlist.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qalgorithms.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qiterator.h \
@@ -4587,20 +4540,24 @@ database.o: ../../database/database.cpp /media/khomin/DATA/Linux_PROGRAMMs/5.11.
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringlist.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qregexp.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringmatcher.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcoreevent.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qscopedpointer.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmetatype.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvarlengtharray.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcontainerfwd.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject_impl.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/QSqlDatabase \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/qsqldatabase.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/qtsqlglobal.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/QSqlQuery \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/qsqlquery.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QVariant \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvariant.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmap.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qdebug.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qhash.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtextstream.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qiodevice.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcoreevent.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qscopedpointer.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject_impl.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlocale.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qshareddata.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvector.h \
@@ -4610,10 +4567,120 @@ database.o: ../../database/database.cpp /media/khomin/DATA/Linux_PROGRAMMs/5.11.
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsharedpointer.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsharedpointer_impl.h \
 		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QDebug \
-		../../database/database.h \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
-		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/QSqlDatabase
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/QSqlError \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/qsqlerror.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o database.o ../../database/database.cpp
+
+session.o: ../../session/session.cpp ../../session/session.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnamespace.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobal.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtcore-config.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsystemdetection.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qprocessordetection.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtypeinfo.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsysinfo.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlogging.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qflags.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbasicatomic.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qgenericatomic.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_msvc.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobalstatic.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmutex.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnumeric.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qversiontagging.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstring.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qchar.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearray.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qrefcount.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qarraydata.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringliteral.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringview.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringbuilder.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlist.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qalgorithms.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qiterator.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qhashfunctions.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qpair.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearraylist.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringlist.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qregexp.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringmatcher.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcoreevent.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qscopedpointer.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmetatype.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject_impl.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o session.o ../../session/session.cpp
+
+sessionsecurity.o: ../../session/sessionsecurity.cpp ../../session/sessionsecurity.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/QObject \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnamespace.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobal.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig-bootstrapped.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qconfig.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtcore-config.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsystemdetection.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qprocessordetection.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcompilerdetection.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qtypeinfo.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qsysinfo.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlogging.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qflags.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbasicatomic.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qgenericatomic.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qatomic_msvc.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qglobalstatic.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmutex.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qnumeric.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qversiontagging.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstring.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qchar.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearray.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qrefcount.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qarraydata.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringliteral.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringalgorithms.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringview.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringbuilder.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qlist.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qalgorithms.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qiterator.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qhashfunctions.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qpair.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qbytearraylist.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringlist.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qregexp.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qstringmatcher.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcoreevent.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qscopedpointer.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qmetatype.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qvarlengtharray.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qcontainerfwd.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtCore/qobject_impl.h \
+		../../session/session.h \
+		../../database/database.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/QSqlDatabase \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/qsqldatabase.h \
+		/media/khomin/DATA/Linux_PROGRAMMs/5.11.1/gcc_64/include/QtSql/qtsqlglobal.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o sessionsecurity.o ../../session/sessionsecurity.cpp
 
 qrc_qml.o: qrc_qml.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_qml.o qrc_qml.cpp
@@ -4623,6 +4690,9 @@ qrc_images.o: qrc_images.cpp
 
 qrc_font.o: qrc_font.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_font.o qrc_font.cpp
+
+qrc_db.o: qrc_db.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_db.o qrc_db.cpp
 
 moc_connectionFactory.o: moc_connectionFactory.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_connectionFactory.o moc_connectionFactory.cpp
@@ -4644,9 +4714,6 @@ moc_interfacesAbstract.o: moc_interfacesAbstract.cpp
 
 moc_interfaceSerial.o: moc_interfaceSerial.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_interfaceSerial.o moc_interfaceSerial.cpp
-
-moc_settings.o: moc_settings.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_settings.o moc_settings.cpp
 
 moc_viewController.o: moc_viewController.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_viewController.o moc_viewController.cpp
@@ -4689,6 +4756,9 @@ moc_Nozzle_Revision_0_00_Oct_2018_Data.o: moc_Nozzle_Revision_0_00_Oct_2018_Data
 
 moc_database.o: moc_database.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_database.o moc_database.cpp
+
+moc_sessionsecurity.o: moc_sessionsecurity.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_sessionsecurity.o moc_sessionsecurity.cpp
 
 ####### Install
 

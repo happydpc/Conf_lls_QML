@@ -24,7 +24,6 @@ SOURCES += \
     interfaces/interfaceEthernet.cpp \
     interfaces/interfacesAbstract.cpp \
     interfaces/interfaceSerial.cpp \
-    settings/settings.cpp \
     view/viewController.cpp \
     command/commandController.cpp \
     other/crc.cpp \
@@ -44,12 +43,15 @@ SOURCES += \
     device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.cpp \
     device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.cpp \
     device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.cpp \
-    database/database.cpp
+    database/database.cpp \
+    session/session.cpp \
+    session/sessionsecurity.cpp
 
 RESOURCES += \
     qml.qrc \
     images.qrc \
-    font.qrc
+    font.qrc \
+    database/db.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -70,7 +72,6 @@ HEADERS += \
     interfaces/interfaceEthernet.h \
     interfaces/interfacesAbstract.h \
     interfaces/interfaceSerial.h \
-    settings/settings.h \
     view/viewController.h \
     command/commandController.h \
     other/crc.h \
@@ -90,7 +91,9 @@ HEADERS += \
     device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.h \
     device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.h \
     device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.h \
-    database/database.h
+    database/database.h \
+    session/session.h \
+    session/sessionsecurity.h
 
 DISTFILES += \
     device/service/serviceDevicesAbstract

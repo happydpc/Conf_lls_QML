@@ -1,24 +1,24 @@
 {
-  "type": "updateServer",
-  "version": "0.0",
-  "installer": [
+  "type": "session",
+  "name": "session_1",
+  "attributes": [
     {
-      "info": [
+      "interfaces": [
         {
-          "lastVersion": "7.0",
-          "previousVersion": "6.8"
+          "name": "ttyUSB0",
+          "property": "6.8"
         }
       ],
       "resouce": [
         {
           "version_6.8": [
             {
-              "dowloadPath": "http://locusAnyName/dowload/resouce/configure_v6.8.msi"
+              "dowloadPath": "http://locusAnyName/dowload/resouce/configure_v6.8.exe"
             }
           ],
           "version_7.0": [
             {
-              "dowloadPath": "http://locusAnyName/dowload/resouce/configure_v7.0.msi"
+              "dowloadPath": "http://locusAnyName/dowload/resouce/configure_v7.0.exe"
             }
           ]
         }

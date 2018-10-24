@@ -12,6 +12,7 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
 
     this->connFactory = new ConnectionFactory();
     this->interfaceTree = pInterfaceModel;
+    this->sessionSecurity = new SessionSecurity();
 
     connect(interfaceTree, SIGNAL(currentIndexIsChangedInteface(int)), this, SLOT(setChangedIndexInteface(int)));
     connect(connFactory, SIGNAL(updateTree(ConnectionFactory::E_ConnectionUpdateType)),
@@ -34,11 +35,7 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
 }
 
 QStringList ViewController::getListSession() {
-    QStringList sessionList;
-    for(int i=0; i<15; i++) {
-        sessionList << QString("lalalla_%1").arg(i);
-    }
-    return sessionList;
+    return sessionSecurity->getAvailableSessions();
 }
 
 bool ViewController::loadSession(QString sessionName) {

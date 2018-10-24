@@ -5,6 +5,7 @@
 #include "connection/connectionFactory.h"
 #include "interfaceListControll/model.h"
 #include "device/devicesFactory.h"
+#include "session/sessionsecurity.h"
 
 class ViewController : public QObject
 {
@@ -145,7 +146,7 @@ private slots:
 private:
     ConnectionFactory *connFactory;
     Model *interfaceTree;
-
+    SessionSecurity *sessionSecurity;
     QList<ServiceDevicesAbstract*> serviceList;
 };
 
