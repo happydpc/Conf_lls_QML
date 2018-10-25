@@ -30,7 +30,6 @@ void Model::addConnection(QString connectionName) {
     treeChanged();
     emit currentIndexIsChanged(false, titem);
     setIoIndex(m_tree.size()-1);
-//    setIoIndex(0);
 }
 
 void Model::removeConnection(int indexConnection) {
@@ -105,12 +104,16 @@ void Model::removeDeviceToConnection(int indexConnection, int indexDevice) {
     disconnectaFullTree();
     m_tree.at(indexConnection)->removeChildByIndexChild(indexDevice);
     connectFullTree();
-    treeChanged();
     if(!m_tree.at(indexConnection)->childItems().isEmpty()) {
         setDevIndex(m_tree.at(indexConnection)->childItems().size()-1);
     } else {
+        for(auto it:m_tree) {
+            it->setIsCurrent(false);
+        }
+        m_tree[indexConnection]->setIsCurrent(true);
         setDevIndex(0);
     }
+    treeChanged();
 }
 
 const QList<TreeItem *> &Model::tree() const{

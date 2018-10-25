@@ -9,7 +9,11 @@ import "qrc:/qml/interfaces"
 Rectangle {
     id: projectDevicePanel
     property var interfaceItemArray: []
-    property var deviceItemArray: []
+    property int interfaceIndex: 0
+
+    property var deviceItemArray: [[]];
+    property int deviceIndex: 0
+
     property alias dialogAddInterfaceFail: dialogAddInterfaceFail
     property alias messageOperationError: messageOperationError
     property int indexItem_Logo: 0
@@ -31,14 +35,18 @@ Rectangle {
             interfaceView.addItem(item)
             interfaceItemArray.push(item);
             modeSelectView.setCurrentIndex(indexItem_Intefaces)
+
+            var devItem = Qt.createQmlObject('import QtQuick.Controls 2.4;SwipeView{id:deviceView_1;anchors.fill:parent;interactive:false;clip: true;}', deviceRootView);
+            deviceRootView.addItem(devItem)
             break;
         default: break;
         }
     }
 
     function intefaceDeleted(ioIndex) {
-        interfaceView.removeItem(ioIndex)
-        interfaceItemArray.splice(ioIndex, ioIndex+1)
+        interfaceIndex = ioIndex
+        interfaceView.removeItem(interfaceIndex)
+        interfaceItemArray.splice(interfaceIndex, interfaceIndex+1)
         if(interfaceItemArray.length <=0) {
             modeSelectView.setCurrentIndex(indexItem_Logo)
         }
@@ -47,20 +55,28 @@ Rectangle {
     function setActiveInterfacePanelType(ioType, ioIndex) {
         switch(ioType.toLowerCase()) {
         case "serial":
+            interfaceIndex = ioIndex
+            for(var len=0; len<interfaceItemArray.length; len++) {
+                interfaceItemArray[len].visible = false
+            }
+            interfaceItemArray[interfaceIndex].visible = true
             modeSelectView.setCurrentIndex(indexItem_Intefaces)
+            interfaceView.setCurrentIndex(interfaceIndex)
             break;
         default: break;
         }
-    }
+   }
 
     function setInterfaceProperites(ioType, ioIndex, keyProperty, valueProperty) {
         modeSelectView.setCurrentIndex(indexItem_Intefaces)
-        interfaceView.setCurrentIndex(ioIndex)
-        interfaceItemArray[ioIndex].setPropertyValues(keyProperty, valueProperty)
+        interfaceIndex = ioIndex
+        interfaceView.setCurrentIndex(interfaceIndex)
+        interfaceItemArray[interfaceIndex].setPropertyValues(keyProperty, valueProperty)
     }
 
     function intefaceSetResultCheckDevice(ioIndex, devTypeName, devId, devSn, result) {
-        interfaceItemArray[ioIndex].setResultCheckDevice(devTypeName, devId, devSn, result)
+        interfaceIndex = ioIndex
+        interfaceItemArray[interfaceIndex].setResultCheckDevice(devTypeName, devId, devSn, result)
     }
 
     // *************  devices   **************/
@@ -68,9 +84,12 @@ Rectangle {
         switch(devType.toLowerCase()) {
         case "progress tmk24":
             var componentQml = Qt.createComponent("qrc:/qml/devices/DevPropertyProgressTmk24.qml");
-            var item = componentQml.createObject(deviceView)
-            deviceView.addItem(item)
-            deviceItemArray.push(item);
+            var item = componentQml.createObject(deviceRootView)
+            item.setInitProperty(devKeyProperty, devValueProperty)
+            deviceRootView.setCurrentIndex(interfaceIndex)
+            var it = deviceRootView.itemAt(interfaceIndex)
+            it.addItem(item)
+            deviceItemArray[interfaceIndex].push(item);
             modeSelectView.setCurrentIndex(indexItem_Devices)
             break;
         case "nozzle rev 0.0":
@@ -81,8 +100,8 @@ Rectangle {
 
     function deviceDeleted(devIndex) {
         deviceView.removeItem(devIndex)
-        deviceItemArray.slice(devIndex-1, devIndex)
-        if(deviceItemArray.length <=0) {
+        deviceItemArray[interfaceIndex].slice(devIndex-1, devIndex)
+        if(deviceItemArray[interfaceIndex].length <=0) {
             modeSelectView.setCurrentIndex(indexItem_Intefaces)
         }
         if(interfaceItemArray.length <=0) {
@@ -91,16 +110,18 @@ Rectangle {
     }
 
     function setActiveDevicePanelType(devType, devIndex) {
-        for(var len=0; len<deviceItemArray.length; len++) {
-            deviceItemArray[len].visible = false
+        for(var len=0; len<deviceItemArray[interfaceIndex].length; len++) {
+            deviceItemArray[interfaceIndex][len].visible = false
         }
-        deviceItemArray[devIndex].visible = true
-        deviceView.setCurrentIndex(devIndex)
+        deviceRootView.setCurrentIndex(interfaceIndex)
+        var it = deviceRootView.itemAt(interfaceIndex)
+        deviceItemArray[interfaceIndex][devIndex].visible = true
+        it.setCurrentIndex(devIndex)
         modeSelectView.setCurrentIndex(indexItem_Devices)
     }
 
     function setDevCustomCommandExecuted(typeDev, devIndex, keys, args, ackMessageIsVisible) {
-        deviceItemArray[devIndex].setCustomCommandExecuted(keys, args, ackMessageIsVisible)
+        deviceItemArray[interfaceIndex][devIndex].setCustomCommandExecuted(keys, args, ackMessageIsVisible)
     }
 
     // *************  message **************/
@@ -110,23 +131,43 @@ Rectangle {
     }
 
     function setReadyProperties(devIndex, typeDev, keys, values) {
-        deviceItemArray[devIndex].setPropertyes(keys, values)
+        deviceItemArray[interfaceIndex][devIndex].setPropertyes(keys, values)
+        deviceRootView.setCurrentIndex(interfaceIndex)
+        var it = deviceRootView.itemAt(interfaceIndex)
+        it.setCurrentIndex(devIndex)
     }
 
     function setReadyPeriodicData(devIndex, typeDev, keys, values) {
-        deviceItemArray[devIndex].insertPeriodicData(keys, values)
+        deviceRootView.setCurrentIndex(interfaceIndex)
+        var it = deviceRootView.itemAt(interfaceIndex)
+        it.setCurrentIndex(devIndex)
+        var id = deviceItemArray[interfaceIndex][devIndex].getId()
+        if(getDevIsThis(id, keys, values)) {
+            deviceItemArray[interfaceIndex][devIndex].insertPeriodicData(keys, values)
+        }
     }
 
     function setDevConnected(devIndex, typeDev) {
-        deviceItemArray[devIndex].setConnected()
+        deviceItemArray[interfaceIndex][devIndex].setConnected()
     }
 
     function setDevReady(devIndex, typeDev) {
-        deviceItemArray[devIndex].setReady()
+        deviceItemArray[interfaceIndex][devIndex].setReady()
     }
 
     function setDevDisconnected(devIndex, typeDev) {
-        deviceItemArray[devIndex].setDisconnected()
+        deviceItemArray[interfaceIndex][devIndex].setDisconnected()
+    }
+
+    function getDevIsThis(id, keys, values, result) {
+        for(var i=0; i<keys.length; i++) {
+            if(keys[i] === "id") {
+                if(values[i] === id) {
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     function setDevShowMessage(typeDev, messageHeader, message) {
@@ -142,7 +183,7 @@ Rectangle {
     }
 
     function addDeviceLog(devIndex, codeMessage, message) {
-        deviceItemArray[devIndex].addLogMessage(codeMessage, message)
+        deviceItemArray[interfaceIndex][devIndex].addLogMessage(codeMessage, message)
     }
 
     function addLogMessage(codeMessage, message) {
@@ -206,7 +247,7 @@ Rectangle {
                 }
                 Item {
                     SwipeView {
-                        id: deviceView
+                        id: deviceRootView
                         anchors.fill: parent
                         interactive: false
                         clip: true

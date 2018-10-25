@@ -19,6 +19,15 @@ Rectangle {
     property bool isNoiseDetected: false
     property bool devIsConnected: false
     property bool devIsReady: false
+    property string  id: ""
+
+    function setInitProperty(devKeyProperty, devValueProperty) {
+        for(var i=0; i<devKeyProperty.length; i++) {
+            if(devKeyProperty[i] === "id") {
+                id = devValueProperty[i]
+            }
+        }
+    }
 
     function setConnected() {
         devIsConnected = true
@@ -62,6 +71,10 @@ Rectangle {
         writeSettingsButton_3.enabled = false
         writeSettingsButton_4.enabled = false
         writeSettingsButton_5.enabled = false
+    }
+
+    function getId() {
+        return id;
     }
 
     function insertPeriodicData(keys, values) {

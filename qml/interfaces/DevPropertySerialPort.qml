@@ -10,14 +10,12 @@ import QtQuick.Controls.Styles 1.4
 import CustomControls 1.0
 import QtGraphicalEffects 1.0
 import "qrc:/qml/miscElems" as MiscElems
-import "qrc:/qml/devices"
 
 Rectangle {
-    id: devPropertySerialPort
-    color: "#e7e9eb"
     anchors.top: parent.top
     anchors.left: parent.left
     visible: true
+    color: "#e7e9eb"
 
     property var addDeviceDialog: Object
     property var messageShow: Object

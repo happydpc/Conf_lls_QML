@@ -19,8 +19,6 @@ Popup {
     property string modeFind_add_finder:    "mode_add_finder"
     property string modeFind: modeFind_idle
 
-    property bool modeFindAbort: false
-
     function setListAvailableDevices(list) {
         console.log("AddDevice: " + list);
         typeDeviceList.model.clear()
@@ -34,7 +32,7 @@ Popup {
         var paramList = []
         var keyList = []
         switch(modeFind) {
-        case modeFind_idle: break;
+        case modeFind_idle: break
         case modeFind_add_once:
             if(result === true) {
                 switch(typeDeviceList.currentIndex) {
@@ -72,17 +70,7 @@ Popup {
                     paramList.push(typeFindStartButton.findIdValues.toString())
                     keyList.push("password")
                     paramList.push("")
-                    if(modeFindAbort) {
-                        typeDeviceProgressProgressTmk24.value = 0;
-                        typeDeviceProgressProgressTmk24.visible = false
-                        typeFindStartButton.enabled = true
-                        typeFindStopButton.enabled = false
-                        typeDeviceIdProgressTmk24FindDown.readOnly = false
-                        typeDeviceIdProgressTmk24FindUp.readOnly = false
-                        //                        mode = "addDevice"
-                    } else {
-                        viewController.checkDeviceFromConnection(typeDeviceList.currentText, keyList, paramList)
-                    }
+                    viewController.checkDeviceFromConnection(typeDeviceList.currentText, keyList, paramList)
                 } else {
                     typeDeviceProgressProgressTmk24.value = 0;
                     typeDeviceProgressProgressTmk24.visible = false
@@ -98,6 +86,17 @@ Popup {
             }
             break;
         }
+    }
+
+    onClosed: {
+        modeFind = modeFind_idle
+        findDevListView.model.clear()
+        typeDeviceProgressProgressTmk24.value = 0;
+        typeDeviceProgressProgressTmk24.visible = false
+        typeFindStartButton.enabled = true
+        typeFindStopButton.enabled = false
+        typeDeviceIdProgressTmk24FindDown.readOnly = false
+        typeDeviceIdProgressTmk24FindUp.readOnly = false
     }
 
     Rectangle {
@@ -563,7 +562,6 @@ Popup {
                         paramList.push(typeDevicePasswordProgressTmk24.text)
                         viewController.checkDeviceFromConnection(typeDeviceList.currentText, keyList, paramList)
                         modeFind = modeFind_add_once
-                        close()
                         break;
                     case 1: // find device
                         var size = findDevListView.count
@@ -577,8 +575,9 @@ Popup {
                             keyList.push("password")
                             paramList.push("")
                             viewController.addDeviceToConnection(typeDeviceList.currentText, keyList, paramList)
-                            modeFind = modeFind_idle
                         }
+                        close()
+                        modeFind = modeFind_idle
                         typeDeviceProgressProgressTmk24.value = 0
                         typeDeviceProgressProgressTmk24.visible = false
                         typeFindStartButton.enabled = true
@@ -586,7 +585,6 @@ Popup {
                         typeDeviceIdProgressTmk24FindDown.readOnly = false
                         typeDeviceIdProgressTmk24FindUp.readOnly = false
                         findDevListView.model.clear()
-                        close()
                         break;
                     }
                     break;
@@ -599,7 +597,6 @@ Popup {
                     modeFind = modeFind_idle
                     typeDeviceProgressProgressTmk24.visible = false
                     findDevListView.model.clear()
-                    close()
                     break;
                 }
             }

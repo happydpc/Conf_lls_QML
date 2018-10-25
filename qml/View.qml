@@ -25,7 +25,7 @@ Item {
             projectPanel.devicePropertyPanel.deviceAdded(devType, devKeyProperty, devValueProperty)
         }
         onDeleteDeviceSuccesfull: {
-            projectPanel.devicePropertyPanel.deviceAdded(devIndex)
+            projectPanel.devicePropertyPanel.deviceDeleted(devIndex)
         }
         onInterfaceAndDeviceListIsEmpty: {
             projectPanel.devicePropertyPanel.setActiveLogoPanel()
