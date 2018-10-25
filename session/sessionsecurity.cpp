@@ -2,6 +2,8 @@
 #include "QJsonDocument"
 #include "QJsonObject"
 #include "QJsonArray"
+#include "QDateTime"
+#include <QDebug>
 
 SessionSecurity::SessionSecurity(QObject *parent) : QObject(parent) {
     this->database = new Database();
@@ -13,6 +15,20 @@ QStringList SessionSecurity::getAvailableSessions() {
     return res;
 }
 
+Session SessionSecurity::getSessionByName(QString name) {
+    auto res = getSessionAll();
+    for(auto it:res) {
+        if(it.getSessionName() == name) {
+            return it;
+        }
+    }
+    return Session();
+}
+
+bool SessionSecurity::removeSession(QString sessionName) {
+    return database->sendRemoveSession(sessionName);
+}
+
 QList<Session> SessionSecurity::getSessionAll() {
     QList<Session> res;
     QStringList jsonRes;
@@ -20,60 +36,117 @@ QList<Session> SessionSecurity::getSessionAll() {
         for(auto rootIt:jsonRes) {
             if(!rootIt.isEmpty()) {
                 // document
-                Session *pSession = new Session();
-
                 QJsonDocument document = QJsonDocument::fromJson(rootIt.toUtf8());
                 QJsonObject rootObject = document.object();
+                // create session class and structures
+                // session name
+                Session *p_session = new Session(rootObject.value("name").toString());
                 // array insterfaces [interface_0 ... _1 _2 _3]
                 QJsonArray attributesArray = rootObject.value("attributes").toArray();
                 QJsonObject interfaceObj = attributesArray.at(0).toObject();
-                int countInterfaces = interfaceObj.size();
-                if(countInterfaces != 0) {
-                    auto itBegin = interfaceObj.begin();
-                    while(itBegin != interfaceObj.end()) {
-                        QJsonObject tObj = itBegin->toObject();
-                        QJsonArray devicesArray = tObj.value("devices").toArray();
-                        QString interfaceName = tObj.value("name").toString();
-                        QJsonObject propertyObj = tObj.value("property").toObject();
-                        QPair<QStringList,QStringList> propertyList;
-                        // interface property
-                        auto propIt = propertyObj.begin();
-                        while(propIt != propertyObj.end()) {
-                            propertyList.first.push_back(propIt.key());
-                            propertyList.second.push_back(propIt.value().toString());
-                            propIt++;
-                        }
-                        auto devIt = devicesArray.begin();
-                        while(devIt != devicesArray.end()) {
-                            QJsonObject deviceList = devIt->toObject();
-                            auto devItContrete = deviceList.begin();
-                            while(devItContrete != deviceList.end()) {
-                                QJsonObject dev = devItContrete->toObject();
-                                QJsonObject devProperty = dev.value("property").toObject();
-                                QString devTypeName = dev.value("typeName").toString();
-                                QString devHeader = devProperty.value("header").toString();
-                                QString devId = devProperty.value("id").toString();
-                                devItContrete++;
-                            }
-                            devIt++;
-                        }
-                        itBegin++;
+                // while interfaces is exist
+                auto itBegin = interfaceObj.begin();
+                while(itBegin != interfaceObj.end()) {
+                    Session::sInterface t_interface;
+                    Session::sDevices t_device;
+                    QJsonObject tObj = itBegin->toObject();
+                    // interface property
+                    QJsonObject propertyObj = tObj.value("property").toObject();
+                    auto propIt = propertyObj.begin();
+                    while(propIt != propertyObj.end()) {
+                        t_interface.propKey.push_back(propIt.key());
+                        t_interface.propValue.push_back(propIt.value().toString());
+                        propIt++;
                     }
+                    t_interface.typeName = tObj.value("type").toString();
+                    t_interface.name = tObj.value("name").toString();
+                    // add interface structure to class
+                    p_session->addInterface(t_interface);
+
+                    // create device structures
+                    QJsonArray devicesArray = tObj.value("devices").toArray();
+                    auto devIt = devicesArray.begin();
+                    while(devIt != devicesArray.end()) {
+                        QJsonObject deviceList = devIt->toObject();
+                        auto devItContrete = deviceList.begin();
+                        while(devItContrete != deviceList.end()) {
+                            QJsonObject dev = devItContrete->toObject();
+                            QJsonObject devProperty = dev.value("property").toObject();
+                            t_device.propKey.clear();
+                            t_device.propValue.clear();
+                            //
+                            t_device.typeName = dev.value("typeName").toString();
+                            // devId
+                            t_device.propKey.push_back("id");
+                            t_device.propValue.push_back(devProperty.value("id").toString());
+                            // devHeader
+                            t_device.propKey.push_back("header");
+                            t_device.propValue.push_back(devProperty.value("header").toString());
+                            p_session->addDevice(t_device);
+                            devItContrete++;
+                        }
+                        devIt++;
+                    }
+                    itBegin++;
                 }
+                p_session->setIsValid(true);
+                res.push_back(*p_session);
             }
         }
     }
     return res;
 }
 
-Session* SessionSecurity::getByName(QString sessionName) {
-
-}
-
-bool SessionSecurity::saveByName(QString sessionName) {
-
-}
-
-bool SessionSecurity::saveAuto() {
-
+QString SessionSecurity::saveSession(Session & session) {
+    QString res;
+    QString jsonResult;
+    QJsonArray attributesArray;
+    session.setSessionName("Сеанс_" + QDateTime::currentDateTimeUtc().toString("yyyy/M/d/hh:mm:ss:z"));
+    session.setIsValid(true);
+    if(session.getIsValid()) {
+        QJsonObject rootObject;
+        rootObject["name"] = session.getSessionName();
+        rootObject["type"] = "session";
+        int interfaceCount = 0;
+        for(auto itInerfaces: session.getInterfaces()) {
+            QJsonObject interfaceObj;
+            int devCounter = 0;
+            QJsonArray devArray;
+            QJsonObject ioSubProperty;
+            QJsonObject ioSubPropertyItem;
+            for(int ioPropCoun=0;ioPropCoun<itInerfaces.propKey.size();ioPropCoun++) {
+                ioSubPropertyItem[itInerfaces.propKey.at(ioPropCoun)] = itInerfaces.propValue.at(ioPropCoun);
+            }
+            ioSubProperty["name"] = itInerfaces.name;
+            ioSubProperty["type"] = itInerfaces.typeName;
+            ioSubProperty["property"] = ioSubPropertyItem;
+            for(auto itDevices: itInerfaces.devices) {
+                QJsonObject devObj;
+                QJsonObject devPropertyObj;
+                QJsonValue devPropertyValue;
+                QJsonObject jsonValueObj;
+                jsonValueObj["header"] = "lls_1";
+                jsonValueObj["id"] = "11111";
+                devPropertyObj["typeName"] = itDevices.typeName;
+                for(int devPropCoun=0; devPropCoun<itDevices.propKey.size(); devPropCoun++) {
+                    jsonValueObj[itDevices.propKey.at(devPropCoun)] = itDevices.propValue.at(devPropCoun);
+                }
+                devPropertyValue = jsonValueObj;
+                devPropertyObj["property"] = devPropertyValue;
+                devObj[QString("dev_%1").arg(devCounter)] = devPropertyObj;
+                devArray.push_back(devObj);
+                ioSubProperty["devices"] = devArray;
+                devCounter++;
+            }
+            interfaceObj[QString("interface_%1").arg(interfaceCount)] = ioSubProperty;
+            attributesArray.append(interfaceObj);
+            interfaceCount++;
+        }
+        rootObject["attributes"] = attributesArray;
+        QJsonDocument jsonDoc(rootObject);
+        qDebug() << "resultJson = " << jsonDoc.toJson();
+        jsonResult = jsonDoc.toJson();
+        database->sendSaveSession(session.getSessionName(), jsonResult);
+    }
+    return session.getSessionName();
 }

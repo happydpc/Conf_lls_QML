@@ -17,6 +17,7 @@ public:
 
     void addConnection(QString name);
     void removeConnection(int index);
+    void removeAll();
 
     void addDeviceToConnection(QString connName, QString devName);
     void removeDeviceToConnection(int indexConnection, int indexDevice);

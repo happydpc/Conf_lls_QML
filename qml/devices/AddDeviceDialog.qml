@@ -40,7 +40,7 @@ Popup {
                 switch(typeDeviceList.currentIndex) {
                 case 0:
                     if(typeDeviceList.currentText.length !== 0) {
-                        keyList.push("devId")
+                        keyList.push("id")
                         paramList.push(typeDeviceIdProgressTmk24.text)
                         keyList.push("password")
                         paramList.push(typeDevicePasswordProgressTmk24.text)
@@ -68,7 +68,7 @@ Popup {
                     typeDeviceIdProgressTmk24FindDown.readOnly = true
                     typeDeviceIdProgressTmk24FindUp.readOnly = true
                     typeFindStartButton.findIdValues++
-                    keyList.push("uniqIdDevice")
+                    keyList.push("id")
                     paramList.push(typeFindStartButton.findIdValues.toString())
                     keyList.push("password")
                     paramList.push("")
@@ -301,7 +301,7 @@ Popup {
                                                         modeFind = modeFind_add_finder
                                                         findIdValues = parseInt(typeDeviceIdProgressTmk24FindDown.text)
                                                         findDevListView.model.clear()
-                                                        keyList.push("uniqIdDevice")
+                                                        keyList.push("id")
                                                         paramList.push(findIdValues)
                                                         keyList.push("password")
                                                         paramList.push("")
@@ -557,7 +557,7 @@ Popup {
                 case 0: // progress tmk24
                     switch(typeAddDeviceViewProgressTmk24.currentIndex) {
                     case 0: // simple add device
-                        keyList.push("uniqIdDevice")
+                        keyList.push("id")
                         paramList.push(typeDeviceIdProgressTmk24.text)
                         keyList.push("password")
                         paramList.push(typeDevicePasswordProgressTmk24.text)
@@ -572,7 +572,7 @@ Popup {
                             var item = findDevListView.model.get(i)
                             keyList = []
                             paramList = []
-                            keyList.push("devId")
+                            keyList.push("id")
                             paramList.push(item.deviceId)
                             keyList.push("password")
                             paramList.push("")
@@ -591,7 +591,7 @@ Popup {
                     }
                     break;
                 case 1: // nozle rev 0_0
-                    keyList.push("devId")
+                    keyList.push("id")
                     paramList.push(typeDeviceIdNozzle_v0_0.text)
                     keyList.push("password")
                     paramList.push(typeDevicePasswordNozzle_v0_0.text)

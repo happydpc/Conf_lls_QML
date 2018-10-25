@@ -30,6 +30,7 @@ void Model::addConnection(QString connectionName) {
     treeChanged();
     emit currentIndexIsChanged(false, titem);
     setIoIndex(m_tree.size()-1);
+//    setIoIndex(0);
 }
 
 void Model::removeConnection(int indexConnection) {
@@ -41,6 +42,15 @@ void Model::removeConnection(int indexConnection) {
     } else {
         setIoIndex(0);
     }
+    connectFullTree();
+    treeChanged();
+}
+
+void Model::removeAll() {
+    disconnectaFullTree();
+    m_tree.clear();
+    setIoIndex(0);
+    setDevIndex(0);
     connectFullTree();
     treeChanged();
 }

@@ -11,6 +11,7 @@ InterfaceSerial::~InterfaceSerial() {}
 void InterfaceSerial::initInterface()  {}
 
 bool InterfaceSerial::openInterface() {
+    bool res = false;
     QString baudrate;
     for(int key=0; key<param.second.size(); key++) {
         if(param.first[key] == "baudrate") {
@@ -27,7 +28,9 @@ bool InterfaceSerial::openInterface() {
     connect(deviceFactory, SIGNAL(writeData(QByteArray)),
             this, SLOT(writeData(QByteArray)));
     connect(deviceFactory, SIGNAL(readReplyData()), this, SLOT(readData()));
-    return portHandler->open(QIODevice::ReadWrite);
+    res  = portHandler->open(QIODevice::ReadWrite);
+    qDebug() << "openInterface = " << ((res) ? (QString("-Ok")) : (QString("-ERR")));
+    return res;
 }
 
 bool InterfaceSerial::isOpen() {

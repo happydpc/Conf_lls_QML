@@ -23,15 +23,32 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
     this->serviceList.push_back(new Nozzle_Rev_0_00_Service("Nozzle Rev 0.0"));
 
     QTimer::singleShot(500, Qt::CoarseTimer, [&] {
-//        addConnection("serial", "ttyUSB0", QStringList("baudrate"), QStringList("19200"));
-//        addDeviceToConnection("PROGRESS TMK24", QStringList("devId"), QStringList("3"));
-//        addDeviceToConnection("PROGRESS TMK24", QStringList("devId"), QStringList("4"));
+        //        addConnection("serial", "ttyUSB0", QStringList("baudrate"), QStringList("19200"));
+        //        addDeviceToConnection("PROGRESS TMK24", QStringList("id"), QStringList("3"));
+        //        addDeviceToConnection("PROGRESS TMK24", QStringList("id"), QStringList("4"));
     });
 
     QTimer::singleShot(1000, Qt::CoarseTimer, [&] {
         //        addConnection("serial", "ttyACM0", QStringList("baudrate"), QStringList("115200"));
-        //        addDeviceToConnection("Nozzle Rev 0.0", QStringList("devId"), QStringList("1"));
+        //        addDeviceToConnection("Nozzle Rev 0.0", QStringList("id"), QStringList("1"));
     });
+}
+
+void ViewController::resetSession() {
+    disconnect(interfaceTree, SIGNAL(currentIndexIsChangedDevice(int,int)), this, SLOT(setChangedIndexDevice(int,int)));
+    disconnectToDevSignals();
+    for(int devCout=0;devCout<connFactory->getCountConnection(); devCout++) {
+        getDeviceFactoryByIndex(devCout)->removeDeviceAll();
+    }
+    connFactory->removeAll();
+    interfaceTree->removeAll();
+    connectToDevSignals();
+    connect(interfaceTree, SIGNAL(currentIndexIsChangedDevice(int,int)), this, SLOT(setChangedIndexDevice(int,int)));
+    emit interfaceAndDeviceListIsEmpty();
+}
+
+bool ViewController::removeSessionByName(QString sessionName) {
+    return sessionSecurity->removeSession(sessionName);
 }
 
 QStringList ViewController::getListSession() {
@@ -39,11 +56,48 @@ QStringList ViewController::getListSession() {
 }
 
 bool ViewController::loadSession(QString sessionName) {
-
+    Session t_load_session = sessionSecurity->getSessionByName(sessionName);
+    if(t_load_session.getIsValid()) {
+        for(auto itInteface:t_load_session.getInterfaces()) {
+            addConnection(itInteface.typeName, itInteface.name, itInteface.propKey, itInteface.propValue);
+            for(auto itDevice:itInteface.devices) {
+                addDeviceToConnection(itInteface.name, itDevice.typeName, itDevice.propKey, itDevice.propValue);
+            }
+        }
+        emit devSetActiveDeviceProperty(interfaceTree->getDevIndex(),
+                                        getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(interfaceTree->getDevIndex()));
+    }
+    return t_load_session.getIsValid();
 }
 
 QString ViewController::saveCurrentSession() {
-    return QString("AnyName") + " - Сохранено";
+    Session session;
+    Session::sDevices t_session_dev;
+    Session::sInterface t_session_io;
+    int connAll = connFactory->getCountConnection();
+    for(int ioCounter=0; ioCounter<connAll; ioCounter++) {
+        DevicesFactory *p_dev_factory = nullptr;
+        // interfaces
+        t_session_io.name = connFactory->getInterace(ioCounter)->getInterfaceName();
+        t_session_io.propKey = connFactory->getInterace(ioCounter)->getInterfaceProperty().first;
+        t_session_io.propValue = connFactory->getInterace(ioCounter)->getInterfaceProperty().second;
+        t_session_io.typeName= connFactory->getInterace(ioCounter)->getType();
+        session.addInterface(t_session_io);
+        // devices
+        p_dev_factory = connFactory->getInterace(ioCounter)->getDeviceFactory();
+        if(p_dev_factory != nullptr) {
+            int devAll = p_dev_factory->getDeviceCount();
+            for(int devCounter=0; devCounter<devAll; devCounter++) {
+                t_session_dev.propKey.clear();
+                t_session_dev.propValue.clear();
+                t_session_dev.typeName = p_dev_factory->getDeviceName(devCounter);
+                t_session_dev.propKey = p_dev_factory->getDevicePropertyByIndex(devCounter).first;
+                t_session_dev.propValue = p_dev_factory->getDevicePropertyByIndex(devCounter).second;
+                session.addDevice(t_session_dev);
+            }
+        }
+    }
+    return sessionSecurity->saveSession(session);
 }
 
 QString ViewController::saveCurrentSessionAs(QString sessionName) {
@@ -108,46 +162,51 @@ void ViewController::removeActiveDevice() {
     }
 }
 
-bool ViewController::addDeviceToConnection(QString devTypeName, QStringList keyParam, QStringList valueParam) {
+bool ViewController::addDeviceToConnection(QString ioName, QString devTypeName, QStringList keyParam, QStringList valueParam) {
     bool res = false;
     interfacesAbstract *pInterface = nullptr;
-    // get current interface
-    pInterface = connFactory->getInterace(connFactory->getInteraceNameFromIndex(interfaceTree->getIoIndex()));
-    if(pInterface != nullptr) {
-        bool serviceIsFinded = false;
-        ServiceDevicesAbstract *p_service = nullptr;
-        for(auto services:serviceList) {
-            if(services->getDeviceType() == devTypeName) {
-                serviceIsFinded = true;
-                p_service = services;
-            }
+    bool serviceIsFinded = false;
+    ServiceDevicesAbstract *p_service = nullptr;
+    // get interface
+    pInterface = connFactory->getInterace(ioName);
+    if(pInterface == nullptr) {
+        return false;
+    }
+    for(auto services:serviceList) {
+        if(services->getDeviceType() == devTypeName) {
+            serviceIsFinded = true;
+            p_service = services; break;
         }
-        if(serviceIsFinded) {
-            res = pInterface->getDeviceFactory()->addNewDevice(pInterface->getDeviceFactory()->getDeviceType(devTypeName),
-                                                               QPair<QStringList,QStringList>(keyParam, valueParam), p_service);
-            if(res) {
-                // change current device index
-                interfaceTree->addDeviceToConnection(getCurrentInterfaceName(), "init_device");
-                interfaceTree->changeDeviceHeader(getCurrentInterfaceName(), "init_device",
-                                                  getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceHeader(interfaceTree->getDevIndex()));
-                interfaceTree->changeDeviceName(getCurrentInterfaceName(), "init_device",
-                                                getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceNameWithId(interfaceTree->getDevIndex()));
-                connect(interfaceTree, SIGNAL(currentIndexIsChangedDevice(int,int)), this, SLOT(setChangedIndexDevice(int,int)));
-                // make it device - "not ready"
-                // while not read settings
-                pInterface->getDeviceFactory()->setDeviceReInitByIndex(interfaceTree->getDevIndex());
-                emit devUpdateLogMessage(interfaceTree->getDevIndex(),0, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
-                emit addDeviceSuccesfull(getDeviceFactoryByIndex(
-                                             interfaceTree->getIoIndex())->getDeviceTypeNameByType(
-                                             getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceType(interfaceTree->getDevIndex())),
-                                         QStringList(), QStringList());
-            } else {
-                emit devUpdateLogMessage(interfaceTree->getDevIndex(),2, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
-                emit addDeviceFail(devTypeName, "Не получилось добавить одно или более устройств\nВозможные причины:\n 1) такой адрес уже используется\n 2) устройство отличается от типа уже добавленных устройств");
-            }
+    }
+    if(serviceIsFinded) {
+        res = pInterface->getDeviceFactory()->addNewDevice(pInterface->getDeviceFactory()->getDeviceType(devTypeName),
+                                                           QPair<QStringList,QStringList>(keyParam, valueParam), p_service);
+        if(res) {
+            // change current device index
+            interfaceTree->addDeviceToConnection(getCurrentInterfaceName(), "init_device");
+            interfaceTree->changeDeviceHeader(getCurrentInterfaceName(), "init_device",
+                                              getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceHeader(interfaceTree->getDevIndex()));
+            interfaceTree->changeDeviceName(getCurrentInterfaceName(), "init_device",
+                                            getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceNameWithId(interfaceTree->getDevIndex()));
+            connect(interfaceTree, SIGNAL(currentIndexIsChangedDevice(int,int)), this, SLOT(setChangedIndexDevice(int,int)));
+            // make it device - "not ready"
+            // while not read settings
+            pInterface->getDeviceFactory()->setDeviceReInitByIndex(interfaceTree->getDevIndex());
+            emit devUpdateLogMessage(interfaceTree->getDevIndex(),0, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+            emit addDeviceSuccesfull(getDeviceFactoryByIndex(
+                                         interfaceTree->getIoIndex())->getDeviceTypeNameByType(
+                                         getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceType(interfaceTree->getDevIndex())),
+                                     QStringList(), QStringList());
+        } else {
+            emit devUpdateLogMessage(interfaceTree->getDevIndex(), 2, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+            emit addDeviceFail(devTypeName, "Не получилось добавить одно или более устройств\nВозможные причины:\n 1) такой адрес уже используется\n 2) устройство отличается от типа уже добавленных устройств");
         }
     }
     return res;
+}
+
+bool ViewController::addDeviceToConnection(QString devTypeName, QStringList keyParam, QStringList valueParam) {
+    return addDeviceToConnection(connFactory->getInteraceNameFromIndex(interfaceTree->getIoIndex()), devTypeName, keyParam, valueParam);
 }
 
 void ViewController::checkDeviceFromConnection(QString devTypeName, QStringList keyParam, QStringList valueParam) { // uniqIdDevice password
@@ -330,14 +389,13 @@ void ViewController::deviceReadyProperties(DevicesFactory::E_DeviceType type, QS
 void ViewController::deviceReadyInit(DevicesFactory::E_DeviceType type, QString uniqNameId) {}
 
 void ViewController::interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateType type) {
-    deviceTreeChanged(DevicesFactory::Type_Update_RamakeAfterChangeInterface, interfaceTree->getDevIndex());
-
     switch(type) {
     case ConnectionFactory::Type_Update_ChangedIndex:
     case ConnectionFactory::Type_Update_Add:
     case ConnectionFactory::Type_Update_Removed:
         break;
     }
+    deviceTreeChanged(DevicesFactory::Type_Update_RamakeAfterChangeInterface, interfaceTree->getDevIndex());
     if(connFactory->getCountConnection() >0) {
         emit interfaceReadyProperties(connFactory->getInterace(interfaceTree->getIoIndex())->getType(),
                                       interfaceTree->getIoIndex(),
@@ -556,15 +614,10 @@ void ViewController::deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, 
     case DevicesFactory::Type_Update_Removed: break;
     case DevicesFactory::Type_Update_Added: break;
     case DevicesFactory::Type_Update_PasswordIncorrect:
-        //        emit devShowMessage(connFactory->getInterace(interfaceTree->getIoIndex())->getType(),
-        //                            "Смена пароля", QStringList(QString("Пароль не верный [Тип=%1]").
-        //                                                        arg(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev))));
         emit devUpdateLogMessage(interfaceTree->getDevIndex(),2, QString("Не правильный пароль [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
         break;
     case DevicesFactory::Type_Update_TypeIncorrect:
         emit devUpdateLogMessage(interfaceTree->getDevIndex(),2, QString("Не правильный тип [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
-        //emit devWrongTypeIncorrect(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
-        //                          getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceHeaderByIndex(indexDev).first());
         break;
     }
 }
@@ -572,38 +625,44 @@ void ViewController::deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, 
 void ViewController::disconnectToDevSignals() {
     int countConn = connFactory->getCountConnection();
     for(int i=0; i<countConn; i++) {
-        disconnect(getDeviceFactoryByIndex(i), SIGNAL(deviceConnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceConnected(DevicesFactory::E_DeviceType,QString)));
-        disconnect(getDeviceFactoryByIndex(i), SIGNAL(deviceDisconnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceDisconnected(DevicesFactory::E_DeviceType,QString)));
-        disconnect(getDeviceFactoryByIndex(i), SIGNAL(deviceReadyCurrentDataSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyCurrentData(DevicesFactory::E_DeviceType,QString)));
-        disconnect(getDeviceFactoryByIndex(i), SIGNAL(deviceReadyInitSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyInit(DevicesFactory::E_DeviceType,QString)));
-        disconnect(getDeviceFactoryByIndex(i), SIGNAL(deviceReadyPropertiesSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyProperties(DevicesFactory::E_DeviceType,QString)));
-        disconnect(getDeviceFactoryByIndex(i),
-                   SIGNAL(deviceUpdateTree(DevicesFactory::E_DeviceUpdateType,int)),
-                   this, SLOT(deviceTreeChanged(DevicesFactory::E_DeviceUpdateType,int)));
-        disconnect(getDeviceFactoryByIndex(i), SIGNAL(deviceReadyCustomCommand(int,QString,QStringList,QStringList,CommandController::sCommandData)),
-                   this, SLOT(deviceReadyCustomCommand(int,QString, QStringList,QStringList, CommandController::sCommandData)));
-        disconnect(getDeviceFactoryByIndex(i), SIGNAL(deviceReadyLog(int,QStringList)),
-                   this, SLOT(deviceLogMessage(int, QStringList)));
-        disconnect(getDeviceFactoryByIndex(i), SIGNAL(deviceCheckIsReady(DevicesFactory::E_DeviceType,QString,bool)),
-                   this, SLOT(deviceCheckReady(DevicesFactory::E_DeviceType,QString,bool)));
+        DevicesFactory *p_dev_factory = getDeviceFactoryByIndex(i);
+        if(p_dev_factory != nullptr) {
+            disconnect(p_dev_factory, SIGNAL(deviceConnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceConnected(DevicesFactory::E_DeviceType,QString)));
+            disconnect(p_dev_factory, SIGNAL(deviceDisconnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceDisconnected(DevicesFactory::E_DeviceType,QString)));
+            disconnect(p_dev_factory, SIGNAL(deviceReadyCurrentDataSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyCurrentData(DevicesFactory::E_DeviceType,QString)));
+            disconnect(p_dev_factory, SIGNAL(deviceReadyInitSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyInit(DevicesFactory::E_DeviceType,QString)));
+            disconnect(p_dev_factory, SIGNAL(deviceReadyPropertiesSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyProperties(DevicesFactory::E_DeviceType,QString)));
+            disconnect(p_dev_factory,
+                       SIGNAL(deviceUpdateTree(DevicesFactory::E_DeviceUpdateType,int)),
+                       this, SLOT(deviceTreeChanged(DevicesFactory::E_DeviceUpdateType,int)));
+            disconnect(p_dev_factory, SIGNAL(deviceReadyCustomCommand(int,QString,QStringList,QStringList,CommandController::sCommandData)),
+                       this, SLOT(deviceReadyCustomCommand(int,QString, QStringList,QStringList, CommandController::sCommandData)));
+            disconnect(p_dev_factory, SIGNAL(deviceReadyLog(int,QStringList)),
+                       this, SLOT(deviceLogMessage(int, QStringList)));
+            disconnect(p_dev_factory, SIGNAL(deviceCheckIsReady(DevicesFactory::E_DeviceType,QString,bool)),
+                       this, SLOT(deviceCheckReady(DevicesFactory::E_DeviceType,QString,bool)));
+        }
     }
 }
 
 void ViewController::connectToDevSignals() {
     if(connFactory->getCountConnection() > 0) {
-        connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceConnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceConnected(DevicesFactory::E_DeviceType,QString)));
-        connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceDisconnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceDisconnected(DevicesFactory::E_DeviceType,QString)));
-        connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceReadyCurrentDataSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyCurrentData(DevicesFactory::E_DeviceType,QString)));
-        connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceReadyInitSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyInit(DevicesFactory::E_DeviceType,QString)));
-        connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceReadyPropertiesSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyProperties(DevicesFactory::E_DeviceType,QString)));
-        connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceUpdateTree(DevicesFactory::E_DeviceUpdateType,int)),
-                this, SLOT(deviceTreeChanged(DevicesFactory::E_DeviceUpdateType,int)));
-        connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceReadyCustomCommand(int,QString,QStringList,QStringList,CommandController::sCommandData)),
-                this, SLOT(deviceReadyCustomCommand(int,QString,QStringList,QStringList,CommandController::sCommandData)));
-        connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceReadyLog(int, QStringList)),
-                this, SLOT(deviceLogMessage(int, QStringList)));
-        connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceCheckIsReady(DevicesFactory::E_DeviceType,QString,bool)),
-                this, SLOT(deviceCheckReady(DevicesFactory::E_DeviceType,QString,bool)));
+        DevicesFactory *p_dev_factory = getDeviceFactoryByIndex(interfaceTree->getIoIndex());
+        if(p_dev_factory != nullptr) {
+            connect(p_dev_factory, SIGNAL(deviceConnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceConnected(DevicesFactory::E_DeviceType,QString)));
+            connect(p_dev_factory, SIGNAL(deviceDisconnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceDisconnected(DevicesFactory::E_DeviceType,QString)));
+            connect(p_dev_factory, SIGNAL(deviceReadyCurrentDataSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyCurrentData(DevicesFactory::E_DeviceType,QString)));
+            connect(p_dev_factory, SIGNAL(deviceReadyInitSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyInit(DevicesFactory::E_DeviceType,QString)));
+            connect(p_dev_factory, SIGNAL(deviceReadyPropertiesSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyProperties(DevicesFactory::E_DeviceType,QString)));
+            connect(p_dev_factory, SIGNAL(deviceUpdateTree(DevicesFactory::E_DeviceUpdateType,int)),
+                    this, SLOT(deviceTreeChanged(DevicesFactory::E_DeviceUpdateType,int)));
+            connect(p_dev_factory, SIGNAL(deviceReadyCustomCommand(int,QString,QStringList,QStringList,CommandController::sCommandData)),
+                    this, SLOT(deviceReadyCustomCommand(int,QString,QStringList,QStringList,CommandController::sCommandData)));
+            connect(p_dev_factory, SIGNAL(deviceReadyLog(int, QStringList)),
+                    this, SLOT(deviceLogMessage(int, QStringList)));
+            connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceCheckIsReady(DevicesFactory::E_DeviceType,QString,bool)),
+                    this, SLOT(deviceCheckReady(DevicesFactory::E_DeviceType,QString,bool)));
+        }
     }
 }
 

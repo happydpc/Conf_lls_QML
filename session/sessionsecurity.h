@@ -13,16 +13,11 @@ public:
     explicit SessionSecurity(QObject *parent = nullptr);
 
     QStringList getAvailableSessions();
+    bool removeSession(QString sessionName);
     QList<Session> getSessionAll();
+    Session getSessionByName(QString name);
 
-    Session* getByName(QString sessionName);
-    bool saveByName(QString sessionName);
-    bool saveAuto();
-
-//    Q_INVOKABLE QStringList getListSession();
-//    Q_INVOKABLE QString saveCurrentSession();
-//    Q_INVOKABLE QString saveCurrentSessionAs(QString sessionName);
-//    Q_INVOKABLE bool loadSession(QString sessionName);
+    QString saveSession(Session & session);
 
 signals:
 

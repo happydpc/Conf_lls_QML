@@ -13,11 +13,16 @@ Popup {
 
     property int sessionSelectMode: 0
 
-    onOpened: {
+    function loadSessionTree() {
         var sessionList = viewController.getListSession()
+        openSessionListView.model.clear()
         for(var i=0; i<sessionList.length; i++) {
             openSessionListView.model.append({"sessionName":sessionList[i]})
         }
+    }
+
+    onOpened: {
+        loadSessionTree()
     }
 
     Row {
@@ -25,18 +30,9 @@ Popup {
         height: parent.height
 
         Rectangle {
-            width: parent.width/2
+            width: parent.width/2 + 50
             height: parent.height
-            color: "#ffffff"
-            layer.enabled: true
-            layer.effect: DropShadow {
-                transparentBorder: true
-                horizontalOffset: 0
-                verticalOffset: 1
-                color: "#e0e5ef"
-                samples: 10
-                radius: 10
-            }
+            color: "#f7f7f7"
             SwipeView {
                 id:panelSwipe
                 currentIndex: sessionSelectMode
@@ -66,7 +62,7 @@ Popup {
                                     TextField {
                                         id: loadSessionName
                                         height: 25
-                                        width: 200
+                                        width: 250
                                         text: model.sessionName
                                         font.bold: false
                                         anchors.top: parent.top
@@ -80,14 +76,35 @@ Popup {
                                         }
                                     }
                                     Button {
-                                        text: "Загрузить"
-                                        width: 100
+                                        id:removeButton
+                                        text: "\uf1f8"
+                                        width: 50
                                         height: 25
                                         anchors.top: parent.top
                                         anchors.topMargin: 5
                                         anchors.left: loadSessionName.right
                                         anchors.leftMargin: 5
                                         onClicked: {
+                                            var list = openSessionListView.model.get(index)
+                                            if(viewController.removeSessionByName(list["sessionName"])) {
+                                                loadSessionTree()
+                                            }
+                                        }
+                                    }
+                                    Button {
+                                        id:loadButton
+                                        text: "Загрузить"
+                                        width: 100
+                                        height: 25
+                                        anchors.top: parent.top
+                                        anchors.topMargin: 5
+                                        anchors.left: removeButton.right
+                                        anchors.leftMargin: 5
+                                        onClicked: {
+                                            var list = openSessionListView.model.get(index)
+                                            viewController.resetSession()
+                                            viewController.loadSession(list["sessionName"])
+                                            close()
                                         }
                                     }
                                 }
@@ -146,49 +163,50 @@ Popup {
         Column {
             spacing: 20
             anchors.verticalCenter: parent.verticalCenter
+            width: 300
             Label {
                 text: qsTr("Открытие")
             }
-            Row {
-                MiscElems.ButtonRound {
-                    id:openSimple
-                    textLine: 2
-                    widthBody: 150
-                    name:"Открыть"
-                    iconCode: "\uf12a  "
-                    useIcon: true
-                    onClicked: {
-                        sessionSelectMode = 0
-                    }
+            MiscElems.ButtonRound {
+                id:openSimple
+                textLine: 1
+                widthBody: 150
+                name:"Открыть"
+                iconCode: "\uf12a  "
+                useIcon: true
+                onClicked: {
+                    sessionSelectMode = 0
                 }
             }
             Label {
                 text: qsTr("Сохранение")
             }
-            Row {
+            Column {
                 spacing: 10
                 MiscElems.ButtonRound {
                     id:saveSimple
-                    textLine: 2
+                    textLine: 1
                     widthBody: 150
                     name:"Сохранить"
                     iconCode: "\uf12a  "
                     useIcon: true
                     onClicked: {
-                        sessionSelectMode = 1                        
+                        sessionSelectMode = 1
                         var res = viewController.saveCurrentSession()
                         if(res.length !==0) {
                             saveSessionSimpleName.text = res
                             var timer = Qt.createQmlObject('import QtQuick 2.4;Timer{interval: 1200;running:true;repeat: false;}', parent);
                             timer.onTriggered.connect(function() {
                                 saveSessionSimpleName.text = ""
+                                sessionSelectMode = 0
+                                loadSessionTree()
                             });
                         }
                     }
                 }
                 MiscElems.ButtonRound {
                     id:saveAs
-                    textLine: 2
+                    textLine: 1
                     widthBody: 150
                     name:"Сохранить как"
                     iconCode: "\uf12a  "

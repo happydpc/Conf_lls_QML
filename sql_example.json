@@ -3,59 +3,45 @@
   "name": "session_1",
   "attributes": [
     {
-      "inteface_0": [
-        {
-          "name": "ttyUSB0",
-          "property": [
-            {
-              "baudrate": "19200"
+      "inteface_0": {
+        "name": "ttyUSB0",
+        "type": "serial",
+        "property": {
+          "baudrate": "19200"
+        },
+        "devices": [
+          {
+            "dev_1": {
+              "typeName": "PROGRESS_TMK24",
+              "property": {
+                "id": "1",
+                "header": "lls_1"
+              }
+            },
+            "dev_2": {
+              "typeName": "PROGRESS_TMK24",
+              "property": {
+                "id": "2",
+                "header": "lls_2"
+              }
+            },
+            "dev_3": {
+              "typeName": "PROGRESS_TMK24",
+              "property": {
+                "id": "3",
+                "header": "lls_3"
+              }
             }
-          ],
-          "devices": [
-            {
-              "dev_1": [
-                {
-                  "typeName": "PROGRESS_TMK24",
-                  "property": [
-                    {
-                      "id": "1",
-                      "header": "lls_1"
-                    }
-                  ]
-                }
-              ],
-              "dev_2": [
-                {
-                  "typeName": "PROGRESS_TMK24",
-                  "property": [
-                    {
-                      "id": "1",
-                      "header": "lls_1"
-                    }
-                  ]
-                }
-              ],
-              "dev_3": [
-                {
-                  "typeName": "PROGRESS_TMK24",
-                  "property": [
-                    {
-                      "id": "1",
-                      "header": "lls_1"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
+          }
+        ]
+      },
+      "inteface_1": {
+        "name": "ttyACM0",
+        "type": "serial",
+        "property": {
+          "baudrate": "19200"
         }
-      ],
-      "inteface_1": [
-        {
-          "name": "ttyACM0",
-          "property": ""
-        }
-      ]
+      }
     }
   ]
 }

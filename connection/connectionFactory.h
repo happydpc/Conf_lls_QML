@@ -27,6 +27,7 @@ public slots:
     bool addConnection(QString typeName, QString name, QPair<QStringList,QStringList> param);
     void removeConnection(QString name);
     void removeConnection(int index);
+    void removeAll();
 
     QStringList getAvailableName(QString typeName);
 

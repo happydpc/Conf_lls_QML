@@ -16,6 +16,11 @@ Rectangle {
     property int indexItem_Intefaces: 1
     property int indexItem_Devices: 2
 
+    // *************  logo   **************/
+    function setActiveLogoPanel() {
+        modeSelectView.setCurrentIndex(indexItem_Logo)
+    }
+
     // *************  interfaces  **************/
     function intefaceAdded(ioType, keyProperty, valueProperty) {
         switch(ioType.toLowerCase()) {
@@ -46,6 +51,12 @@ Rectangle {
             break;
         default: break;
         }
+    }
+
+    function setInterfaceProperites(ioType, ioIndex, keyProperty, valueProperty) {
+        modeSelectView.setCurrentIndex(indexItem_Intefaces)
+        interfaceView.setCurrentIndex(ioIndex)
+        interfaceItemArray[ioIndex].setPropertyValues(keyProperty, valueProperty)
     }
 
     function intefaceSetResultCheckDevice(ioIndex, devTypeName, devId, devSn, result) {
@@ -88,12 +99,11 @@ Rectangle {
         modeSelectView.setCurrentIndex(indexItem_Devices)
     }
 
-    function setInterfaceProperites(ioType, ioIndex, keyProperty, valueProperty) {
-        modeSelectView.setCurrentIndex(indexItem_Intefaces)
-        interfaceView.setCurrentIndex(ioIndex)
-        interfaceItemArray[ioIndex].setPropertyValues(keyProperty, valueProperty)
+    function setDevCustomCommandExecuted(typeDev, devIndex, keys, args, ackMessageIsVisible) {
+        deviceItemArray[devIndex].setCustomCommandExecuted(keys, args, ackMessageIsVisible)
     }
 
+    // *************  message **************/
     function showDeviceAddError(devTypeName, errorMessage) {
         dialogAddDeviceFail.message = errorMessage
         dialogAddDeviceFail.open()
@@ -129,10 +139,6 @@ Rectangle {
             break;
         default: break;
         }
-    }
-
-    function setDevCustomCommandExecuted(typeDev, devIndex, keys, args, ackMessageIsVisible) {
-        deviceItemArray[devIndex].setCustomCommandExecuted(keys, args, ackMessageIsVisible)
     }
 
     function addDeviceLog(devIndex, codeMessage, message) {

@@ -15,20 +15,8 @@ public:
 
     QStringList getSessionsCountAvailable();
     bool getSessionsAll(QStringList &jsonResult);
-
-//    bool getSettings(QString &version,
-//                     int &count_digit_max, bool &use_minus,
-//                     QString &first_name, QString &last_name,
-//                     QString &exercise_all_time,
-//                     int &exercise_correct, int &exercise_wrong, int &exercise_passed);
-
-//    bool setSettings(int count_digit_max, bool use_minus,
-//                     QString first_name, QString last_name);
-
-//    bool getStatistics(QString &exercise_all_time,
-//                               int &exercise_correct, int &exercise_wrong, int &exercise_passed);
-//    bool updateStatistics(QString exercise_all_time,
-//                           int exercise_correct, int exercise_wrong, int exercise_passed);
+    bool sendRemoveSession(QString sessionName);
+    bool sendSaveSession(QString sessionName, QString jsonData);
 
 private:
 

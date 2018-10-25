@@ -94,93 +94,11 @@ Rectangle {
                 messageDialog.message = "Ошибки успешно считаны"
                 messageDialog.open()
             }
-            for(i=0; i<keys.length; i++) {
-                if(keys[i] === "GenFreq0") {
-                    error4Label.error4 = args[i]
-                } else if(keys[i] === "MaxFreqOut") {
-                    error2Label.error2 = args[i]
-                } else if(keys[i] === "MinFreqOut") {
-                    error3Label.error3 = args[i]
-                } else if(keys[i] === "NotCalibrated") {
-                    error1Label.error1 = args[i]
-                } else if(keys[i] === "QeueManagerError") {
-                    periodicSendTime.value = args[i]
-                } else if(keys[i] === "ReplayNotComeRs232") {
-                    typeOutMessage.currentIndex = args[i]
-                } else if(keys[i] === "ReplayNotComeRs485") {
-                    typeInterpolation.currentIndex = args[i]
-                } else if(keys[i] === "Rs232Error") {
-                    typeFiltration.currentIndex = args[i]
-                } else if(keys[i] === "Rs485Error") {
-                    filterLenghtMediana.value = args[i]
-                } else if(keys[i] === "Slave1Error") {
-                    error5Label.error5 = args[i]
-                } else if(keys[i] === "Slave2Error") {
-                    error6Label.error6 = args[i]
-                } else if(keys[i] === "Slave3Error") {
-                    error7Label.error7 = args[i]
-                } else if(keys[i] === "Slave4Error") {
-                    error8Label.error8 = args[i]
-                }
-            }
+            parseInputData(keys, args)
             break;
 
         case "lls_read_lvl_all":
-            if(keys.length > 0) {
-                devIsConnected = true
-                for(i=0; i<keys.length; i++) {
-                    if(keys[i] === "fuelProcent") {
-                        fuelLevelProgress.value = args[i]
-                    } else if(keys[i] === "fuelProcent") {
-                    } else if(keys[i] === "cnt") {
-                        levelCnt.value = args[i]
-                    } else if(keys[i] === "freq") {
-                        levelFreq.value = args[i]
-                    } else if(keys[i] === "temp") {
-                        levelTemp.value = args[i]
-                    } else if(keys[i] === "noiseDetected") {
-                        if((chartTarCurrentValuesMultiple.animateColorUp.running == false
-                            & (chartTarCurrentValuesMultiple.animateColorDown.running == false))) {
-                            if(args[i] == true) {
-                                chartTarCurrentValuesMultiple.animateColorUp.start()
-                            }
-                        }
-                    } else if(keys[i] === "ReplayNotComeRs485") {
-                        typeInterpolation.currentIndex = args[i]
-                    } else if(keys[i] === "Rs232Error") {
-                        typeFiltration.currentIndex = args[i]
-                    } else if(keys[i] === "Rs485Error") {
-                        filterLenghtMediana.value = args[i]
-                    } else if(keys[i] === "Slave1Error") {
-                        error5Label.error5 = args[i]
-                    } else if(keys[i] === "Slave2Error") {
-                        error6Label.error6 = args[i]
-                    } else if(keys[i] === "Slave3Error") {
-                        error7Label.error7 = args[i]
-                    } else if(keys[i] === "Slave4Error") {
-                        error8Label.error8 = args[i]
-                    } else if(keys[i] === "chartValue") {
-                        chartCurrentValue.dataList.push(args[i])
-                        chartCurrentValueLines.clear();
-                        chartCurrentValue.graphLength = chartCurrentValue.dataList.length
-                        chartCurrentValue.graphAmplitudeMax = 0
-                        for(var i=0; i<chartCurrentValue.dataList.length; i++) {
-                            if(chartCurrentValue.dataList[i] > chartCurrentValue.graphAmplitudeMax) {
-                                chartCurrentValue.graphAmplitudeMax = chartCurrentValue.dataList[i];
-                            }
-                            if(chartCurrentValue.dataList[i] < chartCurrentValue.graphAmplitudeMin) {
-                                chartCurrentValue.graphAmplitudeMin = chartCurrentValue.dataList[i];
-                            }
-                        }
-                        for(i=0; i<chartCurrentValue.dataList.length; i++) {
-                            chartCurrentValueLines.append(i, chartCurrentValue.dataList[i]);
-                        }
-                        if(chartCurrentValue.dataList.length > 50) {
-                            chartCurrentValue.dataList.pop()
-                        }
-                    }
-                }
-            }
+            parseInputData(keys, args)
             break;
         case "lls_calibrate_max":
             if(ackMessageIsVisible) {
@@ -268,6 +186,81 @@ Rectangle {
                 snText.text = values[i]
             } else if(keys[i] === "versionFirmare"){
                 versionFirmwareText.text = values[i]
+            } else if(keys[i] === "fuelProcent") {
+                fuelLevelProgress.value = values[i]
+            } else if(keys[i] === "fuelProcent") {
+            } else if(keys[i] === "cnt") {
+                levelCnt.value = values[i]
+            } else if(keys[i] === "freq") {
+                levelFreq.value = values[i]
+            } else if(keys[i] === "temp") {
+                levelTemp.value = values[i]
+            } else if(keys[i] === "noiseDetected") {
+                if((chartTarCurrentValuesMultiple.animateColorUp.running == false
+                    & (chartTarCurrentValuesMultiple.animateColorDown.running == false))) {
+                    if(values[i] == true) {
+                        chartTarCurrentValuesMultiple.animateColorUp.start()
+                    }
+                }
+            } else if(keys[i] === "ReplayNotComeRs485") {
+                typeInterpolation.currentIndex = values[i]
+            } else if(keys[i] === "Rs232Error") {
+                typeFiltration.currentIndex = values[i]
+            } else if(keys[i] === "Rs485Error") {
+                filterLenghtMediana.value = values[i]
+            } else if(keys[i] === "Slave1Error") {
+                error5Label.error5 = values[i]
+            } else if(keys[i] === "Slave2Error") {
+                error6Label.error6 = values[i]
+            } else if(keys[i] === "Slave3Error") {
+                error7Label.error7 = values[i]
+            } else if(keys[i] === "Slave4Error") {
+                error8Label.error8 = values[i]
+            } else if(keys[i] === "chartValue") {
+                if(chartCurrentValue.dataList.length > 50) {
+                    chartCurrentValue.dataList.shift()
+                }
+                chartCurrentValue.dataList.push(parseInt(values[i]))
+                chartCurrentValueLines.clear();
+                chartCurrentValue.graphLength = chartCurrentValue.dataList.length - 1
+                chartCurrentValue.graphAmplitudeMax = 0
+                for(var chartIter=0; chartIter<chartCurrentValue.dataList.length; chartIter++) {
+                    if(chartCurrentValue.dataList[chartIter] > chartCurrentValue.graphAmplitudeMax) {
+                        chartCurrentValue.graphAmplitudeMax = chartCurrentValue.dataList[chartIter];
+                    }
+                    if(chartCurrentValue.dataList[chartIter] < chartCurrentValue.graphAmplitudeMin) {
+                        chartCurrentValue.graphAmplitudeMin = chartCurrentValue.dataList[chartIter];
+                    }
+                }
+                for(chartIter=0; chartIter<chartCurrentValue.dataList.length; chartIter++) {
+                    chartCurrentValueLines.append(chartIter, chartCurrentValue.dataList[chartIter]);
+                }
+            } else if(keys[i] === "GenFreq0") {
+                error4Label.error4 = values[i]
+            } else if(keys[i] === "MaxFreqOut") {
+                error2Label.error2 = values[i]
+            } else if(keys[i] === "MinFreqOut") {
+                error3Label.error3 = values[i]
+            } else if(keys[i] === "NotCalibrated") {
+                error1Label.error1 = values[i]
+            } else if(keys[i] === "QeueManagerError") {
+                periodicSendTime.value = values[i]
+            } else if(keys[i] === "ReplayNotComeRs232") {
+                typeOutMessage.currentIndex = values[i]
+            } else if(keys[i] === "ReplayNotComeRs485") {
+                typeInterpolation.currentIndex = values[i]
+            } else if(keys[i] === "Rs232Error") {
+                typeFiltration.currentIndex = values[i]
+            } else if(keys[i] === "Rs485Error") {
+                filterLenghtMediana.value = values[i]
+            } else if(keys[i] === "Slave1Error") {
+                error5Label.error5 = values[i]
+            } else if(keys[i] === "Slave2Error") {
+                error6Label.error6 = values[i]
+            } else if(keys[i] === "Slave3Error") {
+                error7Label.error7 = values[i]
+            } else if(keys[i] === "Slave4Error") {
+                error8Label.error8 = values[i]
             }
         }
     }

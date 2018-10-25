@@ -13,6 +13,10 @@ class ViewController : public QObject
 public:
     explicit ViewController(Model *pInterfaceModel, QObject *parent = nullptr);
 
+
+    Q_INVOKABLE void resetSession();
+    Q_INVOKABLE bool removeSessionByName(QString sessionName);
+
     Q_INVOKABLE QStringList getListSession();
     Q_INVOKABLE QString saveCurrentSession();
     Q_INVOKABLE QString saveCurrentSessionAs(QString sessionName);
@@ -25,6 +29,7 @@ public:
     Q_INVOKABLE void removeActiveInterface();
     Q_INVOKABLE QStringList getInterfaceAvailableToAdd(QString typeName);
 
+    Q_INVOKABLE bool addDeviceToConnection(QString ioName, QString devTypeName, QStringList keyParam, QStringList valueParam);
     Q_INVOKABLE bool addDeviceToConnection(QString devTypeName, QStringList keyParam, QStringList valueParam);
     Q_INVOKABLE void checkDeviceFromConnection(QString devTypeName, QStringList keyParam, QStringList valueParam);
 

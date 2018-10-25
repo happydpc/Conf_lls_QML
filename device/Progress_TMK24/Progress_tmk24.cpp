@@ -98,6 +98,7 @@ QPair<QStringList,QStringList> Progress_tmk24::getPropertyData() {
 
 QPair<QStringList,QStringList> Progress_tmk24::getCurrentData() {
     QPair<QStringList,QStringList> res;
+    res = getPropertyData();
     res.first.push_back("fuelLevel");
     res.second.push_back(lls_data.fuelLevel.isValid == true ? QString::number(lls_data.fuelLevel.value.value_u32) : QString::number(0));
     res.first.push_back("fuelProcent");
@@ -111,6 +112,7 @@ QPair<QStringList,QStringList> Progress_tmk24::getCurrentData() {
     res.first.push_back("noiseDetected");
     res.second.push_back(QString::number(lls_data.noiseDetected));
     res.first.push_back("chartValue");
+    qDebug() << "ChartValue" << (lls_data.fuelLevel.isValid == true ? QString::number(lls_data.fuelLevel.value.value_u32) : QString::number(0));
     res.second.push_back(lls_data.fuelLevel.isValid == true ? QString::number(lls_data.fuelLevel.value.value_u32) : QString::number(0));
     return res;
 }
@@ -449,7 +451,7 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                     lls_data.fuelProcent.value.value_u32 = 0;
                 }
                 lls_data.fuelLevel.isValid = true;
-                lls_data.freq.value.value_u32  = frequency;
+                lls_data.freq.value.value_u32 = frequency;
                 lls_data.freq.isValid = true;
                 res = true;
             }
@@ -497,9 +499,13 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                     lls_data.llssValues.values.Frequency[i] = lls_data.llssValues.values.Frequency[i] << 8;
                     offset_counter++;
                 }
-                emit eventDeviceUpdateState(Type_DeviceEvent_CurrentDataUpdated, commandReqData.deviceIdent,
-                                            commandReqData.commandType, "Update current data",
-                                            QStringList(),QStringList(), commandReqData);
+
+                if(lls_data.fuelLevel.isValid && lls_data.fuelProcent.isValid && lls_data.cnt.isValid
+                        && lls_data.freq.isValid && lls_data.temp.isValid && lls_data.fuelLevel.isValid) {
+                    emit eventDeviceUpdateState(Type_DeviceEvent_CurrentDataUpdated, commandReqData.deviceIdent,
+                                                commandReqData.commandType, "Update current data",
+                                                QStringList(),QStringList(), commandReqData);
+                }
                 emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
                                             commandReqData.commandType, "Normal",
                                             QStringList(), QStringList(), commandReqData);

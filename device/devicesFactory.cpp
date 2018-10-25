@@ -26,10 +26,10 @@ bool DevicesFactory::addNewDevice(E_DeviceType type, QPair<QStringList,QStringLi
             factoryType = type;
         }
         for(int i=0; i<param.first.size(); i++) {
-            if(param.first[i] == "devId") {
+            if(param.first[i] == "id") {
                 devId = param.second[i];
             }
-            if(param.first[i] == "devHeader") {
+            if(param.first[i] == "header") {
                 devHeader = param.second[i];
             }
         }
@@ -495,7 +495,7 @@ void DevicesFactory::sendCustomCommandUseCallback(E_DeviceType type, QString ope
         lockMutextDevMap();
         QString uniqIdDevice;
         for(int keyCoun = 0; keyCoun<keys.size(); keyCoun++) {
-            if(keys.at(keyCoun) == "uniqIdDevice") {
+            if(keys.at(keyCoun) == "id") {
                 uniqIdDevice = values.at(keyCoun);
             }
         }
@@ -517,6 +517,7 @@ void DevicesFactory::sendCustomCommandUseCallback(E_DeviceType type, QString ope
             }
             delete pdevice;
         }
+        unlockMutextDevMap();
     } else { // TODO:
 
     }

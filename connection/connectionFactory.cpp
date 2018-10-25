@@ -66,6 +66,18 @@ void ConnectionFactory::removeConnection(int index) {
     lockInterface->unlock();
 }
 
+void ConnectionFactory::removeAll() {
+    lockInterface->lock();
+    if(!interfaceList.isEmpty()) {
+        for(int i=0; i<interfaceList.size(); i++) {
+            interfaceList[i]->closeInterface();
+        }
+        interfaceList.clear();
+        emit updateTree(ConnectionFactory::Type_Update_Removed);
+    }
+    lockInterface->unlock();
+}
+
 int ConnectionFactory::getCountConnection() {
     return interfaceList.size();
 }
