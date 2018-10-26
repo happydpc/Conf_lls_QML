@@ -31,7 +31,7 @@ Rectangle {
 
     function setConnected() {
         devIsConnected = true
-        devIsReady = false
+        devIsReady = true//false
         setWriteSettingsIsNoAvailable()
     }
 

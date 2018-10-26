@@ -126,12 +126,16 @@ bool ViewController::addConnection(QString typeName, QString name, QStringList k
             emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(), 0, QString("Добавление интерфейса [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
             // only added to the end
             // when take last count and plus 1
-            emit interfaceSetActiveProperty((connFactory->getCountConnection()) ? (connFactory->getCountConnection()-1) : (connFactory->getCountConnection()),
-                                            connFactory->getInterace((connFactory->getCountConnection()>=1) ? (connFactory->getCountConnection()-1) : (connFactory->getCountConnection()))->getType());
-            emit addInterfaceSuccesfull(connFactory->getInterace((connFactory->getCountConnection()) ? (connFactory->getCountConnection()-1) : (connFactory->getCountConnection()))->getType(),
-                                        connFactory->getInterace((connFactory->getCountConnection()) ? (connFactory->getCountConnection()-1) : (connFactory->getCountConnection()))->getInterfaceProperty().first,
-                                        connFactory->getInterace((connFactory->getCountConnection()) ? (connFactory->getCountConnection()-1) : (connFactory->getCountConnection()))->getInterfaceProperty().second);
-            interfaceTree->addConnection(name);
+            interfacesAbstract *p_interface = nullptr;
+            p_interface = connFactory->getInterace(connFactory->getCountConnection() ? (connFactory->getCountConnection()-1) : 0);
+            if(p_interface != nullptr) {
+                emit addInterfaceSuccesfull(p_interface->getType(),
+                                    p_interface->getInterfaceProperty().first,
+                                    p_interface->getInterfaceProperty().second);
+                emit interfaceSetActiveProperty((connFactory->getCountConnection()) ? (connFactory->getCountConnection()-1) : (connFactory->getCountConnection()),
+                connFactory->getInterace((connFactory->getCountConnection()>=1) ? (connFactory->getCountConnection()-1) : (connFactory->getCountConnection()))->getType());
+                interfaceTree->addConnection(name);
+            }
         } else {
             emit addConnectionFail(name);
         }

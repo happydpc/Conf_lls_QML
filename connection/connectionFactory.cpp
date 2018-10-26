@@ -11,15 +11,18 @@ bool ConnectionFactory::addConnection(QString typeName, QString name, QPair<QStr
     bool res = false;
     lockInterface->lock();
     if(typeName.toLower() == QString("serial")) {
-        interfacesAbstract* pInterface = new InterfaceSerial(name, param);
-        res  = pInterface->openInterface();
-        if(res) {
-            // TODO: !!! // connect(pInterface, SIGNAL(errorConnection(interfacesAbstract::eInterfaceTypes, QString)), this, SLOT(errorFromConnection(QString, QString)));
-            interfaceList.push_back(std::move(pInterface));
-            emit updateTree(ConnectionFactory::Type_Update_Add);
-        } else {
+        interfacesAbstract* pInterface = nullptr;
+        pInterface = new InterfaceSerial(name, param);
+        if(pInterface != nullptr) {
+            res  = pInterface->openInterface();
+            if(res) {
+                // TODO: !!! // connect(pInterface, SIGNAL(errorConnection(interfacesAbstract::eInterfaceTypes, QString)), this, SLOT(errorFromConnection(QString, QString)));
+                interfaceList.push_back(std::move(pInterface));
+                emit updateTree(ConnectionFactory::Type_Update_Add);
+            } else {
+                qDebug() << "ConnectionFactory: addConnection -ERR " + name;
+            }
             delete pInterface;
-            qDebug() << "ConnectionFactory: addConnection -ERR " + name;
         }
     } else if(typeName.toLower() == QString("ethernet")) {
 

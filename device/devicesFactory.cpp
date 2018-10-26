@@ -450,7 +450,7 @@ void DevicesFactory::deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEven
 }
 
 void DevicesFactory::lockMutextDevMap() {
-    devMutex->lock();
+    devMutex->tryLock(1000);
 }
 void DevicesFactory::unlockMutextDevMap() {
     devMutex->unlock();
@@ -506,7 +506,6 @@ void DevicesFactory::sendCustomCommandUseCallback(E_DeviceType type, QString ope
             checkDeviceStruct.isIdle = false;
             checkDeviceStruct.isReady = false;
             checkDeviceStruct.result = false;
-            unlockMutextDevMap();
             commands = pdevice->getCommandCustom(operation);
             for(int i=0; i<commands.size(); i++) {
                 auto tcommand = commands.at(i);
