@@ -6,7 +6,6 @@ import QtGraphicalEffects 1.0
 import "qrc:/qml/miscElems" as MiscElems
 
 Popup {
-    id: addDeviceDialog
     modal: true
     width: 700
     height: 600
@@ -576,7 +575,6 @@ Popup {
                             paramList.push("")
                             viewController.addDeviceToConnection(typeDeviceList.currentText, keyList, paramList)
                         }
-                        close()
                         modeFind = modeFind_idle
                         typeDeviceProgressProgressTmk24.value = 0
                         typeDeviceProgressProgressTmk24.visible = false
@@ -585,6 +583,7 @@ Popup {
                         typeDeviceIdProgressTmk24FindDown.readOnly = false
                         typeDeviceIdProgressTmk24FindUp.readOnly = false
                         findDevListView.model.clear()
+                        close()
                         break;
                     }
                     break;

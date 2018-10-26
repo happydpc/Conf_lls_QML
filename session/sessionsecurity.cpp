@@ -105,11 +105,11 @@ QString SessionSecurity::saveSession(Session & session) {
     session.setIsValid(true);
     if(session.getIsValid()) {
         QJsonObject rootObject;
+        QJsonObject interfaceObj;
         rootObject["name"] = session.getSessionName();
         rootObject["type"] = "session";
         int interfaceCount = 0;
         for(auto itInerfaces: session.getInterfaces()) {
-            QJsonObject interfaceObj;
             int devCounter = 0;
             QJsonArray devArray;
             QJsonObject ioSubProperty;
@@ -139,9 +139,9 @@ QString SessionSecurity::saveSession(Session & session) {
                 devCounter++;
             }
             interfaceObj[QString("interface_%1").arg(interfaceCount)] = ioSubProperty;
-            attributesArray.append(interfaceObj);
             interfaceCount++;
         }
+        attributesArray.append(interfaceObj);
         rootObject["attributes"] = attributesArray;
         QJsonDocument jsonDoc(rootObject);
         qDebug() << "resultJson = " << jsonDoc.toJson();

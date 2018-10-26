@@ -1052,7 +1052,7 @@ Rectangle {
                                     id: chartCurrentValue
                                     anchors.fill: parent
                                     theme: ChartView.ChartThemeLight
-                                    title: "Уровень/Объем"
+                                    title: "Значение CNT"
                                     backgroundColor: devIsConnected ? "#ffffff" : "#d9d9d9"
                                     antialiasing: true
                                     property int graphLength: 1

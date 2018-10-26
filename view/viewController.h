@@ -103,20 +103,20 @@ signals:
     void addConnectionFail(QString devName);
     void addDeviceFail(QString devName, QString errorMessage);
 
-    void addDeviceSuccesfull(QString devType, QStringList devKeyProperty, QStringList devValueProperty);
-    void deleteDeviceSuccesfull(int devIndex);
-    void devSetActiveDeviceProperty(int devIndex, QString devType);
-    void devConnected(int devIndex, QString typeDev);
-    void devDisconnected(int devIndex, QString typeDev);
-    void devReady(int devIndex, QString typeDev);
+    void addDeviceSuccesfull(int ioIndex, QString devType, QStringList devKeyProperty, QStringList devValueProperty);
+    void deleteDeviceSuccesfull(int ioIndex, int devIndex);
+    void devSetActiveDeviceProperty(int ioIndex, int devIndex, QString devType);
+    void devConnected(int ioIndex, int devIndex, QString typeDev);
+    void devDisconnected(int ioIndex, int devIndex, QString typeDev);
+    void devReady(int ioIndex, int devIndex, QString typeDev);
     void devReadyCheckCommand(int ioIndex, QString devTypeName, QString devId, QString devSn, bool result);
-    void devReadyProperties(int devIndex, QString typeDev, QStringList keys, QStringList values);
-    void devReadyPeriodicData(int devIndex, QString typeDev, QStringList keys, QStringList values);
+    void devReadyProperties(QString typeDev, int ioIndex, int devIndex, QStringList keys, QStringList values);
+    void devReadyPeriodicData(QString typeDev, int ioIndex, int devIndex, QStringList keys, QStringList values);
     void devErrorOperation(QString message);
 
     void devWrongTypeIncorrect(QString typeDev, QString devNameId);
-    void devUpdateLogMessage(int devIndex, int codeMessage, QString message);
-    void devCustomCommandExecuted(QString typeDev, int devIndex,
+    void devUpdateLogMessage(int ioIndex, int devIndex, int codeMessage, QString message);
+    void devCustomCommandExecuted(QString typeDev, int ioIndex, int devIndex,
                                   QStringList keys, QStringList args, bool ackMessageIsVisible);
     void devUpdateTree(QStringList devNames, QList<int>status);
 

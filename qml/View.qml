@@ -22,34 +22,34 @@ Item {
             projectPanel.devicePropertyPanel.setActiveInterfacePanelType(ioType, ioIndex)
         }
         onAddDeviceSuccesfull: {
-            projectPanel.devicePropertyPanel.deviceAdded(devType, devKeyProperty, devValueProperty)
+            projectPanel.devicePropertyPanel.deviceAdded(ioIndex, devType, devKeyProperty, devValueProperty)
         }
         onDeleteDeviceSuccesfull: {
-            projectPanel.devicePropertyPanel.deviceDeleted(devIndex)
+            projectPanel.devicePropertyPanel.deviceDeleted(ioIndex, devIndex)
         }
         onInterfaceAndDeviceListIsEmpty: {
             projectPanel.devicePropertyPanel.setActiveLogoPanel()
         }
         onDevSetActiveDeviceProperty: {
-            projectPanel.devicePropertyPanel.setActiveDevicePanelType(devType, devIndex)
+            projectPanel.devicePropertyPanel.setActiveDevicePanelType(devType, ioIndex, devIndex)
         }
         onInterfaceReadyProperties: {
             projectPanel.devicePropertyPanel.setInterfaceProperites(ioType, ioIndex, keyProperty, valueProperty)
         }
         onDevReadyProperties: {
-            projectPanel.devicePropertyPanel.setReadyProperties(devIndex, typeDev, keys, values)
+            projectPanel.devicePropertyPanel.setDevReadyProperties(typeDev, ioIndex, devIndex, keys, values)
         }
         onDevReadyPeriodicData: {
-            projectPanel.devicePropertyPanel.setReadyPeriodicData(devIndex, typeDev, keys, values)
+            projectPanel.devicePropertyPanel.setReadyPeriodicData(typeDev, ioIndex, devIndex, keys, values)
         }
         onDevConnected: {
-            projectPanel.devicePropertyPanel.setDevConnected(devIndex, typeDev)
+            projectPanel.devicePropertyPanel.setDevConnected(ioIndex, devIndex, typeDev)
         }
         onDevReady: {
-            projectPanel.devicePropertyPanel.setDevReady(devIndex, typeDev)
+            projectPanel.devicePropertyPanel.setDevReady(ioIndex, devIndex, typeDev)
         }
         onDevDisconnected: {
-            projectPanel.devicePropertyPanel.setDevDisconnected(devIndex, typeDev)
+            projectPanel.devicePropertyPanel.setDevDisconnected(ioIndex, devIndex, typeDev)
         }
         onAddConnectionFail: {
             projectPanel.devicePropertyPanel.dialogAddInterfaceFail.open()
@@ -60,11 +60,11 @@ Item {
         onDevShowMessage: {
             projectPanel.devicePropertyPanel.setDevShowMessage(typeDev, messageHeader, message)
         }
-        onDevCustomCommandExecuted: {
-            projectPanel.devicePropertyPanel.setDevCustomCommandExecuted(typeDev, devIndex, keys, args, ackMessageIsVisible)
+        onDevCustomCommandExecuted: { // OK
+            projectPanel.devicePropertyPanel.setDevCustomCommandExecuted(typeDev, ioIndex, devIndex, keys, args, ackMessageIsVisible)
         }
         onDevUpdateLogMessage: {
-            projectPanel.devicePropertyPanel.addDeviceLog(devIndex, codeMessage, message)
+            projectPanel.devicePropertyPanel.addDeviceLog(ioIndex, devIndex, codeMessage, message)
         }
         onDevReadyCheckCommand: {
             projectPanel.devicePropertyPanel.intefaceSetResultCheckDevice(ioIndex, devTypeName, devId, devSn, result)

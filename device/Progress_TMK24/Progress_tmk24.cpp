@@ -112,8 +112,7 @@ QPair<QStringList,QStringList> Progress_tmk24::getCurrentData() {
     res.first.push_back("noiseDetected");
     res.second.push_back(QString::number(lls_data.noiseDetected));
     res.first.push_back("chartValue");
-    qDebug() << "ChartValue" << (lls_data.fuelLevel.isValid == true ? QString::number(lls_data.fuelLevel.value.value_u32) : QString::number(0));
-    res.second.push_back(lls_data.fuelLevel.isValid == true ? QString::number(lls_data.fuelLevel.value.value_u32) : QString::number(0));
+    res.second.push_back(lls_data.cnt.isValid == true ? QString::number(lls_data.cnt.value.value_u32) : QString::number(0));
     return res;
 }
 
