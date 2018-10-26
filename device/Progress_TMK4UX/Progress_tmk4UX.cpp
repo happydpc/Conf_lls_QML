@@ -43,6 +43,10 @@ DeviceAbstract::E_State Progress_tmk4UX::getState() {
     return state;
 }
 
+QList<int> Progress_tmk4UX::getChart() {
+    return QList<int>();
+}
+
 QPair<QStringList,QStringList> Progress_tmk4UX::getSettings() {
 
 }

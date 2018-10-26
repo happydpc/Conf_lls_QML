@@ -154,8 +154,6 @@ Makefile: ../../Lls_QML_conf.pro C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_positioningquick_private.pri \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_printsupport.pri \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_printsupport_private.pri \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_purchasing.pri \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_purchasing_private.pri \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_qml.pri \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_qml_private.pri \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_qmldebug_private.pri \
@@ -344,8 +342,6 @@ C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_positioningquick.pri:
 C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_positioningquick_private.pri:
 C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_printsupport.pri:
 C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_printsupport_private.pri:
-C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_purchasing.pri:
-C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_purchasing_private.pri:
 C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_qml.pri:
 C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_qml_private.pri:
 C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_qmldebug_private.pri:

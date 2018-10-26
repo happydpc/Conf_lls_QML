@@ -25,9 +25,6 @@ public slots:
     QStringList getAvailableList() override;
     QString getType() override;
 
-private slots:
-    void aboutClose() override;
-
 private:
     static constexpr char* typeName = "Ethernet";
 

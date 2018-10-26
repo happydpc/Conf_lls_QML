@@ -132,7 +132,7 @@ private slots:
     void deviceReadyInit(DevicesFactory::E_DeviceType, QString uniqNameId);
     void deviceCheckReady(DevicesFactory::E_DeviceType devType,QString devUniqNameId, bool result);
 
-    void interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateType type);
+    void interfaceTreeChanged(int ioIndex, ConnectionFactory::E_ConnectionUpdateType type);
     void deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, int index);
     void deviceReadyCustomCommand(int index, QString message,
                                   QStringList keyCustomData, QStringList valueCustomData,
@@ -149,6 +149,7 @@ private slots:
     int getInterfaceCount();
 
 private:
+    QTimer *updateIoStatusTimer;
     ConnectionFactory *connFactory;
     Model *interfaceTree;
     SessionSecurity *sessionSecurity;

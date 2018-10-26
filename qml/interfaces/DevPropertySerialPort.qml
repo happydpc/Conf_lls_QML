@@ -10,6 +10,7 @@ import QtQuick.Controls.Styles 1.4
 import CustomControls 1.0
 import QtGraphicalEffects 1.0
 import "qrc:/qml/miscElems" as MiscElems
+import "qrc:/qml/devices" as Devices
 
 Rectangle {
     anchors.top: parent.top
@@ -17,13 +18,9 @@ Rectangle {
     visible: true
     color: "#e7e9eb"
 
-    property var addDeviceDialog: Object
     property var messageShow: Object
 
     Component.onCompleted: {
-        var componentQml = Qt.createComponent("qrc:/qml/devices/AddDeviceDialog.qml");
-        addDeviceDialog = componentQml.createObject(devPropertySerialPort)
-        addDeviceDialog.visible = false
         componentQml = Qt.createComponent("qrc:/qml/interfaces/MessageShow.qml");
         messageShow = componentQml.createObject(parent)
         addDeviceDialog.onResultMessage.connect(function(res) {
@@ -83,5 +80,10 @@ Rectangle {
                 addDeviceDialog.open()
             }
         }
+    }
+
+    Devices.AddDeviceDialog {
+        id:addDeviceDialog
+        visible: false
     }
 }

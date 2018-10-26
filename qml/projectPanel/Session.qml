@@ -164,9 +164,6 @@ Popup {
             spacing: 20
             anchors.verticalCenter: parent.verticalCenter
             width: 300
-            Label {
-                text: qsTr("Открытие")
-            }
             MiscElems.ButtonRound {
                 id:openSimple
                 textLine: 1
@@ -178,9 +175,6 @@ Popup {
                     sessionSelectMode = 0
                 }
             }
-            Label {
-                text: qsTr("Сохранение")
-            }
             Column {
                 spacing: 10
                 MiscElems.ButtonRound {
@@ -188,7 +182,7 @@ Popup {
                     textLine: 1
                     widthBody: 150
                     name:"Сохранить"
-                    iconCode: "\uf12a  "
+                    iconCode: "\uf4d3  "
                     useIcon: true
                     onClicked: {
                         sessionSelectMode = 1
@@ -209,7 +203,18 @@ Popup {
                     textLine: 1
                     widthBody: 150
                     name:"Сохранить как"
-                    iconCode: "\uf12a  "
+                    iconCode: "\uf0c7  "
+                    useIcon: true
+                    onClicked: {
+                        sessionSelectMode = 2
+                    }
+                }
+                MiscElems.ButtonRound {
+                    id:closeButton
+                    textLine: 1
+                    widthBody: 150
+                    name:"Закрыть"
+                    iconCode: "\uf410  "
                     useIcon: true
                     onClicked: {
                         sessionSelectMode = 2

@@ -11,18 +11,18 @@ bool ConnectionFactory::addConnection(QString typeName, QString name, QPair<QStr
     bool res = false;
     lockInterface->lock();
     if(typeName.toLower() == QString("serial")) {
-        interfacesAbstract* pInterface = nullptr;
-        pInterface = new InterfaceSerial(name, param);
-        if(pInterface != nullptr) {
-            res  = pInterface->openInterface();
+        interfacesAbstract * p_interface = nullptr;
+        p_interface = new InterfaceSerial(name, param);
+        if(p_interface != nullptr) {
+            res  = p_interface->openInterface();
             if(res) {
-                // TODO: !!! // connect(pInterface, SIGNAL(errorConnection(interfacesAbstract::eInterfaceTypes, QString)), this, SLOT(errorFromConnection(QString, QString)));
-                interfaceList.push_back(std::move(pInterface));
-                emit updateTree(ConnectionFactory::Type_Update_Add);
+                 connect(p_interface, SIGNAL(errorInterface(QString,QString)), this, SLOT(errorFromConnection(QString,QString)));
+                interfaceList.push_back(std::move(p_interface));
+                emit updateTree(getCountConnection() != 0 ? getCountConnection()-1 : 0, ConnectionFactory::Type_Update_Add);
             } else {
                 qDebug() << "ConnectionFactory: addConnection -ERR " + name;
+                delete p_interface;
             }
-            delete pInterface;
         }
     } else if(typeName.toLower() == QString("ethernet")) {
 
@@ -39,9 +39,12 @@ bool ConnectionFactory::addConnection(QString typeName, QString name, QPair<QStr
 QStringList ConnectionFactory::getAvailableName(QString typeName) {
     QStringList interfaceList;
     if(typeName == "serial") {
-        interfacesAbstract* pInterface = new InterfaceSerial("", QPair<QStringList,QStringList>());
-        interfaceList = pInterface->getAvailableList();
-        delete pInterface;
+        interfacesAbstract* p_interface = nullptr;
+        p_interface = new InterfaceSerial("", QPair<QStringList,QStringList>());
+        if(p_interface != nullptr) {
+            interfaceList = p_interface->getAvailableList();
+            delete p_interface;
+        }
     }
     return interfaceList;
 }
@@ -54,7 +57,7 @@ void ConnectionFactory::removeConnection(QString name) {
         }
     }
     lockInterface->unlock();
-    emit updateTree(ConnectionFactory::Type_Update_Removed);
+    emit updateTree(getCountConnection() != 0 ? getCountConnection()-1 : 0, ConnectionFactory::Type_Update_Removed);
 }
 
 void ConnectionFactory::removeConnection(int index) {
@@ -63,7 +66,7 @@ void ConnectionFactory::removeConnection(int index) {
         if(index <= interfaceList.size()-1) {
             interfaceList[index]->closeInterface();
             interfaceList.erase(interfaceList.begin() + index);
-            emit updateTree(ConnectionFactory::Type_Update_Removed);
+            emit updateTree(getCountConnection() != 0 ? getCountConnection()-1 : 0, ConnectionFactory::Type_Update_Removed);
         }
     }
     lockInterface->unlock();
@@ -76,7 +79,7 @@ void ConnectionFactory::removeAll() {
             interfaceList[i]->closeInterface();
         }
         interfaceList.clear();
-        emit updateTree(ConnectionFactory::Type_Update_Removed);
+        emit updateTree(0, ConnectionFactory::Type_Update_Removed);
     }
     lockInterface->unlock();
 }
@@ -99,33 +102,33 @@ QString ConnectionFactory::getInteraceNameFromIndex(int index) {
 }
 
 interfacesAbstract* ConnectionFactory::getInterace(QString name) {
-    interfacesAbstract* pInterface = nullptr;
+    interfacesAbstract* p_interface = nullptr;
     for(auto it = interfaceList.begin(); it!=interfaceList.end(); it++) {
         if((*it)->getInterfaceName() == name) {
-            pInterface = (*it);
+            p_interface = (*it);
             break;
         }
     }
-    return pInterface;
+    return p_interface;
 }
 
 interfacesAbstract* ConnectionFactory::getInterace(int index) {
-    interfacesAbstract *pInterface = nullptr;
+    interfacesAbstract *p_interface = nullptr;
     QString name = getInteraceNameFromIndex(index);
     if(!name.isEmpty()) {
         for(auto it = interfaceList.begin(); it!=interfaceList.end(); it++) {
             if((*it)->getInterfaceName() == name) {
-                pInterface = (*it);
+                p_interface = (*it);
                 break;
             }
         }
     }
-    return pInterface;
+    return p_interface;
 }
 
 //-----------------------------------------------------/
 //---------------         SLOTS             -----------/
 //-----------------------------------------------------/
-void ConnectionFactory::errorFromConnection(QString type, QString name) {
-    qDebug() << "errorFromConnection -"  << type << " " << name;
+void ConnectionFactory::errorFromConnection(QString conTypeName, QString errMessage) {
+    qDebug() << "errorFromConnection -"  << conTypeName << " " << errMessage;
 }

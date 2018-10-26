@@ -37,7 +37,7 @@ public:
     QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList> data) override;
     QList<CommandController::sCommandData> getCommandCustom(QString operation) override;
     ServiceDevicesAbstract* getServiceAbstract() override;
-
+    QList<int> getChart() override;
     QList<QString>getCurrentOtherData();
     QList<QPair<QString,QByteArray>> prepareReply(QByteArray &data);
     void parseCommandReply(QByteArray data, CommandController::sCommandData commandReqData);

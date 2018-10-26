@@ -8,15 +8,24 @@
 #include "device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.h"
 #include "device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.h"
 
+#include <QTimer>
+
 ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObject(parent) {
 
     this->connFactory = new ConnectionFactory();
     this->interfaceTree = pInterfaceModel;
     this->sessionSecurity = new SessionSecurity();
+    this->updateIoStatusTimer = new QTimer();
+    updateIoStatusTimer->start(500);
+    QObject::connect(updateIoStatusTimer, &QTimer::timeout, [this](){
+        for(int ioCounter=0; ioCounter<connFactory->getCountConnection(); ioCounter++) {
+            interfaceTree->setIoStatus(ioCounter, connFactory->getInterace(ioCounter)->isOpen());
+        }
+    });
 
     connect(interfaceTree, SIGNAL(currentIndexIsChangedInteface(int)), this, SLOT(setChangedIndexInteface(int)));
-    connect(connFactory, SIGNAL(updateTree(ConnectionFactory::E_ConnectionUpdateType)),
-            this, SLOT(interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateType)));
+    connect(connFactory, SIGNAL(updateTree(int,ConnectionFactory::E_ConnectionUpdateType)),
+            this, SLOT(interfaceTreeChanged(int,ConnectionFactory::E_ConnectionUpdateType)));
 
     // TODO: the service need and necessery for other action
     this->serviceList.push_back(new Progress_tmk24Service("PROGRESS TMK24"));
@@ -59,13 +68,14 @@ bool ViewController::loadSession(QString sessionName) {
     Session t_load_session = sessionSecurity->getSessionByName(sessionName);
     if(t_load_session.getIsValid()) {
         for(auto itInteface:t_load_session.getInterfaces()) {
-            addConnection(itInteface.typeName, itInteface.name, itInteface.propKey, itInteface.propValue);
-            for(auto itDevice:itInteface.devices) {
-                addDeviceToConnection(itInteface.name, itDevice.typeName, itDevice.propKey, itDevice.propValue);
+            if(addConnection(itInteface.typeName, itInteface.name, itInteface.propKey, itInteface.propValue)) {
+                for(auto itDevice:itInteface.devices) {
+                    addDeviceToConnection(itInteface.name, itDevice.typeName, itDevice.propKey, itDevice.propValue);
+                }
+                emit devSetActiveDeviceProperty(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),
+                                                getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(interfaceTree->getDevIndex()));
             }
         }
-        emit devSetActiveDeviceProperty(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),
-                                        getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(interfaceTree->getDevIndex()));
     }
     return t_load_session.getIsValid();
 }
@@ -127,13 +137,13 @@ bool ViewController::addConnection(QString typeName, QString name, QStringList k
             // only added to the end
             // when take last count and plus 1
             interfacesAbstract *p_interface = nullptr;
-            p_interface = connFactory->getInterace(connFactory->getCountConnection() ? (connFactory->getCountConnection()-1) : 0);
+            p_interface = connFactory->getInterace(interfaceTree->getIoIndex());
             if(p_interface != nullptr) {
                 emit addInterfaceSuccesfull(p_interface->getType(),
-                                    p_interface->getInterfaceProperty().first,
-                                    p_interface->getInterfaceProperty().second);
+                                            p_interface->getInterfaceProperty().first,
+                                            p_interface->getInterfaceProperty().second);
                 emit interfaceSetActiveProperty((connFactory->getCountConnection()) ? (connFactory->getCountConnection()-1) : (connFactory->getCountConnection()),
-                connFactory->getInterace((connFactory->getCountConnection()>=1) ? (connFactory->getCountConnection()-1) : (connFactory->getCountConnection()))->getType());
+                                                connFactory->getInterace((connFactory->getCountConnection()>=1) ? (connFactory->getCountConnection()-1) : (connFactory->getCountConnection()))->getType());
                 interfaceTree->addConnection(name);
             }
         } else {
@@ -202,7 +212,7 @@ bool ViewController::addDeviceToConnection(QString ioName, QString devTypeName, 
             pInterface->getDeviceFactory()->setDeviceReInitByIndex(interfaceTree->getDevIndex());
             emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),0, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
             emit addDeviceSuccesfull(interfaceTree->getIoIndex(),
-                                    getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceTypeNameByType(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceType(interfaceTree->getDevIndex())),
+                                     getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceTypeNameByType(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceType(interfaceTree->getDevIndex())),
                                      getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(interfaceTree->getDevIndex()).first,
                                      getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(interfaceTree->getDevIndex()).second);
         } else {
@@ -353,6 +363,7 @@ void ViewController::deviceReadyCurrentData(DevicesFactory::E_DeviceType type, Q
     }
         break;
     case DevicesFactory::Type_Progress_Tmk24: {
+        int devIndex = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId);
         if(isCurrentDevice(uniqNameId)) {
             emit devReady(interfaceTree->getIoIndex(),
                           interfaceTree->getDevIndex(),
@@ -361,12 +372,12 @@ void ViewController::deviceReadyCurrentData(DevicesFactory::E_DeviceType type, Q
                                       interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),
                                       getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId)).first,
                                       getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId)).second);
-            int devIndex = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId);
-            if(devIndex >= 0) {
-                Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(
-                            getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(devIndex)->getServiceAbstract());
-                pService->placeCurrenDataFromDevice(uniqNameId, getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(devIndex));
-            }
+        }
+        if(devIndex >= 0) {
+            Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(
+                        getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(devIndex)->getServiceAbstract());
+            pService->placeCurrenDataFromDevice(uniqNameId, getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(devIndex));
+            pService->placeCurrentChartDataFromDevice(uniqNameId, getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceChartByIndex(devIndex));
         }
     }
         break;
@@ -405,7 +416,7 @@ void ViewController::deviceReadyProperties(DevicesFactory::E_DeviceType type, QS
 }
 void ViewController::deviceReadyInit(DevicesFactory::E_DeviceType type, QString uniqNameId) {}
 
-void ViewController::interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateType type) {
+void ViewController::interfaceTreeChanged(int ioIndex, ConnectionFactory::E_ConnectionUpdateType type) {
     switch(type) {
     case ConnectionFactory::Type_Update_ChangedIndex:
     case ConnectionFactory::Type_Update_Add:
@@ -414,10 +425,15 @@ void ViewController::interfaceTreeChanged(ConnectionFactory::E_ConnectionUpdateT
     }
     deviceTreeChanged(DevicesFactory::Type_Update_RamakeAfterChangeInterface, interfaceTree->getDevIndex());
     if(connFactory->getCountConnection() >0) {
-        emit interfaceReadyProperties(connFactory->getInterace(interfaceTree->getIoIndex())->getType(),
-                                      interfaceTree->getIoIndex(),
-                                      connFactory->getInterace(interfaceTree->getIoIndex())->getInterfaceProperty().first,
-                                      connFactory->getInterace(interfaceTree->getIoIndex())->getInterfaceProperty().second);
+        interfacesAbstract *p_interface = nullptr;
+        interfaceTree->setIoStatus(ioIndex, connFactory->getInterace(ioIndex)->isOpen());
+        p_interface = connFactory->getInterace(interfaceTree->getIoIndex());
+        if(p_interface != nullptr) {
+            emit interfaceReadyProperties(p_interface->getType(),
+                                          interfaceTree->getIoIndex(),
+                                          p_interface->getInterfaceProperty().first,
+                                          p_interface->getInterfaceProperty().second);
+        }
     }
     emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),2, QString("Перестроение дерева интерфейсов[%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
 }
@@ -624,7 +640,7 @@ void ViewController::deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, 
     switch(type) {
     case DevicesFactory::Type_Update_ChangeStatus:
         if(getDeviceCount() >= indexDev) {
-            interfaceTree->setDevStatusByIndex(indexDev, getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceStatusByIndex(indexDev));
+            interfaceTree->setDevStatus(indexDev, getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceStatusByIndex(indexDev));
         }
         break;
     case DevicesFactory::Type_Update_RamakeAfterChangeInterface: break;
@@ -696,7 +712,7 @@ void ViewController::setChangedIndexInteface(int interfaceIndex) {
     // add interace command to read current property interface
     //...
     disconnectToDevSignals();
-    interfaceTreeChanged(ConnectionFactory::Type_Update_ChangedIndex);
+    interfaceTreeChanged(interfaceIndex, ConnectionFactory::Type_Update_ChangedIndex);
     connectToDevSignals(); // get interface property
     emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),1, QString("Переключение интерфейса[%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
     emit interfaceSetActiveProperty(interfaceTree->getIoIndex(),

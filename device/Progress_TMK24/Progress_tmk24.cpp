@@ -204,6 +204,10 @@ QPair<QStringList,QStringList> Progress_tmk24::getErrors() {
     return ret;
 }
 
+QList<int> Progress_tmk24::getChart() {
+    return chartData;
+}
+
 DeviceAbstract::E_State Progress_tmk24::getState() {
     return state;
 }
@@ -452,6 +456,11 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                 lls_data.fuelLevel.isValid = true;
                 lls_data.freq.value.value_u32 = frequency;
                 lls_data.freq.isValid = true;
+
+                chartData.push_back(lls_data.fuelLevel.value.value_u32 + (rand()%1));
+                while(chartData.size() > 50) {
+                    chartData.pop_front();
+                }
                 res = true;
             }
         } else {

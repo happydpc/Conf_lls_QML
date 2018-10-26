@@ -29,7 +29,9 @@ public:
     void setDevIndex(int);
     void setIoIndex(int);
 
-    void setDevStatusByIndex(int devIndex, int status);
+    void setDevStatus(int devIndex, int status);
+
+    void setIoStatus(int ioIndex, int status);
 
 signals:
     void treeChanged();

@@ -24,11 +24,8 @@ public slots:
     virtual QStringList getAvailableList() = 0;
     virtual DevicesFactory* getDeviceFactory() = 0;
 
-private slots:
-    virtual void aboutClose() = 0;
-
 signals:
-    void errorInterface(QString errorMessage);
+    void errorInterface(QString conTypeName, QString errorMessage);
     void openIsNormam();
     void closeIsNormal();
 

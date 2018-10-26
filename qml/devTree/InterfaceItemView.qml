@@ -11,17 +11,17 @@ Row{
         height: 20
         Text {
             id:itemRectIcon
-            text: " \uf1e6"
+            text: modelData.isConnected ? (" \uf1e6") : (" \uf071")
             anchors.left: itemRectRoot.left
             anchors.leftMargin: 5
-            color: "#a7b6c6"
+            color: modelData.isConnected ? ("#a7b6c6")  : ("orange")
             font { family: "customFont";}
             font.pointSize: 14
         }
         Text{
             id:interfaceName
             text: modelData.content
-            color: modelData.isCurrent ? "#46e342" : "#3598fa"
+            color: modelData.isCurrent ? ("#46e342")  : ("#3598fa")
             anchors.left: itemRectIcon.left
             anchors.leftMargin: 30
             MouseArea{

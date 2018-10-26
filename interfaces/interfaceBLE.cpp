@@ -32,10 +32,6 @@ QPair<QStringList,QStringList> InterfaceBLE::getInterfaceProperty() {}
 
 bool InterfaceBLE::isOpen() {}
 
-void InterfaceBLE::aboutClose() {
-    emit closeIsNormal();
-}
-
 QString InterfaceBLE::getType() {
     return QString::fromLocal8Bit(typeName, strlen(typeName));
 }

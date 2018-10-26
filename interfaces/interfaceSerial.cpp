@@ -7,8 +7,12 @@ InterfaceSerial::InterfaceSerial(QString name, QPair<QStringList,QStringList>par
     this->name = name;
     this->param = param;
 }
-InterfaceSerial::~InterfaceSerial() {}
-void InterfaceSerial::initInterface()  {}
+InterfaceSerial::~InterfaceSerial() {
+    delete this->deviceFactory;
+}
+void InterfaceSerial::initInterface()  {
+    closeInterface();
+}
 
 bool InterfaceSerial::openInterface() {
     bool res = false;
@@ -24,7 +28,7 @@ bool InterfaceSerial::openInterface() {
     portHandler->setParity(QSerialPort::NoParity);
     portHandler->setStopBits(QSerialPort::OneStop);
     portHandler->setFlowControl(QSerialPort::NoFlowControl);
-    //connect(portHandler, SIGNAL(errorInterface(QString)), SLOT(errorInterface(QString)));
+    connect(portHandler, SIGNAL(error(QSerialPort::SerialPortError)), SLOT(errorHanler(QSerialPort::SerialPortError)));
     connect(deviceFactory, SIGNAL(writeData(QByteArray)),
             this, SLOT(writeData(QByteArray)));
     connect(deviceFactory, SIGNAL(readReplyData()), this, SLOT(readData()));
@@ -98,12 +102,21 @@ QPair<QStringList,QStringList> InterfaceSerial::getInterfaceProperty() {
 }
 
 bool InterfaceSerial::writeData(QByteArray data) {
-    return portHandler->write(data);
+    bool res = false;
+    if(!portHandler->isOpen()) {
+        portHandler->open(QIODevice::ReadWrite);
+    }
+    if(portHandler->isOpen()) {
+        res = portHandler->write(data);
+    }
+    return res;
 }
 
 void InterfaceSerial::readData() {
     QByteArray data;
-    data = portHandler->readAll();
+    if(portHandler->isOpen()) {
+        data = portHandler->readAll();
+    }
     deviceFactory->placeReplyDataFromInterface(data);
 }
 
@@ -120,17 +133,17 @@ QStringList InterfaceSerial::getAvailableList() {
     return list;
 }
 
-void InterfaceSerial::errorInterface(QString errorMessage) {
+void InterfaceSerial::errorHanler(QSerialPort::SerialPortError err) {
+    qDebug() << "InterfaseSerial -ERR=" << err;
+    if(err != QSerialPort::NoError) {
+        closeInterface();
+        emit errorInterface(portHandler->portName(), tr("Ошибка интерфейса\nПроверьте соединение"));
+    }
 }
 
 QString InterfaceSerial::getType() {
     return QString::fromLocal8Bit(typeName, strlen(typeName));
 }
-
-void InterfaceSerial::aboutClose() {
-    emit closeIsNormal();
-}
-
 
 DevicesFactory* InterfaceSerial::getDeviceFactory() {
     return deviceFactory;

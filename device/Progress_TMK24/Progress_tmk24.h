@@ -41,6 +41,7 @@ public:
     QList<CommandController::sCommandData> getCommandListToCurrentData() override;
     QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList> data) override;
     QList<CommandController::sCommandData> getCommandCustom(QString operation) override;
+    QList<int> getChart() override;
     ServiceDevicesAbstract* getServiceAbstract() override;
 
     QList<QString>getCurrentOtherData();
@@ -55,6 +56,8 @@ private:
     Progress_tmk24Data::T_calibrationTable calibrationTable;
     Progress_tmk24Data::T_settings settings;
     Progress_tmk24Data::S_lls_data lls_data;
+
+    QList<int>chartData;
 
     struct {
         QString id;

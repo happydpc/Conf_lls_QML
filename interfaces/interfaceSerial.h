@@ -31,19 +31,13 @@ public slots:
 private slots:
     bool writeData(QByteArray data);
     void readData();
-
-   void errorInterface(QString errorMessage);
-
+    void errorHanler(QSerialPort::SerialPortError err);
 private:
     DevicesFactory *deviceFactory;
-
-private slots:
-    void aboutClose() override;
 
 private:
 
     static constexpr char* typeName = "serial";
-
     QSerialPort *portHandler = nullptr;
     QString name;
     QPair<QStringList,QStringList>param;

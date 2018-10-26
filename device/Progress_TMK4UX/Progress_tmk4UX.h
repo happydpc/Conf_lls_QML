@@ -28,7 +28,7 @@ public:
     QString getUniqId() override;
     bool makeDataToCommand(CommandController::sCommandData &commandData) override;
     bool placeDataReplyToCommand(QByteArray &commandArrayReplyData, CommandController::sCommandData commandReqData) override;
-
+    QList<int> getChart() override;
     CommandController::sCommandData getCommandToCheckConnected() override;
     CommandController::sCommandData getCommandToGetType() override;
     CommandController::sCommandData getCommandtoCheckPassword() override;

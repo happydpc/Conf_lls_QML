@@ -99,6 +99,14 @@ Rectangle {
            deviceItemArray[ioIndex].slice(devIndex-1, devIndex)
            if(deviceItemArray[ioIndex].length <=0) {
                modeSelectView.setCurrentIndex(indexItem_Intefaces)
+           } else {
+               deviceRootView.setCurrentIndex(ioIndex) // ???
+               var it = deviceRootView.itemAt(ioIndex)
+               it.setCurrentIndex(deviceItemArray[ioIndex].size-1)
+//               var id = deviceItemArray[ioIndex][devIndex].getId()
+//               if(getDevIsThis(id, keys, values)) {
+//                   deviceItemArray[ioIndex][devIndex].insertPeriodicData(keys, values)
+//               }
            }
            if(interfaceItemArray.length <=0) {
                modeSelectView.setCurrentIndex(indexItem_Logo)

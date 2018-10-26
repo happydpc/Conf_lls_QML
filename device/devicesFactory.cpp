@@ -349,9 +349,11 @@ void DevicesFactory::devShedullerSlot() {
 }
 
 void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
-    if(commandController->getCommandFirstCommand().first == true) {
+    if(commandController->getCommandFirstCommand().first) {
         auto command = commandController->getCommandFirstCommand().second;
-        if(command.commandType == CommandController::E_CommandType_send_typical_request) {
+        switch (command.commandType) {
+        case CommandController::E_CommandType_send_typical_request:
+        case CommandController::E_CommandType_command_without_request:
             for(auto dev: deviceMap) {
                 if(dev.second->getUniqId() == command.deviceIdent) {
                     dev.second->placeDataReplyToCommand(data, command);
@@ -359,17 +361,24 @@ void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
                 }
             }
             commandController->removeFirstCommand();
-        } else if(command.commandType == CommandController::E_CommandType_send_security_request) {
+            break;
+        case CommandController::E_CommandType_send_security_request: {
             if(command.deviceTypeName == QString(Progress_tmk24::name)) {
-                Progress_tmk24 *pdevice = new Progress_tmk24(
-                            checkDeviceStruct.checkedDeviceUniqName, "tHeader", QPair<QStringList,QStringList>(QStringList(),QStringList()), nullptr);
-                checkDeviceStruct.result = pdevice->placeDataReplyToCommand(data, commandController->getCommandFirstCommand().second);
+                Progress_tmk24 *p_device = nullptr;
+                p_device = new Progress_tmk24(checkDeviceStruct.checkedDeviceUniqName,
+                           "header", QPair<QStringList,QStringList>(QStringList(),QStringList()), nullptr);
+                if(p_device != nullptr) {
+                checkDeviceStruct.result = p_device->placeDataReplyToCommand(data, commandController->getCommandFirstCommand().second);
                 checkDeviceStruct.isReady = true;
                 commandController->removeFirstCommand();
-                delete pdevice;
-            } else if(factoryType == Type_Progress_tmk4UX) {
-            } else if(factoryType == Type_Nozzle_rev_0_00) {
+                delete p_device;
             }
+            } else if(factoryType == Type_Progress_tmk4UX) {
+            } else  {}
+        }
+            break;
+        default:
+            break;
         }
     }
     //-- start sheduller after reply
@@ -520,6 +529,11 @@ void DevicesFactory::sendCustomCommandUseCallback(E_DeviceType type, QString ope
     } else { // TODO:
 
     }
+}
+
+QList<int> DevicesFactory::getDeviceChartByIndex(int index) {
+    if(deviceMap.empty()) {return QList<int>();}
+    return findDeviceByIndex(index)->second->getChart();
 }
 
 QPair<QString,DeviceAbstract*>* DevicesFactory::findDeviceByIndex(int index) {

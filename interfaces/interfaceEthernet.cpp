@@ -51,7 +51,3 @@ QStringList InterfaceEthernet::getAvailableList() {
 QString InterfaceEthernet::getType() {
     return QString::fromLocal8Bit(typeName, strlen(typeName));
 }
-
-void InterfaceEthernet::aboutClose() {
-    emit closeIsNormal();
-}

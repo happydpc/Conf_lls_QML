@@ -71,6 +71,8 @@ public slots:
     bool sendCustomCommadToDev(int indexDev, QString operation);
     void sendCustomCommandUseCallback(E_DeviceType type, QString operation, QStringList keys, QStringList values);
 
+    QList<int>getDeviceChartByIndex(int index);
+
 signals:
     void writeData(QByteArray data);
     void readReplyData();

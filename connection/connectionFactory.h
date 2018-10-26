@@ -38,10 +38,10 @@ public slots:
     interfacesAbstract* getInterace(QString name);
     interfacesAbstract* getInterace(int index);
 
-    void errorFromConnection(QString type, QString name);
+    void errorFromConnection(QString conTypeName, QString errMessage);
 
 signals:
-    void updateTree(ConnectionFactory::E_ConnectionUpdateType type);
+    void updateTree(int ioIndex, ConnectionFactory::E_ConnectionUpdateType type);
 
 private:
 

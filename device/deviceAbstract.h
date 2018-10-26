@@ -54,6 +54,7 @@ public:
     virtual QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList>) = 0;
     virtual QList<CommandController::sCommandData> getCommandCustom(QString operation) = 0;
 
+    virtual QList<int> getChart() = 0;
     virtual ServiceDevicesAbstract* getServiceAbstract() = 0;
 
     int getPriority();

@@ -162,12 +162,22 @@ void Model::setIoIndex(int index) {
     curIndex.ioIndex = index;
 }
 
-void Model::setDevStatusByIndex(int devIndex, int status) {
-    TreeItem *pDev = nullptr;
-    pDev = m_tree.at(curIndex.ioIndex);
-    if(pDev != nullptr) {
-        if(!pDev->childItems().isEmpty()) {
-            pDev->childItems().at(devIndex)->setConnected((bool)status);
+void Model::setIoStatus(int ioIndex, int status) {
+    TreeItem *p_io = nullptr;
+    if(m_tree.size() >= ioIndex+1) {
+        p_io = m_tree.at(ioIndex);
+        if(p_io != nullptr) {
+            p_io->setConnected((bool)status);
+        }
+    }
+}
+
+void Model::setDevStatus(int devIndex, int status) {
+    TreeItem *p_dev = nullptr;
+    p_dev = m_tree.at(curIndex.ioIndex);
+    if(p_dev != nullptr) {
+        if(!p_dev->childItems().isEmpty()) {
+            p_dev->childItems().at(devIndex)->setConnected((bool)status);
         }
     }
 }

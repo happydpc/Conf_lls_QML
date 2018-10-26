@@ -54,6 +54,10 @@ ServiceDevicesAbstract* Nozzle_Revision_0_00_Oct_2018::getServiceAbstract() {
     return nullptr;
 }
 
+QList<int> Nozzle_Revision_0_00_Oct_2018::getChart() {
+    return QList<int>();
+}
+
 QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getPropertyData() {
     QPair<QStringList,QStringList> res;
     res.first.push_back("devTypeName");
