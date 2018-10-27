@@ -6,6 +6,7 @@
 #include "interfaceListControll/model.h"
 #include "device/devicesFactory.h"
 #include "session/sessionsecurity.h"
+#include "update/updater.h"
 
 class ViewController : public QObject
 {
@@ -47,6 +48,10 @@ public:
     Q_INVOKABLE bool setCurrentDevCustomCommand(QString typeCommand, QStringList keys, QStringList values);
 
     DeviceAbstract *getCurrentDeviceToAbstract();
+
+    QList<ServiceDevicesAbstract*> getNewServices();
+
+    Q_INVOKABLE void checkUpdateVersionSoftware();
 
     //****************** Only PROGRESS TMK24 ***********//
     Q_INVOKABLE void getCurrentDevTarTable();
@@ -103,6 +108,8 @@ signals:
     void addConnectionFail(QString devName);
     void addDeviceFail(QString devName, QString errorMessage);
 
+    void clearAllFrontEndItems();
+
     void addDeviceSuccesfull(int ioIndex, QString devType, QStringList devKeyProperty, QStringList devValueProperty);
     void deleteDeviceSuccesfull(int ioIndex, int devIndex);
     void devSetActiveDeviceProperty(int ioIndex, int devIndex, QString devType);
@@ -119,6 +126,8 @@ signals:
     void devCustomCommandExecuted(QString typeDev, int ioIndex, int devIndex,
                                   QStringList keys, QStringList args, bool ackMessageIsVisible);
     void devUpdateTree(QStringList devNames, QList<int>status);
+
+    void isAvailableNewVersion(QString downloadUrl);
 
 public slots:
     void setChangedIndexDevice(int interfaceIndex,int deviceIndex);
@@ -148,12 +157,18 @@ private slots:
 
     int getInterfaceCount();
 
+    void updateVersion(QString path);
+
 private:
     QTimer *updateIoStatusTimer;
+    Updater *softwareUpdater;
     ConnectionFactory *connFactory;
     Model *interfaceTree;
     SessionSecurity *sessionSecurity;
-    QList<ServiceDevicesAbstract*> serviceList;
+    // сервисы создаются по инетфейсам
+    // корень - интерфейсы
+    // втрой list - сами типы серсвисов (tmk24, nozzle...и т.д)
+    QList<QList<ServiceDevicesAbstract*>> serviceList;
 };
 
 #endif // VIEWCONTROLLER_H

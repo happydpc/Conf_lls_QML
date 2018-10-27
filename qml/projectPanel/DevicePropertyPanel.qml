@@ -9,16 +9,28 @@ import "qrc:/qml/interfaces"
 Rectangle {
     id: projectDevicePanel
     property var interfaceItemArray: []
-    property var deviceItemArray: [[],[],[],[]];
+    property var deviceItemArray: [];
 
     property alias dialogAddInterfaceFail: dialogAddInterfaceFail
     property alias messageOperationError: messageOperationError
+    property alias updateVersionDialog: updateVersionDialog
     property int indexItem_Logo: 0
     property int indexItem_Intefaces: 1
     property int indexItem_Devices: 2
 
     // *************  logo   **************/
     function setActiveLogoPanel() {
+        modeSelectView.setCurrentIndex(indexItem_Logo)
+    }
+
+    // *************  full clear before load session **************/
+    function setCrearAllItems() {
+        interfaceItemArray = []
+        deviceItemArray = []
+        while(deviceRootView.count !== 0) {
+            deviceRootView.removeItem(0)
+            interfaceView.removeItem(0)
+        }
         modeSelectView.setCurrentIndex(indexItem_Logo)
     }
 
@@ -33,6 +45,7 @@ Rectangle {
             interfaceItemArray.push(item);
             modeSelectView.setCurrentIndex(indexItem_Intefaces)
             var devItem = Qt.createQmlObject('import QtQuick.Controls 2.4;SwipeView{anchors.fill:parent;interactive:false;clip: true;}', deviceRootView);
+            deviceItemArray.push([])
             deviceRootView.addItem(devItem)
             break;
         default: break;
@@ -45,7 +58,7 @@ Rectangle {
         if(interfaceItemArray.length <=0) {
             modeSelectView.setCurrentIndex(indexItem_Logo)
         }
-        deviceItemArray[ioIndex] = []//.slice(deviceItemArray[ioIndex].size)
+        deviceItemArray.splice(ioIndex, ioIndex+1)
         deviceRootView.removeItem(ioIndex)
     }
 
@@ -61,7 +74,7 @@ Rectangle {
             break;
         default: break;
         }
-   }
+    }
 
     function setInterfaceProperites(ioType, ioIndex, keyProperty, valueProperty) {
         modeSelectView.setCurrentIndex(indexItem_Intefaces)
@@ -93,24 +106,20 @@ Rectangle {
         }
     }
 
-       function deviceDeleted(ioIndex, devIndex) {
-           var it = deviceRootView.itemAt(ioIndex)
-           it.removeItem(devIndex)
-           deviceItemArray[ioIndex].slice(devIndex-1, devIndex)
-           if(deviceItemArray[ioIndex].length <=0) {
-               modeSelectView.setCurrentIndex(indexItem_Intefaces)
-           } else {
-               deviceRootView.setCurrentIndex(ioIndex) // ???
-               var it = deviceRootView.itemAt(ioIndex)
-               it.setCurrentIndex(deviceItemArray[ioIndex].size-1)
-//               var id = deviceItemArray[ioIndex][devIndex].getId()
-//               if(getDevIsThis(id, keys, values)) {
-//                   deviceItemArray[ioIndex][devIndex].insertPeriodicData(keys, values)
-//               }
-           }
-           if(interfaceItemArray.length <=0) {
-               modeSelectView.setCurrentIndex(indexItem_Logo)
-           }
+    function deviceDeleted(ioIndex, devIndex) {
+        var it = deviceRootView.itemAt(ioIndex)
+        it.removeItem(devIndex)
+        deviceItemArray[ioIndex].splice(devIndex, devIndex+1)
+        if(deviceItemArray[ioIndex].length === 0) {
+            modeSelectView.setCurrentIndex(indexItem_Intefaces)
+        } else {
+            deviceRootView.setCurrentIndex(ioIndex) // ???
+            it = deviceRootView.itemAt(ioIndex)
+            it.setCurrentIndex(deviceItemArray[ioIndex].size-1)
+        }
+        if(interfaceItemArray.length <=0) {
+            modeSelectView.setCurrentIndex(indexItem_Logo)
+        }
     }
 
     function setActiveDevicePanelType(devType, ioIndex, devIndex) { /****/
@@ -190,19 +199,10 @@ Rectangle {
     }
 
     function addDeviceLog(ioIndex, devIndex, codeMessage, message) {
-        //deviceItemArray[ioIndex][devIndex].addLogMessage(codeMessage, message)
+        deviceItemArray[ioIndex][devIndex].addLogMessage(codeMessage, message)
     }
 
-    function addLogMessage(codeMessage, message) {
-//        switch(typeDev.toLowerCase()) {
-//        case "progress tmk24":
-//            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.addLogMessage(codeMessage, message)
-//            break;
-//        case "nozzle rev 0.0":
-//            break;
-//        default: break;
-//        }
-    }
+    function addLogMessage(codeMessage, message) {}
 
     // TODO: type!
     function devShowTypeIncorrect(typeDev, devNameId) {
@@ -294,6 +294,31 @@ Rectangle {
                     text: "Не получилось добавить интерфейс\nВозможно такой интерфейс уже используется\nили ресурс не доступен"
                     color: "navy"
                     anchors.centerIn: parent
+                }
+            }
+        }
+
+        Dialog {
+            id:updateVersionDialog
+            visible: false
+            title: "Проверка обновлений"
+            standardButtons: StandardButton.Close
+            property string url: ""
+            Rectangle {
+                color: "transparent"
+                implicitWidth: 500
+                implicitHeight: 80
+                Column{
+                    anchors.fill: parent
+                    spacing: 10
+                    Text {
+                        text: qsTr("Доступна новая версия программы\nРекомендуется скачать инсталятор, удалить текущую версию и установить новую!\n")
+                    }
+                    Text {
+                        anchors.centerIn: parent
+                        text: "<a href='" + updateVersionDialog.url + "'>Нажмите здесь</a>"
+                        onLinkActivated: Qt.openUrlExternally(link)
+                    }
                 }
             }
         }

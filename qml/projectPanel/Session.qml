@@ -37,6 +37,7 @@ Popup {
                 id:panelSwipe
                 currentIndex: sessionSelectMode
                 anchors.fill: parent
+                interactive: false
                 clip: true
                 Item {
                     Column {
@@ -152,6 +153,8 @@ Popup {
                                     var timer = Qt.createQmlObject('import QtQuick 2.4;Timer{interval: 1500;running:true;repeat: false;}', parent);
                                     timer.onTriggered.connect(function() {
                                         saveSessionAsName.text = ""
+                                        sessionSelectMode = 0
+                                        loadSessionTree()
                                     });
                                 }
                             }
@@ -218,6 +221,7 @@ Popup {
                     useIcon: true
                     onClicked: {
                         sessionSelectMode = 2
+                        close()
                     }
                 }
             }

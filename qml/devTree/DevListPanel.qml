@@ -6,12 +6,15 @@ import QtQuick.Layouts 1.1
 import QtQuick.Window 2.10
 import Qt.labs.platform 1.0
 import QtCharts 2.2
-import QtQuick.Dialogs 1.2
 import QtQuick.Controls 1.4 as ControlOld
 import QtQuick.Controls.Styles 1.4
 import CustomControls 1.0
 import QtGraphicalEffects 1.0
-
+import Qt.labs.platform 1.0
+import QtQuick.Dialogs 1.2
+import QtQml.Models 2.11
+import "qrc:/qml/devices"
+import "qrc:/qml/interfaces"
 import "qrc:/qml/miscElems"
 import "qrc:/qml/projectPanel"
 
@@ -138,19 +141,29 @@ Rectangle {
             id:settingsButton
             textLine:2
             widthBody: interfaceTree.width - 40
-            enabled: false
-            name: qsTr("Настройки")
+            name: qsTr("Обновление")
             useIcon: true
             iconCode: "\uF54A  "
+            onClicked: {
+                settings.open()
+            }
         }
         ButtonRound {
             id:supportButton
             textLine:2
             widthBody: interfaceTree.width - 40
-            enabled: false
             name: qsTr("Поддержка")
             useIcon: true
             iconCode: "\uF0E0  "
+            onClicked: {
+                support.open()
+            }
         }
+    }
+    Support {
+        id:support
+    }
+    Settings {
+        id:settings
     }
 }

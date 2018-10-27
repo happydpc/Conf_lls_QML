@@ -18,17 +18,6 @@ Rectangle {
     visible: true
     color: "#e7e9eb"
 
-    property var messageShow: Object
-
-    Component.onCompleted: {
-        componentQml = Qt.createComponent("qrc:/qml/interfaces/MessageShow.qml");
-        messageShow = componentQml.createObject(parent)
-        addDeviceDialog.onResultMessage.connect(function(res) {
-            messageShow.setData("Добавление устройства", res)
-            messageShow.open()
-        });
-    }
-
     function setPropertyValues(keyProperty, valueProperty) {
         typeDeviceText.text = ""
         for(var i=0; i<valueProperty.length; i++) {
@@ -84,6 +73,14 @@ Rectangle {
 
     Devices.AddDeviceDialog {
         id:addDeviceDialog
+        visible: false
+        onResultMessage: {
+            messageShow.setData("Добавление устройства", res)
+            messageShow.open()
+        }
+    }
+    MessageShow {
+        id:messageShow
         visible: false
     }
 }

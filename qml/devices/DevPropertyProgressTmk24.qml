@@ -200,6 +200,9 @@ Rectangle {
             } else if(keys[i] === "versionFirmare"){
                 versionFirmwareText.text = values[i]
             } else if(keys[i] === "fuelProcent") {
+                if(values[i] > 100) {
+                    values[i] = 0
+                }
                 fuelLevelProgress.value = values[i]
             } else if(keys[i] === "fuelProcent") {
             } else if(keys[i] === "cnt") {
@@ -515,8 +518,6 @@ Rectangle {
     }
 
     function remakeTarTable() {
-        //        viewController.setCurrentDevCustomCommand("read current dev tar table", [], [])
-        tarTabViewMultiple.model.clear()
         tarListDevice.model.clear()
         for(var index = tarTabViewMultiple.columnCount-1; index>=0; index--) {
             tarTabViewMultiple.removeColumn(index)
@@ -1485,36 +1486,98 @@ Rectangle {
                     }
                     onCurrentIndexChanged: {
                         if(stackSubProperty.currentItem == itemDevTarir) {
-                            console.log("tarDev item -active")
-                            // сперва добавить всем роли
-                            // TODO: hack!!!
-                            var connDevId = viewController.getAvailableDevTarrirAdd_DevId()
-                            var connDevType = viewController.getAvailableDevTarrirAdd_DevType()
-                            for(var i=0; i<connDevId.length; i++) {
-                                viewController.addTarrirDev(connDevType[i], connDevId[i])
-                            }
-                            addTarStepValue(0)
-                            // clear tar table
+                            // first check what not device in the tarClass
+                            // when show dialog and add it
                             var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
                             var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
                             var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
-                            for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
-                                viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
-                            }
                             var keys = viewController.getCurrentDevPropertyKey()
                             var values = viewController.getCurrentDevPropertyValue()
                             var devType = ""
                             var devId = ""
-                            for(var i=0; i<keys.length; i++) {
-                                if(keys[i] === "devTypeName"){
-                                    devType = values[i]
+                            if(viewController.getStayedDevTarrirCount()) {
+                                dialogTarNotEmpty.open()
+                                dialogTarNotEmpty.onApply.connect(function() {
+                                    dialogTarNotEmpty.close()
+                                    // clear all
+                                    for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
+                                        viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
+                                    }
+                                    // add current
+                                    var keys = viewController.getCurrentDevPropertyKey()
+                                    var values = viewController.getCurrentDevPropertyValue()
+                                    var devType = ""
+                                    var devId = ""
+                                    for(var i=0; i<keys.length; i++) {
+                                        if(keys[i] === "devTypeName"){
+                                            devType = values[i]
+                                        }
+                                        if(keys[i] === "id"){
+                                            devId = values[i]
+                                        }
+                                    }
+                                    viewController.addTarrirDev(devType, devId)
+                                    timerAffterChangeTarTable.start()
+                                });
+                                dialogTarNotEmpty.onClose.connect(function() {
+                                    for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
+                                        viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
+                                    }
+                                    for(var i=0; i<tarirDevType.length; i++) {
+                                        viewController.addTarrirDev(tarirDevType[i], tarirDevId[i])
+                                    }
+                                    // nothing add - when add current
+                                    if(tarirDevId.length === 0) {
+                                        for(var i=0; i<keys.length; i++) {
+                                            if(keys[i] === "devTypeName"){
+                                                devType = values[i]
+                                            }
+                                            if(keys[i] === "id"){
+                                                devId = values[i]
+                                            }
+                                        }
+                                        viewController.addTarrirDev(devType, devId)
+                                    }
+                                    timerAffterChangeTarTable.start()
+                                });
+                            } else { // add current dev to the tarTable
+                                for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
+                                    viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
                                 }
-                                if(keys[i] === "id"){
-                                    devId = values[i]
+                                for(var i=0; i<tarirDevType.length; i++) {
+                                    viewController.addTarrirDev(tarirDevType[i], tarirDevId[i])
                                 }
+                                // nothing add - when add current
+                                if(tarirDevId.length === 0) {
+                                    for(var i=0; i<keys.length; i++) {
+                                        if(keys[i] === "devTypeName"){
+                                            devType = values[i]
+                                        }
+                                        if(keys[i] === "id"){
+                                            devId = values[i]
+                                        }
+                                    }
+                                    viewController.addTarrirDev(devType, devId)
+                                }
+                                timerAffterChangeTarTable.start()
                             }
-                            viewController.addTarrirDev(devType, devId)
-                            timerAffterChangeTarTable.start()
+                        }
+                    }
+                    Dialog {
+                        id: dialogTarNotEmpty
+                        visible: false
+                        title: "Тарировка"
+                        standardButtons: StandardButton.Close | StandardButton.Apply
+                        Rectangle {
+                            color: "transparent"
+                            implicitWidth: 500
+                            implicitHeight: 200
+                            TextEdit{
+                                text: "Обнаружены не сохраненные данные в процессе тарировки\nПроводить тарировку можно только на одной открытой вкладке\n(Последней открытой)\nПри этом данные на других вкладках не будут сохранены\Начать новую тарировку на этой вкладке?\nНе сохраненые данные будут утеряны!"
+                                color: "black"
+                                anchors.centerIn: parent
+                                readOnly: true
+                            }
                         }
                     }
                     Timer {
@@ -1560,7 +1623,7 @@ Rectangle {
                                             anchors.left: parent.left
                                             anchors.leftMargin: 15
                                             anchors.verticalCenter: parent.verticalCenter
-                                            enabled: devIsConnected
+                                            enabled: (devIsConnected && devIsReady)
                                             onClicked: {
                                                 changeDeviceUniqId()
                                             }
@@ -1590,7 +1653,7 @@ Rectangle {
                                             samples: 10
                                             radius: 20
                                         }
-                                        enabled: devIsConnected
+                                        enabled: (devIsConnected && devIsReady)
                                         onClicked: {
                                             viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
                                         }
@@ -1950,7 +2013,7 @@ Rectangle {
                                             text: "Пустой"
                                             width: 300
                                             height: 30
-                                            enabled: devIsConnected
+                                            enabled: (devIsConnected && devIsReady)
                                             anchors.left: parent.left
                                             anchors.leftMargin: 15
                                             anchors.top: emptyFullLabel.bottom
@@ -1988,7 +2051,7 @@ Rectangle {
                                             anchors.topMargin: 10
                                             anchors.left: parent.left
                                             anchors.leftMargin: 15
-                                            enabled: devIsConnected
+                                            enabled: (devIsConnected && devIsReady)
                                             onClicked: {
                                                 dialogLevelSetFull.open()
                                             }
@@ -2049,7 +2112,7 @@ Rectangle {
                                             samples: 10
                                             radius: 20
                                         }
-                                        enabled: devIsConnected
+                                        enabled: (devIsConnected && devIsReady)
                                         onClicked: {
                                             viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
                                         }
@@ -2189,7 +2252,7 @@ Rectangle {
                                             samples: 10
                                             radius: 20
                                         }
-                                        enabled: devIsConnected
+                                        enabled: (devIsConnected && devIsReady)
                                         onClicked: {
                                             viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
                                         }
@@ -2519,7 +2582,7 @@ Rectangle {
                                             samples: 10
                                             radius: 20
                                         }
-                                        enabled: devIsConnected
+                                        enabled: (devIsConnected && devIsReady)
                                         onClicked: {
                                             viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
                                         }
@@ -2751,7 +2814,7 @@ Rectangle {
                                             samples: 10
                                             radius: 20
                                         }
-                                        enabled: devIsConnected
+                                        enabled: (devIsConnected && devIsReady)
                                         onClicked: {
                                             viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
                                         }
@@ -3107,7 +3170,7 @@ Rectangle {
                                                     name: qsTr("Добавить\nтекущее значение")
                                                     useIcon: true
                                                     iconCode: "\uF0FE  "
-                                                    enabled: devIsConnected
+                                                    enabled: (devIsConnected && devIsReady)
                                                     onClicked: {
                                                         if(!isNoiseDetected) {
                                                             addTarStepValue(tarTabViewMultiple.currentRow)
@@ -3215,7 +3278,7 @@ Rectangle {
                                                     name:"Считать\nтаблицу"
                                                     useIcon: true
                                                     iconCode: "\uF093  "
-                                                    enabled: devIsConnected
+                                                    enabled: (devIsConnected && devIsReady)
                                                     onClicked: {
                                                         dialogReadTarTableMultiple.open()
                                                     }
@@ -3247,7 +3310,7 @@ Rectangle {
                                                     name:"Записать\nтаблицу"
                                                     useIcon: true
                                                     iconCode: "\uF0C7  "
-                                                    enabled: devIsConnected
+                                                    enabled: (devIsConnected && devIsReady)
                                                     Dialog {
                                                         id: dialogWriteTarTableMultipleRequest
                                                         visible: false

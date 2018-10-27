@@ -1,6 +1,7 @@
 #include "viewController.h"
 #include <QDebug>
 #include <QTime>
+#include <QTimer>
 #include <QFile>
 #include "device/Progress_TMK24/Progress_tmk24.h"
 #include "device/Progress_TMK4UX/Progress_tmk4UX.h"
@@ -8,14 +9,15 @@
 #include "device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.h"
 #include "device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.h"
 
-#include <QTimer>
-
 ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObject(parent) {
-
+    this->softwareUpdater = new Updater();
     this->connFactory = new ConnectionFactory();
     this->interfaceTree = pInterfaceModel;
     this->sessionSecurity = new SessionSecurity();
     this->updateIoStatusTimer = new QTimer();
+
+    connect(softwareUpdater, SIGNAL(needUpdate(QString)), this, SLOT(updateVersion(QString)));
+
     updateIoStatusTimer->start(500);
     QObject::connect(updateIoStatusTimer, &QTimer::timeout, [this](){
         for(int ioCounter=0; ioCounter<connFactory->getCountConnection(); ioCounter++) {
@@ -27,10 +29,6 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
     connect(connFactory, SIGNAL(updateTree(int,ConnectionFactory::E_ConnectionUpdateType)),
             this, SLOT(interfaceTreeChanged(int,ConnectionFactory::E_ConnectionUpdateType)));
 
-    // TODO: the service need and necessery for other action
-    this->serviceList.push_back(new Progress_tmk24Service("PROGRESS TMK24"));
-    this->serviceList.push_back(new Nozzle_Rev_0_00_Service("Nozzle Rev 0.0"));
-
     QTimer::singleShot(500, Qt::CoarseTimer, [&] {
         //        addConnection("serial", "ttyUSB0", QStringList("baudrate"), QStringList("19200"));
         //        addDeviceToConnection("PROGRESS TMK24", QStringList("id"), QStringList("3"));
@@ -41,6 +39,25 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
         //        addConnection("serial", "ttyACM0", QStringList("baudrate"), QStringList("115200"));
         //        addDeviceToConnection("Nozzle Rev 0.0", QStringList("id"), QStringList("1"));
     });
+
+    QTimer::singleShot(10000, Qt::CoarseTimer, [&] {
+        checkUpdateVersionSoftware();
+    });
+}
+
+void ViewController::checkUpdateVersionSoftware() {
+    softwareUpdater->checkNewUpdate();
+}
+
+void ViewController::updateVersion(QString downloadUrl) {
+    emit isAvailableNewVersion(downloadUrl);
+}
+
+QList<ServiceDevicesAbstract*> ViewController::getNewServices() {
+    QList<ServiceDevicesAbstract*> res;
+    res << new Progress_tmk24Service("PROGRESS TMK24");
+    res << new Nozzle_Rev_0_00_Service("Nozzle Rev 0.0");
+    return res;
 }
 
 void ViewController::resetSession() {
@@ -54,6 +71,9 @@ void ViewController::resetSession() {
     connectToDevSignals();
     connect(interfaceTree, SIGNAL(currentIndexIsChangedDevice(int,int)), this, SLOT(setChangedIndexDevice(int,int)));
     emit interfaceAndDeviceListIsEmpty();
+    // очистка всех item на форме
+    // иначе надо долго очищать по одному
+    emit clearAllFrontEndItems();
 }
 
 bool ViewController::removeSessionByName(QString sessionName) {
@@ -85,6 +105,7 @@ QString ViewController::saveCurrentSession() {
     Session::sDevices t_session_dev;
     Session::sInterface t_session_io;
     int connAll = connFactory->getCountConnection();
+    session.setSessionName("Сеанс_" + QDateTime::currentDateTimeUtc().toString("yyyy/M/d/hh:mm:ss:z"));
     for(int ioCounter=0; ioCounter<connAll; ioCounter++) {
         DevicesFactory *p_dev_factory = nullptr;
         // interfaces
@@ -111,7 +132,34 @@ QString ViewController::saveCurrentSession() {
 }
 
 QString ViewController::saveCurrentSessionAs(QString sessionName) {
-    return sessionName + " - Сохранено";
+    Session session;
+    Session::sDevices t_session_dev;
+    Session::sInterface t_session_io;
+    int connAll = connFactory->getCountConnection();
+    session.setSessionName(QString("%1_%2").arg(sessionName).arg(QDateTime::currentDateTimeUtc().toString("yyyy/M/d/hh:mm:ss:z")));
+    for(int ioCounter=0; ioCounter<connAll; ioCounter++) {
+        DevicesFactory *p_dev_factory = nullptr;
+        // interfaces
+        t_session_io.name = connFactory->getInterace(ioCounter)->getInterfaceName();
+        t_session_io.propKey = connFactory->getInterace(ioCounter)->getInterfaceProperty().first;
+        t_session_io.propValue = connFactory->getInterace(ioCounter)->getInterfaceProperty().second;
+        t_session_io.typeName= connFactory->getInterace(ioCounter)->getType();
+        session.addInterface(t_session_io);
+        // devices
+        p_dev_factory = connFactory->getInterace(ioCounter)->getDeviceFactory();
+        if(p_dev_factory != nullptr) {
+            int devAll = p_dev_factory->getDeviceCount();
+            for(int devCounter=0; devCounter<devAll; devCounter++) {
+                t_session_dev.propKey.clear();
+                t_session_dev.propValue.clear();
+                t_session_dev.typeName = p_dev_factory->getDeviceName(devCounter);
+                t_session_dev.propKey = p_dev_factory->getDevicePropertyByIndex(devCounter).first;
+                t_session_dev.propValue = p_dev_factory->getDevicePropertyByIndex(devCounter).second;
+                session.addDevice(t_session_dev);
+            }
+        }
+    }
+    return sessionSecurity->saveSession(session);
 }
 
 void ViewController::closeApplication() {
@@ -132,6 +180,10 @@ bool ViewController::addConnection(QString typeName, QString name, QStringList k
     if((!name.isEmpty()) && (!name.isEmpty())) {
         res = connFactory->addConnection(typeName, name, QPair<QStringList,QStringList>(keyParam, valueParam));
         if(res) {
+            // create finished
+            // when add service
+            // TODO: the service need and necessery for other action
+            serviceList.push_back(getNewServices());
             qDebug() << "addConnectionSerialPort -open= "<< res << name;
             emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(), 0, QString("Добавление интерфейса [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
             // only added to the end
@@ -155,6 +207,7 @@ bool ViewController::addConnection(QString typeName, QString name, QStringList k
 
 void ViewController::removeActiveInterface() {
     int indexRemove = interfaceTree->getIoIndex();
+    serviceList.removeAt(indexRemove);
     interfaceTree->removeConnection(indexRemove);
     getDeviceFactoryByIndex(indexRemove)->removeDeviceAll();
     connFactory->removeConnection(indexRemove);
@@ -190,7 +243,7 @@ bool ViewController::addDeviceToConnection(QString ioName, QString devTypeName, 
     if(pInterface == nullptr) {
         return false;
     }
-    for(auto services:serviceList) {
+    for(auto services:serviceList[interfaceTree->getIoIndex()]) {
         if(services->getDeviceType() == devTypeName) {
             serviceIsFinded = true;
             p_service = services; break;

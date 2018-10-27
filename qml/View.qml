@@ -69,6 +69,13 @@ Item {
         onDevReadyCheckCommand: {
             projectPanel.devicePropertyPanel.intefaceSetResultCheckDevice(ioIndex, devTypeName, devId, devSn, result)
         }
+        onClearAllFrontEndItems: {
+            projectPanel.devicePropertyPanel.setCrearAllItems()
+        }
+        onIsAvailableNewVersion: {
+            projectPanel.devicePropertyPanel.updateVersionDialog.url = downloadUrl
+            projectPanel.devicePropertyPanel.updateVersionDialog.open()
+        }
     }
 
     Rectangle {
@@ -122,6 +129,8 @@ Item {
                 AddSerialPort {
                     visible: false
                     id:addInterface
+                    x: rootPanel.height / 5
+                    y: rootPanel.width / 5
                     onAcceptConnectReady: {
                         var paramList = []
                         var keyList = []
@@ -140,6 +149,7 @@ Item {
             }
         }
     }
+
     Timer {
         id: timerStartScreen
         interval: 100

@@ -22,9 +22,11 @@ Popup {
             x: 235
             y: 220
             textLine:2
+            useIcon: true
             textIsCenter: true
             widthBody: 175
             name: qsTr("Сменить")
+            iconCode: " \uF0FE"
             onClicked: {
                 dialogChangeId.open()
                 close()
@@ -60,6 +62,8 @@ Popup {
             y: 220
             widthBody: 180
             textLine: 2
+            useIcon: true
+            iconCode: " \uf00d"
             name: qsTr("Закрыть")
             onClicked: {
                 close()
@@ -111,8 +115,14 @@ Popup {
     }
 
     onOpened: {
-        var devProperty = viewController.getCurrentDevProperty()
-        var devId = devProperty[6]
-        currentId.text = devId
+        var devPropertyKey = viewController.getCurrentDevPropertyKey()
+        var devPropertyValue = viewController.getCurrentDevPropertyValue()
+        var devId = 0
+        for(var i=0; i<devPropertyValue.length; i++) {
+            if(devPropertyKey[i] === "id"){
+                devId = devPropertyValue[i]
+            }
+            currentId.text = devId
+        }
    }
 }

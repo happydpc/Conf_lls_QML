@@ -2,6 +2,7 @@ QT += quick
 QT += serialport
 QT += charts qml
 QT += sql
+QT += network
 CONFIG += c++14
 
 # The following define makes your compiler emit warnings if you use
@@ -45,7 +46,8 @@ SOURCES += \
     device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.cpp \
     database/database.cpp \
     session/session.cpp \
-    session/sessionsecurity.cpp
+    session/sessionsecurity.cpp \
+    update/updater.cpp
 
 RESOURCES += \
     qml.qrc \
@@ -93,7 +95,8 @@ HEADERS += \
     device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.h \
     database/database.h \
     session/session.h \
-    session/sessionsecurity.h
+    session/sessionsecurity.h \
+    update/updater.h
 
 DISTFILES += \
     device/service/serviceDevicesAbstract

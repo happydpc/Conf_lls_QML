@@ -101,7 +101,6 @@ QString SessionSecurity::saveSession(Session & session) {
     QString res;
     QString jsonResult;
     QJsonArray attributesArray;
-    session.setSessionName("Сеанс_" + QDateTime::currentDateTimeUtc().toString("yyyy/M/d/hh:mm:ss:z"));
     session.setIsValid(true);
     if(session.getIsValid()) {
         QJsonObject rootObject;

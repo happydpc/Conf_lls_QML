@@ -29,5 +29,7 @@
         <file>qml/devTree/EditDeviceName.qml</file>
         <file>qml/interfaces/MessageShow.qml</file>
         <file>qml/projectPanel/Session.qml</file>
+        <file>qml/projectPanel/Settings.qml</file>
+        <file>qml/projectPanel/Support.qml</file>
     </qresource>
 </RCC>

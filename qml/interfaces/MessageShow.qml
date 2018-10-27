@@ -8,7 +8,6 @@ Dialog {
     property string messageTitle: ""
     property string messageText: ""
     title: messageTitle
-    standardButtons: StandardButton.Close | StandardButton.Apply
     function setData(textTitle, textMessage) {
         messageTitle = textTitle
         messageText = textMessage
