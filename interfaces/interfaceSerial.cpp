@@ -6,12 +6,19 @@ InterfaceSerial::InterfaceSerial(QString name, QPair<QStringList,QStringList>par
     this->portHandler = new QSerialPort();
     this->name = name;
     this->param = param;
+    this->isManualClosed = false;
 }
+
 InterfaceSerial::~InterfaceSerial() {
-    delete this->deviceFactory;
+    if(portHandler->isOpen()) {
+        portHandler->close();
+    }
+    delete deviceFactory;
+    delete portHandler;
 }
+
 void InterfaceSerial::initInterface()  {
-    closeInterface();
+
 }
 
 bool InterfaceSerial::openInterface() {
@@ -33,6 +40,7 @@ bool InterfaceSerial::openInterface() {
             this, SLOT(writeData(QByteArray)));
     connect(deviceFactory, SIGNAL(readReplyData()), this, SLOT(readData()));
     res  = portHandler->open(QIODevice::ReadWrite);
+    isManualClosed = false;
     qDebug() << "openInterface = " << ((res) ? (QString("-Ok")) : (QString("-ERR")));
     return res;
 }
@@ -44,6 +52,7 @@ bool InterfaceSerial::isOpen() {
 void InterfaceSerial::closeInterface() {
     if(portHandler != nullptr) {
         if(portHandler->isOpen()) {
+            isManualClosed = true;
             portHandler->close();
         }
     }
@@ -104,7 +113,9 @@ QPair<QStringList,QStringList> InterfaceSerial::getInterfaceProperty() {
 bool InterfaceSerial::writeData(QByteArray data) {
     bool res = false;
     if(!portHandler->isOpen()) {
-        portHandler->open(QIODevice::ReadWrite);
+        if(!isManualClosed) {
+            portHandler->open(QIODevice::ReadWrite);
+        }
     }
     if(portHandler->isOpen()) {
         res = portHandler->write(data);

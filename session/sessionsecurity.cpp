@@ -9,6 +9,10 @@ SessionSecurity::SessionSecurity(QObject *parent) : QObject(parent) {
     this->database = new Database();
 }
 
+SessionSecurity::~SessionSecurity() {
+    delete database;
+}
+
 QStringList SessionSecurity::getAvailableSessions() {
     QStringList res;
     res = database->getSessionsCountAvailable();

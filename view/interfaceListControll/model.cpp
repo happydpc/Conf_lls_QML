@@ -7,12 +7,14 @@ Model::Model(QObject *parent) :
 }
 
 TreeItem * Model::createTreeItem(QString nameInterface){
+    // TODO: need uniqPtr
     auto res = new TreeItem(nameInterface, true);
     res->setIsCurrent(true);
     return res;
 }
 
 TreeItem * Model::createTreeSubItem(QString nameDevice) {
+    // TODO: need uniqPtr
     auto res = new TreeItem(nameDevice, false);
     connect(res, SIGNAL(currentIndexIsChanged(bool, TreeItem*)), this, SLOT(currentIndexIsChanged(bool, TreeItem*)));
     return res;

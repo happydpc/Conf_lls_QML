@@ -12,6 +12,7 @@ bool ConnectionFactory::addConnection(QString typeName, QString name, QPair<QStr
     lockInterface->lock();
     if(typeName.toLower() == QString("serial")) {
         interfacesAbstract * p_interface = nullptr;
+        // TODO: need uniqPtr
         p_interface = new InterfaceSerial(name, param);
         if(p_interface != nullptr) {
             res  = p_interface->openInterface();

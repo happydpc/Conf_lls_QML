@@ -13,7 +13,11 @@ DevicesFactory::DevicesFactory() {
     connect(this->devShedullerTimer, SIGNAL(timeout()), this, SLOT(devShedullerSlot()));
 }
 
-DevicesFactory::~DevicesFactory() {}
+DevicesFactory::~DevicesFactory() {
+    delete  devShedullerTimer;
+    delete devMutex;
+    delete commandController;
+}
 
 bool DevicesFactory::addNewDevice(E_DeviceType type, QPair<QStringList,QStringList>param,
                                   ServiceDevicesAbstract *pDevService) {
@@ -40,7 +44,7 @@ bool DevicesFactory::addNewDevice(E_DeviceType type, QPair<QStringList,QStringLi
                         devHeader = QString("lls_num_%2").arg(deviceMap.size());
                     }
                     lockMutextDevMap();
-                    deviceMap.push_back(QPair<QString, DeviceAbstract*>(devId,
+                    deviceMap.push_back(QPair<QString, DeviceAbstract*>(devId,  // TODO: need uniqPtr
                                                                         new Progress_tmk24(devId, devHeader, param, pDevService)));
                     unlockMutextDevMap();
                     emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0); // TODO: 0
@@ -365,6 +369,7 @@ void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
         case CommandController::E_CommandType_send_security_request: {
             if(command.deviceTypeName == QString(Progress_tmk24::name)) {
                 Progress_tmk24 *p_device = nullptr;
+                // TODO: need uniqPtr
                 p_device = new Progress_tmk24(checkDeviceStruct.checkedDeviceUniqName,
                            "header", QPair<QStringList,QStringList>(QStringList(),QStringList()), nullptr);
                 if(p_device != nullptr) {

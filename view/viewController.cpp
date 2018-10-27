@@ -45,6 +45,14 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
     });
 }
 
+ViewController::~ViewController() {
+    delete softwareUpdater;
+    delete connFactory;
+    delete interfaceTree;
+    delete sessionSecurity;
+    delete updateIoStatusTimer;
+}
+
 void ViewController::checkUpdateVersionSoftware() {
     softwareUpdater->checkNewUpdate();
 }
@@ -53,6 +61,7 @@ void ViewController::updateVersion(QString downloadUrl) {
     emit isAvailableNewVersion(downloadUrl);
 }
 
+// TODO: need uniqPtr
 QList<ServiceDevicesAbstract*> ViewController::getNewServices() {
     QList<ServiceDevicesAbstract*> res;
     res << new Progress_tmk24Service("PROGRESS TMK24");

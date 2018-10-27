@@ -10,7 +10,7 @@ Progress_tmk4UX::Progress_tmk4UX(QString uniqIdentId, QString passwordSession) {
 }
 
 Progress_tmk4UX::~Progress_tmk4UX() {
-
+    delete chartData;
 }
 
 QString Progress_tmk4UX::getDevTypeName() {

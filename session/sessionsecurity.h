@@ -11,6 +11,7 @@ class SessionSecurity : public QObject
     Q_OBJECT
 public:
     explicit SessionSecurity(QObject *parent = nullptr);
+    ~SessionSecurity();
 
     QStringList getAvailableSessions();
     bool removeSession(QString sessionName);

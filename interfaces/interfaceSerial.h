@@ -38,6 +38,7 @@ private:
 private:
 
     static constexpr char* typeName = "serial";
+    bool isManualClosed;
     QSerialPort *portHandler = nullptr;
     QString name;
     QPair<QStringList,QStringList>param;

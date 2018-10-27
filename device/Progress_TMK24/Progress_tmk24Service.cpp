@@ -22,6 +22,7 @@ bool Progress_tmk24Service::addDevice(QString devTypeName, QString devId, QStrin
         idBlock.isWhitedResult = 0;
         idBlock.writeIsNormal = 0;
         idBlock.currData.isValid = false;
+        // TODO: need uniqPtr
         devList.push_back(new QPair<sDevIdentBlock, QList<sDevValues>*>(idBlock, new QList<sDevValues>()));
         res = true;
     } else {
