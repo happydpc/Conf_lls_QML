@@ -7,6 +7,9 @@ InterfaceSerial::InterfaceSerial(QString name, QPair<QStringList,QStringList>par
     this->name = name;
     this->param = param;
     this->isManualClosed = false;
+    connect(deviceFactory, SIGNAL(writeData(QByteArray)),
+            this, SLOT(writeData(QByteArray)));
+    connect(deviceFactory, SIGNAL(readReplyData()), this, SLOT(readData()));
 }
 
 InterfaceSerial::~InterfaceSerial() {
@@ -35,12 +38,9 @@ bool InterfaceSerial::openInterface() {
     portHandler->setParity(QSerialPort::NoParity);
     portHandler->setStopBits(QSerialPort::OneStop);
     portHandler->setFlowControl(QSerialPort::NoFlowControl);
-    connect(deviceFactory, SIGNAL(writeData(QByteArray)),
-            this, SLOT(writeData(QByteArray)));
-    connect(deviceFactory, SIGNAL(readReplyData()), this, SLOT(readData()));
     res  = portHandler->open(QIODevice::ReadWrite);
     if(res) {
-        connect(portHandler, SIGNAL(error(QSerialPort::SerialPortError)), SLOT(errorHanler(QSerialPort::SerialPortError)));
+        connect(portHandler, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(errorHanler(QSerialPort::SerialPortError)));
         isManualClosed = false;
     }
     qDebug() << "openInterface = " << ((res) ? (QString("-Ok")) : (QString("-ERR")));

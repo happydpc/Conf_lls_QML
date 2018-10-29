@@ -297,13 +297,13 @@ Popup {
                                                         typeFindStartButton.enabled = false
                                                         var keyList = []
                                                         var paramList = []
+                                                        modeFind = modeFind_add_finder
                                                         findIdValues = parseInt(typeDeviceIdProgressTmk24FindDown.text)
                                                         findDevListView.model.clear()
                                                         keyList.push("id")
                                                         paramList.push(findIdValues)
                                                         keyList.push("password")
                                                         paramList.push("")
-                                                        modeFind = modeFind_add_finder
                                                         viewController.checkDeviceFromConnection(typeDeviceList.currentText, keyList, paramList)
 
                                                     }
