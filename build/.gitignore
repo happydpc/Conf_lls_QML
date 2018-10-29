@@ -1,2 +1,4 @@
 *.o
 *.exe
+/object_script.Lls_QML_conf.Debug
+/object_script.Lls_QML_conf.Release

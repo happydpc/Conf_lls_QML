@@ -35,12 +35,14 @@ bool InterfaceSerial::openInterface() {
     portHandler->setParity(QSerialPort::NoParity);
     portHandler->setStopBits(QSerialPort::OneStop);
     portHandler->setFlowControl(QSerialPort::NoFlowControl);
-    connect(portHandler, SIGNAL(error(QSerialPort::SerialPortError)), SLOT(errorHanler(QSerialPort::SerialPortError)));
     connect(deviceFactory, SIGNAL(writeData(QByteArray)),
             this, SLOT(writeData(QByteArray)));
     connect(deviceFactory, SIGNAL(readReplyData()), this, SLOT(readData()));
     res  = portHandler->open(QIODevice::ReadWrite);
-    isManualClosed = false;
+    if(res) {
+        connect(portHandler, SIGNAL(error(QSerialPort::SerialPortError)), SLOT(errorHanler(QSerialPort::SerialPortError)));
+        isManualClosed = false;
+    }
     qDebug() << "openInterface = " << ((res) ? (QString("-Ok")) : (QString("-ERR")));
     return res;
 }
@@ -54,6 +56,7 @@ void InterfaceSerial::closeInterface() {
         if(portHandler->isOpen()) {
             isManualClosed = true;
             portHandler->close();
+            disconnect(portHandler, SIGNAL(error(QSerialPort::SerialPortError)), this, NULL);
         }
     }
 }
@@ -112,13 +115,15 @@ QPair<QStringList,QStringList> InterfaceSerial::getInterfaceProperty() {
 
 bool InterfaceSerial::writeData(QByteArray data) {
     bool res = false;
-    if(!portHandler->isOpen()) {
-        if(!isManualClosed) {
-            portHandler->open(QIODevice::ReadWrite);
+    if(portHandler != nullptr) {
+        if(!portHandler->isOpen()) {
+            if(!isManualClosed) {
+                openInterface();
+            }
         }
-    }
-    if(portHandler->isOpen()) {
-        res = portHandler->write(data);
+        if(portHandler->isOpen()) {
+            res = portHandler->write(data);
+        }
     }
     return res;
 }
@@ -147,7 +152,8 @@ QStringList InterfaceSerial::getAvailableList() {
 void InterfaceSerial::errorHanler(QSerialPort::SerialPortError err) {
     qDebug() << "InterfaseSerial -ERR=" << err;
     if(err != QSerialPort::NoError) {
-        closeInterface();
+        disconnect(portHandler, SIGNAL(error(QSerialPort::SerialPortError)), this, NULL);
+        portHandler->close();
         emit errorInterface(portHandler->portName(), tr("Ошибка интерфейса\nПроверьте соединение"));
     }
 }

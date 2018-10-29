@@ -73,7 +73,7 @@ bool DevicesFactory::addNewDevice(E_DeviceType type, QPair<QStringList,QStringLi
 }
 
 void DevicesFactory::checkDeviceIsOnline(E_DeviceType type, QStringList keyParam, QStringList valParam) {
-    if(checkDeviceStruct.isIdle) {
+    //if(checkDeviceStruct.isIdle) {
         if((factoryType == Type_Undefined) || (factoryType == type)) {
             if(type == Type_Progress_Tmk24) {
                 sendCustomCommandUseCallback(type, "check device is connected", keyParam, valParam);
@@ -100,7 +100,7 @@ void DevicesFactory::checkDeviceIsOnline(E_DeviceType type, QStringList keyParam
             } else if(type == Type_Nozzle_rev_0_00) {
             }
         }
-    }
+    //}
 }
 
 bool DevicesFactory::removeDevice(QString uniqDevName) {
