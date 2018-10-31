@@ -46,8 +46,6 @@ Popup {
             Label {
                 id: lTypeDevice
                 text: qsTr("Последовательный порт:")
-                anchors.left: parent
-                anchors.leftMargin: 20
             }
             ComboBox {
                 id: portList

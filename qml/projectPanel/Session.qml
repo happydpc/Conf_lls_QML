@@ -30,6 +30,7 @@ Popup {
         height: parent.height
 
         Rectangle {
+            id:rootRectangle
             width: parent.width/2 + 50
             height: parent.height
             color: "#f7f7f7"
@@ -41,10 +42,10 @@ Popup {
                 clip: true
                 Item {
                     Column {
-                        anchors.fill: parent
                         ListView {
                             id: openSessionListView
-                            anchors.fill: parent
+                            width: rootRectangle.width
+                            height: rootRectangle.height
                             clip: true
                             ScrollBar.vertical: ScrollBar {
                                 width: 20
@@ -87,8 +88,11 @@ Popup {
                                         anchors.leftMargin: 5
                                         onClicked: {
                                             var list = openSessionListView.model.get(index)
-                                            if(viewController.removeSessionByName(list["sessionName"])) {
-                                                loadSessionTree()
+                                            var res = list["sessionName"]
+                                            if(res !== undefined) {
+                                                if(viewController.removeSessionByName(res)) {
+                                                    loadSessionTree()
+                                                }
                                             }
                                         }
                                     }
@@ -118,12 +122,12 @@ Popup {
                 }
                 Item {
                     Column {
-                        anchors.fill: parent
+                        anchors.centerIn: parent
+                        height: 100
+                        width: parent.width
                         TextField {
                             id:saveSessionSimpleName
                             width: parent.width
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.horizontalCenter: parent.horizontalCenter
                             placeholderText: "Название авто сохранения"
                             readOnly: true
                         }

@@ -884,6 +884,7 @@ CommandController::sCommandData Progress_tmk24::getCommandToCheckConnected() {
     command.isNeedAckMessage = false;
     command.operationHeader = "check dev is connected";
     command.devCommand = (int)Progress_tmk24Data::lls_read_errors;
+    command.commandType = CommandController::E_CommandType_send_typical_request;
     return command;
 }
 
@@ -893,6 +894,7 @@ CommandController::sCommandData Progress_tmk24::getCommandtoCheckPassword() {
     command.isNeedAckMessage = false;
     command.operationHeader = "check dev password";
     command.devCommand = (int)Progress_tmk24Data::lls_check_address_and_pass;
+        command.commandType = CommandController::E_CommandType_send_typical_request;
     return command;
 }
 
@@ -902,6 +904,7 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandListToInit() {
     command.deviceIdent = getUniqId();
     command.operationHeader = "init dev after connecting";
     command.isNeedAckMessage = false;
+    command.commandType = CommandController::E_CommandType_send_typical_request;
     command.devCommand = (int)Progress_tmk24Data::lls_read_settings;
     listCommand.push_back(command);
     command.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
@@ -924,6 +927,7 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandListToUpdate() 
     command.operationHeader = "update device";
     command.isNeedAckMessage = false;
     command.devCommand = (int)Progress_tmk24Data::lls_read_lvl_all;
+    command.commandType = CommandController::E_CommandType_send_typical_request;
     listCommand.push_back(command);
     return listCommand;
 }
@@ -934,6 +938,7 @@ CommandController::sCommandData Progress_tmk24::getCommandToGetType() {
     command.isNeedAckMessage = false;
     command.operationHeader = "get dev type";
     command.devCommand = (int)Progress_tmk24Data::lls_read_settings;
+        command.commandType = CommandController::E_CommandType_send_typical_request;
     return command;
 }
 
@@ -949,6 +954,7 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
         tcommand.devCommand = (int)Progress_tmk24Data::lls_calibrate_min;
+        tcommand.commandType = CommandController::E_CommandType_send_typical_request;
         command.push_back(tcommand);
     } else if(operation == "check device is connected") {
         tcommand.deviceIdent = getUniqId();
@@ -960,26 +966,31 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true;
         tcommand.devCommand = (int)Progress_tmk24Data::lls_calibrate_max;
+        tcommand.commandType = CommandController::E_CommandType_send_typical_request;
         command.push_back(tcommand);
     } else if(operation == "get current dev settings") {
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true;
         tcommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;
+        tcommand.commandType = CommandController::E_CommandType_send_typical_request;
         command.push_back(tcommand);
     } else if(operation == "get get available dev tarrir id") {
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true;
         tcommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;
+        tcommand.commandType = CommandController::E_CommandType_send_typical_request;
         command.push_back(tcommand);
     } else if(operation == "get current dev settings without ack dialog") {
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = false;
         tcommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;
+        tcommand.commandType = CommandController::E_CommandType_send_typical_request;
         command.push_back(tcommand);
     } else if(operation == "set current dev settings") {
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true;
         tcommand.devCommand = (int)Progress_tmk24Data::lls_write_settings;
+        tcommand.commandType = CommandController::E_CommandType_send_typical_request;
         // key
         for(auto i:data.first) {
             tcommand.args.key.push_back(i);
@@ -993,11 +1004,13 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true;
         tcommand.devCommand = (int)Progress_tmk24Data::lls_read_errors;
+        tcommand.commandType = CommandController::E_CommandType_send_typical_request;
         command.push_back(tcommand);
     } else if(operation == "set current dev tar table") {
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true;
         tcommand.devCommand = (int)Progress_tmk24Data::lls_write_cal_table;
+        tcommand.commandType = CommandController::E_CommandType_send_typical_request;
         // key
         for(auto i:data.first) { // string index
             tcommand.args.key.push_back(i);
@@ -1011,11 +1024,13 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true;
         tcommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
+        tcommand.commandType = CommandController::E_CommandType_send_typical_request;
         command.push_back(tcommand);
     } else if(operation == "change current dev id") {
         // first read settings
         tcommand.deviceIdent = getUniqId();
         tcommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;
+        tcommand.commandType = CommandController::E_CommandType_send_typical_request;
         tcommand.isNeedAckMessage = false;
         tcommand.args.key.clear();
         tcommand.args.value.clear();
@@ -1024,6 +1039,7 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
         // потоm запись id
         tcommand.deviceIdent = getUniqId();
         tcommand.devCommand = (int)Progress_tmk24Data::lls_write_settings;
+        tcommand.commandType = CommandController::E_CommandType_send_typical_request;
         tcommand.isNeedAckMessage = true;
         // key
         for(auto i:data.first) { // string index
@@ -1048,6 +1064,7 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandListToCurrentDa
     command.operationHeader = "typical command get current data";
     command.isNeedAckMessage = false;
     command.devCommand = (int)Progress_tmk24Data::lls_read_lvl_once;
+    command.commandType = CommandController::E_CommandType_send_typical_request;
     listCommand.push_back(command);
     command.devCommand = (int)Progress_tmk24Data::lls_read_cnt;
     listCommand.push_back(command);

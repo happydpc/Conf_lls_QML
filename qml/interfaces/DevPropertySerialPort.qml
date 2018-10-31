@@ -13,8 +13,6 @@ import "qrc:/qml/miscElems" as MiscElems
 import "qrc:/qml/devices" as Devices
 
 Rectangle {
-    anchors.top: parent.top
-    anchors.left: parent.left
     visible: true
     color: "#e7e9eb"
 

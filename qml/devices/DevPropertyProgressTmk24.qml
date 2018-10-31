@@ -10,10 +10,9 @@ import QtQuick.Controls.Styles 1.4
 import CustomControls 1.0
 import QtGraphicalEffects 1.0
 import "qrc:/qml/miscElems" as MiscElems
+import "qrc:/qml/devices" as Devices
 
 Rectangle {
-    anchors.top: parent.top
-    anchors.left: parent.left
     visible: true
 
     property bool isNoiseDetected: false
@@ -283,7 +282,7 @@ Rectangle {
 
     Timer {
         id: timerUpdateRepeat
-        interval: 500
+        interval: 1500
         running: true
         repeat: true
         onTriggered: {
@@ -304,47 +303,58 @@ Rectangle {
         colorArray.push("#4b4bf3")
         colorArray.push("#be4bf3")
         colorArray.push("#0d8741")
+        colorArray.push("#4bf3c6")
+        colorArray.push("#4b4bf3")
+        colorArray.push("#be4bf3")
+        colorArray.push("#0d8741")
         chartTarCurrentValuesMultiple.removeAllSeries();
+        var chartArray = undefined
+        var maxGraphAmplitude = 0
 
         for(var devIter=0; devIter<devCount; devIter++) {
             var res = viewController.getTarCurrentDeviceData(devIter)
-            var dataArray = tarListDevice.model.get(devIter)
-            if(dataArray !== undefined) {
-                dataArray["valueCnt"] = res[0]
-                dataArray["valueFuelLevel"] = res[2]
-                tarListDevice.model.set(devIter, dataArray)
-            }
-            //-- chart
-            var chartArray = viewController.getTarCurrentDeviceChartData(devIter)
-
-            var line = chartTarCurrentValuesMultiple.createSeries(ChartView.SeriesTypeLine, "ID" + devId[devIter], currentTarChartAxisXMultiple, currentTarChartAxisYMultiple);
-            line.color = colorArray[devIter]
-
-            chartTarCurrentValuesMultiple.graphLength = chartArray.length
-            chartTarCurrentValuesMultiple.graphAmplitudeMax = 0
-
-            for(var chartIter=0; chartIter<chartArray.length; chartIter++) {
-                if(chartTarCurrentValuesMultiple.graphAmplitudeMax < chartArray[chartIter]) {
-                    chartTarCurrentValuesMultiple.graphAmplitudeMax = chartArray[chartIter];
+            if(res !== undefined) {
+                var dataArray = tarListDevice.model.get(devIter)
+                if(dataArray !== undefined) {
+                    dataArray["valueCnt"] = res[0]
+                    dataArray["valueFuelLevel"] = res[2]
+                    tarListDevice.model.set(devIter, dataArray)
                 }
             }
+            //-- chart
+            chartArray = viewController.getTarCurrentDeviceChartData(devIter)
+            if(chartArray !== undefined) {
+                var maxGraphLen = chartArray.length
+                for(var chartIter=0; chartIter<chartArray.length; chartIter++) {
+                    if(maxGraphAmplitude < chartArray[chartIter]) {
+                        maxGraphAmplitude = chartArray[chartIter];
+                    }
+                }
+                var tAxisXMultipleMin = 0;
+                var tAxisXMultipleMax = chartArray.length
+                var tAxisYMultipleMin = 0;
+                var tAxisYMultipleMax = maxGraphAmplitude
 
-            currentTarChartAxisXMultiple.min = 0;
-            currentTarChartAxisXMultiple.max = chartArray.length
-            currentTarChartAxisYMultiple.min = 0;
-            currentTarChartAxisYMultiple.max = chartTarCurrentValuesMultiple.graphAmplitudeMax
+                var line = chartTarCurrentValuesMultiple.createSeries(ChartView.SeriesTypeLine,
+                                                                      "ID" + devId[devIter], currentTarChartAxisXMultiple, currentTarChartAxisYMultiple);
+                line.color = colorArray[devIter]
 
-            for(chartIter=0; chartIter<chartArray.length; chartIter++) {
-                line.append(chartIter, parseInt(chartArray[chartIter]));
+                for(chartIter=0; chartIter<chartArray.length; chartIter++) {
+                    var tvalue = parseInt(chartArray[chartIter])
+                    line.append(chartIter, tvalue);
+                }
             }
-
+        }
+        if(chartArray !== undefined) {
+            chartTarCurrentValuesMultiple.graphLength = chartArray.length
+            chartTarCurrentValuesMultiple.graphAmplitudeMax = maxGraphAmplitude
             chartTarCurrentValuesMultiple.graphAmplitudeMaxChanged();
         }
     }
 
     function addLogMessage(codeMessage, message) {
-        if(logListView.model.length > 1000) {
-            logListView.model.clear()
+        if(logListView.model.length > 50) {
+            logListView.model.shift()
         }
         logListView.model.append({"message":message,"status":codeMessage})
     }
@@ -425,11 +435,11 @@ Rectangle {
                 var item = tarTabViewMultiple.model.get(itemCounter)
                 tarArrayLitrs.push(item[roleLiters])
                 tarArrayFuelLevel.push(item[roleFuelLevel])
-                if(maxvalueFuelLevel < item[roleFuelLevel]) {
-                    maxvalueFuelLevel = item[roleFuelLevel]
+                if(maxvalueFuelLevel < parseInt(item[roleFuelLevel])) {
+                    maxvalueFuelLevel = parseInt(item[roleFuelLevel])
                 }
-                if(maxValueLitrs < item[roleLiters]) {
-                    maxValueLitrs = item[roleLiters]
+                if(maxValueLitrs < parseInt(item[roleLiters])) {
+                    maxValueLitrs = parseInt(item[roleLiters])
                 }
                 console.log(roleLiters + " " + item[roleFuelLevel] + "\nValue Litrs=" + item[roleLiters])
             }
@@ -437,12 +447,12 @@ Rectangle {
             var line = chartTarTableMultiple.createSeries(ChartView.SeriesTypeLine, "ID" + devId[deviceCounter], chartTarTableAxisXMultiple, chartTarTableAxisYMultiple);
             line.color = colorArray[deviceCounter]
             chartTarTableAxisXMultiple.min = 0;
-            chartTarTableAxisXMultiple.max = parseInt(maxValueLitrs)
+            chartTarTableAxisXMultiple.max = maxValueLitrs
             chartTarTableAxisYMultiple.min = 0;
             chartTarTableAxisYMultiple.max = parseInt(maxvalueFuelLevel)
 
             chartTarTableMultiple.chartTarTableAmplitudeMax = parseInt(maxvalueFuelLevel)
-            chartTarTableMultiple.chartTarTableLength = parseInt(maxValueLitrs)
+            chartTarTableMultiple.chartTarTableLength = maxValueLitrs
 
             console.log("MaxLevel =" + chartTarTableMultiple.chartTarTableAmplitudeMax)
             for(var i=0; i<tarArrayFuelLevel.length; i++) {
@@ -795,22 +805,15 @@ Rectangle {
                         anchors.left: parent.left
                         anchors.leftMargin: 15
                         spacing: 10
-
                         Row {
-
                             id:currentDataTexted
-                            layer.enabled: true
-                            width: 800
-                            height: 50
+                            spacing: 10
                             Row {
                                 id:currentDataTexted_1
                                 clip: true
-                                anchors.left: parent.left
-                                anchors.leftMargin: 10
-                                anchors.top: parent.top
-                                anchors.topMargin: 13
                                 width: 250
                                 height: 25
+                                spacing: 10
                                 Label {
                                     id: lSn
                                     text: qsTr("Завод/ном:")
@@ -819,36 +822,27 @@ Rectangle {
                                 TextField {
                                     id: snText
                                     text: qsTr("")
-                                    anchors.left: lSn.right
-                                    anchors.leftMargin: 5
-                                    anchors.right: parent.right
+                                    width: parent.width - lSn.width - 15
                                     height: parent.height
                                     enabled: devIsConnected
                                     readOnly: true
                                 }
                             }
-
                             Row {
                                 id: currentDataTexted_2
                                 clip: true
-                                anchors.left: currentDataTexted_1.right
-                                anchors.leftMargin: 10
-                                anchors.top: parent.top
-                                anchors.topMargin: 13
                                 width: 250
                                 height: 25
+                                spacing: 10
                                 Label {
                                     id: lTypeDevice
                                     text: qsTr("Тип датчика:")
                                     anchors.verticalCenter: parent.verticalCenter
                                 }
-
                                 TextField {
                                     id: typeDeviceText
                                     text: qsTr("")
-                                    anchors.left: lTypeDevice.right
-                                    anchors.right: parent.right
-                                    anchors.leftMargin: 5
+                                    width: parent.width - lTypeDevice.width - 15
                                     readOnly: true
                                     enabled: devIsConnected
                                     height: parent.height
@@ -858,12 +852,9 @@ Rectangle {
                             Row {
                                 id: currentDataTexted_3
                                 clip: true
-                                anchors.left: currentDataTexted_2.right
-                                anchors.leftMargin: 10
-                                anchors.top: parent.top
-                                anchors.topMargin: 13
                                 width: 250
                                 height: 25
+                                spacing: 10
                                 Label {
                                     id: lversionFirmwareText
                                     text: qsTr("Версия ПО:")
@@ -873,21 +864,20 @@ Rectangle {
                                     id: versionFirmwareText
                                     text: qsTr("")
                                     enabled: devIsConnected
-                                    anchors.left: lversionFirmwareText.right
-                                    anchors.right: parent.right
-                                    anchors.leftMargin: 5
+                                    width: parent.width - lversionFirmwareText.width - 15
                                     readOnly: true
                                     height: parent.height
                                 }
                             }
-                            layer.effect: DropShadow {
-                                transparentBorder: true
-                                horizontalOffset: 0
-                                verticalOffset: 1
-                                color: "#e0e5ef"
-                                samples: 10
-                                radius: 10
-                            }
+                            //                            layer.enabled: true
+                            //                            layer.effect: DropShadow {
+                            //                                transparentBorder: true
+                            //                                horizontalOffset: 0
+                            //                                verticalOffset: 1
+                            //                                color: "#e0e5ef"
+                            //                                samples: 10
+                            //                                radius: 10
+                            //                            }
                         }
 
                         Column {
@@ -898,14 +888,13 @@ Rectangle {
                                 Rectangle{
                                     width: 150
                                     height: 150
-                                    layer.enabled: true
                                     radius: 15
                                     color: devIsConnected ? "#ffffff" : "#d9d9d9"
                                     Label {
                                         id: levelValueLabel
                                         text: qsTr("Уровень/Объем:")
-                                        anchors.left: parent.left
                                         color: "#888d91"
+                                        anchors.left: parent.left
                                         anchors.leftMargin: 15
                                         anchors.right: parent.right
                                         anchors.rightMargin: 0
@@ -934,20 +923,20 @@ Rectangle {
                                         textColor: "#888d91"
                                         enabled: devIsConnected
                                     }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 10
-                                    }
+                                    //                                    layer.enabled: true
+                                    //                                    layer.effect: DropShadow {
+                                    //                                        transparentBorder: true
+                                    //                                        horizontalOffset: 0
+                                    //                                        verticalOffset: 1
+                                    //                                        color: "#e0e5ef"
+                                    //                                        samples: 10
+                                    //                                        radius: 10
+                                    //                                    }
                                 }
 
                                 Rectangle{
                                     width: 150
                                     height: 150
-                                    layer.enabled: true
                                     radius: 15
                                     color: devIsConnected ? "#ffffff" : "#d9d9d9"
                                     Label {
@@ -995,20 +984,20 @@ Rectangle {
                                             anchors.verticalCenter: parent.verticalCenter
                                         }
                                     }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 10
-                                    }
+                                    //                                    layer.enabled: true
+                                    //                                    layer.effect: DropShadow {
+                                    //                                        transparentBorder: true
+                                    //                                        horizontalOffset: 0
+                                    //                                        verticalOffset: 1
+                                    //                                        color: "#e0e5ef"
+                                    //                                        samples: 10
+                                    //                                        radius: 10
+                                    //                                    }
                                 }
 
                                 Rectangle{
                                     width: 150
                                     height: 150
-                                    layer.enabled: true
                                     radius: 15
                                     color: devIsConnected ? "#ffffff" : "#d9d9d9"
                                     Label {
@@ -1044,20 +1033,20 @@ Rectangle {
                                         textColor: "#888d91"
                                         enabled: devIsConnected
                                     }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 10
-                                    }
+                                    //                                    layer.enabled: true
+                                    //                                    layer.effect: DropShadow {
+                                    //                                        transparentBorder: true
+                                    //                                        horizontalOffset: 0
+                                    //                                        verticalOffset: 1
+                                    //                                        color: "#e0e5ef"
+                                    //                                        samples: 10
+                                    //                                        radius: 10
+                                    //                                    }
                                 }
 
                                 Rectangle{
                                     width: 150
                                     height: 150
-                                    layer.enabled: true
                                     radius: 15
                                     color: devIsConnected ? "#ffffff" : "#d9d9d9"
                                     Label {
@@ -1093,14 +1082,15 @@ Rectangle {
                                         textColor: "#888d91"
                                         enabled: devIsConnected
                                     }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 10
-                                    }
+                                    //                                    layer.enabled: true
+                                    //                                    layer.effect: DropShadow {
+                                    //                                        transparentBorder: true
+                                    //                                        horizontalOffset: 0
+                                    //                                        verticalOffset: 1
+                                    //                                        color: "#e0e5ef"
+                                    //                                        samples: 10
+                                    //                                        radius: 10
+                                    //                                    }
                                 }
                             }
                         }
@@ -1140,15 +1130,15 @@ Rectangle {
                                     }
                                     enabled: devIsConnected
                                 }
-                                layer.enabled: true
-                                layer.effect: DropShadow {
-                                    transparentBorder: true
-                                    horizontalOffset: 0
-                                    verticalOffset: 1
-                                    color: "#e0e5ef"
-                                    samples: 10
-                                    radius: 10
-                                }
+                                //                                layer.enabled: true
+                                //                                layer.effect: DropShadow {
+                                //                                    transparentBorder: true
+                                //                                    horizontalOffset: 0
+                                //                                    verticalOffset: 1
+                                //                                    color: "#e0e5ef"
+                                //                                    samples: 10
+                                //                                    radius: 10
+                                //                                }
                             }
                         }
 
@@ -1158,7 +1148,6 @@ Rectangle {
                                 id:errorRectangle
                                 height: 400
                                 width: column.width
-                                layer.enabled: true
                                 radius: 15
                                 enabled: devIsConnected
                                 color: devIsConnected ? "#ffffff" : "#d9d9d9"
@@ -1187,7 +1176,6 @@ Rectangle {
                                             viewController.setCurrentDevCustomCommand("read current dev errors", [], [])
                                         }
                                     }
-
                                     Row{
                                         width: 400
                                         height: 30
@@ -1199,133 +1187,120 @@ Rectangle {
                                         Image {
                                             height: 32
                                             width: 32
-                                            anchors.left: parent.right
-                                            anchors.leftMargin: 20
                                             source: error1Label.error1 === true ? "qrc:/icon/images/icon/bad.png" : "qrc:/icon/images/icon/normal.png"
                                         }
                                     }
-                                    Row{
-                                        width: 400
-                                        height: 30
-                                        Label {
-                                            id:error2Label
-                                            text: "Выход за минимальную границу измерения на 10%:"
-                                            property bool error2: false
+                                    Column {
+                                        Row{
+                                            width: 400
+                                            height: 30
+                                            Label {
+                                                id:error2Label
+                                                text: "Выход за минимальную границу измерения на 10%:"
+                                                property bool error2: false
+                                            }
+                                            Image {
+                                                height: 32
+                                                width: 32
+                                                source: error2Label.error1 === true ? "qrc:/icon/images/icon/bad.png" : "qrc:/icon/images/icon/normal.png"
+                                            }
                                         }
-                                        Image {
-                                            height: 32
-                                            width: 32
-                                            anchors.left: parent.right
-                                            anchors.leftMargin: 20
-                                            source: error2Label.error1 === true ? "qrc:/icon/images/icon/bad.png" : "qrc:/icon/images/icon/normal.png"
+                                        Row{
+                                            width: 400
+                                            height: 30
+                                            Label {
+                                                id:error3Label
+                                                text: "Выход за максимальную границу измерения на 10%:"
+                                                property bool error3: false
+                                            }
+                                            Image {
+                                                height: 32
+                                                width: 32
+                                                source: error3Label.error1 === true ? "qrc:/icon/images/icon/bad.png" : "qrc:/icon/images/icon/normal.png"
+                                            }
                                         }
-                                    }
-                                    Row{
-                                        width: 400
-                                        height: 30
-                                        Label {
-                                            id:error3Label
-                                            text: "Выход за максимальную границу измерения на 10%:"
-                                            property bool error3: false
+                                        Row{
+                                            width: 400
+                                            height: 30
+                                            Label {
+                                                id:error4Label
+                                                text: "Частота измерительного генератора 0 Гц:"
+                                                property bool error4: false
+                                            }
+                                            Image {
+                                                height: 32
+                                                width: 32
+                                                source: error4Label.error1 === true ? "qrc:/icon/images/icon/bad.png" : "qrc:/icon/images/icon/normal.png"
+                                            }
                                         }
-                                        Image {
-                                            height: 32
-                                            width: 32
-                                            anchors.left: parent.right
-                                            anchors.leftMargin: 20
-                                            source: error3Label.error1 === true ? "qrc:/icon/images/icon/bad.png" : "qrc:/icon/images/icon/normal.png"
+                                        Row{
+                                            width: 400
+                                            height: 30
+                                            Label {
+                                                id:error5Label
+                                                text: "Ведомый датчик №1 не отвечает:"
+                                                property bool error5: false
+                                            }
+                                            Image {
+                                                height: 32
+                                                width: 32
+                                                source: error5Label.error1 === true ? "qrc:/icon/images/icon/bad.png" : "qrc:/icon/images/icon/normal.png"
+                                            }
                                         }
-                                    }
-                                    Row{
-                                        width: 400
-                                        height: 30
-                                        Label {
-                                            id:error4Label
-                                            text: "Частота измерительного генератора 0 Гц:"
-                                            property bool error4: false
-                                        }
-                                        Image {
-                                            height: 32
-                                            width: 32
-                                            anchors.left: parent.right
-                                            anchors.leftMargin: 20
-                                            source: error4Label.error1 === true ? "qrc:/icon/images/icon/bad.png" : "qrc:/icon/images/icon/normal.png"
-                                        }
-                                    }
-                                    Row{
-                                        width: 400
-                                        height: 30
-                                        Label {
-                                            id:error5Label
-                                            text: "Ведомый датчик №1 не отвечает:"
-                                            property bool error5: false
-                                        }
-                                        Image {
-                                            height: 32
-                                            width: 32
-                                            anchors.left: parent.right
-                                            anchors.leftMargin: 20
-                                            source: error5Label.error1 === true ? "qrc:/icon/images/icon/bad.png" : "qrc:/icon/images/icon/normal.png"
-                                        }
-                                    }
 
-                                    Row{
-                                        width: 400
-                                        height: 30
-                                        Label {
-                                            id:error6Label
-                                            text: "Ведомый датчик №2 не отвечает:"
-                                            property bool error6: false
+                                        Row{
+                                            width: 400
+                                            height: 30
+                                            Label {
+                                                id:error6Label
+                                                text: "Ведомый датчик №2 не отвечает:"
+                                                property bool error6: false
+                                            }
+                                            Image {
+                                                height: 32
+                                                width: 32
+                                                source: error6Label.error1 === true ? "qrc:/icon/images/icon/bad.png" : "qrc:/icon/images/icon/normal.png"
+                                            }
                                         }
-                                        Image {
-                                            height: 32
-                                            width: 32
-                                            anchors.left: parent.right
-                                            anchors.leftMargin: 20
-                                            source: error6Label.error1 === true ? "qrc:/icon/images/icon/bad.png" : "qrc:/icon/images/icon/normal.png"
+                                        Row{
+                                            width: 400
+                                            height: 30
+                                            Label {
+                                                id:error7Label
+                                                text: "Ведомый датчик №3 не отвечает:"
+                                                property bool error7: false
+                                            }
+                                            Image {
+                                                height: 32
+                                                width: 32
+                                                source: error7Label.error1 === true ? "qrc:/icon/images/icon/4149.png" : "qrc:/icon/images/icon/normal.png"
+                                            }
                                         }
-                                    }
-                                    Row{
-                                        width: 400
-                                        height: 30
-                                        Label {
-                                            id:error7Label
-                                            text: "Ведомый датчик №3 не отвечает:"
-                                            property bool error7: false
-                                        }
-                                        Image {
-                                            height: 32
-                                            width: 32
-                                            anchors.left: parent.right
-                                            anchors.leftMargin: 20
-                                            source: error7Label.error1 === true ? "qrc:/icon/images/icon/4149.png" : "qrc:/icon/images/icon/normal.png"
-                                        }
-                                    }
-                                    Row{
-                                        width: 400
-                                        height: 30
-                                        Label {
-                                            id:error8Label
-                                            text: "Ведомый датчик №4 не отвечает:"
-                                            property bool error8: false
-                                        }
-                                        Image {
-                                            height: 32
-                                            width: 32
-                                            anchors.left: parent.right
-                                            anchors.leftMargin: 20
-                                            source: error8Label.error1 === true ? "qrc:/icon/images/icon/4149.png" : "qrc:/icon/images/icon/normal.png"
+                                        Row{
+                                            width: 400
+                                            height: 30
+                                            Label {
+                                                id:error8Label
+                                                text: "Ведомый датчик №4 не отвечает:"
+                                                property bool error8: false
+                                            }
+                                            Image {
+                                                height: 32
+                                                width: 32
+                                                source: error8Label.error1 === true ? "qrc:/icon/images/icon/4149.png" : "qrc:/icon/images/icon/normal.png"
+                                            }
                                         }
                                     }
                                 }
-                                layer.effect: DropShadow {
-                                    transparentBorder: true
-                                    horizontalOffset: 0
-                                    verticalOffset: 1
-                                    color: "#e0e5ef"
-                                    samples: 10
-                                    radius: 10
-                                }
+                                //                                layer.enabled: true
+                                //                                layer.effect: DropShadow {
+                                //                                    transparentBorder: true
+                                //                                    horizontalOffset: 0
+                                //                                    verticalOffset: 1
+                                //                                    color: "#e0e5ef"
+                                //                                    samples: 10
+                                //                                    radius: 10
+                                //                                }
                             }
                         }
                         Column {
@@ -1333,7 +1308,6 @@ Rectangle {
                                 height: 250
                                 width: column.width
                                 color: "#ffffff"
-                                layer.enabled: true
                                 radius: 15
                                 Column {
                                     anchors.left: parent.left
@@ -1381,21 +1355,21 @@ Rectangle {
                                         }
                                     }
                                 }
-                                layer.effect: DropShadow {
-                                    transparentBorder: true
-                                    horizontalOffset: 0
-                                    verticalOffset: 1
-                                    color: "#e0e5ef"
-                                    samples: 10
-                                    radius: 10
-                                }
+                                //                                layer.enabled: true
+                                //                                layer.effect: DropShadow {
+                                //                                    transparentBorder: true
+                                //                                    horizontalOffset: 0
+                                //                                    verticalOffset: 1
+                                //                                    color: "#e0e5ef"
+                                //                                    samples: 10
+                                //                                    radius: 10
+                                //                                }
                             }
                         }
                         Rectangle {
                             height: 100
                             width: column.width
                             color: "#ffffff"
-                            layer.enabled: true
                             radius: 15
                         }
                     }
@@ -1404,122 +1378,139 @@ Rectangle {
 
             Item {
                 clip: true
-                Rectangle {
-                    id: subBarup
-                    color: "#fdfdfb"
-                    height: 45
-                    anchors.top: parent.top
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                Column {
+                    anchors.fill: parent
+                    Rectangle {
+                        id: subBarup
+                        color: "#fdfdfb"
+                        height: 45
+                        width: parent.width
+                        TabBar {
+                            id:tabSubProperty
+                            height: 25
+                            anchors.left: parent.left
+                            anchors.top: parent.top
+                            anchors.topMargin: 17
+                            anchors.leftMargin: 30
+                            spacing: 5
+                            currentIndex: stackSubProperty.currentIndex
+                            font.pointSize: 8
+                            background: Rectangle {
+                                color: "transparent"
+                            }
 
-                    TabBar {
-                        id:tabSubProperty
-                        height: 25
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        anchors.topMargin: 17
-                        anchors.leftMargin: 30
-                        spacing: 5
-                        currentIndex: stackSubProperty.currentIndex
-                        font.pointSize: 8
-                        background: Rectangle {
-                            color: "transparent"
-                        }
-
-                        MiscElems.TabButtonUp {
-                            name: "Общее"
-                            textLine:1
-                            widthBody: 100
-                            useIcon: true
-                            iconCode: "\uF015  "
-                        }
-                        MiscElems.TabButtonUp {
-                            name: "Калибровка\nMinMax"
-                            textLine:2
-                            widthBody: 120
-                            useIcon: true
-                            iconCode: "\uF492  "
-                        }
-                        MiscElems.TabButtonUp {
-                            name: "Фильтрация"
-                            textLine:1
-                            widthBody: 115
-                            useIcon: true
-                            iconCode: "\uF0B0  "
-                        }
-                        MiscElems.TabButtonUp {
-                            name: "Температурная\nкомпенсация"
-                            textLine:2
-                            widthBody: 135
-                            useIcon: true
-                            iconCode: "\uF2C9  "
-                        }
-                        MiscElems.TabButtonUp {
-                            name: "Ведущий\nведомый"
-                            textLine:2
-                            widthBody: 110
-                            useIcon: true
-                            iconCode: "\uf5ee  "
-                        }
-                        MiscElems.TabButtonUp {
-                            name: "Тарировка"
-                            textLine:1
-                            widthBody: 110
-                            useIcon: true
-                            iconCode: "\uF080  "
+                            MiscElems.TabButtonUp {
+                                name: "Общее"
+                                textLine:1
+                                widthBody: 100
+                                useIcon: true
+                                iconCode: "\uF015  "
+                            }
+                            MiscElems.TabButtonUp {
+                                name: "Калибровка\nMinMax"
+                                textLine:2
+                                widthBody: 120
+                                useIcon: true
+                                iconCode: "\uF492  "
+                            }
+                            MiscElems.TabButtonUp {
+                                name: "Фильтрация"
+                                textLine:1
+                                widthBody: 115
+                                useIcon: true
+                                iconCode: "\uF0B0  "
+                            }
+                            MiscElems.TabButtonUp {
+                                name: "Температурная\nкомпенсация"
+                                textLine:2
+                                widthBody: 135
+                                useIcon: true
+                                iconCode: "\uF2C9  "
+                            }
+                            MiscElems.TabButtonUp {
+                                name: "Ведущий\nведомый"
+                                textLine:2
+                                widthBody: 110
+                                useIcon: true
+                                iconCode: "\uf5ee  "
+                            }
+                            MiscElems.TabButtonUp {
+                                name: "Тарировка"
+                                textLine:1
+                                widthBody: 110
+                                useIcon: true
+                                iconCode: "\uF080  "
+                            }
                         }
                     }
-                }
 
-                SwipeView {
-                    id: stackSubProperty
-                    currentIndex: tabSubProperty.currentIndex
-                    clip: true
-                    anchors.top: subBarup.bottom
-                    anchors.left: subBarup.left
-                    anchors.right: parent.right
-                    anchors.bottom: parent.bottom
-
-                    Component{
-                        id: columnComponent
-                        Controls_1_4.TableViewColumn{width: 30 }
-                    }
-                    onCurrentIndexChanged: {
-                        if(stackSubProperty.currentItem == itemDevTarir) {
-                            // first check what not device in the tarClass
-                            // when show dialog and add it
-                            var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
-                            var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
-                            var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
-                            var keys = viewController.getCurrentDevPropertyKey()
-                            var values = viewController.getCurrentDevPropertyValue()
-                            var devType = ""
-                            var devId = ""
-                            if(viewController.getStayedDevTarrirCount()) {
-                                dialogTarNotEmpty.open()
-                                dialogTarNotEmpty.onApply.connect(function() {
-                                    dialogTarNotEmpty.close()
-                                    // clear all
-                                    for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
-                                        viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
-                                    }
-                                    // add current
-                                    var keys = viewController.getCurrentDevPropertyKey()
-                                    var values = viewController.getCurrentDevPropertyValue()
-                                    var devType = ""
-                                    var devId = ""
-                                    for(var i=0; i<keys.length; i++) {
-                                        if(keys[i] === "devTypeName"){
-                                            devType = values[i]
+                    SwipeView {
+                        id: stackSubProperty
+                        currentIndex: tabSubProperty.currentIndex
+                        clip: true
+                        width: parent.width
+                        height: parent.height - subBarup.height
+                        Component{
+                            id: columnComponent
+                            Controls_1_4.TableViewColumn{width: 30 }
+                        }
+                        onCurrentIndexChanged: {
+                            if(stackSubProperty.currentItem == itemDevTarir) {
+                                // first check what not device in the tarClass
+                                // when show dialog and add it
+                                var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
+                                var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
+                                var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
+                                var keys = viewController.getCurrentDevPropertyKey()
+                                var values = viewController.getCurrentDevPropertyValue()
+                                var devType = ""
+                                var devId = ""
+                                if(viewController.getStayedDevTarrirCount()) {
+                                    dialogTarNotEmpty.open()
+                                    dialogTarNotEmpty.onApply.connect(function() {
+                                        dialogTarNotEmpty.close()
+                                        // clear all
+                                        for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
+                                            viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
                                         }
-                                        if(keys[i] === "id"){
-                                            devId = values[i]
+                                        // add current
+                                        var keys = viewController.getCurrentDevPropertyKey()
+                                        var values = viewController.getCurrentDevPropertyValue()
+                                        var devType = ""
+                                        var devId = ""
+                                        for(var i=0; i<keys.length; i++) {
+                                            if(keys[i] === "devTypeName"){
+                                                devType = values[i]
+                                            }
+                                            if(keys[i] === "id"){
+                                                devId = values[i]
+                                            }
                                         }
-                                    }
-                                    viewController.addTarrirDev(devType, devId)
-                                    timerAffterChangeTarTable.start()
-                                });
-                                dialogTarNotEmpty.onClose.connect(function() {
+                                        viewController.addTarrirDev(devType, devId)
+                                        timerAffterChangeTarTable.start()
+                                    });
+                                    dialogTarNotEmpty.onDiscard.connect(function() {
+                                        for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
+                                            viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
+                                        }
+                                        for(var i=0; i<tarirDevType.length; i++) {
+                                            viewController.addTarrirDev(tarirDevType[i], tarirDevId[i])
+                                        }
+                                        // nothing add - when add current
+                                        if(tarirDevId.length === 0) {
+                                            for(var i=0; i<keys.length; i++) {
+                                                if(keys[i] === "devTypeName"){
+                                                    devType = values[i]
+                                                }
+                                                if(keys[i] === "id"){
+                                                    devId = values[i]
+                                                }
+                                            }
+                                            viewController.addTarrirDev(devType, devId)
+                                        }
+                                        timerAffterChangeTarTable.start()
+                                    });
+                                } else { // add current dev to the tarTable
                                     for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
                                         viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
                                     }
@@ -1539,1875 +1530,1720 @@ Rectangle {
                                         viewController.addTarrirDev(devType, devId)
                                     }
                                     timerAffterChangeTarTable.start()
-                                });
-                            } else { // add current dev to the tarTable
-                                for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
-                                    viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
                                 }
-                                for(var i=0; i<tarirDevType.length; i++) {
-                                    viewController.addTarrirDev(tarirDevType[i], tarirDevId[i])
-                                }
-                                // nothing add - when add current
-                                if(tarirDevId.length === 0) {
-                                    for(var i=0; i<keys.length; i++) {
-                                        if(keys[i] === "devTypeName"){
-                                            devType = values[i]
-                                        }
-                                        if(keys[i] === "id"){
-                                            devId = values[i]
-                                        }
-                                    }
-                                    viewController.addTarrirDev(devType, devId)
-                                }
-                                timerAffterChangeTarTable.start()
                             }
                         }
-                    }
-                    Dialog {
-                        id: dialogTarNotEmpty
-                        visible: false
-                        title: "Тарировка"
-                        standardButtons: StandardButton.Close | StandardButton.Apply
-                        Rectangle {
-                            color: "transparent"
-                            implicitWidth: 500
-                            implicitHeight: 200
-                            TextEdit{
-                                text: "Обнаружены не сохраненные данные в процессе тарировки\nПроводить тарировку можно только на одной открытой вкладке\n(Последней открытой)\nПри этом данные на других вкладках не будут сохранены\Начать новую тарировку на этой вкладке?\nНе сохраненые данные будут утеряны!"
-                                color: "black"
-                                anchors.centerIn: parent
-                                readOnly: true
+                        Dialog {
+                            id: dialogTarNotEmpty
+                            visible: false
+                            title: "Тарировка"
+                            standardButtons: StandardButton.Close | StandardButton.Apply
+                            Rectangle {
+                                color: "transparent"
+                                implicitWidth: 500
+                                implicitHeight: 200
+                                TextEdit{
+                                    text: "Обнаружены не сохраненные данные в процессе тарировки\nПроводить тарировку можно только на одной открытой вкладке\n(Последней открытой)\nПри этом данные на других вкладках не будут сохранены\nНачать новую тарировку на этой вкладке?\nНе сохраненые данные будут утеряны!"
+                                    color: "black"
+                                    anchors.centerIn: parent
+                                    readOnly: true
+                                }
                             }
                         }
-                    }
-                    Timer {
-                        id: timerAffterChangeTarTable
-                        interval: 100
-                        running: false
-                        repeat: false
-                        onTriggered: {
-                            remakeTarTable()
-                            remakeTarTableChart()
+                        Timer {
+                            id: timerAffterChangeTarTable
+                            interval: 100
+                            running: false
+                            repeat: false
+                            onTriggered: {
+                                remakeTarTable()
+                                remakeTarTableChart()
+                            }
                         }
-                    }
 
-                    Item {
-                        ScrollView {
-                            clip: true
-                            anchors.fill: parent
-                            Column {
-                                spacing: 10
-                                anchors.top: parent.top
-                                anchors.topMargin: 15
-                                Row{
-                                    height: 100
-                                    width: 500
-                                    Rectangle {
-                                        id:changeIdRect
-                                        width: 500
+                        Item {
+                            ScrollView {
+                                clip: true
+                                anchors.fill: parent
+                                Column {
+                                    spacing: 10
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 15
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+                                    Row{
                                         height: 100
-                                        color: "#fdfdfb"
-                                        layer.enabled: true
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        Label {
-                                            text: "Смена сетевого адреса:"
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                        }
-                                        Button {
-                                            text: "Сменить адрес"
-                                            id: changeIdAddr
-                                            width: 300
-                                            height: 30
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            enabled: (devIsConnected && devIsReady)
-                                            onClicked: {
-                                                changeDeviceUniqId()
-                                            }
-                                        }
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
-                                        }
-                                    }
-                                    Button {
-                                        text: "Считать настройки"
-                                        id:readSetingsButton_1
-                                        width: 180
-                                        height: 50
-                                        anchors.left: changeIdRect.right
-                                        anchors.leftMargin: 15
-                                        layer.enabled: true
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
-                                        }
-                                        enabled: (devIsConnected && devIsReady)
-                                        onClicked: {
-                                            viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
-                                        }
-                                    }
-                                    Button {
-                                        id:writeSettingsButton_1
-                                        text: "Записать настройки"
-                                        width: 180
-                                        height: 50
-                                        anchors.left: changeIdRect.right
-                                        anchors.leftMargin: 15
-                                        anchors.top: readSetingsButton_1.bottom
-                                        anchors.topMargin: 15
-                                        layer.enabled: true
-                                        enabled: false
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
-                                        }
-                                        onClicked: {
-                                            writeSettings()
-                                        }
-                                    }
-                                }
-
-                                Rectangle {
-                                    width: 500
-                                    height: 100
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-                                    Label {
-                                        text: "Самостоятельная выдача данных:"
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                    }
-                                    ComboBox {
-                                        id: periodicSendType
-                                        height: 25
-                                        width: 300
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        model: ListModel {
-                                            ListElement {
-                                                text: "Выключена"
-                                            }
-                                            ListElement {
-                                                text: "Бинарная"
-                                            }
-                                            ListElement {
-                                                text: "Символьная"
-                                            }
-                                        }
-                                        onCurrentIndexChanged: {
-                                            if(periodicSendType.currentIndex != 0) {
-                                                periodicSendTime.enabled = true
-                                            } else {
-                                                periodicSendTime.enabled = false
-                                            }
-                                        }
-                                    }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 20
-                                    }
-                                }
-                                Rectangle {
-                                    width: 500
-                                    height: 100
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-                                    Label {
-                                        text: "Период выдачи данных (0-255), с:"
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                    }
-                                    SpinBox {
-                                        id:periodicSendTime
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        height: 25
-                                        width: 200
-                                    }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 20
-                                    }
-                                }
-                                Rectangle {
-                                    width: 500
-                                    height: 100
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-                                    Label {
-                                        text: "Мин. значение уровня (0-1023):"
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                    }
-                                    SpinBox {
-                                        id:minLevelValue
-                                        height: 25
-                                        width: 200
-                                        to: 4095
-                                        from: 0
-                                        value: 0
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.verticalCenter: parent.verticalCenter
-                                    }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 20
-                                    }
-                                }
-                                Rectangle {
-                                    width: 500
-                                    height: 100
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-
-                                    Label {
-                                        text: "Макс.значение уровня (0-4095):"
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                    }
-                                    SpinBox {
-                                        id:maxLevelValue
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        height: 25
-                                        width: 200
-                                        to: 4095
-                                        from: 0
-                                        value: 0
-                                    }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 20
-                                    }
-                                }
-                                Rectangle {
-                                    width: 500
-                                    height: 100
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-
-                                    Label {
-                                        text: "Параметр в выходном сообщении датчика:"
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                    }
-                                    ComboBox {
-                                        id: typeOutMessage
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        height: 25
-                                        width: 300
-                                        model: ListModel {
-                                            ListElement {
-                                                text: "Относительный уровень"
-                                            }
-                                            ListElement {
-                                                text: "Объем (по таблице тарировки)"
-                                            }
-                                        }
-                                    }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 20
-                                    }
-                                }
-
-                                Rectangle {
-                                    width: 500
-                                    height: 100
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-
-                                    Label {
-                                        text: "Скорость обмена по RS232:"
-                                        id: baudrateRs232Label
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                    }
-                                    ComboBox {
-                                        id: baudrateRs232Values
-                                        height: 25
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        model: ListModel {
-                                            ListElement {
-                                                text: "2800"
-                                            }
-                                            ListElement {
-                                                text: "4800"
-                                            }
-                                            ListElement {
-                                                text: "9600"
-                                            }
-                                            ListElement {
-                                                text: "19200"
-                                            }
-                                            ListElement {
-                                                text: "28800"
-                                            }
-                                            ListElement {
-                                                text: "38400"
-                                            }
-                                            ListElement {
-                                                text: "57600"
-                                            }
-                                            ListElement {
-                                                text: "115200"
-                                            }
-                                        }
-                                    }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 20
-                                    }
-                                }
-
-                                Rectangle {
-                                    width: 500
-                                    height: 100
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-
-                                    Label {
-                                        text: "Скорость обмена по RS485:"
-                                        id: baudrateRs485Label
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                    }
-                                    ComboBox {
-                                        id: baudrateRs485Values
-                                        height: 25
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        model: ListModel {
-                                            ListElement {
-                                                text: "2800"
-                                            }
-                                            ListElement {
-                                                text: "4800"
-                                            }
-                                            ListElement {
-                                                text: "9600"
-                                            }
-                                            ListElement {
-                                                text: "19200"
-                                            }
-                                            ListElement {
-                                                text: "28800"
-                                            }
-                                            ListElement {
-                                                text: "38400"
-                                            }
-                                            ListElement {
-                                                text: "57600"
-                                            }
-                                            ListElement {
-                                                text: "115200"
-                                            }
-                                        }
-                                    }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 20
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    Item {
-                        ScrollView {
-                            clip: true
-                            anchors.fill: parent
-
-                            Column {
-                                spacing: 10
-                                anchors.top: parent.top
-                                anchors.topMargin: 15
-
-                                Row{
-                                    width: 500
-                                    height: 180
-                                    Rectangle {
-                                        id:setScaleFuelLabel
                                         width: 500
-                                        height: 180
-                                        color: "#fdfdfb"
-                                        layer.enabled: true
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-
-                                        Label {
-                                            id:emptyFullLabel
-                                            text: qsTr("Задание границ измерения:")
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                        }
-                                        Button {
-                                            id: buttonEmpty
-                                            text: "Пустой"
-                                            width: 300
-                                            height: 30
-                                            enabled: (devIsConnected && devIsReady)
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            anchors.top: emptyFullLabel.bottom
-                                            anchors.topMargin: 10
-                                            onClicked: {
-                                                dialogLevelSetEmpty.open()
-                                            }
-                                            Dialog {
-                                                id: dialogLevelSetEmpty
-                                                visible: false
-                                                title: "Смена уровня Min-Max"
-                                                standardButtons: StandardButton.Close | StandardButton.Apply
-                                                Rectangle {
-                                                    color: "transparent"
-                                                    implicitWidth: 250
-                                                    implicitHeight: 100
-                                                    Text {
-                                                        text: "Присвоить уровень \"Минимум\""
-                                                        color: "black"
-                                                        anchors.centerIn: parent
+                                        Rectangle {
+                                            id:changeIdRect
+                                            width: 500
+                                            height: 100
+                                            color: "#fdfdfb"
+                                            Column{
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                spacing: 10
+                                                Label {
+                                                    text: "Смена сетевого адреса:"
+                                                }
+                                                Button {
+                                                    text: "Сменить адрес"
+                                                    id: changeIdAddr
+                                                    width: 300
+                                                    height: 30
+                                                    enabled: (devIsConnected && devIsReady)
+                                                    onClicked: {
+                                                        changeDeviceUniqId()
                                                     }
                                                 }
-                                                onApply: {
-                                                    viewController.setCurrentDevCustomCommand("set current level value as min", [], [])
-                                                    close()
-                                                }
                                             }
+                                            //                                            layer.enabled: true
+                                            //                                            layer.effect: DropShadow {
+                                            //                                                transparentBorder: true
+                                            //                                                horizontalOffset: 0
+                                            //                                                verticalOffset: 1
+                                            //                                                color: "#e0e5ef"
+                                            //                                                samples: 10
+                                            //                                                radius: 20
+                                            //                                            }
                                         }
                                         Button {
-                                            id: buttonFull
-                                            text: "Полный"
-                                            width: 300
-                                            height: 30
-                                            anchors.top: buttonEmpty.bottom
-                                            anchors.topMargin: 10
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
+                                            text: "Считать настройки"
+                                            id:readSetingsButton_1
+                                            width: 180
+                                            height: 50
+                                            //                                            layer.enabled: true
+                                            //                                            layer.effect: DropShadow {
+                                            //                                                transparentBorder: true
+                                            //                                                horizontalOffset: 0
+                                            //                                                verticalOffset: 1
+                                            //                                                color: "#e0e5ef"
+                                            //                                                samples: 10
+                                            //                                                radius: 20
+                                            //                                            }
                                             enabled: (devIsConnected && devIsReady)
                                             onClicked: {
-                                                dialogLevelSetFull.open()
-                                            }
-                                            Dialog {
-                                                id: dialogLevelSetFull
-                                                visible: false
-                                                title: "Смена уровня Min-Max"
-                                                standardButtons: StandardButton.Close | StandardButton.Apply
-                                                Rectangle {
-                                                    color: "transparent"
-                                                    implicitWidth: 250
-                                                    implicitHeight: 100
-                                                    Text {
-                                                        text: "Присвоить уровень \"Максимум\""
-                                                        color: "black"
-                                                        anchors.centerIn: parent
-                                                    }
-                                                }
-                                                onApply: {
-                                                    viewController.setCurrentDevCustomCommand("set current level value as max", [], [])
-                                                    close()
-                                                }
+                                                viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
                                             }
                                         }
                                         Button {
-                                            id: buttonEdit
-                                            width: 300
-                                            height: 30
-                                            text: "Редактировать"
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            anchors.top: buttonFull.bottom
-                                            anchors.topMargin: 10
+                                            id:writeSettingsButton_1
+                                            text: "Записать настройки"
+                                            width: 180
+                                            height: 50
                                             enabled: false
-                                        }
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
-                                        }
-                                    }
-                                    Button {
-                                        text: "Считать настройки"
-                                        id:readSetingsButton_2
-                                        width: 180
-                                        height: 50
-                                        anchors.left: setScaleFuelLabel.right
-                                        anchors.leftMargin: 15
-                                        layer.enabled: true
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
-                                        }
-                                        enabled: (devIsConnected && devIsReady)
-                                        onClicked: {
-                                            viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
-                                        }
-                                    }
-                                    Button {
-                                        id:writeSettingsButton_2
-                                        text: "Записать настройки"
-                                        width: 180
-                                        height: 50
-                                        anchors.left: setScaleFuelLabel.right
-                                        anchors.leftMargin: 15
-                                        anchors.top: readSetingsButton_2.bottom
-                                        anchors.topMargin: 15
-                                        layer.enabled: true
-                                        enabled: false
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
-                                        }
-                                        onClicked: {
-                                            writeSettings()
-                                        }
-                                    }
-                                }
-                                Rectangle {
-                                    width: 500
-                                    height: 100
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-
-                                    Label {
-                                        text: "Тип жидкости"
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                    }
-                                    ComboBox {
-                                        id: typeFuel
-                                        height: 25
-                                        width: 300
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        model: ListModel {
-                                            ListElement {
-                                                text: "Топливо"
-                                            }
-                                            ListElement {
-                                                text: "Вода"
+                                            //                                            layer.enabled: true
+                                            //                                            layer.effect: DropShadow {
+                                            //                                                transparentBorder: true
+                                            //                                                horizontalOffset: 0
+                                            //                                                verticalOffset: 1
+                                            //                                                color: "#e0e5ef"
+                                            //                                                samples: 10
+                                            //                                                radius: 20
+                                            //                                            }
+                                            onClicked: {
+                                                writeSettings()
                                             }
                                         }
                                     }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 20
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    Item {
-                        ScrollView {
-                            clip: true
-                            anchors.fill: parent
-                            Column {
-                                spacing: 10
-                                anchors.top: parent.top
-                                anchors.topMargin: 15
-                                Row{
-                                    width: 500
-                                    height: 80
                                     Rectangle {
-                                        id:typeInterpolationRect
-                                        width: 500
-                                        height: 80
-                                        color: "#fdfdfb"
-                                        layer.enabled: true
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-
-                                        Label {
-                                            text: "Тип интерполяции:"
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                        }
-                                        ComboBox {
-                                            id: typeInterpolation
-                                            height: 25
-                                            width: 300
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            model: ListModel {
-                                                ListElement {
-                                                    text: "Линейная"
-                                                }
-                                                ListElement {
-                                                    text: "Квадратичная"
-                                                }
-                                                ListElement {
-                                                    text: "Сплайновая"
-                                                }
-                                            }
-                                        }
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
-                                        }
-                                    }
-                                    Button {
-                                        text: "Считать настройки"
-                                        id:readSetingsButton_3
-                                        width: 180
-                                        height: 50
-                                        anchors.left: typeInterpolationRect.right
-                                        anchors.leftMargin: 15
-                                        layer.enabled: true
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
-                                        }
-                                        enabled: (devIsConnected && devIsReady)
-                                        onClicked: {
-                                            viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
-                                        }
-                                    }
-                                    Button {
-                                        id:writeSettingsButton_3
-                                        text: "Записать настройки"
-                                        width: 180
-                                        height: 50
-                                        anchors.left: typeInterpolationRect.right
-                                        anchors.leftMargin: 15
-                                        anchors.top: readSetingsButton_3.bottom
-                                        anchors.topMargin: 15
-                                        layer.enabled: true
-                                        enabled: false
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
-                                        }
-                                        onClicked: {
-                                            writeSettings()
-                                        }
-                                    }
-                                }
-                                //1
-                                Rectangle {
-                                    id:typeFiltrationRectangle
-                                    width: 500
-                                    height: 80
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-
-                                    Label {
-                                        text: "Тип фильтрации:"
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                    }
-                                    ComboBox {
-                                        id: typeFiltration
-                                        height: 25
-                                        width: 300
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        anchors.topMargin: 10
-                                        model: ListModel {
-                                            ListElement {
-                                                text: "Выключена"
-                                            }
-                                            ListElement {
-                                                text: "Усреднение"
-                                            }
-                                            ListElement {
-                                                text: "Медиана"
-                                            }
-                                            ListElement {
-                                                text: "Адаптивный"
-                                            }
-                                        }
-                                        onCurrentIndexChanged: {
-                                            if(typeFiltration.currentIndex == 0) {
-                                                filterAvarageValueSec.enabled = false
-                                                filterLenghtMediana.enabled = false
-                                                filterValueQ.enabled = false
-                                                filterValueR.enabled = false
-                                            } else if(typeFiltration.currentIndex == 1) {
-                                                filterAvarageValueSec.enabled = true
-                                                filterLenghtMediana.enabled = false
-                                                filterValueQ.enabled = false
-                                                filterValueR.enabled = false
-                                            } else if(typeFiltration.currentIndex == 2) {
-                                                filterAvarageValueSec.enabled = true
-                                                filterLenghtMediana.enabled = true
-                                                filterValueQ.enabled = false
-                                                filterValueR.enabled = false
-                                            } else if(typeFiltration.currentIndex == 3) {
-                                                filterAvarageValueSec.enabled = false
-                                                filterLenghtMediana.enabled = false
-                                                filterValueQ.enabled = true
-                                                filterValueR.enabled = true
-                                            }
-                                        }
-                                    }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 20
-                                    }
-                                }
-                                //2
-                                Rectangle {
-                                    id:typeAvarageRectangle
-                                    width: 500
-                                    height: 80
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-
-                                    Label {
-                                        text: "Время усреднения (0-21), с:"
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                    }
-                                    SpinBox {
-                                        id: filterAvarageValueSec
-                                        height: 25
-                                        width: 200
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        anchors.topMargin: 10
-                                    }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 20
-                                    }
-                                }
-                                //3
-                                Rectangle {
-                                    id:lenMedianaRectangle
-                                    width: 500
-                                    height: 80
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-
-                                    Label {
-                                        text: "Длина медианы (0-7):"
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                    }
-                                    SpinBox {
-                                        id: filterLenghtMediana
-                                        height: 25
-                                        width: 200
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.verticalCenter: parent.verticalCenter
-                                    }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 20
-                                    }
-                                }
-                                //4
-                                Rectangle {
-                                    id:covairachiaRectangle
-                                    width: 500
-                                    height: 80
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-
-                                    Label {
-                                        text: "Ковариация шума процесса (Q):"
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                    }
-                                    SpinBox {
-                                        id: filterValueQ
-                                        height: 25
-                                        width: 200
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.top: emptyFullLabel.bottom
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        anchors.topMargin: 10
-                                    }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 20
-                                    }
-                                }
-                                //5
-                                Rectangle {
-                                    width: 500
-                                    height: 80
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-
-                                    Label {
-                                        text: "Ковариация шума измерения (R):"
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                    }
-                                    SpinBox {
-                                        id: filterValueR
-                                        height: 25
-                                        width: 200
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        anchors.topMargin: 10
-                                    }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 20
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    Item {
-                        ScrollView {
-                            clip: true
-                            anchors.fill: parent
-                            Column {
-                                spacing: 10
-                                anchors.top: parent.top
-                                anchors.topMargin: 15
-                                //1
-                                Row {
-                                    width: 500
-                                    height: 100
-                                    Rectangle {
-                                        id:termocomRectangle
                                         width: 500
                                         height: 100
                                         color: "#fdfdfb"
-                                        layer.enabled: true
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-
-                                        Label {
-                                            text: qsTr("Температурная компенсация линейного расширения топлива\nРежим:")
+                                        Column{
                                             anchors.left: parent.left
                                             anchors.leftMargin: 15
-                                        }
-                                        ComboBox {
-                                            id: typeTempCompensation
-                                            width: 300
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            anchors.top: emptyFullLabel.bottom
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            anchors.topMargin: 10
-                                            height: 25
-                                            model: ListModel {
-                                                ListElement {
-                                                    text: "Выключен"
-                                                }
-                                                ListElement {
-                                                    text: "АИ-95"
-                                                }
-                                                ListElement {
-                                                    text: "АИ-92"
-                                                }
-                                                ListElement {
-                                                    text: "АИ-80 (лето)"
-                                                }
-                                                ListElement {
-                                                    text: "АИ-80 (зима)"
-                                                }
-                                                ListElement {
-                                                    text: "ДТ (лето)"
-                                                }
-                                                ListElement {
-                                                    text: "ДТ (зима)"
-                                                }
-                                                ListElement {
-                                                    text: "Пользовательский"
-                                                }
+                                            spacing: 10
+                                            Label {
+                                                text: "Самостоятельная выдача данных:"
                                             }
-                                            onCurrentIndexChanged: {
-                                                if(typeTempCompensation.currentIndex == 7) {
-                                                    k1.enabled = true
-                                                    k2.enabled = true
-                                                } else {
-                                                    k1.enabled = false
-                                                    k2.enabled = false
+                                            ComboBox {
+                                                id: periodicSendType
+                                                height: 25
+                                                width: 300
+                                                model: ListModel {
+                                                    ListElement {
+                                                        text: "Выключена"
+                                                    }
+                                                    ListElement {
+                                                        text: "Бинарная"
+                                                    }
+                                                    ListElement {
+                                                        text: "Символьная"
+                                                    }
+                                                }
+                                                onCurrentIndexChanged: {
+                                                    if(periodicSendType.currentIndex != 0) {
+                                                        periodicSendTime.enabled = true
+                                                    } else {
+                                                        periodicSendTime.enabled = false
+                                                    }
                                                 }
                                             }
                                         }
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
-                                        }
+                                        //                                        layer.enabled: true
+                                        //                                        layer.effect: DropShadow {
+                                        //                                            transparentBorder: true
+                                        //                                            horizontalOffset: 0
+                                        //                                            verticalOffset: 1
+                                        //                                            color: "#e0e5ef"
+                                        //                                            samples: 10
+                                        //                                            radius: 20
+                                        //                                        }
                                     }
-                                    Button {
-                                        text: "Считать настройки"
-                                        id:readSetingsButton_4
-                                        width: 180
-                                        height: 50
-                                        anchors.left: termocomRectangle.right
-                                        anchors.leftMargin: 15
-                                        layer.enabled: true
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
+                                    Rectangle {
+                                        width: 500
+                                        height: 100
+                                        color: "#fdfdfb"
+                                        Column{
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            spacing: 10
+                                            Label {
+                                                text: "Период выдачи данных (0-255), с:"
+                                            }
+                                            SpinBox {
+                                                id:periodicSendTime
+                                                height: 25
+                                                width: 200
+                                            }
                                         }
-                                        enabled: (devIsConnected && devIsReady)
-                                        onClicked: {
-                                            viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
-                                        }
+                                        //                                        layer.enabled: true
+                                        //                                        layer.effect: DropShadow {
+                                        //                                            transparentBorder: true
+                                        //                                            horizontalOffset: 0
+                                        //                                            verticalOffset: 1
+                                        //                                            color: "#e0e5ef"
+                                        //                                            samples: 10
+                                        //                                            radius: 20
+                                        //                                        }
                                     }
-                                    Button {
-                                        id:writeSettingsButton_4
-                                        text: "Записать настройки"
-                                        width: 180
-                                        height: 50
-                                        anchors.left: termocomRectangle.right
-                                        anchors.leftMargin: 15
-                                        anchors.top: readSetingsButton_4.bottom
-                                        anchors.topMargin: 15
-                                        enabled: false
-                                        layer.enabled: true
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
+                                    Rectangle {
+                                        width: 500
+                                        height: 100
+                                        color: "#fdfdfb"
+                                        Column{
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            spacing: 10
+                                            Label {
+                                                text: "Мин. значение уровня (0-1023):"
+                                            }
+                                            SpinBox {
+                                                id:minLevelValue
+                                                height: 25
+                                                width: 200
+                                                to: 4095
+                                                from: 0
+                                                value: 0
+                                            }
                                         }
-                                        onClicked: {
-                                            writeSettings()
-                                        }
+                                        //                                        layer.enabled: true
+                                        //                                        layer.effect: DropShadow {
+                                        //                                            transparentBorder: true
+                                        //                                            horizontalOffset: 0
+                                        //                                            verticalOffset: 1
+                                        //                                            color: "#e0e5ef"
+                                        //                                            samples: 10
+                                        //                                            radius: 20
+                                        //                                        }
                                     }
-                                }
-                                //2
-                                Rectangle {
-                                    width: 500
-                                    height: 80
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
+                                    Rectangle {
+                                        width: 500
+                                        height: 100
+                                        color: "#fdfdfb"
+                                        Column{
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            spacing: 10
+                                            Label {
+                                                text: "Макс.значение уровня (0-4095):"
+                                            }
+                                            SpinBox {
+                                                id:maxLevelValue
+                                                height: 25
+                                                width: 200
+                                                to: 4095
+                                                from: 0
+                                                value: 0
+                                            }
+                                        }
+                                        //                                        layer.enabled: true
+                                        //                                        layer.effect: DropShadow {
+                                        //                                            transparentBorder: true
+                                        //                                            horizontalOffset: 0
+                                        //                                            verticalOffset: 1
+                                        //                                            color: "#e0e5ef"
+                                        //                                            samples: 10
+                                        //                                            radius: 20
+                                        //                                        }
+                                    }
+                                    Rectangle {
+                                        width: 500
+                                        height: 100
+                                        color: "#fdfdfb"
+                                        Column{
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            spacing: 10
+                                            Label {
+                                                text: "Параметр в выходном сообщении датчика:"
+                                            }
+                                            ComboBox {
+                                                id: typeOutMessage
+                                                height: 25
+                                                width: 300
+                                                model: ListModel {
+                                                    ListElement {
+                                                        text: "Относительный уровень"
+                                                    }
+                                                    ListElement {
+                                                        text: "Объем (по таблице тарировки)"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        //                                        layer.enabled: true
+                                        //                                        layer.effect: DropShadow {
+                                        //                                            transparentBorder: true
+                                        //                                            horizontalOffset: 0
+                                        //                                            verticalOffset: 1
+                                        //                                            color: "#e0e5ef"
+                                        //                                            samples: 10
+                                        //                                            radius: 20
+                                        //                                        }
+                                    }
 
-                                    Label {
-                                        text: qsTr("K1:")
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
+                                    Rectangle {
+                                        width: 500
+                                        height: 100
+                                        color: "#fdfdfb"
+                                        Column{
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            spacing: 10
+                                            Label {
+                                                text: "Скорость обмена по RS232:"
+                                                id: baudrateRs232Label
+                                            }
+                                            ComboBox {
+                                                id: baudrateRs232Values
+                                                height: 25
+                                                model: ListModel {
+                                                    ListElement {
+                                                        text: "2800"
+                                                    }
+                                                    ListElement {
+                                                        text: "4800"
+                                                    }
+                                                    ListElement {
+                                                        text: "9600"
+                                                    }
+                                                    ListElement {
+                                                        text: "19200"
+                                                    }
+                                                    ListElement {
+                                                        text: "28800"
+                                                    }
+                                                    ListElement {
+                                                        text: "38400"
+                                                    }
+                                                    ListElement {
+                                                        text: "57600"
+                                                    }
+                                                    ListElement {
+                                                        text: "115200"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        //                                        layer.enabled: true
+                                        //                                        layer.effect: DropShadow {
+                                        //                                            transparentBorder: true
+                                        //                                            horizontalOffset: 0
+                                        //                                            verticalOffset: 1
+                                        //                                            color: "#e0e5ef"
+                                        //                                            samples: 10
+                                        //                                            radius: 20
+                                        //                                        }
                                     }
-                                    TextField {
-                                        id: k1
-                                        text: "0.0"
-                                        height: 25
-                                        width: 300
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.top: emptyFullLabel.bottom
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        anchors.topMargin: 10
-                                    }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 20
-                                    }
-                                }
-                                //3
-                                Rectangle {
-                                    width: 500
-                                    height: 80
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
 
-                                    Label {
-                                        text: qsTr("K2:")
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                    }
-                                    TextField {
-                                        id: k2
-                                        text: "0.0"
-                                        height: 25
-                                        width: 300
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.top: emptyFullLabel.bottom
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        anchors.topMargin: 10
-                                    }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 20
+                                    Rectangle {
+                                        width: 500
+                                        height: 100
+                                        color: "#fdfdfb"
+                                        Column{
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            spacing: 10
+                                            Label {
+                                                text: "Скорость обмена по RS485:"
+                                                id: baudrateRs485Label
+                                            }
+                                            ComboBox {
+                                                id: baudrateRs485Values
+                                                height: 25
+                                                model: ListModel {
+                                                    ListElement {
+                                                        text: "2800"
+                                                    }
+                                                    ListElement {
+                                                        text: "4800"
+                                                    }
+                                                    ListElement {
+                                                        text: "9600"
+                                                    }
+                                                    ListElement {
+                                                        text: "19200"
+                                                    }
+                                                    ListElement {
+                                                        text: "28800"
+                                                    }
+                                                    ListElement {
+                                                        text: "38400"
+                                                    }
+                                                    ListElement {
+                                                        text: "57600"
+                                                    }
+                                                    ListElement {
+                                                        text: "115200"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        //                                        layer.enabled: true
+                                        //                                        layer.effect: DropShadow {
+                                        //                                            transparentBorder: true
+                                        //                                            horizontalOffset: 0
+                                        //                                            verticalOffset: 1
+                                        //                                            color: "#e0e5ef"
+                                        //                                            samples: 10
+                                        //                                            radius: 20
+                                        //                                        }
                                     }
                                 }
                             }
                         }
-                    }
 
-                    Item {
-                        ScrollView {
-                            clip: true
-                            anchors.fill: parent
-                            Column {
-                                spacing: 10
-                                anchors.top: parent.top
-                                anchors.topMargin: 15
-                                //1
-                                Row {
-                                    width: 500
-                                    height: 150
+                        Item {
+                            ScrollView {
+                                clip: true
+                                anchors.fill: parent
 
+                                Column {
+                                    spacing: 10
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 15
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+                                    Row{
+                                        width: 500
+                                        height: 150
+                                        Rectangle {
+                                            id:setScaleFuelLabel
+                                            width: 500
+                                            height: 150
+                                            color: "#fdfdfb"
+                                            Column{
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                spacing: 10
+                                                Label {
+                                                    id:emptyFullLabel
+                                                    text: qsTr("Задание границ измерения:")
+                                                }
+                                                Button {
+                                                    id: buttonEmpty
+                                                    text: "Пустой"
+                                                    width: 300
+                                                    height: 30
+                                                    enabled: (devIsConnected && devIsReady)
+                                                    onClicked: {
+                                                        dialogLevelSetEmpty.open()
+                                                    }
+                                                    Dialog {
+                                                        id: dialogLevelSetEmpty
+                                                        visible: false
+                                                        title: "Смена уровня Min-Max"
+                                                        standardButtons: StandardButton.Close | StandardButton.Apply
+                                                        Rectangle {
+                                                            color: "transparent"
+                                                            implicitWidth: 250
+                                                            implicitHeight: 100
+                                                            Text {
+                                                                text: "Присвоить уровень \"Минимум\""
+                                                                color: "black"
+                                                                anchors.centerIn: parent
+                                                            }
+                                                        }
+                                                        onApply: {
+                                                            viewController.setCurrentDevCustomCommand("set current level value as min", [], [])
+                                                            close()
+                                                        }
+                                                    }
+                                                }
+                                                Button {
+                                                    id: buttonFull
+                                                    text: "Полный"
+                                                    width: 300
+                                                    height: 30
+                                                    enabled: (devIsConnected && devIsReady)
+                                                    onClicked: {
+                                                        dialogLevelSetFull.open()
+                                                    }
+                                                    Dialog {
+                                                        id: dialogLevelSetFull
+                                                        visible: false
+                                                        title: "Смена уровня Min-Max"
+                                                        standardButtons: StandardButton.Close | StandardButton.Apply
+                                                        Rectangle {
+                                                            color: "transparent"
+                                                            implicitWidth: 250
+                                                            implicitHeight: 100
+                                                            Text {
+                                                                text: "Присвоить уровень \"Максимум\""
+                                                                color: "black"
+                                                                anchors.centerIn: parent
+                                                            }
+                                                        }
+                                                        onApply: {
+                                                            viewController.setCurrentDevCustomCommand("set current level value as max", [], [])
+                                                            close()
+                                                        }
+                                                    }
+                                                }
+                                                Button {
+                                                    id: buttonEdit
+                                                    width: 300
+                                                    height: 30
+                                                    text: "Редактировать"
+                                                    enabled: false
+                                                }
+                                            }
+                                            //                                            layer.enabled: true
+                                            //                                            layer.effect: DropShadow {
+                                            //                                                transparentBorder: true
+                                            //                                                horizontalOffset: 0
+                                            //                                                verticalOffset: 1
+                                            //                                                color: "#e0e5ef"
+                                            //                                                samples: 10
+                                            //                                                radius: 20
+                                            //                                            }
+                                        }
+                                        Button {
+                                            text: "Считать настройки"
+                                            id:readSetingsButton_2
+                                            width: 180
+                                            height: 50
+                                            //                                            layer.enabled: true
+                                            //                                            layer.effect: DropShadow {
+                                            //                                                transparentBorder: true
+                                            //                                                horizontalOffset: 0
+                                            //                                                verticalOffset: 1
+                                            //                                                color: "#e0e5ef"
+                                            //                                                samples: 10
+                                            //                                                radius: 20
+                                            //                                            }
+                                            enabled: (devIsConnected && devIsReady)
+                                            onClicked: {
+                                                viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
+                                            }
+                                        }
+                                        Button {
+                                            id:writeSettingsButton_2
+                                            text: "Записать настройки"
+                                            width: 180
+                                            height: 50
+                                            enabled: false
+                                            //                                            layer.enabled: true
+                                            //                                            layer.effect: DropShadow {
+                                            //                                                transparentBorder: true
+                                            //                                                horizontalOffset: 0
+                                            //                                                verticalOffset: 1
+                                            //                                                color: "#e0e5ef"
+                                            //                                                samples: 10
+                                            //                                                radius: 20
+                                            //                                            }
+                                            onClicked: {
+                                                writeSettings()
+                                            }
+                                        }
+                                    }
                                     Rectangle {
-                                        id:setSlaveMasterModeRectangle
                                         width: 500
                                         height: 150
                                         color: "#fdfdfb"
-                                        layer.enabled: true
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-
-                                        Label {
-                                            text: "Режим ведущий/ведомый:"
-                                            id:labelSlaveModes
+                                        Column{
                                             anchors.left: parent.left
                                             anchors.leftMargin: 15
-                                        }
-                                        ComboBox {
-                                            id: masterSlaveModes
-                                            width: 200
-                                            height: 30
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            anchors.top: labelSlaveModes.bottom
-                                            anchors.topMargin: 15
-                                            model: ListModel {
-                                                ListElement {
-                                                    text: "Выключен"
-                                                }
-                                                ListElement {
-                                                    text: "Ведомый"
-                                                }
-                                                ListElement {
-                                                    text: "Ведущий"
-                                                }
-                                                ListElement {
-                                                    text: "Трансляция"
-                                                }
+                                            spacing: 10
+                                            Label {
+                                                text: "Тип жидкости"
                                             }
-                                            onCurrentIndexChanged: {
-                                                if(masterSlaveModes.currentIndex == 2) {
-                                                    //masterSlavesAddresRectange.enabled = true
-                                                } else {
-                                                    //masterSlavesAddresRectange.enabled = false
-                                                    masterSlaveFullCountes.value = 0
+                                            ComboBox {
+                                                id: typeFuel
+                                                height: 25
+                                                width: 300
+                                                model: ListModel {
+                                                    ListElement {
+                                                        text: "Топливо"
+                                                    }
+                                                    ListElement {
+                                                        text: "Вода"
+                                                    }
                                                 }
                                             }
                                         }
-
-                                        Label {
-                                            id: masterSlaveModeCountAllLabel
-                                            text: "Количество ведомых:"
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            anchors.top: masterSlaveModes.bottom
-                                            anchors.topMargin: 15
-                                        }
-                                        SpinBox {
-                                            id: masterSlaveFullCountes
-                                            width: 200
-                                            height: 25
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            anchors.topMargin: 15
-                                            anchors.top: masterSlaveModeCountAllLabel.bottom
-                                            from: 0
-                                            to: 4
-                                            onValueChanged: {
-                                                if(masterSlaveFullCountes.value >= 1) {
-                                                    masterSlaveSlaveId_1.enabled = true
-                                                } else {
-                                                    masterSlaveFullCountes.value = 0
-                                                    masterSlaveModes.currentIndex = 0
-                                                    masterSlaveSlaveId_1.enabled = false
-                                                    masterSlaveSlaveId_2.enabled = false
-                                                    masterSlaveSlaveId_3.enabled = false
-                                                    masterSlaveSlaveId_4.enabled = false
-                                                }
-                                                if(masterSlaveFullCountes.value >= 2) {
-                                                    masterSlaveSlaveId_2.enabled = true
-                                                } else {
-                                                    masterSlaveSlaveId_2.enabled = false
-                                                }
-                                                if(masterSlaveFullCountes.value >= 3) {
-                                                    masterSlaveSlaveId_3.enabled = true
-                                                } else {
-                                                    masterSlaveSlaveId_3.enabled = false
-                                                }
-                                                if(masterSlaveFullCountes.value >= 4) {
-                                                    masterSlaveSlaveId_4.enabled = true
-                                                } else {
-                                                    masterSlaveSlaveId_4.enabled = false
-                                                }
-                                            }
-                                        }
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
-                                        }
-                                    }
-                                    Button {
-                                        text: "Считать настройки"
-                                        id:readSetingsButton_5
-                                        width: 180
-                                        height: 50
-                                        anchors.left: setSlaveMasterModeRectangle.right
-                                        anchors.leftMargin: 15
-                                        layer.enabled: true
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
-                                        }
-                                        enabled: (devIsConnected && devIsReady)
-                                        onClicked: {
-                                            viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
-                                        }
-                                    }
-                                    Button {
-                                        id:writeSettingsButton_5
-                                        text: "Записать настройки"
-                                        width: 180
-                                        height: 50
-                                        anchors.left: setSlaveMasterModeRectangle.right
-                                        anchors.leftMargin: 15
-                                        anchors.top: readSetingsButton_5.bottom
-                                        anchors.topMargin: 15
-                                        enabled: false
-                                        layer.enabled: true
-                                        layer.effect: DropShadow {
-                                            transparentBorder: true
-                                            horizontalOffset: 0
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            samples: 10
-                                            radius: 20
-                                        }
-                                        onClicked: {
-                                            writeSettings()
-                                        }
-                                    }
-                                }
-                                Rectangle {
-                                    width: 500
-                                    height: 300
-                                    color: "#fdfdfb"
-                                    layer.enabled: true
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-
-                                    Label {
-                                        id: masterSlaveAddress_1
-                                        text: "Адрес ведомого №1"
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                    }
-                                    SpinBox {
-                                        id: masterSlaveSlaveId_1
-                                        from: 1
-                                        to: 254
-                                        height: 25
-                                        width: 200
-                                        anchors.top: masterSlaveAddress_1.bottom
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.topMargin: 15
-                                    }
-                                    Label {
-                                        text: "Адрес ведомого №2"
-                                        id: masterSlaveAddress_2
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.top: masterSlaveSlaveId_1.bottom
-                                        anchors.topMargin: 15
-                                    }
-                                    SpinBox {
-                                        id: masterSlaveSlaveId_2
-                                        height: 25
-                                        from: 1
-                                        to: 254
-                                        width: 200
-                                        anchors.top: masterSlaveAddress_2.bottom
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.topMargin: 15
-                                    }
-                                    Label {
-                                        text: "Адрес ведомого №3"
-                                        id: masterSlaveAddress_3
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.top: masterSlaveSlaveId_2.bottom
-                                        anchors.topMargin: 15
-                                    }
-                                    SpinBox {
-                                        id: masterSlaveSlaveId_3
-                                        height: 25
-                                        from: 1
-                                        to: 254
-                                        width: 200
-                                        anchors.top: masterSlaveAddress_3.bottom
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.topMargin: 15
-                                    }
-                                    Label {
-                                        text: "Адрес ведомого №4"
-                                        id: masterSlaveAddress_4
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.top: masterSlaveSlaveId_3.bottom
-                                        anchors.topMargin: 15
-                                    }
-                                    SpinBox {
-                                        id: masterSlaveSlaveId_4
-                                        height: 25
-                                        from: 1
-                                        width: 200
-                                        to: 254
-                                        anchors.top: masterSlaveAddress_4.bottom
-                                        anchors.left: parent.left
-                                        anchors.leftMargin: 15
-                                        anchors.topMargin: 15
-                                    }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 20
+                                        //                                        layer.enabled: true
+                                        //                                        layer.effect: DropShadow {
+                                        //                                            transparentBorder: true
+                                        //                                            horizontalOffset: 0
+                                        //                                            verticalOffset: 1
+                                        //                                            color: "#e0e5ef"
+                                        //                                            samples: 10
+                                        //                                            radius: 20
+                                        //                                        }
                                     }
                                 }
                             }
                         }
-                    }
 
-                    Item {
-                        id:itemDevTarir
-                        ScrollView {
-                            clip: true
-                            anchors.fill: parent
-
-                            Column {
-                                spacing: 10
-                                anchors.top: parent.top
-                                anchors.topMargin: 15
-                                anchors.left: parent.left
-                                anchors.leftMargin: 15
-                                Row {
-                                    id:tarRowRoot1
+                        Item {
+                            ScrollView {
+                                clip: true
+                                anchors.fill: parent
+                                Column {
                                     spacing: 10
-                                    Rectangle {
-                                        radius: 20
-                                        width: stackSubProperty.width - 30
-                                        height: stackSubProperty.height - 10
-                                        color: "transparent"
-                                        layer.enabled: true
-                                        layer.effect: DropShadow {
-                                            verticalOffset: 1
-                                            color: "#e0e5ef"
-                                            radius: 20
-                                        }
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 15
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+                                    Row{
+                                        width: 500
+                                        height: 80
                                         Rectangle {
-                                            id:tarTabRectangleMultiple
-                                            anchors.left: parent.left
-                                            anchors.top: parent.top
-                                            height: parent.height - 70
-                                            width: parent.width / 2
-                                            Controls_1_4.TableView {
-                                                id:tarTabViewMultiple
+                                            id:typeInterpolationRect
+                                            width: 500
+                                            height: 80
+                                            color: "#fdfdfb"
+                                            Column{
                                                 anchors.left: parent.left
-                                                anchors.top: parent.top
-                                                height: parent.height / 2
-                                                width: parent.width
-
-                                                model: ListModel {
-                                                    id: tarTableListModelMultiple
+                                                anchors.leftMargin: 15
+                                                spacing: 10
+                                                Label {
+                                                    text: "Тип интерполяции:"
                                                 }
-                                                onCurrentRowChanged: {
-                                                    tarTabViewMultiple.selection.clear()
-                                                    tarTabViewMultiple.selection.select(tarTabViewMultiple.currentRow)
-                                                }
-
-                                                rowDelegate: Rectangle {
-                                                    SystemPalette {
-                                                        id: systemPaletteMultiple
-                                                        colorGroup: SystemPalette.Active
-                                                    }
-                                                    color: {
-                                                        var baseColor = styleData.alternate ? systemPaletteMultiple.alternateBase : systemPaletteMultiple.base
-                                                        return styleData.selected ? "orange" : baseColor
-                                                    }
-                                                }
-                                            }
-                                            ChartView {
-                                                id: chartTarTableMultiple
-                                                anchors.top: tarTabViewMultiple.bottom
-                                                anchors.topMargin: 5
-                                                anchors.left: parent.left
-                                                height: parent.height / 2
-                                                width: parent.width
-                                                theme: ChartView.ChartThemeBlueCerulean
-                                                clip: true
-                                                antialiasing: true
-                                                title: "Отношение уровня к объему"
-                                                property int chartTarTableLength: 1
-                                                property int chartTarTableAmplitudeMax: 1
-                                                ValueAxis {
-                                                    id: chartTarTableAxisXMultiple
-                                                    min: 0
-                                                    max: chartTarTableMultiple.chartTarTableLength
-                                                    tickCount: 5
-                                                }
-                                                ValueAxis {
-                                                    id: chartTarTableAxisYMultiple
-                                                    min: 0
-                                                    max: chartTarTableMultiple.chartTarTableAmplitudeMax
-                                                    tickCount: 5
-                                                }
-                                            }
-                                            Rectangle {
-                                                id:tarTabRectangleCurrentValuesMultiple
-                                                anchors.left: tarTabRectangleMultiple.right
-                                                anchors.leftMargin: 10
-                                                anchors.top: parent.top
-                                                radius: 20
-                                                width: parent.width - 5
-                                                height: parent.height / 2// + 40
-                                                color: "#ffffff"
-
-                                                ListView {
-                                                    id: tarListDevice
-                                                    clip: true
-                                                    height: parent.height
-                                                    width: parent.width - 10
-                                                    ScrollBar.vertical: ScrollBar {
-                                                        width: 20
-                                                    }
-                                                    delegate: Item {
-                                                        id: tarListDeviceDelegate
-                                                        height: 70
-                                                        width: parent.width
-
-                                                        Rectangle {
-                                                            id:tarTabRectangleCurrLevelMultiple
-                                                            anchors.left: parent.left
-                                                            anchors.leftMargin: 2
-                                                            anchors.top: parent.top
-                                                            radius: 20
-                                                            width: parent.width / 2 - 15
-                                                            height: parent.height
-                                                            color: "transparent"
-
-                                                            Label {
-                                                                id: levelTarCurrCntLabelMultiple
-                                                                text: qsTr("%1\nSN[%2]\nID[%3]").arg(model.devTyp).arg(model.devSn).arg(model.devId)
-                                                                anchors.left: parent.left
-                                                                color: "#888d91"
-                                                                anchors.leftMargin: 15
-                                                                anchors.right: parent.right
-                                                                anchors.rightMargin: 0
-                                                            }
-                                                            TextField {
-                                                                id:levelTarCurrCntValueMultiple
-                                                                anchors.left: levelTarCurrCntLabelMultiple.right
-                                                                width: 120
-                                                                height: 50
-                                                                background: Rectangle {
-                                                                    color: "#05fF00"
-                                                                    height: parent.height
-                                                                }
-                                                                text: model.valueCnt
-                                                                readOnly: true
-                                                            }
-                                                            TextField {
-                                                                id:levelTarCurrCntValuesMultiple
-                                                                anchors.left: levelTarCurrCntValueMultiple.right
-                                                                width: 120
-                                                                height: 50
-                                                                background: Rectangle {
-                                                                    color: "#080ff0"
-                                                                    height: parent.height
-                                                                }
-                                                                text: model.valueFuelLevel
-                                                                color: "white"
-                                                                readOnly: true
-                                                            }
-                                                        }
-                                                    }
+                                                ComboBox {
+                                                    id: typeInterpolation
+                                                    height: 25
+                                                    width: 300
                                                     model: ListModel {
-                                                        id: logItemModel
+                                                        ListElement {
+                                                            text: "Линейная"
+                                                        }
+                                                        ListElement {
+                                                            text: "Квадратичная"
+                                                        }
+                                                        ListElement {
+                                                            text: "Сплайновая"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            //                                            layer.enabled: true
+                                            //                                            layer.effect: DropShadow {
+                                            //                                                transparentBorder: true
+                                            //                                                horizontalOffset: 0
+                                            //                                                verticalOffset: 1
+                                            //                                                color: "#e0e5ef"
+                                            //                                                samples: 10
+                                            //                                                radius: 20
+                                            //                                            }
+                                        }
+                                        Button {
+                                            text: "Считать настройки"
+                                            id:readSetingsButton_3
+                                            width: 180
+                                            height: 50
+                                            //                                            layer.enabled: true
+                                            //                                            layer.effect: DropShadow {
+                                            //                                                transparentBorder: true
+                                            //                                                horizontalOffset: 0
+                                            //                                                verticalOffset: 1
+                                            //                                                color: "#e0e5ef"
+                                            //                                                samples: 10
+                                            //                                                radius: 20
+                                            //                                            }
+                                            enabled: (devIsConnected && devIsReady)
+                                            onClicked: {
+                                                viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
+                                            }
+                                        }
+                                        Button {
+                                            id:writeSettingsButton_3
+                                            text: "Записать настройки"
+                                            width: 180
+                                            height: 50
+                                            enabled: false
+                                            //                                            layer.enabled: true
+                                            //                                            layer.effect: DropShadow {
+                                            //                                                transparentBorder: true
+                                            //                                                horizontalOffset: 0
+                                            //                                                verticalOffset: 1
+                                            //                                                color: "#e0e5ef"
+                                            //                                                samples: 10
+                                            //                                                radius: 20
+                                            //                                            }
+                                            onClicked: {
+                                                writeSettings()
+                                            }
+                                        }
+                                    }
+                                    //1
+                                    Rectangle {
+                                        id:typeFiltrationRectangle
+                                        width: 500
+                                        height: 80
+                                        color: "#fdfdfb"
+                                        Column{
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            spacing: 10
+                                            Label {
+                                                text: "Тип фильтрации:"
+                                            }
+                                            ComboBox {
+                                                id: typeFiltration
+                                                height: 25
+                                                width: 300
+                                                model: ListModel {
+                                                    ListElement {
+                                                        text: "Выключена"
+                                                    }
+                                                    ListElement {
+                                                        text: "Усреднение"
+                                                    }
+                                                    ListElement {
+                                                        text: "Медиана"
+                                                    }
+                                                    ListElement {
+                                                        text: "Адаптивный"
+                                                    }
+                                                }
+                                                onCurrentIndexChanged: {
+                                                    if(typeFiltration.currentIndex == 0) {
+                                                        filterAvarageValueSec.enabled = false
+                                                        filterLenghtMediana.enabled = false
+                                                        filterValueQ.enabled = false
+                                                        filterValueR.enabled = false
+                                                    } else if(typeFiltration.currentIndex == 1) {
+                                                        filterAvarageValueSec.enabled = true
+                                                        filterLenghtMediana.enabled = false
+                                                        filterValueQ.enabled = false
+                                                        filterValueR.enabled = false
+                                                    } else if(typeFiltration.currentIndex == 2) {
+                                                        filterAvarageValueSec.enabled = true
+                                                        filterLenghtMediana.enabled = true
+                                                        filterValueQ.enabled = false
+                                                        filterValueR.enabled = false
+                                                    } else if(typeFiltration.currentIndex == 3) {
+                                                        filterAvarageValueSec.enabled = false
+                                                        filterLenghtMediana.enabled = false
+                                                        filterValueQ.enabled = true
+                                                        filterValueR.enabled = true
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        //                                        layer.enabled: true
+                                        //                                        layer.effect: DropShadow {
+                                        //                                            transparentBorder: true
+                                        //                                            horizontalOffset: 0
+                                        //                                            verticalOffset: 1
+                                        //                                            color: "#e0e5ef"
+                                        //                                            samples: 10
+                                        //                                            radius: 20
+                                        //                                        }
+                                    }
+                                    //2
+                                    Rectangle {
+                                        id:typeAvarageRectangle
+                                        width: 500
+                                        height: 80
+                                        color: "#fdfdfb"
+                                        Column{
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            spacing: 10
+                                            Label {
+                                                text: "Время усреднения (0-21), с:"
+                                            }
+                                            SpinBox {
+                                                id: filterAvarageValueSec
+                                                height: 25
+                                                width: 200
+                                            }
+                                        }
+                                        //                                        layer.enabled: true
+                                        //                                        layer.effect: DropShadow {
+                                        //                                            transparentBorder: true
+                                        //                                            horizontalOffset: 0
+                                        //                                            verticalOffset: 1
+                                        //                                            color: "#e0e5ef"
+                                        //                                            samples: 10
+                                        //                                            radius: 20
+                                        //                                        }
+                                    }
+                                    //3
+                                    Rectangle {
+                                        id:lenMedianaRectangle
+                                        width: 500
+                                        height: 80
+                                        color: "#fdfdfb"
+                                        Column{
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            spacing: 10
+                                            Label {
+                                                text: "Длина медианы (0-7):"
+                                            }
+                                            SpinBox {
+                                                id: filterLenghtMediana
+                                                height: 25
+                                                width: 200
+                                            }
+                                        }
+                                        //                                        layer.enabled: true
+                                        //                                        layer.effect: DropShadow {
+                                        //                                            transparentBorder: true
+                                        //                                            horizontalOffset: 0
+                                        //                                            verticalOffset: 1
+                                        //                                            color: "#e0e5ef"
+                                        //                                            samples: 10
+                                        //                                            radius: 20
+                                        //                                        }
+                                    }
+                                    //4
+                                    Rectangle {
+                                        id:covairachiaRectangle
+                                        width: 500
+                                        height: 80
+                                        color: "#fdfdfb"
+                                        Column{
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            spacing: 10
+                                            Label {
+                                                text: "Ковариация шума процесса (Q):"
+                                            }
+                                            SpinBox {
+                                                id: filterValueQ
+                                                height: 25
+                                                width: 200
+                                            }
+                                        }
+                                        //                                        layer.enabled: true
+                                        //                                        layer.effect: DropShadow {
+                                        //                                            transparentBorder: true
+                                        //                                            horizontalOffset: 0
+                                        //                                            verticalOffset: 1
+                                        //                                            color: "#e0e5ef"
+                                        //                                            samples: 10
+                                        //                                            radius: 20
+                                        //                                        }
+                                    }
+                                    //5
+                                    Rectangle {
+                                        width: 500
+                                        height: 80
+                                        color: "#fdfdfb"
+                                        Label {
+                                            text: "Ковариация шума измерения (R):"
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                        }
+                                        SpinBox {
+                                            id: filterValueR
+                                            height: 25
+                                            width: 200
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            anchors.topMargin: 10
+                                        }
+                                        //                                        layer.enabled: true
+                                        //                                        layer.effect: DropShadow {
+                                        //                                            transparentBorder: true
+                                        //                                            horizontalOffset: 0
+                                        //                                            verticalOffset: 1
+                                        //                                            color: "#e0e5ef"
+                                        //                                            samples: 10
+                                        //                                            radius: 20
+                                        //                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        Item {
+                            ScrollView {
+                                clip: true
+                                anchors.fill: parent
+                                Column {
+                                    spacing: 10
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 15
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+                                    //1
+                                    Row {
+                                        width: 500
+                                        height: 100
+                                        Rectangle {
+                                            id:termocomRectangle
+                                            width: 500
+                                            height: 100
+                                            color: "#fdfdfb"
+                                            Column{
+                                                spacing: 10
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                Label {
+                                                    text: qsTr("Температурная компенсация линейного расширения топлива\nРежим:")
+                                                }
+                                                ComboBox {
+                                                    id: typeTempCompensation
+                                                    width: 300
+                                                    height: 25
+                                                    model: ListModel {
+                                                        ListElement {
+                                                            text: "Выключен"
+                                                        }
+                                                        ListElement {
+                                                            text: "АИ-95"
+                                                        }
+                                                        ListElement {
+                                                            text: "АИ-92"
+                                                        }
+                                                        ListElement {
+                                                            text: "АИ-80 (лето)"
+                                                        }
+                                                        ListElement {
+                                                            text: "АИ-80 (зима)"
+                                                        }
+                                                        ListElement {
+                                                            text: "ДТ (лето)"
+                                                        }
+                                                        ListElement {
+                                                            text: "ДТ (зима)"
+                                                        }
+                                                        ListElement {
+                                                            text: "Пользовательский"
+                                                        }
+                                                    }
+                                                    onCurrentIndexChanged: {
+                                                        if(typeTempCompensation.currentIndex == 7) {
+                                                            k1.enabled = true
+                                                            k2.enabled = true
+                                                        } else {
+                                                            k1.enabled = false
+                                                            k2.enabled = false
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            //                                            layer.enabled: true
+                                            //                                            layer.effect: DropShadow {
+                                            //                                                transparentBorder: true
+                                            //                                                horizontalOffset: 0
+                                            //                                                verticalOffset: 1
+                                            //                                                color: "#e0e5ef"
+                                            //                                                samples: 10
+                                            //                                                radius: 20
+                                            //                                            }
+                                        }
+                                        Button {
+                                            text: "Считать настройки"
+                                            id:readSetingsButton_4
+                                            width: 180
+                                            height: 50
+                                            //                                            layer.enabled: true
+                                            //                                            layer.effect: DropShadow {
+                                            //                                                transparentBorder: true
+                                            //                                                horizontalOffset: 0
+                                            //                                                verticalOffset: 1
+                                            //                                                color: "#e0e5ef"
+                                            //                                                samples: 10
+                                            //                                                radius: 20
+                                            //                                            }
+                                            enabled: (devIsConnected && devIsReady)
+                                            onClicked: {
+                                                viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
+                                            }
+                                        }
+                                        Button {
+                                            id:writeSettingsButton_4
+                                            text: "Записать настройки"
+                                            width: 180
+                                            height: 50
+                                            enabled: false
+                                            //                                            layer.enabled: true
+                                            //                                            layer.effect: DropShadow {
+                                            //                                                transparentBorder: true
+                                            //                                                horizontalOffset: 0
+                                            //                                                verticalOffset: 1
+                                            //                                                color: "#e0e5ef"
+                                            //                                                samples: 10
+                                            //                                                radius: 20
+                                            //                                            }
+                                            onClicked: {
+                                                writeSettings()
+                                            }
+                                        }
+                                    }
+                                    //2
+                                    Rectangle {
+                                        width: 500
+                                        height: 80
+                                        color: "#fdfdfb"
+                                        Column {
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            spacing: 10
+                                            Label {
+                                                text: qsTr("K1:")
+                                            }
+                                            TextField {
+                                                id: k1
+                                                text: "0.0"
+                                                height: 25
+                                                width: 300
+                                            }
+                                        }
+                                        //                                        layer.enabled: true
+                                        //                                        layer.effect: DropShadow {
+                                        //                                            transparentBorder: true
+                                        //                                            horizontalOffset: 0
+                                        //                                            verticalOffset: 1
+                                        //                                            color: "#e0e5ef"
+                                        //                                            samples: 10
+                                        //                                            radius: 20
+                                        //                                        }
+                                    }
+                                    //3
+                                    Rectangle {
+                                        width: 500
+                                        height: 80
+                                        color: "#fdfdfb"
+                                        Column {
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            spacing: 10
+                                            Label {
+                                                text: qsTr("K2:")
+                                            }
+                                            TextField {
+                                                id: k2
+                                                text: "0.0"
+                                                height: 25
+                                                width: 300
+                                            }
+                                        }
+                                        //                                        layer.enabled: true
+                                        //                                        layer.effect: DropShadow {
+                                        //                                            transparentBorder: true
+                                        //                                            horizontalOffset: 0
+                                        //                                            verticalOffset: 1
+                                        //                                            color: "#e0e5ef"
+                                        //                                            samples: 10
+                                        //                                            radius: 20
+                                        //                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        Item {
+                            ScrollView {
+                                clip: true
+                                anchors.fill: parent
+                                Column {
+                                    spacing: 10
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 15
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+                                    //1
+                                    Row {
+                                        width: 500
+                                        height: 130
+                                        Rectangle {
+                                            id:setSlaveMasterModeRectangle
+                                            width: parent.width
+                                            height: parent.height
+                                            color: "#fdfdfb"
+                                            Column {
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                spacing: 10
+                                                Label {
+                                                    text: "Режим ведущий/ведомый:"
+                                                    id:labelSlaveModes
+                                                }
+                                                ComboBox {
+                                                    id: masterSlaveModes
+                                                    width: 200
+                                                    height: 30
+                                                    model: ListModel {
+                                                        ListElement {
+                                                            text: "Выключен"
+                                                        }
+                                                        ListElement {
+                                                            text: "Ведомый"
+                                                        }
+                                                        ListElement {
+                                                            text: "Ведущий"
+                                                        }
+                                                        ListElement {
+                                                            text: "Трансляция"
+                                                        }
+                                                    }
+                                                    onCurrentIndexChanged: {
+                                                        if(masterSlaveModes.currentIndex == 2) {
+                                                            //masterSlavesAddresRectange.enabled = true
+                                                        } else {
+                                                            //masterSlavesAddresRectange.enabled = false
+                                                            masterSlaveFullCountes.value = 0
+                                                        }
+                                                    }
+                                                }
+                                                Label {
+                                                    id: masterSlaveModeCountAllLabel
+                                                    text: "Количество ведомых:"
+                                                }
+                                                SpinBox {
+                                                    id: masterSlaveFullCountes
+                                                    width: 200
+                                                    height: 25
+                                                    from: 0
+                                                    to: 4
+                                                    onValueChanged: {
+                                                        if(masterSlaveFullCountes.value >= 1) {
+                                                            masterSlaveSlaveId_1.enabled = true
+                                                        } else {
+                                                            masterSlaveFullCountes.value = 0
+                                                            masterSlaveModes.currentIndex = 0
+                                                            masterSlaveSlaveId_1.enabled = false
+                                                            masterSlaveSlaveId_2.enabled = false
+                                                            masterSlaveSlaveId_3.enabled = false
+                                                            masterSlaveSlaveId_4.enabled = false
+                                                        }
+                                                        if(masterSlaveFullCountes.value >= 2) {
+                                                            masterSlaveSlaveId_2.enabled = true
+                                                        } else {
+                                                            masterSlaveSlaveId_2.enabled = false
+                                                        }
+                                                        if(masterSlaveFullCountes.value >= 3) {
+                                                            masterSlaveSlaveId_3.enabled = true
+                                                        } else {
+                                                            masterSlaveSlaveId_3.enabled = false
+                                                        }
+                                                        if(masterSlaveFullCountes.value >= 4) {
+                                                            masterSlaveSlaveId_4.enabled = true
+                                                        } else {
+                                                            masterSlaveSlaveId_4.enabled = false
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            //                                            layer.enabled: true
+                                            //                                            layer.effect: DropShadow {
+                                            //                                                transparentBorder: true
+                                            //                                                horizontalOffset: 0
+                                            //                                                verticalOffset: 1
+                                            //                                                color: "#e0e5ef"
+                                            //                                                samples: 10
+                                            //                                                radius: 20
+                                            //                                            }
+                                        }
+
+                                        Button {
+                                            text: "Считать настройки"
+                                            id:readSetingsButton_5
+                                            width: 180
+                                            height: 50
+                                            //                                            layer.enabled: true
+                                            //                                            layer.effect: DropShadow {
+                                            //                                                transparentBorder: true
+                                            //                                                horizontalOffset: 0
+                                            //                                                verticalOffset: 1
+                                            //                                                color: "#e0e5ef"
+                                            //                                                samples: 10
+                                            //                                                radius: 20
+                                            //                                            }
+                                            enabled: (devIsConnected && devIsReady)
+                                            onClicked: {
+                                                viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
+                                            }
+                                        }
+                                        Button {
+                                            id:writeSettingsButton_5
+                                            text: "Записать настройки"
+                                            width: 180
+                                            height: 50
+                                            enabled: false
+                                            //                                            layer.enabled: true
+                                            //                                            layer.effect: DropShadow {
+                                            //                                                transparentBorder: true
+                                            //                                                horizontalOffset: 0
+                                            //                                                verticalOffset: 1
+                                            //                                                color: "#e0e5ef"
+                                            //                                                samples: 10
+                                            //                                                radius: 20
+                                            //                                            }
+                                            onClicked: {
+                                                writeSettings()
+                                            }
+                                        }
+                                    }
+                                    Rectangle {
+                                        width: 500
+                                        height: 250
+                                        color: "#fdfdfb"
+                                        Column{
+                                            anchors.left: parent.left
+                                            anchors.leftMargin: 15
+                                            spacing: 10
+                                            Label {
+                                                id: masterSlaveAddress_1
+                                                text: "Адрес ведомого №1"
+                                            }
+                                            SpinBox {
+                                                id: masterSlaveSlaveId_1
+                                                from: 1
+                                                to: 254
+                                                height: 25
+                                                width: 200
+                                            }
+                                            Label {
+                                                text: "Адрес ведомого №2"
+                                                id: masterSlaveAddress_2
+                                            }
+                                            SpinBox {
+                                                id: masterSlaveSlaveId_2
+                                                height: 25
+                                                from: 1
+                                                to: 254
+                                                width: 200
+                                            }
+                                            Label {
+                                                text: "Адрес ведомого №3"
+                                                id: masterSlaveAddress_3
+                                            }
+                                            SpinBox {
+                                                id: masterSlaveSlaveId_3
+                                                height: 25
+                                                from: 1
+                                                to: 254
+                                                width: 200
+                                            }
+                                            Label {
+                                                text: "Адрес ведомого №4"
+                                                id: masterSlaveAddress_4
+                                            }
+                                            SpinBox {
+                                                id: masterSlaveSlaveId_4
+                                                height: 25
+                                                from: 1
+                                                width: 200
+                                                to: 254
+                                            }
+                                        }
+                                        //                                        layer.enabled: true
+                                        //                                        layer.effect: DropShadow {
+                                        //                                            transparentBorder: true
+                                        //                                            horizontalOffset: 0
+                                        //                                            verticalOffset: 1
+                                        //                                            color: "#e0e5ef"
+                                        //                                            samples: 10
+                                        //                                            radius: 20
+                                        //                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        Item {
+                            id:itemDevTarir
+                            ScrollView {
+                                clip: true
+                                anchors.fill: parent
+
+                                Column {
+                                    spacing: 10
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 15
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+                                    Row {
+                                        id:tarRowRoot1
+                                        spacing: 10
+                                        Rectangle {
+                                            radius: 20
+                                            width: stackSubProperty.width - 30
+                                            height: stackSubProperty.height - 10
+                                            color: "transparent"
+                                            //                                            layer.enabled: true
+                                            //                                            layer.effect: DropShadow {
+                                            //                                                verticalOffset: 1
+                                            //                                                color: "#e0e5ef"
+                                            //                                                radius: 20
+                                            //                                            }
+                                            Rectangle {
+                                                id:tarTabRectangleMultiple
+                                                anchors.left: parent.left
+                                                anchors.top: parent.top
+                                                height: parent.height - 70
+                                                width: parent.width / 2
+                                                Controls_1_4.TableView {
+                                                    id:tarTabViewMultiple
+                                                    anchors.left: parent.left
+                                                    anchors.top: parent.top
+                                                    height: parent.height / 2
+                                                    width: parent.width
+
+                                                    model: ListModel {
+                                                        id: tarTableListModelMultiple
+                                                    }
+                                                    onCurrentRowChanged: {
+                                                        tarTabViewMultiple.selection.clear()
+                                                        tarTabViewMultiple.selection.select(tarTabViewMultiple.currentRow)
+                                                    }
+
+                                                    rowDelegate: Rectangle {
+                                                        SystemPalette {
+                                                            id: systemPaletteMultiple
+                                                            colorGroup: SystemPalette.Active
+                                                        }
+                                                        color: {
+                                                            var baseColor = styleData.alternate ? systemPaletteMultiple.alternateBase : systemPaletteMultiple.base
+                                                            return styleData.selected ? "orange" : baseColor
+                                                        }
+                                                    }
+                                                }
+                                                ChartView {
+                                                    id: chartTarTableMultiple
+                                                    anchors.top: tarTabViewMultiple.bottom
+                                                    anchors.topMargin: 5
+                                                    anchors.left: parent.left
+                                                    height: parent.height / 2
+                                                    width: parent.width
+                                                    theme: ChartView.ChartThemeBlueCerulean
+                                                    clip: true
+                                                    antialiasing: true
+                                                    title: "Отношение уровня к объему"
+                                                    property int chartTarTableLength: 1
+                                                    property int chartTarTableAmplitudeMax: 1
+                                                    ValueAxis {
+                                                        id: chartTarTableAxisXMultiple
+                                                        min: 0
+                                                        max: chartTarTableMultiple.chartTarTableLength
+                                                        tickCount: 5
+                                                    }
+                                                    ValueAxis {
+                                                        id: chartTarTableAxisYMultiple
+                                                        min: 0
+                                                        max: chartTarTableMultiple.chartTarTableAmplitudeMax
+                                                        tickCount: 5
+                                                    }
+                                                }
+                                                Rectangle {
+                                                    id:tarTabRectangleCurrentValuesMultiple
+                                                    anchors.left: tarTabRectangleMultiple.right
+                                                    anchors.leftMargin: 10
+                                                    anchors.top: parent.top
+                                                    radius: 20
+                                                    width: parent.width - 5
+                                                    height: parent.height / 2// + 40
+                                                    color: "#ffffff"
+
+                                                    ListView {
+                                                        id: tarListDevice
+                                                        clip: true
+                                                        height: parent.height
+                                                        width: parent.width - 10
+                                                        ScrollBar.vertical: ScrollBar {
+                                                            width: 20
+                                                        }
+                                                        delegate: Item {
+                                                            id: tarListDeviceDelegate
+                                                            height: 70
+                                                            width: parent.width
+
+                                                            Rectangle {
+                                                                id:tarTabRectangleCurrLevelMultiple
+                                                                anchors.left: parent.left
+                                                                anchors.leftMargin: 2
+                                                                anchors.top: parent.top
+                                                                radius: 20
+                                                                width: parent.width / 2 - 15
+                                                                height: parent.height
+                                                                color: "transparent"
+
+                                                                Label {
+                                                                    id: levelTarCurrCntLabelMultiple
+                                                                    text: qsTr("%1\nSN[%2]\nID[%3]").arg(model.devTyp).arg(model.devSn).arg(model.devId)
+                                                                    anchors.left: parent.left
+                                                                    color: "#888d91"
+                                                                    anchors.leftMargin: 15
+                                                                    anchors.right: parent.right
+                                                                    anchors.rightMargin: 0
+                                                                }
+                                                                TextField {
+                                                                    id:levelTarCurrCntValueMultiple
+                                                                    anchors.left: levelTarCurrCntLabelMultiple.right
+                                                                    width: 120
+                                                                    height: 50
+                                                                    background: Rectangle {
+                                                                        color: "#05fF00"
+                                                                        height: parent.height
+                                                                    }
+                                                                    text: model.valueCnt
+                                                                    readOnly: true
+                                                                }
+                                                                TextField {
+                                                                    id:levelTarCurrCntValuesMultiple
+                                                                    anchors.left: levelTarCurrCntValueMultiple.right
+                                                                    width: 120
+                                                                    height: 50
+                                                                    background: Rectangle {
+                                                                        color: "#080ff0"
+                                                                        height: parent.height
+                                                                    }
+                                                                    text: model.valueFuelLevel
+                                                                    color: "white"
+                                                                    readOnly: true
+                                                                }
+                                                            }
+                                                        }
+                                                        model: ListModel {
+                                                            id: logItemModel
+                                                        }
+                                                    }
+                                                }
+                                                Rectangle {
+                                                    color: "#ffffff"
+                                                    anchors.top: tarTabRectangleCurrentValuesMultiple.bottom
+                                                    anchors.left: tarTabRectangleMultiple.right
+                                                    anchors.leftMargin: 10
+                                                    radius: 20
+                                                    width: parent.width - 5
+                                                    anchors.topMargin: 10
+                                                    height: parent.height / 2 - 10
+                                                    ChartView {
+                                                        id: chartTarCurrentValuesMultiple
+                                                        anchors.fill: parent
+                                                        theme: ChartView.ChartThemeLight
+                                                        title: "Уровень/Объем"
+                                                        antialiasing: true
+                                                        property int graphLength: 1
+                                                        property int graphAmplitudeMax: 1
+                                                        backgroundColor: "transparent"
+                                                        property alias animateColorUp: animateColorUpMultiple
+                                                        property alias animateColorDown: animateColorDownMultiple
+                                                        PropertyAnimation {id: animateColorUpMultiple; target: chartTarCurrentValuesMultiple; properties: "backgroundColor"; to: "#d9d9d9"; duration: 1000
+                                                            onStopped: {
+                                                                chartTarCurrentValuesMultiple.animateColorDown.start()
+                                                            }
+                                                            onStarted: {
+                                                                isNoiseDetected = true
+                                                            }
+                                                        }
+                                                        PropertyAnimation {id: animateColorDownMultiple; target: chartTarCurrentValuesMultiple; properties: "backgroundColor"; to: "transparent"; duration: 1000
+                                                            onStopped: {
+                                                                isNoiseDetected = false
+                                                            }
+                                                        }
+
+                                                        ValueAxis {
+                                                            id: currentTarChartAxisXMultiple
+                                                            min: -0.5
+                                                            max: chartTarCurrentValuesMultiple.graphLength
+                                                            tickCount: 5
+                                                        }
+                                                        ValueAxis {
+                                                            id: currentTarChartAxisYMultiple
+                                                            min: -0.5
+                                                            max: chartTarCurrentValuesMultiple.graphAmplitudeMax
+                                                            tickCount: 5
+                                                        }
+                                                        enabled: devIsConnected
                                                     }
                                                 }
                                             }
                                             Rectangle {
-                                                color: "#ffffff"
-                                                anchors.top: tarTabRectangleCurrentValuesMultiple.bottom
-                                                anchors.left: tarTabRectangleMultiple.right
-                                                anchors.leftMargin: 10
-                                                radius: 20
-                                                width: parent.width - 5
+                                                anchors.top: tarTabRectangleMultiple.bottom
                                                 anchors.topMargin: 10
-                                                height: parent.height / 2 - 10
-                                                ChartView {
-                                                    id: chartTarCurrentValuesMultiple
-                                                    anchors.fill: parent
-                                                    theme: ChartView.ChartThemeLight
-                                                    title: "Уровень/Объем"
-                                                    antialiasing: true
-                                                    property int graphLength: 1
-                                                    property int graphAmplitudeMax: 1
-                                                    backgroundColor: "transparent"
-                                                    property alias animateColorUp: animateColorUpMultiple
-                                                    property alias animateColorDown: animateColorDownMultiple
-                                                    PropertyAnimation {id: animateColorUpMultiple; target: chartTarCurrentValuesMultiple; properties: "backgroundColor"; to: "#d9d9d9"; duration: 1000
-                                                        onStopped: {
-                                                            chartTarCurrentValuesMultiple.animateColorDown.start()
-                                                        }
-                                                        onStarted: {
-                                                            isNoiseDetected = true
-                                                        }
-                                                    }
-                                                    PropertyAnimation {id: animateColorDownMultiple; target: chartTarCurrentValuesMultiple; properties: "backgroundColor"; to: "transparent"; duration: 1000
-                                                        onStopped: {
-                                                            isNoiseDetected = false
-                                                        }
-                                                    }
-
-                                                    ValueAxis {
-                                                        id: currentTarChartAxisXMultiple
-                                                        min: -0.5
-                                                        max: chartCurrentValue.graphLength
-                                                        tickCount: 5
-                                                    }
-                                                    ValueAxis {
-                                                        id: currentTarChartAxisYMultiple
-                                                        min: -0.5
-                                                        max: chartCurrentValue.graphAmplitudeMax
-                                                        tickCount: 5
-                                                    }
-                                                    enabled: devIsConnected
-                                                }
-                                            }
-                                        }
-                                        Rectangle {
-                                            anchors.top: tarTabRectangleMultiple.bottom
-                                            anchors.topMargin: 10
-                                            radius: 20
-                                            width: stackSubProperty.width -15
-                                            height: 50
-                                            color: "transparent"
-                                            layer.enabled: true
-                                            layer.effect: DropShadow {
-                                                transparentBorder: true
-                                                horizontalOffset: 0
-                                                verticalOffset: 1
-                                                color: "#e0e5ef"
-                                                samples: 10
-                                                radius: 10
-                                            }
-                                            Row{
-                                                MiscElems.ButtonRound {
-                                                    id:tarBatButtonsMultiple
-                                                    textLine:2
-                                                    widthBody: 150
-                                                    name: qsTr("Добавить\nтекущее значение")
-                                                    useIcon: true
-                                                    iconCode: "\uF0FE  "
-                                                    enabled: (devIsConnected && devIsReady)
-                                                    onClicked: {
-                                                        if(!isNoiseDetected) {
-                                                            addTarStepValue(tarTabViewMultiple.currentRow)
-                                                        } else {
-                                                            dialogAddTarValueWhenNoiseDetectedMultiple.open()
-                                                        }
-                                                    }
-
-                                                    Dialog {
-                                                        id: dialogAddTarValueWhenNoiseDetectedMultiple
-                                                        title: "Добавление значения в таблицу"
-                                                        standardButtons: StandardButton.Close | StandardButton.Apply
-                                                        Rectangle {
-                                                            color: "transparent"
-                                                            implicitWidth: 500
-                                                            implicitHeight: 50
-                                                            Text {
-                                                                text: "Обнаружен шум показаний\nДействительно добавить это значение?"
-                                                                color: "black"
-                                                                anchors.centerIn: parent
-                                                            }
-                                                        }
-                                                        onApply: {
-                                                            addTarStepValue(tarTabViewMultiple.currentRow)
-                                                            close()
-                                                        }
-                                                    }
-                                                }
-                                                MiscElems.ButtonRound {
-                                                    id:tarTabRemoveStepMultiple
-                                                    textLine:2
-                                                    widthBody: 100
-                                                    name: qsTr("Удалить\nзначение")
-                                                    useIcon: true
-                                                    iconCode: "\uF1f8  "
-                                                    Dialog {
-                                                        id: dialogRemoveTarTableRowMultiple
-                                                        title: "Удаление записи таблицы"
-                                                        standardButtons: StandardButton.Apply
-                                                        Rectangle {
-                                                            color: "transparent"
-                                                            implicitWidth: 500
-                                                            implicitHeight: 50
-                                                            Text {
-                                                                text: "Для удаления сначала кликните по удалялемой строке в таблице"
-                                                                color: "black"
-                                                                anchors.centerIn: parent
-                                                            }
-                                                        }
-                                                        onApply: {
-                                                            close()
-                                                        }
-                                                    }
-                                                    onClicked: {
-                                                        if(tarTabViewMultiple.currentRow === -1) {
-                                                            dialogRemoveTarTableRowMultiple.open()
-                                                        } else {
-                                                            removeTarStepValue(tarTabViewMultiple.currentRow)
-                                                            timerAffterRefrashTarTable.start()
-                                                        }
-                                                    }
-                                                }
-                                                MiscElems.ButtonRound {
-                                                    id:tarTabRemoveAddDeviceMultiple
-                                                    textLine:2
-                                                    widthBody: 165
-                                                    useIcon: true
-                                                    iconCode: "\uF0FE  "
-                                                    name: qsTr("Добавить/Удалить\nустройство")
-                                                    onClicked: {
-                                                        addDeviceTarirDialog.parent = devPropertyProgressTmk24
-                                                        addDeviceTarirDialog.open()
-                                                    }
-                                                    AddDeviceTarirDialog {
-                                                        id:addDeviceTarirDialog
-                                                        onAccepted: {
-                                                            console.log("AddDeviceTarirDialog-accepted = " + deviceTypeName.length + deviceId.length + deviceSerialNumber.length)
-                                                            var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
-                                                            var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
-                                                            var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
-                                                            // обновляем таблицу dev
-                                                            for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
-                                                                viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
-                                                            }
-                                                            for(var devcount=0; devcount<deviceId.length; devcount++) {
-                                                                viewController.addTarrirDev(deviceTypeName[devcount], deviceId[devcount])
-                                                            }
-                                                            timerAffterAddRemoveDevTarTable.start()
-                                                        }
-                                                    }
-                                                    Timer {
-                                                        id: timerAffterAddRemoveDevTarTable
-                                                        interval: 100
-                                                        running: false
-                                                        repeat: false
-                                                        onTriggered: {
-                                                            remakeTarTable()
-                                                            remakeTarTableChart()
-                                                        }
-                                                    }
-                                                }
-                                                MiscElems.ButtonRound {
-                                                    id:tarTabReadTableMultiple
-                                                    textLine: 2
-                                                    name:"Считать\nтаблицу"
-                                                    useIcon: true
-                                                    iconCode: "\uF093  "
-                                                    enabled: (devIsConnected && devIsReady)
-                                                    onClicked: {
-                                                        dialogReadTarTableMultiple.open()
-                                                    }
-                                                    Dialog {
-                                                        id: dialogReadTarTableMultiple
-                                                        visible: false
-                                                        title: "Чтение записей таблицы из устройства"
-                                                        standardButtons: StandardButton.Close | StandardButton.Apply
-                                                        Rectangle {
-                                                            color: "transparent"
-                                                            implicitWidth: 500
-                                                            implicitHeight: 50
-                                                            Text {
-                                                                text: "Считать данные?\nВсе не сохраненные изменения будут утеряны!\nВы уверены?"
-                                                                color: "black"
-                                                                anchors.centerIn: parent
-                                                            }
-                                                        }
-                                                        onApply: {
-                                                            remakeTarTable()
-                                                            viewController.sendReqGetTarrirAllDev()
-                                                            close()
-                                                        }
-                                                    }
-                                                }
-                                                MiscElems.ButtonRound {
-                                                    id:tarTabWriteTableMultiple
-                                                    textLine: 2
-                                                    name:"Записать\nтаблицу"
-                                                    useIcon: true
-                                                    iconCode: "\uF0C7  "
-                                                    enabled: (devIsConnected && devIsReady)
-                                                    Dialog {
-                                                        id: dialogWriteTarTableMultipleRequest
-                                                        visible: false
-                                                        title: "Запись таблицы"
-                                                        standardButtons: StandardButton.Close | StandardButton.Apply
-                                                        Rectangle {
-                                                            color: "transparent"
-                                                            implicitWidth: 500
-                                                            implicitHeight: 50
-                                                            Text {
-                                                                text: "Записать таблицу в устройство!\nВы уверены?"
-                                                                color: "black"
-                                                                anchors.centerIn: parent
-                                                            }
-                                                        }
-                                                        onApply: {
-                                                            writeTarTable()
-                                                            close()
-                                                        }
-                                                    }
-                                                    Dialog {
-                                                        id: dialogWriteTarTableMultipleWarningOverSize
-                                                        visible: false
-                                                        title: "Запись таблицы"
-                                                        standardButtons: StandardButton.Apply
-                                                        Rectangle {
-                                                            color: "transparent"
-                                                            implicitWidth: 500
-                                                            implicitHeight: 50
-                                                            Text {
-                                                                text: "Данных больше размера памяти в устройстве\nЗапись не возможна"
-                                                                color: "black"
-                                                                anchors.centerIn: parent
-                                                            }
-                                                        }
-                                                        onApply: {
-                                                            close()
-                                                        }
-                                                    }
-                                                    Dialog {
-                                                        id: dialogWriteTarTableMultipleWarningEmpty
-                                                        visible: false
-                                                        title: "Запись таблицы"
-                                                        standardButtons: StandardButton.Apply
-                                                        Rectangle {
-                                                            color: "transparent"
-                                                            implicitWidth: 500
-                                                            implicitHeight: 50
-                                                            Text {
-                                                                text: "Нет данных для записи!"
-                                                                color: "black"
-                                                                anchors.centerIn: parent
-                                                            }
-                                                        }
-                                                        onApply: {
-                                                            close()
-                                                        }
-                                                    }
-                                                    onClicked: {
-                                                        if(tarTabViewMultiple.model.count > 0) {
-                                                            if(tarTabViewMultiple.model.count < 30) {
-                                                                dialogWriteTarTableMultipleRequest.open()
+                                                radius: 20
+                                                width: stackSubProperty.width -15
+                                                height: 50
+                                                color: "transparent"
+                                                //                                                layer.enabled: true
+                                                //                                                layer.effect: DropShadow {
+                                                //                                                    transparentBorder: true
+                                                //                                                    horizontalOffset: 0
+                                                //                                                    verticalOffset: 1
+                                                //                                                    color: "#e0e5ef"
+                                                //                                                    samples: 10
+                                                //                                                    radius: 10
+                                                //                                                }
+                                                Row{
+                                                    MiscElems.ButtonRound {
+                                                        id:tarBatButtonsMultiple
+                                                        textLine:2
+                                                        widthBody: 150
+                                                        name: qsTr("Добавить\nтекущее значение")
+                                                        useIcon: true
+                                                        iconCode: "\uF0FE  "
+                                                        enabled: (devIsConnected && devIsReady)
+                                                        onClicked: {
+                                                            if(!isNoiseDetected) {
+                                                                addTarStepValue(tarTabViewMultiple.currentRow)
                                                             } else {
-                                                                dialogWriteTarTableMultipleWarningOverSize.open()
+                                                                dialogAddTarValueWhenNoiseDetectedMultiple.open()
                                                             }
-                                                        } else {
-                                                            dialogWriteTarTableMultipleWarningEmpty.open()
                                                         }
-                                                    }
-                                                }
-                                                MiscElems.ButtonRound {
-                                                    id:tarTabTableExportMultiple
-                                                    textLine: 2
-                                                    name:"Выгрузить\n.csv"
-                                                    useIcon: true
-                                                    iconCode: "\uF093  "
-                                                    widthBody: 110
-                                                    FileDialog {
-                                                        id: dialogExportTarTableMultiple
-                                                        folder: shortcuts.home
-                                                        selectMultiple: false
-                                                        selectFolder: false
-                                                        title: "Save to file"
-                                                        nameFilters: [ "All files (*)" ]
-                                                        selectExisting: false
-                                                        onAccepted: {
-                                                            if(dialogExportTarTableMultiple.selectExisting == true) {
-                                                                console.log(dialogExportTarTableMultiple.fileUrl)
+
+                                                        Dialog {
+                                                            id: dialogAddTarValueWhenNoiseDetectedMultiple
+                                                            title: "Добавление значения в таблицу"
+                                                            standardButtons: StandardButton.Close | StandardButton.Apply
+                                                            Rectangle {
+                                                                color: "transparent"
+                                                                implicitWidth: 500
+                                                                implicitHeight: 50
+                                                                Text {
+                                                                    text: "Обнаружен шум показаний\nДействительно добавить это значение?"
+                                                                    color: "black"
+                                                                    anchors.centerIn: parent
+                                                                }
                                                             }
-                                                            else {
-                                                                console.log(dialogExportTarTableMultiple.fileUrl)
-                                                                saveTarTableToCsv(dialogExportTarTableMultiple.fileUrl)
+                                                            onApply: {
+                                                                addTarStepValue(tarTabViewMultiple.currentRow)
+                                                                close()
                                                             }
                                                         }
                                                     }
-                                                    onClicked: {
-                                                        dialogExportTarTableMultiple.open()
+                                                    MiscElems.ButtonRound {
+                                                        id:tarTabRemoveStepMultiple
+                                                        textLine:2
+                                                        widthBody: 100
+                                                        name: qsTr("Удалить\nзначение")
+                                                        useIcon: true
+                                                        iconCode: "\uF1f8  "
+                                                        Dialog {
+                                                            id: dialogRemoveTarTableRowMultiple
+                                                            title: "Удаление записи таблицы"
+                                                            standardButtons: StandardButton.Apply
+                                                            Rectangle {
+                                                                color: "transparent"
+                                                                implicitWidth: 500
+                                                                implicitHeight: 50
+                                                                Text {
+                                                                    text: "Для удаления сначала кликните по удалялемой строке в таблице"
+                                                                    color: "black"
+                                                                    anchors.centerIn: parent
+                                                                }
+                                                            }
+                                                            onApply: {
+                                                                close()
+                                                            }
+                                                        }
+                                                        onClicked: {
+                                                            if(tarTabViewMultiple.currentRow === -1) {
+                                                                dialogRemoveTarTableRowMultiple.open()
+                                                            } else {
+                                                                removeTarStepValue(tarTabViewMultiple.currentRow)
+                                                                timerAffterRefrashTarTable.start()
+                                                            }
+                                                        }
+                                                    }
+                                                    MiscElems.ButtonRound {
+                                                        id:tarTabRemoveAddDeviceMultiple
+                                                        textLine:2
+                                                        widthBody: 165
+                                                        useIcon: true
+                                                        iconCode: "\uF0FE  "
+                                                        name: qsTr("Добавить/Удалить\nустройство")
+                                                        onClicked: {
+                                                            addDeviceTarirDialog.parent = devPropertyProgressTmk24
+                                                            addDeviceTarirDialog.open()
+                                                        }
+                                                        AddDeviceTarirDialog {
+                                                            id:addDeviceTarirDialog
+                                                            onAccepted: {
+                                                                console.log("AddDeviceTarirDialog-accepted = " + deviceTypeName.length + deviceId.length + deviceSerialNumber.length)
+                                                                var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
+                                                                var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
+                                                                var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
+                                                                // обновляем таблицу dev
+                                                                for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
+                                                                    viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
+                                                                }
+                                                                for(var devcount=0; devcount<deviceId.length; devcount++) {
+                                                                    viewController.addTarrirDev(deviceTypeName[devcount], deviceId[devcount])
+                                                                }
+                                                                timerAffterAddRemoveDevTarTable.start()
+                                                            }
+                                                        }
+                                                        Timer {
+                                                            id: timerAffterAddRemoveDevTarTable
+                                                            interval: 100
+                                                            running: false
+                                                            repeat: false
+                                                            onTriggered: {
+                                                                remakeTarTable()
+                                                                remakeTarTableChart()
+                                                            }
+                                                        }
+                                                    }
+                                                    MiscElems.ButtonRound {
+                                                        id:tarTabReadTableMultiple
+                                                        textLine: 2
+                                                        name:"Считать\nтаблицу"
+                                                        useIcon: true
+                                                        iconCode: "\uF093  "
+                                                        enabled: (devIsConnected && devIsReady)
+                                                        onClicked: {
+                                                            dialogReadTarTableMultiple.open()
+                                                        }
+                                                        Dialog {
+                                                            id: dialogReadTarTableMultiple
+                                                            visible: false
+                                                            title: "Чтение записей таблицы из устройства"
+                                                            standardButtons: StandardButton.Close | StandardButton.Apply
+                                                            Rectangle {
+                                                                color: "transparent"
+                                                                implicitWidth: 500
+                                                                implicitHeight: 50
+                                                                Text {
+                                                                    text: "Считать данные?\nВсе не сохраненные изменения будут утеряны!\nВы уверены?"
+                                                                    color: "black"
+                                                                    anchors.centerIn: parent
+                                                                }
+                                                            }
+                                                            onApply: {
+                                                                remakeTarTable()
+                                                                viewController.sendReqGetTarrirAllDev()
+                                                                close()
+                                                            }
+                                                        }
+                                                    }
+                                                    MiscElems.ButtonRound {
+                                                        id:tarTabWriteTableMultiple
+                                                        textLine: 2
+                                                        name:"Записать\nтаблицу"
+                                                        useIcon: true
+                                                        iconCode: "\uF0C7  "
+                                                        enabled: (devIsConnected && devIsReady)
+                                                        Dialog {
+                                                            id: dialogWriteTarTableMultipleRequest
+                                                            visible: false
+                                                            title: "Запись таблицы"
+                                                            standardButtons: StandardButton.Close | StandardButton.Apply
+                                                            Rectangle {
+                                                                color: "transparent"
+                                                                implicitWidth: 500
+                                                                implicitHeight: 50
+                                                                Text {
+                                                                    text: "Записать таблицу в устройство!\nВы уверены?"
+                                                                    color: "black"
+                                                                    anchors.centerIn: parent
+                                                                }
+                                                            }
+                                                            onApply: {
+                                                                writeTarTable()
+                                                                close()
+                                                            }
+                                                        }
+                                                        Dialog {
+                                                            id: dialogWriteTarTableMultipleWarningOverSize
+                                                            visible: false
+                                                            title: "Запись таблицы"
+                                                            standardButtons: StandardButton.Apply
+                                                            Rectangle {
+                                                                color: "transparent"
+                                                                implicitWidth: 500
+                                                                implicitHeight: 50
+                                                                Text {
+                                                                    text: "Данных больше размера памяти в устройстве\nЗапись не возможна"
+                                                                    color: "black"
+                                                                    anchors.centerIn: parent
+                                                                }
+                                                            }
+                                                            onApply: {
+                                                                close()
+                                                            }
+                                                        }
+                                                        Dialog {
+                                                            id: dialogWriteTarTableMultipleWarningEmpty
+                                                            visible: false
+                                                            title: "Запись таблицы"
+                                                            standardButtons: StandardButton.Apply
+                                                            Rectangle {
+                                                                color: "transparent"
+                                                                implicitWidth: 500
+                                                                implicitHeight: 50
+                                                                Text {
+                                                                    text: "Нет данных для записи!"
+                                                                    color: "black"
+                                                                    anchors.centerIn: parent
+                                                                }
+                                                            }
+                                                            onApply: {
+                                                                close()
+                                                            }
+                                                        }
+                                                        onClicked: {
+                                                            if(tarTabViewMultiple.model.count > 0) {
+                                                                if(tarTabViewMultiple.model.count < 30) {
+                                                                    dialogWriteTarTableMultipleRequest.open()
+                                                                } else {
+                                                                    dialogWriteTarTableMultipleWarningOverSize.open()
+                                                                }
+                                                            } else {
+                                                                dialogWriteTarTableMultipleWarningEmpty.open()
+                                                            }
+                                                        }
+                                                    }
+                                                    MiscElems.ButtonRound {
+                                                        id:tarTabTableExportMultiple
+                                                        textLine: 2
+                                                        name:"Выгрузить\n.csv"
+                                                        useIcon: true
+                                                        iconCode: "\uF093  "
+                                                        widthBody: 110
+                                                        FileDialog {
+                                                            id: dialogExportTarTableMultiple
+                                                            folder: shortcuts.home
+                                                            selectMultiple: false
+                                                            selectFolder: false
+                                                            title: "Save to file"
+                                                            nameFilters: [ "All files (*)" ]
+                                                            selectExisting: false
+                                                            onAccepted: {
+                                                                if(dialogExportTarTableMultiple.selectExisting == true) {
+                                                                    console.log(dialogExportTarTableMultiple.fileUrl)
+                                                                }
+                                                                else {
+                                                                    console.log(dialogExportTarTableMultiple.fileUrl)
+                                                                    saveTarTableToCsv(dialogExportTarTableMultiple.fileUrl)
+                                                                }
+                                                            }
+                                                        }
+                                                        onClicked: {
+                                                            dialogExportTarTableMultiple.open()
+                                                        }
                                                     }
                                                 }
                                             }
@@ -3429,14 +3265,15 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             visible: ((devIsConnected) && (devIsReady)) ? false : true
+            color: "transparent"
             Column {
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 20
                 BusyIndicator {
                     id:waitReadyIndicator
-                    width: 96
-                    height: 96
+                    width: 110
+                    height: 110
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
                 Label {
@@ -3444,15 +3281,15 @@ Rectangle {
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
             }
-            layer.enabled: true
-            layer.effect: DropShadow {
-                transparentBorder: true
-                horizontalOffset: 0
-                verticalOffset: 1
-                color: "#e0e5ef"
-                samples: 10
-                radius: 10
-            }
+            //            layer.enabled: true
+            //            layer.effect: DropShadow {
+            //                transparentBorder: true
+            //                horizontalOffset: 0
+            //                verticalOffset: 1
+            //                color: "#e0e5ef"
+            //                samples: 10
+            //                radius: 10
+            //            }
         }
     }
 
@@ -3464,10 +3301,9 @@ Rectangle {
     Dialog {
         id: messageDialog
         visible: false
-        property string headerTitile: "undefine"
-        property string message: "undefine"
+        property string headerTitile: ""
+        property string message: ""
         title: headerTitile
-        standardButtons: StandardButton.Accepted
         width: 500
         height: 150
         Rectangle {

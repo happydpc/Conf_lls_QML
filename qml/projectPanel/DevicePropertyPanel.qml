@@ -25,189 +25,440 @@ Rectangle {
 
     // *************  full clear before load session **************/
     function setCrearAllItems() {
-        interfaceItemArray = []
-        deviceItemArray = []
-        while(deviceRootView.count !== 0) {
-            deviceRootView.removeItem(0)
-            interfaceView.removeItem(0)
+        try {
+            delete interfaceItemArray
+            delete deviceItemArray
+            interfaceItemArray = []
+            deviceItemArray = []
+            while(deviceRootView.count !== 0) {
+                deviceRootView.removeItem(0)
+                interfaceView.removeItem(0)
+            }
+            modeSelectView.setCurrentIndex(indexItem_Logo)
+        } catch (error) {
+            console.log ("Error loading QML : ")
+            for (var i = 0; i < error.qmlErrors.length; i++) {
+                console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                console.log("fileName: " + error.qmlErrors[i].fileName)
+                console.log("message: " + error.qmlErrors[i].message)
+            }
         }
-        modeSelectView.setCurrentIndex(indexItem_Logo)
     }
 
     // *************  interfaces  **************/
     function intefaceAdded(ioType, keyProperty, valueProperty) {
-        switch(ioType.toLowerCase()) {
-        case "serial":
-            var componentQml = Qt.createComponent("qrc:/qml/interfaces/DevPropertySerialPort.qml");
-            var item = componentQml.createObject(interfaceView)
-            item.setPropertyValues(keyProperty, valueProperty)
-            interfaceView.addItem(item)
-            interfaceItemArray.push(item);
-            modeSelectView.setCurrentIndex(indexItem_Intefaces)
-            var devItem = Qt.createQmlObject('import QtQuick.Controls 2.4;SwipeView{anchors.fill:parent;interactive:false;clip: true;}', deviceRootView);
-            deviceItemArray.push([])
-            deviceRootView.addItem(devItem)
-            break;
-        default: break;
+        try {
+            switch(ioType.toLowerCase()) {
+            case "serial":
+                var componentQml = Qt.createComponent("qrc:/qml/interfaces/DevPropertySerialPort.qml");
+                var item = componentQml.createObject(interfaceView)
+                item.setPropertyValues(keyProperty, valueProperty)
+                interfaceItemArray.push(item);
+                interfaceView.addItem(item)
+                modeSelectView.setCurrentIndex(indexItem_Intefaces)
+                var devItem = Qt.createQmlObject('import QtQuick.Controls 2.4;SwipeView{interactive:true;clip:true;}', deviceRootView);
+//                var devItem = Qt.createQmlObject('import QtQuick.Controls 2.4;SwipeView{anchors.fill:parent;interactive:false;clip:true;}', deviceRootView);
+                deviceItemArray.push([])
+                deviceRootView.addItem(devItem)
+                break;
+            default: break;
+            }
+        } catch (error) {
+            console.log ("Error loading QML : ")
+            for (var i = 0; i < error.qmlErrors.length; i++) {
+                console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                console.log("fileName: " + error.qmlErrors[i].fileName)
+                console.log("message: " + error.qmlErrors[i].message)
+            }
         }
     }
 
     function intefaceDeleted(ioIndex) {
-        interfaceView.removeItem(ioIndex)
-        interfaceItemArray.splice(ioIndex, ioIndex+1)
-        if(interfaceItemArray.length <=0) {
-            modeSelectView.setCurrentIndex(indexItem_Logo)
+        try {
+            interfaceView.removeItem(ioIndex)
+            delete interfaceItemArray[ioIndex]
+            interfaceItemArray.splice(ioIndex, ioIndex+1)
+            if(interfaceItemArray.length <=0) {
+                modeSelectView.setCurrentIndex(indexItem_Logo)
+            }
+            delete deviceItemArray[ioIndex]
+            deviceItemArray.splice(ioIndex, ioIndex+1)
+            var item = deviceRootView.itemAt(ioIndex)
+            deviceRootView.removeItem(ioIndex)
+            delete item
+        } catch (error) {
+            console.log ("Error loading QML : ")
+            for (var i = 0; i < error.qmlErrors.length; i++) {
+                console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                console.log("fileName: " + error.qmlErrors[i].fileName)
+                console.log("message: " + error.qmlErrors[i].message)
+            }
         }
-        deviceItemArray.splice(ioIndex, ioIndex+1)
-        deviceRootView.removeItem(ioIndex)
     }
 
     function setActiveInterfacePanelType(ioType, ioIndex) {
-        switch(ioType.toLowerCase()) {
-        case "serial":
-            for(var len=0; len<interfaceItemArray.length; len++) {
-                interfaceItemArray[len].visible = false
+        try {
+            switch(ioType.toLowerCase()) {
+            case "serial":
+                for(var len=0; len<interfaceItemArray.length; len++) {
+                    interfaceItemArray[len].visible = false
+                }
+                if(interfaceItemArray !== undefined) {
+                    if(interfaceItemArray[ioIndex] !== undefined) {
+                        interfaceItemArray[ioIndex].visible = true
+                    }
+                }
+                modeSelectView.setCurrentIndex(indexItem_Intefaces)
+                interfaceView.setCurrentIndex(ioIndex)
+                break;
+            default: break;
             }
-            interfaceItemArray[ioIndex].visible = true
-            modeSelectView.setCurrentIndex(indexItem_Intefaces)
-            interfaceView.setCurrentIndex(ioIndex)
-            break;
-        default: break;
+        } catch (error) {
+            console.log ("Error loading QML : ")
+            for (var i = 0; i < error.qmlErrors.length; i++) {
+                console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                console.log("fileName: " + error.qmlErrors[i].fileName)
+                console.log("message: " + error.qmlErrors[i].message)
+            }
         }
     }
 
     function setInterfaceProperites(ioType, ioIndex, keyProperty, valueProperty) {
-        modeSelectView.setCurrentIndex(indexItem_Intefaces)
-        interfaceView.setCurrentIndex(ioIndex)
-        interfaceItemArray[ioIndex].setPropertyValues(keyProperty, valueProperty)
+        try {
+            modeSelectView.setCurrentIndex(indexItem_Intefaces)
+            interfaceView.setCurrentIndex(ioIndex)
+            if(interfaceItemArray !== undefined) {
+                if(interfaceItemArray[ioIndex] !== undefined) {
+                    interfaceItemArray[ioIndex].setPropertyValues(keyProperty, valueProperty)
+                }
+            }
+        } catch (error) {
+            console.log ("Error loading QML : ")
+            for (var i = 0; i < error.qmlErrors.length; i++) {
+                console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                console.log("fileName: " + error.qmlErrors[i].fileName)
+                console.log("message: " + error.qmlErrors[i].message)
+            }
+        }
     }
 
     function intefaceSetResultCheckDevice(ioIndex, devTypeName, devId, devSn, result) {
-        interfaceItemArray[ioIndex].setResultCheckDevice(devTypeName, devId, devSn, result)
+        try {
+            if(interfaceItemArray !== undefined) {
+                if(interfaceItemArray[ioIndex] !== undefined) {
+                    interfaceItemArray[ioIndex].setResultCheckDevice(devTypeName, devId, devSn, result)
+                }
+            }
+        } catch (error) {
+            console.log ("Error loading QML : ")
+            for (var i = 0; i < error.qmlErrors.length; i++) {
+                console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                console.log("fileName: " + error.qmlErrors[i].fileName)
+                console.log("message: " + error.qmlErrors[i].message)
+            }
+        }
     }
 
     // *************  devices   **************/
     function deviceAdded(ioIndex, devType, devKeyProperty, devValueProperty) {
-        switch(devType.toLowerCase()) {
-        case "progress tmk24":
-            var componentQml = Qt.createComponent("qrc:/qml/devices/DevPropertyProgressTmk24.qml");
-            var item = componentQml.createObject(deviceRootView.currentItem)
-            item.setInitProperty(devKeyProperty, devValueProperty)
-            deviceRootView.setCurrentIndex(ioIndex)
-            var it = deviceRootView.currentItem
-            it.addItem(item)
-            deviceItemArray[ioIndex].push(item);
-            deviceRootView.setCurrentIndex(ioIndex)
-            modeSelectView.setCurrentIndex(indexItem_Devices)
-            break;
-        case "nozzle rev 0.0":
-            break;
-        default: break;
+        try {
+            switch(devType.toLowerCase()) {
+            case "progress tmk24":
+                var componentQml = Qt.createComponent("qrc:/qml/devices/DevPropertyProgressTmk24.qml");
+                var devSwipe = deviceRootView.itemAt(ioIndex)
+                var item = componentQml.createObject(devSwipe)
+                item.setInitProperty(devKeyProperty, devValueProperty)
+                devSwipe.addItem(item)
+                deviceItemArray[ioIndex].push(item);
+                deviceRootView.setCurrentIndex(ioIndex)
+                devSwipe.setCurrentIndex(devSwipe.length-1)
+                modeSelectView.setCurrentIndex(indexItem_Devices)
+                break;
+            case "nozzle rev 0.0":
+                break;
+            default: break;
+            }
+        } catch (error) {
+            console.log ("Error loading QML : ")
+            for (var i = 0; i < error.qmlErrors.length; i++) {
+                console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                console.log("fileName: " + error.qmlErrors[i].fileName)
+                console.log("message: " + error.qmlErrors[i].message)
+            }
         }
     }
 
     function deviceDeleted(ioIndex, devIndex) {
-        var it = deviceRootView.itemAt(ioIndex)
-        it.removeItem(devIndex)
-        deviceItemArray[ioIndex].splice(devIndex, devIndex+1)
-        if(deviceItemArray[ioIndex].length === 0) {
-            modeSelectView.setCurrentIndex(indexItem_Intefaces)
-        } else {
-            deviceRootView.setCurrentIndex(ioIndex) // ???
-            it = deviceRootView.itemAt(ioIndex)
-            it.setCurrentIndex(deviceItemArray[ioIndex].size-1)
-        }
-        if(interfaceItemArray.length <=0) {
-            modeSelectView.setCurrentIndex(indexItem_Logo)
+        try {
+            var it = deviceRootView.itemAt(ioIndex)
+            it.removeItem(devIndex)
+            delete deviceItemArray[ioIndex][devIndex]
+            deviceItemArray[ioIndex].splice(devIndex, devIndex+1)
+            if(deviceItemArray[ioIndex].length === 0) {
+                modeSelectView.setCurrentIndex(indexItem_Intefaces)
+            } else {
+                deviceRootView.setCurrentIndex(ioIndex) // ???
+                it = deviceRootView.itemAt(ioIndex)
+                it.setCurrentIndex(deviceItemArray[ioIndex].size-1)
+            }
+            if(interfaceItemArray.length <=0) {
+                modeSelectView.setCurrentIndex(indexItem_Logo)
+            }
+        } catch (error) {
+            console.log ("Error loading QML : ")
+            for (var i = 0; i < error.qmlErrors.length; i++) {
+                console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                console.log("fileName: " + error.qmlErrors[i].fileName)
+                console.log("message: " + error.qmlErrors[i].message)
+            }
         }
     }
 
     function setActiveDevicePanelType(devType, ioIndex, devIndex) { /****/
-        for(var len=0; len<deviceRootView.count; len++) {
-            for(var lenSub=0; lenSub<deviceItemArray[len].length; lenSub++) {
-                deviceItemArray[len][lenSub].visible = false
+        try {
+//            for(var len=0; len<deviceRootView.count; len++) {
+//                for(var lenSub=0; lenSub<deviceItemArray[len].length; lenSub++) {
+//                    deviceItemArray[len][lenSub].visible = false
+//                }
+//            }
+            deviceRootView.setCurrentIndex(ioIndex) // ????
+            var it = deviceRootView.itemAt(ioIndex)
+            it.setCurrentIndex(devIndex)
+//            it.visible = true
+//            if(isAvailableSubIndex(deviceItemArray, ioIndex, devIndex)) {
+//                deviceItemArray[ioIndex][devIndex].visible = true
+//            }
+            modeSelectView.setCurrentIndex(indexItem_Devices)
+        } catch (error) {
+            console.log ("Error loading QML : ")
+            for (var i = 0; i < error.qmlErrors.length; i++) {
+                console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                console.log("fileName: " + error.qmlErrors[i].fileName)
+                console.log("message: " + error.qmlErrors[i].message)
             }
         }
-        deviceRootView.setCurrentIndex(ioIndex) // ????
-        var it = deviceRootView.itemAt(ioIndex)
-        it.setCurrentIndex(devIndex)
-        it.visible = true
-        deviceItemArray[ioIndex][devIndex].visible = true
-        modeSelectView.setCurrentIndex(indexItem_Devices)
     }
 
     function setDevCustomCommandExecuted(typeDev, ioIndex, devIndex, keys, args, ackMessageIsVisible) { /****/
-        deviceItemArray[ioIndex][devIndex].setCustomCommandExecuted(keys, args, ackMessageIsVisible)
+        try {
+            if(isAvailableSubIndex(deviceItemArray, ioIndex, devIndex)) {
+                deviceItemArray[ioIndex][devIndex].setCustomCommandExecuted(keys, args, ackMessageIsVisible)
+            }
+        } catch (error) {
+            console.log ("Error loading QML : ")
+            for (var i = 0; i < error.qmlErrors.length; i++) {
+                console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                console.log("fileName: " + error.qmlErrors[i].fileName)
+                console.log("message: " + error.qmlErrors[i].message)
+            }
+        }
     }
 
     // *************  message **************/
     function showDeviceAddError(devTypeName, errorMessage) {
-        dialogAddDeviceFail.message = errorMessage
-        dialogAddDeviceFail.open()
+        try {
+            dialogAddDeviceFail.message = errorMessage
+            dialogAddDeviceFail.open()
+        } catch (error) {
+            console.log ("Error loading QML : ")
+            for (var i = 0; i < error.qmlErrors.length; i++) {
+                console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                console.log("fileName: " + error.qmlErrors[i].fileName)
+                console.log("message: " + error.qmlErrors[i].message)
+            }
+        }
     }
 
-    function setDevReadyProperties(typeDev, ioIndex, devIndex, keys, values) { /****/
-        deviceItemArray[ioIndex][devIndex].setPropertyes(keys, values)
-        deviceRootView.setCurrentIndex(ioIndex) // ????
-        var it = deviceRootView.itemAt(ioIndex)
-        it.setCurrentIndex(devIndex)
+    function setDevReadyProperties(typeDev, ioIndex, devIndex, keys, values) {
+        try {
+            if(isAvailableSubIndex(deviceItemArray, ioIndex, devIndex)) {
+                deviceItemArray[ioIndex][devIndex].setPropertyes(keys, values)
+            }
+            deviceRootView.setCurrentIndex(ioIndex) // ????
+            var it = deviceRootView.itemAt(ioIndex)
+            it.setCurrentIndex(devIndex)
+        } catch (error) {
+            console.log ("Error loading QML : ")
+            for (var i = 0; i < error.qmlErrors.length; i++) {
+                console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                console.log("fileName: " + error.qmlErrors[i].fileName)
+                console.log("message: " + error.qmlErrors[i].message)
+            }
+        }
     }
 
-    function setReadyPeriodicData(typeDev, ioIndex, devIndex, keys, values) { /****/
-        deviceRootView.setCurrentIndex(ioIndex) // ???
-        var it = deviceRootView.itemAt(ioIndex)
-        it.setCurrentIndex(devIndex)
-        var id = deviceItemArray[ioIndex][devIndex].getId()
-        if(getDevIsThis(id, keys, values)) {
-            deviceItemArray[ioIndex][devIndex].insertPeriodicData(keys, values)
+    function setReadyPeriodicData(typeDev, ioIndex, devIndex, keys, values) {
+        try {
+            deviceRootView.setCurrentIndex(ioIndex) // ???
+            var it = deviceRootView.itemAt(ioIndex)
+            it.setCurrentIndex(devIndex)
+            if(isAvailableSubIndex(deviceItemArray, ioIndex, devIndex)) {
+                var id = deviceItemArray[ioIndex][devIndex].getId()
+                if(getDevIsThis(id, keys, values)) {
+                    deviceItemArray[ioIndex][devIndex].insertPeriodicData(keys, values)
+                }
+            }
+        } catch (error) {
+            console.log ("Error loading QML : ")
+            for (var i = 0; i < error.qmlErrors.length; i++) {
+                console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                console.log("fileName: " + error.qmlErrors[i].fileName)
+                console.log("message: " + error.qmlErrors[i].message)
+            }
         }
     }
 
     function setDevConnected(ioIndex, devIndex, typeDev) { /****/
-        deviceItemArray[ioIndex][devIndex].setConnected()
+        try {
+            if(isAvailableSubIndex(deviceItemArray, ioIndex, devIndex)) {
+                deviceItemArray[ioIndex][devIndex].setConnected()
+            }
+        } catch (error) {
+            console.log ("Error loading QML : ")
+            for (var i = 0; i < error.qmlErrors.length; i++) {
+                console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                console.log("fileName: " + error.qmlErrors[i].fileName)
+                console.log("message: " + error.qmlErrors[i].message)
+            }
+        }
     }
 
     function setDevReady(ioIndex, devIndex, typeDev) { /****/
-        deviceItemArray[ioIndex][devIndex].setReady()
+        try {
+            if(isAvailableSubIndex(deviceItemArray, ioIndex, devIndex)) {
+                deviceItemArray[ioIndex][devIndex].setReady()
+            }
+        } catch (error) {
+            console.log ("Error loading QML : ")
+            for (var i = 0; i < error.qmlErrors.length; i++) {
+                console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                console.log("fileName: " + error.qmlErrors[i].fileName)
+                console.log("message: " + error.qmlErrors[i].message)
+            }
+        }
     }
 
     function setDevDisconnected(ioIndex, devIndex, typeDev) { /****/
-        deviceItemArray[ioIndex][devIndex].setDisconnected()
+        try {
+            if(isAvailableSubIndex(deviceItemArray, ioIndex, devIndex)) {
+                deviceItemArray[ioIndex][devIndex].setDisconnected()
+            }
+        } catch (error) {
+            console.log ("Error loading QML : ")
+            for (var i = 0; i < error.qmlErrors.length; i++) {
+                console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                console.log("fileName: " + error.qmlErrors[i].fileName)
+                console.log("message: " + error.qmlErrors[i].message)
+            }
+        }
     }
 
     function getDevIsThis(id, keys, values, result) {
-        for(var i=0; i<keys.length; i++) {
-            if(keys[i] === "id") {
-                if(values[i] === id) {
-                    return true
+        try {
+            for(var i=0; i<keys.length; i++) {
+                if(keys[i] === "id") {
+                    if(values[i] === id) {
+                        return true
+                    }
                 }
+            }
+        } catch (error) {
+            console.log ("Error loading QML : ")
+            for (var i = 0; i < error.qmlErrors.length; i++) {
+                console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                console.log("fileName: " + error.qmlErrors[i].fileName)
+                console.log("message: " + error.qmlErrors[i].message)
             }
         }
         return false
     }
 
+    function isAvailableSubIndex(array, ioIndex, devIndex) {
+        if(array.length >= ioIndex) {
+            if(array[ioIndex] !== undefined) {
+                if(array[ioIndex].length >= devIndex) {
+                    if(array[ioIndex][devIndex] !== undefined) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     function setDevShowMessage(typeDev, messageHeader, message) {
-        switch(typeDev.toLowerCase()) {
-        case "progress tmk24":
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.devShowMessage(messageHeader, message)
-            break;
-        case "nozzle rev 0.0":
-            projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.devShowMessage(messageHeader, message)
-            break;
-        default: break;
+        try {
+            switch(typeDev.toLowerCase()) {
+            case "progress tmk24":
+                projectPanel.devicePanel.devicePropertyPanel.devPropertyProgressTmk24.devShowMessage(messageHeader, message)
+                break;
+            case "nozzle rev 0.0":
+                projectPanel.devicePanel.devicePropertyPanel.devPropertyNozzle_v_0_00.devShowMessage(messageHeader, message)
+                break;
+            default: break;
+            }
+        } catch (error) {
+            console.log ("Error loading QML : ")
+            for (var i = 0; i < error.qmlErrors.length; i++) {
+                console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                console.log("fileName: " + error.qmlErrors[i].fileName)
+                console.log("message: " + error.qmlErrors[i].message)
+            }
         }
     }
 
     function addDeviceLog(ioIndex, devIndex, codeMessage, message) {
-        deviceItemArray[ioIndex][devIndex].addLogMessage(codeMessage, message)
+        try {
+            if(isAvailableSubIndex(deviceItemArray, ioIndex, devIndex)) {
+                deviceItemArray[ioIndex][devIndex].addLogMessage(codeMessage, message)
+            }
+        } catch (error) {
+            console.log ("Error loading QML : ")
+            for (var i = 0; i < error.qmlErrors.length; i++) {
+                console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                console.log("fileName: " + error.qmlErrors[i].fileName)
+                console.log("message: " + error.qmlErrors[i].message)
+            }
+        }
     }
 
-    function addLogMessage(codeMessage, message) {}
+    function addLogMessage(codeMessage, message) {
+
+    }
 
     // TODO: type!
     function devShowTypeIncorrect(typeDev, devNameId) {
-        dialogTypeError.messageArg = devNameId
-        dialogTypeError.open()
+        try {
+            dialogTypeError.messageArg = devNameId
+            dialogTypeError.open()
+        } catch (error) {
+            console.log ("Error loading QML : ")
+            for (var i = 0; i < error.qmlErrors.length; i++) {
+                console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                console.log("fileName: " + error.qmlErrors[i].fileName)
+                console.log("message: " + error.qmlErrors[i].message)
+            }
+        }
     }
 
     Rectangle {
@@ -247,9 +498,6 @@ Rectangle {
                         interactive: false
                         anchors.fill: parent
                         clip: true
-                        DevPropertySerialPort {
-                            id: devPropertySerialPort
-                        }
                     }
                 }
                 Item {
@@ -268,7 +516,7 @@ Rectangle {
             visible: false
             title: "Добавление устройства"
             property string message: ""
-            standardButtons: StandardButton.Accept
+            //standardButtons: StandardButton.Accept
             Rectangle {
                 color: "transparent"
                 implicitWidth: 400
@@ -309,13 +557,11 @@ Rectangle {
                 implicitWidth: 500
                 implicitHeight: 80
                 Column{
-                    anchors.fill: parent
-                    spacing: 10
+                    spacing: 50
                     Text {
                         text: qsTr("Доступна новая версия программы\nРекомендуется скачать инсталятор, удалить текущую версию и установить новую!\n")
                     }
                     Text {
-                        anchors.centerIn: parent
                         text: "<a href='" + updateVersionDialog.url + "'>Нажмите здесь</a>"
                         onLinkActivated: Qt.openUrlExternally(link)
                     }

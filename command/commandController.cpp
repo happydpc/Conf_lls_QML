@@ -6,7 +6,7 @@ CommandController::CommandController(QObject *parent) : QObject(parent) {
 
 bool CommandController::addCommandToStack(sCommandData devCommandData) {
     commandQueue.enqueue(devCommandData);
-    return !commandQueue.empty();
+    return !commandQueue.isEmpty();
 }
 
 QPair<bool, CommandController::sCommandData> CommandController::getCommandFirstCommand() {

@@ -9,6 +9,8 @@
 #include "device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.h"
 #include "device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.h"
 
+#define USE_DB_VIEWCONTROLLER       1
+
 ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObject(parent) {
     this->softwareUpdater = new Updater();
     this->connFactory = new ConnectionFactory();
@@ -40,9 +42,13 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
         //        addDeviceToConnection("Nozzle Rev 0.0", QStringList("id"), QStringList("1"));
     });
 
-    QTimer::singleShot(10000, Qt::CoarseTimer, [&] {
-        checkUpdateVersionSoftware();
-    });
+    //    QTimer::singleShot(10000, Qt::CoarseTimer, [&] {
+    //        checkUpdateVersionSoftware();
+    //    });
+
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: -create Ok";
+#endif
 }
 
 ViewController::~ViewController() {
@@ -54,22 +60,34 @@ ViewController::~ViewController() {
 }
 
 void ViewController::checkUpdateVersionSoftware() {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - checkUpdate";
+#endif
     softwareUpdater->checkNewUpdate();
 }
 
 void ViewController::updateVersion(QString downloadUrl) {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - emit updateSoftReady";
+#endif
     emit isAvailableNewVersion(downloadUrl);
 }
 
 // TODO: need uniqPtr
 QList<ServiceDevicesAbstract*> ViewController::getNewServices() {
     QList<ServiceDevicesAbstract*> res;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getNewService";
+#endif
     res << new Progress_tmk24Service("PROGRESS TMK24");
     res << new Nozzle_Rev_0_00_Service("Nozzle Rev 0.0");
     return res;
 }
 
 void ViewController::resetSession() {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - resetSession";
+#endif
     disconnect(interfaceTree, SIGNAL(currentIndexIsChangedDevice(int,int)), this, SLOT(setChangedIndexDevice(int,int)));
     disconnectToDevSignals();
     for(int devCout=0;devCout<connFactory->getCountConnection(); devCout++) {
@@ -83,17 +101,29 @@ void ViewController::resetSession() {
     // очистка всех item на форме
     // иначе надо долго очищать по одному
     emit clearAllFrontEndItems();
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - resetSession -Ok";
+#endif
 }
 
 bool ViewController::removeSessionByName(QString sessionName) {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - removeSessionByName";
+#endif
     return sessionSecurity->removeSession(sessionName);
 }
 
 QStringList ViewController::getListSession() {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getListSession";
+#endif
     return sessionSecurity->getAvailableSessions();
 }
 
 bool ViewController::loadSession(QString sessionName) {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - loadSession=" << sessionName;
+#endif
     Session t_load_session = sessionSecurity->getSessionByName(sessionName);
     if(t_load_session.getIsValid()) {
         for(auto itInteface:t_load_session.getInterfaces()) {
@@ -106,6 +136,9 @@ bool ViewController::loadSession(QString sessionName) {
             }
         }
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - loadSession=" << sessionName << "-Ok";
+#endif
     return t_load_session.getIsValid();
 }
 
@@ -113,6 +146,9 @@ QString ViewController::saveCurrentSession() {
     Session session;
     Session::sDevices t_session_dev;
     Session::sInterface t_session_io;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - saveCurrentSession";
+#endif
     int connAll = connFactory->getCountConnection();
     session.setSessionName("Сеанс_" + QDateTime::currentDateTimeUtc().toString("yyyy/M/d/hh:mm:ss:z"));
     for(int ioCounter=0; ioCounter<connAll; ioCounter++) {
@@ -137,13 +173,20 @@ QString ViewController::saveCurrentSession() {
             }
         }
     }
-    return sessionSecurity->saveSession(session);
+    QString resNameSession = sessionSecurity->saveSession(session);
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - saveCurrentSession -OK " << resNameSession;
+#endif
+    return resNameSession;
 }
 
 QString ViewController::saveCurrentSessionAs(QString sessionName) {
     Session session;
     Session::sDevices t_session_dev;
     Session::sInterface t_session_io;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - saveCurrentSessinonAs=" << sessionName;
+#endif
     int connAll = connFactory->getCountConnection();
     session.setSessionName(QString("%1_%2").arg(sessionName).arg(QDateTime::currentDateTimeUtc().toString("yyyy/M/d/hh:mm:ss:z")));
     for(int ioCounter=0; ioCounter<connAll; ioCounter++) {
@@ -168,24 +211,40 @@ QString ViewController::saveCurrentSessionAs(QString sessionName) {
             }
         }
     }
-    return sessionSecurity->saveSession(session);
+    QString resNameSession = sessionSecurity->saveSession(session);
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - saveCurrentSessinonAs -OK =" << resNameSession;
+#endif
+    return resNameSession;
 }
 
 void ViewController::closeApplication() {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - closeApplication";
+#endif
     exit(0);
 }
 
 QStringList ViewController::getInterfaceAvailableToAdd(QString typeName) {
     QStringList res;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getInterfaceAvailableToAdd=" << typeName;
+#endif
     res = connFactory->getAvailableName(typeName);
     emit devUpdateLogMessage(interfaceTree->getIoIndex(),
                              interfaceTree->getDevIndex(), 0,
                              QString("Получение списка интерфейсов [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getInterfaceAvailableToAdd -OK = " << typeName;
+#endif
     return res;
 }
 
 bool ViewController::addConnection(QString typeName, QString name, QStringList keyParam, QStringList valueParam) {
     bool res = false;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - addConnection=" << typeName << " " << name;
+#endif
     if((!name.isEmpty()) && (!name.isEmpty())) {
         res = connFactory->addConnection(typeName, name, QPair<QStringList,QStringList>(keyParam, valueParam));
         if(res) {
@@ -211,10 +270,16 @@ bool ViewController::addConnection(QString typeName, QString name, QStringList k
             emit addConnectionFail(name);
         }
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - addConnection -OK " << typeName << " " << name;
+#endif
     return res;
 }
 
 void ViewController::removeActiveInterface() {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - removeActiveInterface";
+#endif
     int indexRemove = interfaceTree->getIoIndex();
     serviceList.removeAt(indexRemove);
     interfaceTree->removeConnection(indexRemove);
@@ -225,9 +290,15 @@ void ViewController::removeActiveInterface() {
         emit interfaceAndDeviceListIsEmpty();
     }
     emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),1, QString("Удаление интерфейса [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - removeActiveInterface -OK";
+#endif
 }
 
 void ViewController::removeActiveDevice() {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - removeActiveDevice";
+#endif
     int indexRemove = interfaceTree->getDevIndex();
     interfaceTree->removeDeviceToConnection(interfaceTree->getIoIndex(), indexRemove);
     getDeviceFactoryByIndex(interfaceTree->getIoIndex())->removeDeviceByIndex(indexRemove);
@@ -240,6 +311,9 @@ void ViewController::removeActiveDevice() {
         emit devSetActiveDeviceProperty(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),
                                         getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(interfaceTree->getDevIndex()));
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - removeActiveDevice -OK";
+#endif
 }
 
 bool ViewController::addDeviceToConnection(QString ioName, QString devTypeName, QStringList keyParam, QStringList valueParam) {
@@ -247,9 +321,15 @@ bool ViewController::addDeviceToConnection(QString ioName, QString devTypeName, 
     interfacesAbstract *pInterface = nullptr;
     bool serviceIsFinded = false;
     ServiceDevicesAbstract *p_service = nullptr;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - addDeviceToConnection = " << ioName << " " << devTypeName ;
+#endif
     // get interface
     pInterface = connFactory->getInterace(ioName);
     if(pInterface == nullptr) {
+#if USE_DB_VIEWCONTROLLER == 1
+        qDebug() << "ViewController: - addDeviceToConnection -ERR nullprt " << ioName << " " << devTypeName ;
+#endif
         return false;
     }
     for(auto services:serviceList[interfaceTree->getIoIndex()]) {
@@ -282,6 +362,9 @@ bool ViewController::addDeviceToConnection(QString ioName, QString devTypeName, 
             emit addDeviceFail(devTypeName, "Не получилось добавить одно или более устройств\nВозможные причины:\n 1) такой адрес уже используется\n 2) устройство отличается от типа уже добавленных устройств");
         }
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - addDeviceToConnection -OK " << ioName << " " << devTypeName ;
+#endif
     return res;
 }
 
@@ -290,6 +373,9 @@ bool ViewController::addDeviceToConnection(QString devTypeName, QStringList keyP
 }
 
 void ViewController::checkDeviceFromConnection(QString devTypeName, QStringList keyParam, QStringList valueParam) { // uniqIdDevice password
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - checkDeviceFromConnection = " << devTypeName ;
+#endif
     if(devTypeName == QString(Progress_tmk24::name)) {
         getDeviceFactoryByIndex(interfaceTree->getIoIndex())->checkDeviceIsOnline(DevicesFactory::Type_Progress_Tmk24, keyParam, valueParam);
     }
@@ -299,70 +385,146 @@ void ViewController::checkDeviceFromConnection(QString devTypeName, QStringList 
     if(devTypeName == QString(Nozzle_Revision_0_00_Oct_2018::name)) {
         getDeviceFactoryByIndex(interfaceTree->getIoIndex())->checkDeviceIsOnline(DevicesFactory::Type_Nozzle_rev_0_00, keyParam, valueParam);
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - checkDeviceFromConnection -OK " << devTypeName ;
+#endif
 }
 
 QStringList ViewController::getDeviceAvailableType() {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getDeviceAvailableType";
+#endif
     return getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getAvailableDeviceTypes();
 }
 
 QString ViewController::getCurrentInterfaceName() {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getCurrentInterfaceName";
+#endif
     QString name = connFactory->getInteraceNameFromIndex(interfaceTree->getIoIndex());
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getCurrentInterfaceName -OK " << name;
+#endif
     return name;
 }
 
 int ViewController::getInterfaceCount() {
-    return connFactory->getCountConnection();
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getInterfaceCount";
+#endif
+    int count = connFactory->getCountConnection();
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getInterfaceCount -OK " << count;
+#endif
+    return count;
 }
 
 QList<QString> ViewController::getCurrentDevPeriodicDataKey() {
     QList<QString> res;
     QString name;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getCurrentDevPeriodicDataKey";
+#endif
     name = connFactory->getInteraceNameFromIndex(interfaceTree->getIoIndex());
     if(!name.isEmpty()) {
         res = connFactory->getInterace(name)->getDeviceFactory()->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getCurrentDevPeriodicDataKey -OK ";
+#endif
     return res;
 }
 
 QList<QString> ViewController::getCurrentDevPeriodicDataValue() {
     QList<QString> res;
     QString name;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getCurrentDevPeriodicDataValue";
+#endif
     name = connFactory->getInteraceNameFromIndex(interfaceTree->getIoIndex());
     if(!name.isEmpty()) {
         res = connFactory->getInterace(name)->getDeviceFactory()->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getCurrentDevPeriodicDataValue -OK ";
+#endif
     return res;
 }
 
 int ViewController::getDeviceCount() {
-    return getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getDeviceCount";
+#endif
+    int count = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getDeviceCount -OK " << count;
+#endif
+    return count;
 }
 
 QStringList ViewController::getCurrentDevPropertyKey() {
-    QStringList ret = connFactory->getInterace(
-                connFactory->getInteraceNameFromIndex(interfaceTree->getIoIndex()))->getDeviceFactory()
-            ->getDevicePropertyByIndex(interfaceTree->getDevIndex()).first;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getCurrentDevPropertyKey";
+#endif
+    QStringList ret;
+    interfacesAbstract *p_interface = nullptr;
+    p_interface = connFactory->getInterace(connFactory->getInteraceNameFromIndex(interfaceTree->getIoIndex()));
+    if(p_interface != nullptr) {
+        ret = p_interface->getDeviceFactory()->getDevicePropertyByIndex(interfaceTree->getDevIndex()).first;
+    } else {
+#if USE_DB_VIEWCONTROLLER == 1
+        qDebug() << "ViewController: - getCurrentDevPropertyKey -ERR nullprt";
+#endif
+    }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getCurrentDevPropertyKey -OK ";
+#endif
     return ret;
 }
 
 QStringList ViewController::getCurrentDevPropertyValue() {
-    QStringList ret = connFactory->getInterace(
-                connFactory->getInteraceNameFromIndex(interfaceTree->getIoIndex()))->getDeviceFactory()
-            ->getDevicePropertyByIndex(interfaceTree->getDevIndex()).second;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getCurrentDevPropertyValue";
+#endif
+    QStringList ret;
+    interfacesAbstract *p_interface = nullptr;
+    p_interface = connFactory->getInterace(connFactory->getInteraceNameFromIndex(interfaceTree->getIoIndex()));
+    if(p_interface != nullptr) {
+        ret = p_interface->getDeviceFactory()->getDevicePropertyByIndex(interfaceTree->getDevIndex()).second;
+    } else {
+#if USE_DB_VIEWCONTROLLER == 1
+        qDebug() << "ViewController: - getCurrentDevPropertyValue -ERR nullprt";
+#endif
+    }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getCurrentDevPropertyValue -OK ";
+#endif
     return ret;
 }
 
 DevicesFactory* ViewController::getDeviceFactoryByIndex(int indexIterface) {
-    return connFactory->getInterace(connFactory->getInteraceNameFromIndex(indexIterface))->getDeviceFactory();
+    try {
+        return connFactory->getInterace(connFactory->getInteraceNameFromIndex(indexIterface))->getDeviceFactory();
+    } catch(...) {
+#if USE_DB_VIEWCONTROLLER == 1
+        qDebug() << "ViewController: - getDeviceFactoryByIndex -ERR " << indexIterface;
+#endif
+    }
 }
 
 bool ViewController::isCurrentDevice(QString uniqNameId) {
-    if(interfaceTree->getIoIndex() < connFactory->getCountConnection()) {
-        if(interfaceTree->getDevIndex() < getDeviceCount()) {
-            if(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceIdTextByIndex(interfaceTree->getDevIndex()) == uniqNameId) {
-                return true;
+    try {
+        if(interfaceTree->getIoIndex() < connFactory->getCountConnection()) {
+            if(interfaceTree->getDevIndex() < getDeviceCount()) {
+                if(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceIdTextByIndex(interfaceTree->getDevIndex()) == uniqNameId) {
+                    return true;
+                }
             }
         }
+    } catch(...) {
+#if USE_DB_VIEWCONTROLLER == 1
+        qDebug() << "ViewController: - isCurrentDevice -ERR " << uniqNameId;
+#endif
     }
     return false;
 }
@@ -371,6 +533,9 @@ bool ViewController::setCurrentDevCustomCommand(QString typeCommand, QStringList
     bool res = false;
     // сперва проверка на команды
     // которые можно выполнить сранужи
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - setCurrentDevCustomCommand =" << typeCommand;
+#endif
     if(getDeviceCount() != 0) {
         if(typeCommand == "change device head name") {
             for(auto i=0; i<keys.length(); i++) {
@@ -378,6 +543,9 @@ bool ViewController::setCurrentDevCustomCommand(QString typeCommand, QStringList
                     res = interfaceTree->changeDeviceHeader(getCurrentInterfaceName(),
                                                             getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceNameWithId(interfaceTree->getDevIndex()), values[i]);
                     getDeviceFactoryByIndex(interfaceTree->getIoIndex())->setDeviceHeader(interfaceTree->getDevIndex(), values[i]);
+#if USE_DB_VIEWCONTROLLER == 1
+                    qDebug() << "ViewController: - setCurrentDevCustomCommand -OK =" << res;
+#endif
                     return res;
                 }
             }
@@ -385,11 +553,23 @@ bool ViewController::setCurrentDevCustomCommand(QString typeCommand, QStringList
     }
     res = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->sendCustomCommadToDev(interfaceTree->getDevIndex(),
                                                                                       typeCommand, keys, values);
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - setCurrentDevCustomCommand =OK " << res;
+#endif
     return res;
 }
 
 DeviceAbstract* ViewController::getCurrentDeviceToAbstract() {
-    return getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
+    DeviceAbstract * p_devfact = nullptr;
+    try {
+        p_devfact = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
+    }
+    catch(...) {
+#if USE_DB_VIEWCONTROLLER == 1
+        qDebug() << "ViewController: - getCurrentDeviceToAbstract -ERR catch";
+#endif
+    }
+    return p_devfact;
 }
 
 
@@ -397,23 +577,39 @@ DeviceAbstract* ViewController::getCurrentDeviceToAbstract() {
 //**                        SECURITY, PROPERTYES                        **/
 //************************************************************************/
 void ViewController::deviceConnected(DevicesFactory::E_DeviceType type, QString uniqNameId) {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - deviceConnected -"<<type;
+#endif
     if(isCurrentDevice(uniqNameId)) {
         emit devConnected(interfaceTree->getIoIndex(),
                           getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId),
                           getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(interfaceTree->getDevIndex()));
     }
     emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),0, QString("Устройста подключено[%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - deviceConnected -OK -"<<type;
+#endif
 }
 
 void ViewController::deviceDisconnected(DevicesFactory::E_DeviceType type, QString uniqNameId) {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - deviceDisconnected -" << type << " " << uniqNameId;
+#endif
     if(isCurrentDevice(uniqNameId)) {
         emit devDisconnected(interfaceTree->getIoIndex(),
                              getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId),
                              getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceTypeNameByType(type));
     }
     emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),2, QString("Устройство потеряно [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - deviceDisconnected -OK -"<<type << " " << uniqNameId;
+#endif
 }
+
 void ViewController::deviceReadyCurrentData(DevicesFactory::E_DeviceType type, QString uniqNameId) {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - deviceReadyCurrentData -" << type << " " << uniqNameId;
+#endif
     switch(type) {
     case DevicesFactory::Type_Progress_tmk4UX: {
         if(isCurrentDevice(uniqNameId)) {
@@ -436,10 +632,17 @@ void ViewController::deviceReadyCurrentData(DevicesFactory::E_DeviceType type, Q
                                       getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId)).second);
         }
         if(devIndex >= 0) {
-            Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(
-                        getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(devIndex)->getServiceAbstract());
-            pService->placeCurrenDataFromDevice(uniqNameId, getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(devIndex));
-            pService->placeCurrentChartDataFromDevice(uniqNameId, getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceChartByIndex(devIndex));
+            ServiceDevicesAbstract *p_serviceAbstact = nullptr;
+            p_serviceAbstact = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(devIndex)->getServiceAbstract();
+            if(p_serviceAbstact != nullptr) {
+                try {
+                    Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(p_serviceAbstact);
+                    pService->placeCurrenDataFromDevice(uniqNameId, getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(devIndex));
+                    pService->placeCurrentChartDataFromDevice(uniqNameId, getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceChartByIndex(devIndex));
+                } catch(...) {
+                    qDebug() << "-ERR (catch - Progress_tmk24Service* pService)";
+                }
+            }
         }
     }
         break;
@@ -455,9 +658,15 @@ void ViewController::deviceReadyCurrentData(DevicesFactory::E_DeviceType type, Q
     case DevicesFactory::Type_Undefined: break;
     }
     emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),1, QString("Получение данных с устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - deviceReadyCurrentData -OK" << type << " " << uniqNameId;
+#endif
 }
 
 void ViewController::deviceCheckReady(DevicesFactory::E_DeviceType devType, QString devUniqNameId, bool result) {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - deviceCheckReady -" << devType << " " << devUniqNameId;
+#endif
     if(devType == DevicesFactory::Type_Progress_Tmk24) {
         emit devReadyCheckCommand(interfaceTree->getIoIndex(), QString(Progress_tmk24::name), devUniqNameId, "...", result);
     }
@@ -467,18 +676,31 @@ void ViewController::deviceCheckReady(DevicesFactory::E_DeviceType devType, QStr
     if(devType == DevicesFactory::Type_Nozzle_rev_0_00) {
         emit devReadyCheckCommand(interfaceTree->getIoIndex(), QString(Nozzle_Revision_0_00_Oct_2018::name), devUniqNameId, "...", result);
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - deviceCheckReady -OK" << devType << " " << devUniqNameId;
+#endif
 }
 
 void ViewController::deviceReadyProperties(DevicesFactory::E_DeviceType type, QString uniqNameId) {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - deviceReadyProperties -" << type << " " << uniqNameId;
+#endif
     emit devReadyProperties(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(interfaceTree->getDevIndex()),
                             interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),
                             getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(interfaceTree->getDevIndex()).first,
                             getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(interfaceTree->getDevIndex()).second);
     emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),0, QString("Получение информации с устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - deviceReadyProperties -OK" << type << " " << uniqNameId;
+#endif
 }
+
 void ViewController::deviceReadyInit(DevicesFactory::E_DeviceType type, QString uniqNameId) {}
 
 void ViewController::interfaceTreeChanged(int ioIndex, ConnectionFactory::E_ConnectionUpdateType type) {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - interfaceTreeChanged " << ioIndex;
+#endif
     switch(type) {
     case ConnectionFactory::Type_Update_ChangedIndex:
     case ConnectionFactory::Type_Update_Add:
@@ -498,13 +720,22 @@ void ViewController::interfaceTreeChanged(int ioIndex, ConnectionFactory::E_Conn
         }
     }
     emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),2, QString("Перестроение дерева интерфейсов[%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - interfaceTreeChanged -OK" << ioIndex;
+#endif
 }
 
 void ViewController::deviceLogMessage(int indexDev, QStringList message) {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - deviceLogMessage" << indexDev << " " << message;
+#endif
     while(!message.empty()) {
         emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),0, message.first());
         message.pop_front();
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - deviceLogMessage -OK" << indexDev << " " << message;
+#endif
 }
 
 void ViewController::deviceReadyCustomCommand(int indexDev, QString message,
@@ -513,6 +744,9 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message,
     DevicesFactory *pDevFactory = nullptr;
     QStringList keys;
     QStringList values;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - deviceReadyCustomCommand " << indexDev << " " << message;
+#endif
     pDevFactory = getDeviceFactoryByIndex(interfaceTree->getIoIndex());
     if(pDevFactory != nullptr) {
         emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),2, QString("Получен ответ с команды [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
@@ -547,36 +781,42 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message,
                                               keys, values, commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Progress_tmk24Data::lls_read_cal_table) {
-                Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(pDevFactory->getDeviceToDeviceAbstract(indexDev)->getServiceAbstract());
-                pService->placeTableFromDevice(commmandData.deviceIdent, keyCustomData, valueCustomData);
-                if(pService->readTableAllDeviceIsReady()) {
-                    //emit devUpdateReadTarTable(pService->getDeviceCount());
-                    keys << "lls_read_cal_table" << keyCustomData;
-                    values << message.toLower() << valueCustomData;
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
-                                                  interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),
-                                                  keys, values, commmandData.isNeedAckMessage);
+                Progress_tmk24Service* pService = nullptr;
+                pService = dynamic_cast<Progress_tmk24Service*>(pDevFactory->getDeviceToDeviceAbstract(indexDev)->getServiceAbstract());
+                if(pService != nullptr) {
+                    pService->placeTableFromDevice(commmandData.deviceIdent, keyCustomData, valueCustomData);
+                    if(pService->readTableAllDeviceIsReady()) {
+                        //emit devUpdateReadTarTable(pService->getDeviceCount());
+                        keys << "lls_read_cal_table" << keyCustomData;
+                        values << message.toLower() << valueCustomData;
+                        emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                                      interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),
+                                                      keys, values, commmandData.isNeedAckMessage);
+                    }
                 }
             }
             if(commmandData.devCommand == Progress_tmk24Data::lls_write_cal_table) {
-                Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(pDevFactory->getDeviceToDeviceAbstract(indexDev)->getServiceAbstract());
-                pService->placeAckReplyOfWriteTableFromDevice(commmandData.deviceIdent, (message == "Normal" ? (true) : (false)));
-                if(pService->readTableAllDeviceIsReady()) {
-                    QStringList resWrite;
-                    for(int index=0; index<pService->getDeviceCount(); index++) {
-                        resWrite << QString("\nID%1 [%2][SN-%3]   статус - %4").arg(commmandData.deviceIdent)
-                                    .arg(pService->getDeviceProperty(index).at(0))
-                                    .arg(pService->getDeviceProperty(index).at(2))
-                                    .arg(message == QString("Normal") ? QString("Успешно записано") :
-                                                                        (message == QString("Data no valid") ?
-                                                                             (QString("Устройство отвергло данные")) :
-                                                                             QString("Нет ответа")));
+                Progress_tmk24Service* pService = nullptr;
+                pService = dynamic_cast<Progress_tmk24Service*>(pDevFactory->getDeviceToDeviceAbstract(indexDev)->getServiceAbstract());
+                if(pService != nullptr) {
+                    pService->placeAckReplyOfWriteTableFromDevice(commmandData.deviceIdent, (message == "Normal" ? (true) : (false)));
+                    if(pService->readTableAllDeviceIsReady()) {
+                        QStringList resWrite;
+                        for(int index=0; index<pService->getDeviceCount(); index++) {
+                            resWrite << QString("\nID%1 [%2][SN-%3]   статус - %4").arg(commmandData.deviceIdent)
+                                        .arg(pService->getDeviceProperty(index).at(0))
+                                        .arg(pService->getDeviceProperty(index).at(2))
+                                        .arg(message == QString("Normal") ? QString("Успешно записано") :
+                                                                            (message == QString("Data no valid") ?
+                                                                                 (QString("Устройство отвергло данные")) :
+                                                                                 QString("Нет ответа")));
+                        }
+                        keys << "lls_write_cal_table" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
+                        values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
+                        emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
+                                                      interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),
+                                                      keys, values, commmandData.isNeedAckMessage);
                     }
-                    keys << "lls_write_cal_table" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
-                    values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
-                    emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
-                                                  interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),
-                                                  keys, values, commmandData.isNeedAckMessage);
                 }
             }
             if(commmandData.devCommand == Progress_tmk24Data::lls_read_lvl_all) {
@@ -696,9 +936,15 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message,
         case DevicesFactory::Type_Undefined: break;
         }
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - deviceReadyCustomCommand -OK" << indexDev << " " << message;
+#endif
 }
 
 void ViewController::deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, int indexDev) {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - deviceTreeChanged " << indexDev;
+#endif
     switch(type) {
     case DevicesFactory::Type_Update_ChangeStatus:
         if(getDeviceCount() >= indexDev) {
@@ -715,70 +961,109 @@ void ViewController::deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, 
         emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),2, QString("Не правильный тип [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
         break;
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - deviceTreeChanged -OK" << indexDev;
+#endif
 }
 
 void ViewController::disconnectToDevSignals() {
-    int countConn = connFactory->getCountConnection();
-    for(int i=0; i<countConn; i++) {
-        DevicesFactory *p_dev_factory = getDeviceFactoryByIndex(i);
-        if(p_dev_factory != nullptr) {
-            disconnect(p_dev_factory, SIGNAL(deviceConnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceConnected(DevicesFactory::E_DeviceType,QString)));
-            disconnect(p_dev_factory, SIGNAL(deviceDisconnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceDisconnected(DevicesFactory::E_DeviceType,QString)));
-            disconnect(p_dev_factory, SIGNAL(deviceReadyCurrentDataSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyCurrentData(DevicesFactory::E_DeviceType,QString)));
-            disconnect(p_dev_factory, SIGNAL(deviceReadyInitSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyInit(DevicesFactory::E_DeviceType,QString)));
-            disconnect(p_dev_factory, SIGNAL(deviceReadyPropertiesSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyProperties(DevicesFactory::E_DeviceType,QString)));
-            disconnect(p_dev_factory,
-                       SIGNAL(deviceUpdateTree(DevicesFactory::E_DeviceUpdateType,int)),
-                       this, SLOT(deviceTreeChanged(DevicesFactory::E_DeviceUpdateType,int)));
-            disconnect(p_dev_factory, SIGNAL(deviceReadyCustomCommand(int,QString,QStringList,QStringList,CommandController::sCommandData)),
-                       this, SLOT(deviceReadyCustomCommand(int,QString, QStringList,QStringList, CommandController::sCommandData)));
-            disconnect(p_dev_factory, SIGNAL(deviceReadyLog(int,QStringList)),
-                       this, SLOT(deviceLogMessage(int, QStringList)));
-            disconnect(p_dev_factory, SIGNAL(deviceCheckIsReady(DevicesFactory::E_DeviceType,QString,bool)),
-                       this, SLOT(deviceCheckReady(DevicesFactory::E_DeviceType,QString,bool)));
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - disconnectToDevSignals";
+#endif
+    try {
+        int countConn = connFactory->getCountConnection();
+        for(int i=0; i<countConn; i++) {
+            DevicesFactory *p_dev_factory = getDeviceFactoryByIndex(i);
+            if(p_dev_factory != nullptr) {
+                disconnect(p_dev_factory, SIGNAL(deviceConnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceConnected(DevicesFactory::E_DeviceType,QString)));
+                disconnect(p_dev_factory, SIGNAL(deviceDisconnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceDisconnected(DevicesFactory::E_DeviceType,QString)));
+                disconnect(p_dev_factory, SIGNAL(deviceReadyCurrentDataSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyCurrentData(DevicesFactory::E_DeviceType,QString)));
+                disconnect(p_dev_factory, SIGNAL(deviceReadyInitSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyInit(DevicesFactory::E_DeviceType,QString)));
+                disconnect(p_dev_factory, SIGNAL(deviceReadyPropertiesSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyProperties(DevicesFactory::E_DeviceType,QString)));
+                disconnect(p_dev_factory,
+                           SIGNAL(deviceUpdateTree(DevicesFactory::E_DeviceUpdateType,int)),
+                           this, SLOT(deviceTreeChanged(DevicesFactory::E_DeviceUpdateType,int)));
+                disconnect(p_dev_factory, SIGNAL(deviceReadyCustomCommand(int,QString,QStringList,QStringList,CommandController::sCommandData)),
+                           this, SLOT(deviceReadyCustomCommand(int,QString, QStringList,QStringList, CommandController::sCommandData)));
+                disconnect(p_dev_factory, SIGNAL(deviceReadyLog(int,QStringList)),
+                           this, SLOT(deviceLogMessage(int, QStringList)));
+                disconnect(p_dev_factory, SIGNAL(deviceCheckIsReady(DevicesFactory::E_DeviceType,QString,bool)),
+                           this, SLOT(deviceCheckReady(DevicesFactory::E_DeviceType,QString,bool)));
+            }
         }
+    }catch(...) {
+#if USE_DB_VIEWCONTROLLER == 1
+        qDebug() << "ViewController: - disconnectToDevSignals -ERR catch";
+#endif
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - disconnectToDevSignals -OK";
+#endif
 }
 
 void ViewController::connectToDevSignals() {
-    if(connFactory->getCountConnection() > 0) {
-        DevicesFactory *p_dev_factory = getDeviceFactoryByIndex(interfaceTree->getIoIndex());
-        if(p_dev_factory != nullptr) {
-            connect(p_dev_factory, SIGNAL(deviceConnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceConnected(DevicesFactory::E_DeviceType,QString)));
-            connect(p_dev_factory, SIGNAL(deviceDisconnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceDisconnected(DevicesFactory::E_DeviceType,QString)));
-            connect(p_dev_factory, SIGNAL(deviceReadyCurrentDataSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyCurrentData(DevicesFactory::E_DeviceType,QString)));
-            connect(p_dev_factory, SIGNAL(deviceReadyInitSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyInit(DevicesFactory::E_DeviceType,QString)));
-            connect(p_dev_factory, SIGNAL(deviceReadyPropertiesSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyProperties(DevicesFactory::E_DeviceType,QString)));
-            connect(p_dev_factory, SIGNAL(deviceUpdateTree(DevicesFactory::E_DeviceUpdateType,int)),
-                    this, SLOT(deviceTreeChanged(DevicesFactory::E_DeviceUpdateType,int)));
-            connect(p_dev_factory, SIGNAL(deviceReadyCustomCommand(int,QString,QStringList,QStringList,CommandController::sCommandData)),
-                    this, SLOT(deviceReadyCustomCommand(int,QString,QStringList,QStringList,CommandController::sCommandData)));
-            connect(p_dev_factory, SIGNAL(deviceReadyLog(int, QStringList)),
-                    this, SLOT(deviceLogMessage(int, QStringList)));
-            connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceCheckIsReady(DevicesFactory::E_DeviceType,QString,bool)),
-                    this, SLOT(deviceCheckReady(DevicesFactory::E_DeviceType,QString,bool)));
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - connectToDevSignals";
+#endif
+    try {
+        if(connFactory->getCountConnection() > 0) {
+            DevicesFactory *p_dev_factory = getDeviceFactoryByIndex(interfaceTree->getIoIndex());
+            if(p_dev_factory != nullptr) {
+                connect(p_dev_factory, SIGNAL(deviceConnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceConnected(DevicesFactory::E_DeviceType,QString)));
+                connect(p_dev_factory, SIGNAL(deviceDisconnectedSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceDisconnected(DevicesFactory::E_DeviceType,QString)));
+                connect(p_dev_factory, SIGNAL(deviceReadyCurrentDataSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyCurrentData(DevicesFactory::E_DeviceType,QString)));
+                connect(p_dev_factory, SIGNAL(deviceReadyInitSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyInit(DevicesFactory::E_DeviceType,QString)));
+                connect(p_dev_factory, SIGNAL(deviceReadyPropertiesSignal(DevicesFactory::E_DeviceType,QString)), this, SLOT(deviceReadyProperties(DevicesFactory::E_DeviceType,QString)));
+                connect(p_dev_factory, SIGNAL(deviceUpdateTree(DevicesFactory::E_DeviceUpdateType,int)),
+                        this, SLOT(deviceTreeChanged(DevicesFactory::E_DeviceUpdateType,int)));
+                connect(p_dev_factory, SIGNAL(deviceReadyCustomCommand(int,QString,QStringList,QStringList,CommandController::sCommandData)),
+                        this, SLOT(deviceReadyCustomCommand(int,QString,QStringList,QStringList,CommandController::sCommandData)));
+                connect(p_dev_factory, SIGNAL(deviceReadyLog(int, QStringList)),
+                        this, SLOT(deviceLogMessage(int, QStringList)));
+                connect(getDeviceFactoryByIndex(interfaceTree->getIoIndex()), SIGNAL(deviceCheckIsReady(DevicesFactory::E_DeviceType,QString,bool)),
+                        this, SLOT(deviceCheckReady(DevicesFactory::E_DeviceType,QString,bool)));
+            }
         }
+    } catch(...) {
+#if USE_DB_VIEWCONTROLLER == 1
+        qDebug() << "ViewController: - connectToDevSignals -ERR catch";
+#endif
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - connectToDevSignals -OK";
+#endif
 }
 
 void ViewController::setChangedIndexDevice(int interfaceIndex, int devIndex) {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - setChangedIndexDevice " << interfaceIndex << " " << devIndex;
+#endif
     disconnectToDevSignals();
     connectToDevSignals(); // get interface property
     getDeviceFactoryByIndex(interfaceTree->getIoIndex())->setDeviceCommandUpdateByIndex(interfaceTree->getDevIndex());
     emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),2, QString("Переключение устройства [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
     emit devSetActiveDeviceProperty(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),
                                     getDeviceFactoryByIndex(interfaceIndex)->getDeviceName(devIndex));
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - setChangedIndexDevice -OK" << interfaceIndex << " " << devIndex;
+#endif
 }
 
 void ViewController::setChangedIndexInteface(int interfaceIndex) {
     // add interace command to read current property interface
     //...
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - setChangedIndexInteface " << interfaceIndex;
+#endif
     disconnectToDevSignals();
     interfaceTreeChanged(interfaceIndex, ConnectionFactory::Type_Update_ChangedIndex);
     connectToDevSignals(); // get interface property
     emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),1, QString("Переключение интерфейса[%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
     emit interfaceSetActiveProperty(interfaceTree->getIoIndex(),
                                     connFactory->getInterace(interfaceTree->getIoIndex())->getType());
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - setChangedIndexInteface -OK" << interfaceIndex;
+#endif
 }
 
 
@@ -819,16 +1104,31 @@ void ViewController::setChangedIndexInteface(int interfaceIndex) {
 //**                        TARIR                                       **/
 //************************************************************************/
 void ViewController::getCurrentDevTarTable() {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getCurrentDevTarTable";
+#endif
     getDeviceFactoryByIndex(interfaceTree->getIoIndex())->sendCustomCommadToDev(interfaceTree->getDevIndex(), "read current dev tar table");
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getCurrentDevTarTable -OK";
+#endif
 }
 void ViewController::setTableFromFrontEnd(QString uniqDevName, QStringList valuesLiters, QStringList valuesFuelLevel) {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - setTableFromFrontEnd";
+#endif
     if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
         Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
         pService->placeTableFromFrontEnd(uniqDevName, valuesLiters, valuesFuelLevel);
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - setTableFromFrontEnd -OK";
+#endif
 }
 
 void ViewController::sendReqWriteTarrirAllDev() {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - sendReqWriteTarrirAllDev";
+#endif
     if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
         Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
         for(auto i:pService->requestWriteTableToAllDevice()) {
@@ -841,11 +1141,17 @@ void ViewController::sendReqWriteTarrirAllDev() {
                                                                                         table.first, table.second);
         }
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - sendReqWriteTarrirAllDev -OK";
+#endif
 }
 
 void ViewController::setCurrentDevChangeId(QString password, QString uniqNameIdNew, QString uniqNameIdCurrent) {
     QPair<QStringList,QStringList> id;
     QString devpassword;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - setCurrentDevChangeId";
+#endif
     id.first.push_back("netAddress_value");
     id.second.push_back(uniqNameIdNew);
     QStringList keyList = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(interfaceTree->getDevIndex()).first;
@@ -860,20 +1166,33 @@ void ViewController::setCurrentDevChangeId(QString password, QString uniqNameIdN
     } else {
         emit devErrorOperation(tr("Ошибка операции!\nНе правильные параметры или ошибка в действиях оператора"));
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - setCurrentDevChangeId -OK";
+#endif
 }
 
 int ViewController::getTarMaxCountStep() {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getTarMaxCountStep";
+#endif
     if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
         Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-        return pService->getMaxCountStep();
+        if(pService !=nullptr) {
+            return pService->getMaxCountStep();
+        }
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getTarMaxCountStep -OK";
+#endif
     return 0;
 }
 
 void ViewController::sendReqExportTarrirAllDevToCsv(QString pathFile) {
     QStringList exportList;
     QString str;
-
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - sendReqExportTarrirAllDevToCsv";
+#endif
     if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
         Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
         int devAll = pService->getDeviceCount();
@@ -924,10 +1243,16 @@ void ViewController::sendReqExportTarrirAllDevToCsv(QString pathFile) {
             }
         }
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - sendReqExportTarrirAllDevToCsv -OK";
+#endif
 }
 
 QStringList ViewController::getAvailableDevTarrirAdd_DevType() {
     QStringList resList;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getAvailableDevTarrirAdd_DevType";
+#endif
     if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
         int devCount = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
         for(int i=0; i<devCount; i++) {
@@ -935,9 +1260,15 @@ QStringList ViewController::getAvailableDevTarrirAdd_DevType() {
         }
     }
     return resList;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getAvailableDevTarrirAdd_DevType -OK";
+#endif
 }
 QStringList ViewController::getAvailableDevTarrirAdd_DevId() {
     QStringList resList;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getAvailableDevTarrirAdd_DevId";
+#endif
     if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
         int devCount = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
         for(int i=0; i<devCount; i++) {
@@ -945,9 +1276,15 @@ QStringList ViewController::getAvailableDevTarrirAdd_DevId() {
         }
     }
     return resList;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getAvailableDevTarrirAdd_DevId -OK";
+#endif
 }
 QStringList ViewController::getAvailableDevTarrirAdd_DevSerialNumber() {
     QStringList resList;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getAvailableDevTarrirAdd_DevSerialNumber";
+#endif
     if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
         int devCount = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
         for(int i=0; i<devCount; i++) {
@@ -959,83 +1296,138 @@ QStringList ViewController::getAvailableDevTarrirAdd_DevSerialNumber() {
             }
         }
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getAvailableDevTarrirAdd_DevSerialNumber -OK";
+#endif
     return resList;
 }
 
 QStringList ViewController::getTarCurrentDeviceData(int index) {
     QStringList res;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getTarCurrentDeviceData";
+#endif
     if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
         if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
             Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-            res = pService->getCurrentDataDevice(index);
+            if(pService != nullptr) {
+                res = pService->getCurrentDataDevice(index);
+            }
         }
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getTarCurrentDeviceData -OK";
+#endif
     return res;
 }
 
 QList<int> ViewController::getTarCurrentDeviceChartData(int index) {
     QList<int> res;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getTarCurrentDeviceChartData";
+#endif
     if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
         if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
             Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-            res = pService->getCurrentChartDataDevice(index);
+            if(pService != nullptr) {
+                res = pService->getCurrentChartDataDevice(index);
+            }
         }
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getTarCurrentDeviceChartData -OK";
+#endif
     return res;
 }
 
 int ViewController::getStayedDevTarrirCount() {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getStayedDevTarrirCount";
+#endif
     if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
         if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
             Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-            return pService->getDeviceCount();
+            if(pService != nullptr) {
+                return pService->getDeviceCount();
+            }
         }
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getStayedDevTarrirCount -OK";
+#endif
     return 0;
 }
 
 QStringList ViewController::getStayedDevTarrir_DevProperty(QString propertyName) {
     QStringList res;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getStayedDevTarrir_DevProperty";
+#endif
     if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
         if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
             Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-            for(int i=0; i<pService->getDeviceCount(); i++) {
-                if(propertyName.toLower() == "type") {
-                    res << pService->getDeviceProperty(i).at(0); // type
-                }
-                if(propertyName.toLower() == "id") {
-                    res << pService->getDeviceProperty(i).at(1); // id
-                }
-                if(propertyName.toLower() == "sn") {
-                    res << pService->getDeviceProperty(i).at(2); // serialNum
+            if(pService != nullptr) {
+                for(int i=0; i<pService->getDeviceCount(); i++) {
+                    if(propertyName.toLower() == "type") {
+                        res << pService->getDeviceProperty(i).at(0); // type
+                    }
+                    if(propertyName.toLower() == "id") {
+                        res << pService->getDeviceProperty(i).at(1); // id
+                    }
+                    if(propertyName.toLower() == "sn") {
+                        res << pService->getDeviceProperty(i).at(2); // serialNum
+                    }
                 }
             }
         }
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getStayedDevTarrir_DevProperty -OK";
+#endif
     return res;
 }
 
 
 bool ViewController::addTarrirDev(QString devTypeName, QString devId) {
     bool res = false;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - addTarrirDev";
+#endif
     if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
         Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
         res = pService->addDevice(devTypeName, devId,"-----");
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - addTarrirDev -OK";
+#endif
     return res;
 }
 void ViewController::removeTarrirDev(QString devTypeName, QString devId) {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - removeTarrirDev -OK";
+#endif
     if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
         Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-        pService->removeDevice(devTypeName, devId);
+        if(pService != nullptr) {
+            pService->removeDevice(devTypeName, devId);
+        }
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - removeTarrirDev -OK";
+#endif
 }
 
 void ViewController::setLastRealTimeValuesToStep(int indexStep) {
-    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
-        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-        //        pService->setLastRealTimeValuesToStep(indexStep);
-    }
+    //#if USE_DB_VIEWCONTROLLER == 1
+    //    qDebug() << "ViewController: - setLastRealTimeValuesToStep";
+    //#endif
+    ////    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+    //        //  Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+    //        //  pService->setLastRealTimeValuesToStep(indexStep);
+    ////    }
+    //#if USE_DB_VIEWCONTROLLER == 1
+    //    qDebug() << "ViewController: - setLastRealTimeValuesToStep -OK";
+    //#endif
 }
 
 //1) считать таблицу с добавленных устройств
@@ -1045,31 +1437,66 @@ void ViewController::setLastRealTimeValuesToStep(int indexStep) {
 // когда последний опрошен, отсылаем результат в qml
 // если ответа небыло, значение выделить красным и вывести message
 void ViewController::sendReqGetTarrirAllDev() {
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - sendReqGetTarrirAllDev";
+#endif
     if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
         Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-        for(auto i:pService->requestGetTableFromAllDevice()) {
-            // отправляем всем dev из списка команду на чтение таблицы
-            getDeviceFactoryByIndex(interfaceTree->getIoIndex())->sendCustomCommadToDev(
-                        getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(i),
-                        "read current dev tar table");
+        if(pService != nullptr) {
+            for(auto i:pService->requestGetTableFromAllDevice()) {      // TODO: плохо, можно взять пустой список и ждать ответа
+                if(i.length() > 0) {
+                    // отправляем всем dev из списка команду на чтение таблицы
+                    DevicesFactory *pdeviceFactory = nullptr;
+                    pdeviceFactory = getDeviceFactoryByIndex(interfaceTree->getIoIndex());
+                    if(pdeviceFactory != nullptr) {
+                        int devIndex = pdeviceFactory->findDeviceIndex(i);
+                        if(devIndex >= 0) {
+                            pdeviceFactory->sendCustomCommadToDev(devIndex, "read current dev tar table");
+                        } else {
+                            qDebug() << "ViewController: - sendReqGetTarrirAllDev -ERR find device";
+                        }
+                    } else {
+                        qDebug() << "ViewController: - sendReqGetTarrirAllDev -ERR nullprt deviceFactory";
+                    }
+                }
+            }
         }
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - sendReqGetTarrirAllDev -OK";
+#endif
 }
 
 QStringList ViewController::getTableAtDevice(int index) {
     QStringList res;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getTableAtDevice";
+#endif
     if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
         Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-        res = pService->getTableAtDevice(index);
+        if(pService != nullptr) {
+            res = pService->getTableAtDevice(index);
+        }
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getTableAtDevice -OK";
+#endif
     return res;
 }
 
 int ViewController::getTableCountReady() {
     int res = 0;
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getTableCountReady";
+#endif
     if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
         Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-        res = pService->requestGetTableFromAllDevice().size();
+        if(pService != nullptr) {
+            res = pService->requestGetTableFromAllDevice().size();
+        }
     }
+#if USE_DB_VIEWCONTROLLER == 1
+    qDebug() << "ViewController: - getTableCountReady -OK";
+#endif
     return res;
 }

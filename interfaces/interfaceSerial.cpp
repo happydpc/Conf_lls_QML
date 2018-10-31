@@ -73,7 +73,7 @@ bool InterfaceSerial::readData(QByteArray &pData)  {
         return false;
     }
     pData = portHandler->readAll();
-    return (bool)pData.length();
+    return !pData.isEmpty();
 }
 
 QString InterfaceSerial::getInterfaceName() {

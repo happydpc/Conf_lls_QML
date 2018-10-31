@@ -5,7 +5,7 @@ import QtQuick.Controls 2.4
 Component {
     Rectangle {
         color: "#ffffff"
-        anchors.fill: parent
+        //anchors.fill: parent
         Image {
             id: logo
             source: "qrc:/logo/images/logo/logo_progress.png"

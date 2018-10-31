@@ -74,32 +74,32 @@ bool DevicesFactory::addNewDevice(E_DeviceType type, QPair<QStringList,QStringLi
 
 void DevicesFactory::checkDeviceIsOnline(E_DeviceType type, QStringList keyParam, QStringList valParam) {
     //if(checkDeviceStruct.isIdle) {
-        if((factoryType == Type_Undefined) || (factoryType == type)) {
-            if(type == Type_Progress_Tmk24) {
-                sendCustomCommandUseCallback(type, "check device is connected", keyParam, valParam);
-                checkDeviceStruct.devType = type;
-                QTimer *tTimer = new QTimer();
-                connect(tTimer, &QTimer::timeout, [=]() {
-                    if(checkDeviceStruct.isReady) {
-                        QString devFindId = checkDeviceStruct.checkedDeviceUniqName;
-                        bool findResult = checkDeviceStruct.result;
-                        checkDeviceStruct.checkedDeviceUniqName.clear();
-                        checkDeviceStruct.isIdle = true;
-                        checkDeviceStruct.isProcessed = false;
-                        checkDeviceStruct.isReady = false;
-                        checkDeviceStruct.result = false;
-                        tTimer->stop();
-                        disconnect(tTimer, &QTimer::timeout, this, nullptr);
-                        delete tTimer;
-                        emit deviceCheckIsReady(checkDeviceStruct.devType,
-                                                devFindId, findResult);
-                    }
-                } );
-                tTimer->start(100);
-            } else if(type == Type_Progress_tmk4UX) {
-            } else if(type == Type_Nozzle_rev_0_00) {
-            }
+    if((factoryType == Type_Undefined) || (factoryType == type)) {
+        if(type == Type_Progress_Tmk24) {
+            sendCustomCommandUseCallback(type, "check device is connected", keyParam, valParam);
+            checkDeviceStruct.devType = type;
+            QTimer *tTimer = new QTimer();
+            connect(tTimer, &QTimer::timeout, [=]() {
+                if(checkDeviceStruct.isReady) {
+                    QString devFindId = checkDeviceStruct.checkedDeviceUniqName;
+                    bool findResult = checkDeviceStruct.result;
+                    checkDeviceStruct.checkedDeviceUniqName.clear();
+                    checkDeviceStruct.isIdle = true;
+                    checkDeviceStruct.isProcessed = false;
+                    checkDeviceStruct.isReady = false;
+                    checkDeviceStruct.result = false;
+                    tTimer->stop();
+                    disconnect(tTimer, &QTimer::timeout, this, nullptr);
+                    delete tTimer;
+                    emit deviceCheckIsReady(checkDeviceStruct.devType,
+                                            devFindId, findResult);
+                }
+            } );
+            tTimer->start(100);
+        } else if(type == Type_Progress_tmk4UX) {
+        } else if(type == Type_Nozzle_rev_0_00) {
         }
+    }
     //}
 }
 
@@ -371,18 +371,20 @@ void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
                 Progress_tmk24 *p_device = nullptr;
                 // TODO: need uniqPtr
                 p_device = new Progress_tmk24(checkDeviceStruct.checkedDeviceUniqName,
-                           "header", QPair<QStringList,QStringList>(QStringList(),QStringList()), nullptr);
+                                              "header", QPair<QStringList,QStringList>(QStringList(),QStringList()), nullptr);
                 if(p_device != nullptr) {
-                checkDeviceStruct.result = p_device->placeDataReplyToCommand(data, commandController->getCommandFirstCommand().second);
-                checkDeviceStruct.isReady = true;
-                commandController->removeFirstCommand();
-                delete p_device;
-            }
+                    checkDeviceStruct.result = p_device->placeDataReplyToCommand(data, commandController->getCommandFirstCommand().second);
+                    checkDeviceStruct.isReady = true;
+                    commandController->removeFirstCommand();
+                    delete p_device;
+                }
             } else if(factoryType == Type_Progress_tmk4UX) {
             } else  {}
         }
             break;
         default:
+            qDebug() << "deviceFactoty: [placeReplyDataFromInterface] - undefined command -ERR = " << command.commandType;
+            commandController->removeFirstCommand();
             break;
         }
     }
@@ -470,16 +472,21 @@ void DevicesFactory::unlockMutextDevMap() {
     devMutex->unlock();
 }
 
-bool DevicesFactory::sendCustomCommadToDev(int indexDev, QString operation) {
+bool DevicesFactory::
+sendCustomCommadToDev(int indexDev, QString operation) {
     QList<CommandController::sCommandData> command;
     bool res = false;
-    command = findDeviceByIndex(indexDev)->second->getCommandCustom(operation);
-    // что требует подтверждения о выполнении (на форме)
-    for(auto cIt: command) {
-        findDeviceByIndex(indexDev)->second->makeDataToCommand(cIt);
-        cIt.commandType = CommandController::E_CommandType_send_typical_request;
-        commandController->addCommandToStack(cIt);
-        res = true;
+    if(!deviceMap.isEmpty()) {
+        if((indexDev >= 0) && (indexDev <= deviceMap.size()-1)) {
+            command = findDeviceByIndex(indexDev)->second->getCommandCustom(operation);
+            // что требует подтверждения о выполнении (на форме)
+            for(auto cIt: command) {
+                findDeviceByIndex(indexDev)->second->makeDataToCommand(cIt);
+                cIt.commandType = CommandController::E_CommandType_send_typical_request;
+                commandController->addCommandToStack(cIt);
+                res = true;
+            }
+        }
     }
     return res;
 }

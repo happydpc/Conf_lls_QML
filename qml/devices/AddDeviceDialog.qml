@@ -217,117 +217,14 @@ Popup {
                                 Item {
                                     Column {
                                         anchors.fill: parent
-                                        Row{
-                                            anchors.fill: parent
-                                            Column{
-                                                id:typeAddDeviceFindColumn
-                                                anchors.right: parent.right
-                                                width: parent.width / 2
-                                                height: parent.height
-                                                spacing: 20
-                                                Label {
-                                                    text: "Параметры адресов поиска"
-                                                    anchors.right: parent.right
-                                                    anchors.rightMargin: 20
-                                                }
-                                                Row{
-                                                    anchors.right: parent.right
-                                                    anchors.rightMargin: 20
-                                                    spacing: 10
-                                                    Label {
-                                                        text: qsTr("От")
-                                                        anchors.verticalCenter: parent.verticalCenter
-                                                    }
-                                                    TextField {
-                                                        id: typeDeviceIdProgressTmk24FindDown
-                                                        width: 250
-                                                        height: 40
-                                                        validator: IntValidator{bottom: 1; top: 255;}
-                                                        placeholderText: "введите ID  адрес"
-                                                        text: "1"
-                                                        onFocusChanged: {
-                                                            if(typeDeviceIdProgressTmk24.text.length === 0) {
-                                                                typeDeviceIdProgressTmk24.text = "1"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                                Row{
-                                                    anchors.right: parent.right
-                                                    anchors.rightMargin: 20
-                                                    spacing: 10
-                                                    Label {
-                                                        text: qsTr("До")
-                                                        anchors.verticalCenter: parent.verticalCenter
-                                                    }
-                                                    TextField {
-                                                        id: typeDeviceIdProgressTmk24FindUp
-                                                        width: 250
-                                                        height: 40
-                                                        validator: IntValidator{bottom: 1; top: 255;}
-                                                        placeholderText: "введите ID  адрес"
-                                                        text: "254"
-                                                        onFocusChanged: {
-                                                            if(typeDeviceIdProgressTmk24.text.length === 0) {
-                                                                typeDeviceIdProgressTmk24.text = "1"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                                ProgressBar {
-                                                    id:typeDeviceProgressProgressTmk24
-                                                    width: 250
-                                                    height: 40
-                                                    anchors.right: parent.right
-                                                    anchors.rightMargin: 20
-                                                    visible: false
-                                                    from: 0
-                                                    to: 100
-                                                }
-                                                Button {
-                                                    id:typeFindStartButton
-                                                    anchors.right: parent.right
-                                                    anchors.rightMargin: 20
-                                                    width: 200
-                                                    height: 50
-                                                    text: "Искать"
-                                                    property int findIdValues: 1
-                                                    onClicked: {
-                                                        typeFindStopButton.enabled = true
-                                                        typeFindStartButton.enabled = false
-                                                        var keyList = []
-                                                        var paramList = []
-                                                        modeFind = modeFind_add_finder
-                                                        findIdValues = parseInt(typeDeviceIdProgressTmk24FindDown.text)
-                                                        findDevListView.model.clear()
-                                                        keyList.push("id")
-                                                        paramList.push(findIdValues)
-                                                        keyList.push("password")
-                                                        paramList.push("")
-                                                        viewController.checkDeviceFromConnection(typeDeviceList.currentText, keyList, paramList)
-
-                                                    }
-                                                }
-                                                Button {
-                                                    id:typeFindStopButton
-                                                    anchors.right: parent.right
-                                                    anchors.rightMargin: 20
-                                                    width: 200
-                                                    height: 50
-                                                    text: "Остановить"
-                                                    enabled: false
-                                                    onClicked: {
-                                                        typeFindStartButton.enabled = true
-                                                        typeFindStopButton.enabled = false
-                                                        modeFind = modeFind_idle
-                                                    }
-                                                }
-                                            }
+                                        width: typeAddDeviceViewProgressTmk24.width
+                                        spacing: 10
+                                        Row {
+                                            spacing: 20
                                             Rectangle {
-                                                width: parent.width / 2 + 30
-                                                height: parent.height
+                                                width: typeAddDeviceViewProgressTmk24.width / 2
+                                                height: typeAddDeviceViewProgressTmk24.height
                                                 color: "#ffffff"
-                                                anchors.left: parent.left
                                                 Label {
                                                     id:findDeviceHeader
                                                     text: "Найденные устройства:"
@@ -402,7 +299,7 @@ Popup {
                                                             }
                                                             Button {
                                                                 text: "Убрать"
-                                                                width: 100
+                                                                width: 60
                                                                 height: 30
                                                                 anchors.top: parent.top
                                                                 anchors.topMargin: 15
@@ -417,6 +314,106 @@ Popup {
                                                     }
                                                     model: ListModel {
                                                         id: tarDevListModel
+                                                    }
+                                                }
+                                            }
+                                            Column{
+                                                spacing: 20
+                                                id:typeAddDeviceFindColumn
+                                                width: typeAddDeviceViewProgressTmk24.width / 2 - 50
+                                                height: typeAddDeviceViewProgressTmk24.height
+                                                Label {
+                                                    text: "Параметры адресов поиска"
+                                                }
+                                                Row{
+                                                    spacing: 10
+                                                    Label {
+                                                        text: qsTr("От")
+                                                        anchors.verticalCenter: parent.verticalCenter
+                                                    }
+                                                    TextField {
+                                                        id: typeDeviceIdProgressTmk24FindDown
+                                                        width: 250
+                                                        height: 40
+                                                        validator: IntValidator{bottom: 1; top: 255;}
+                                                        placeholderText: "введите ID  адрес"
+                                                        text: "1"
+                                                        onFocusChanged: {
+                                                            if(typeDeviceIdProgressTmk24.text.length === 0) {
+                                                                typeDeviceIdProgressTmk24.text = "1"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                Row{
+                                                    spacing: 10
+                                                    Label {
+                                                        text: qsTr("До")
+                                                        anchors.verticalCenter: parent.verticalCenter
+                                                    }
+                                                    TextField {
+                                                        id: typeDeviceIdProgressTmk24FindUp
+                                                        width: 250
+                                                        height: 40
+                                                        validator: IntValidator{bottom: 1; top: 255;}
+                                                        placeholderText: "введите ID  адрес"
+                                                        text: "254"
+                                                        onFocusChanged: {
+                                                            if(typeDeviceIdProgressTmk24.text.length === 0) {
+                                                                typeDeviceIdProgressTmk24.text = "1"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                Row{
+                                                    spacing: 10
+                                                    ProgressBar {
+                                                        id:typeDeviceProgressProgressTmk24
+                                                        width: 250
+                                                        height: 40
+                                                        visible: false
+                                                        from: 0
+                                                        to: 100
+                                                    }
+                                                }
+                                                Button {
+                                                    id:typeFindStartButton
+                                                    anchors.right: parent.right
+                                                    anchors.rightMargin: 20
+                                                    width: 200
+                                                    height: 50
+                                                    text: "Искать"
+                                                    property int findIdValues: 1
+                                                    onClicked: {
+                                                        typeFindStopButton.enabled = true
+                                                        typeFindStartButton.enabled = false
+                                                        var keyList = []
+                                                        var paramList = []
+                                                        modeFind = modeFind_add_finder
+                                                        findIdValues = parseInt(typeDeviceIdProgressTmk24FindDown.text)
+                                                        findDevListView.model.clear()
+                                                        keyList.push("id")
+                                                        paramList.push(findIdValues)
+                                                        keyList.push("password")
+                                                        paramList.push("")
+                                                        viewController.checkDeviceFromConnection(typeDeviceList.currentText, keyList, paramList)
+
+                                                    }
+                                                }
+                                                Button {
+                                                    id:typeFindStopButton
+                                                    anchors.right: parent.right
+                                                    anchors.rightMargin: 20
+                                                    width: 200
+                                                    height: 50
+                                                    text: "Остановить"
+                                                    enabled: false
+                                                    onClicked: {
+                                                        typeFindStartButton.enabled = true
+                                                        typeFindStopButton.enabled = false
+                                                        typeDeviceIdProgressTmk24FindDown.readOnly = false
+                                                        typeDeviceIdProgressTmk24FindUp.readOnly = false
+                                                        modeFind = modeFind_idle
                                                     }
                                                 }
                                             }

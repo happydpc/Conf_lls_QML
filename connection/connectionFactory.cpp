@@ -3,7 +3,7 @@
 
 ConnectionFactory::ConnectionFactory() {
     this->interfaceList.clear();
-    this->lockInterface = new QMutex();
+    this->lockInterface = std::make_unique<QMutex>();
 }
 ConnectionFactory::~ConnectionFactory() {}
 

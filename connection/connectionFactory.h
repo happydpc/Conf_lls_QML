@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QVector>
 #include <QMutex>
+#include <memory>
 #include "interfaces/interfacesAbstract.h"
 #include "interfaces/interfaceSerial.h"
 #include "interfaces/interfaceBLE.h"
@@ -47,7 +48,7 @@ private:
 
     QVector<interfacesAbstract*>interfaceList;
 
-    QMutex *lockInterface;
+    std::unique_ptr<QMutex> lockInterface;
 
 };
 

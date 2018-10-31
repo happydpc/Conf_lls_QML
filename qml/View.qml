@@ -57,11 +57,21 @@ Item {
         onAddDeviceFail: {
             projectPanel.devicePropertyPanel.showDeviceAddError(devName, errorMessage)
         }
-        onDevShowMessage: {
-            projectPanel.devicePropertyPanel.setDevShowMessage(typeDev, messageHeader, message)
-        }
+        //        onDevShowMessage: {
+        //            projectPanel.devicePropertyPanel.setDevShowMessage(typeDev, messageHeader, message)
+        //        }
         onDevCustomCommandExecuted: { // OK
-            projectPanel.devicePropertyPanel.setDevCustomCommandExecuted(typeDev, ioIndex, devIndex, keys, args, ackMessageIsVisible)
+            try {
+                projectPanel.devicePropertyPanel.setDevCustomCommandExecuted(typeDev, ioIndex, devIndex, keys, args, ackMessageIsVisible)
+            } catch (error) {
+                console.log ("Error loading QML : ")
+                for (var i = 0; i < error.qmlErrors.length; i++) {
+                    console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+                    console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+                    console.log("fileName: " + error.qmlErrors[i].fileName)
+                    console.log("message: " + error.qmlErrors[i].message)
+                }
+            }
         }
         onDevUpdateLogMessage: {
             projectPanel.devicePropertyPanel.addDeviceLog(ioIndex, devIndex, codeMessage, message)
@@ -102,15 +112,15 @@ Item {
                     anchors.right: parent.right
                     height: 50
                     width: parent.width
-                    Image {
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        anchors.topMargin: -65
-                        source: "logo.png"
-                        width: 256
-                        height: 160
-                        visible: false
-                    }
+                    //                    Image {
+                    //                        anchors.left: parent.left
+                    //                        anchors.top: parent.top
+                    //                        anchors.topMargin: -65
+                    //                        source: "logo.png"
+                    //                        width: 256
+                    //                        height: 160
+                    //                        visible: false
+                    //                    }
                 }
 
                 DevListPanel {

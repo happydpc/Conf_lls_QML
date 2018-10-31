@@ -116,7 +116,7 @@ private:
         bool result = false;
     }checkDeviceStruct;
 
-    int indexProcessedDev = 0;
+    int indexProcessedDev = 50;
     const int delayTypicalCommandMs = 150;
     const int delayIncreasedCommandMs = 300;
 };
