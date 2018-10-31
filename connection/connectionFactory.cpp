@@ -3,7 +3,7 @@
 
 ConnectionFactory::ConnectionFactory() {
     this->interfaceList.clear();
-    this->lockInterface = std::make_unique<QMutex>();
+    this->lockInterface = std::make_unique<QMutex>(QMutex::NonRecursive);
 }
 ConnectionFactory::~ConnectionFactory() {}
 
@@ -11,18 +11,16 @@ bool ConnectionFactory::addConnection(QString typeName, QString name, QPair<QStr
     bool res = false;
     lockInterface->lock();
     if(typeName.toLower() == QString("serial")) {
-        interfacesAbstract * p_interface = nullptr;
-        // TODO: need uniqPtr
-        p_interface = new InterfaceSerial(name, param);
-        if(p_interface != nullptr) {
+        std::shared_ptr<interfacesAbstract> p_interface = std::make_shared<InterfaceSerial>(name, param);
+        if(p_interface.get() != nullptr) {
             res  = p_interface->openInterface();
             if(res) {
-                 connect(p_interface, SIGNAL(errorInterface(QString,QString)), this, SLOT(errorFromConnection(QString,QString)));
+                connect(p_interface.get(), SIGNAL(errorInterface(QString,QString)), this, SLOT(errorFromConnection(QString,QString)));
                 interfaceList.push_back(std::move(p_interface));
                 emit updateTree(getCountConnection() != 0 ? getCountConnection()-1 : 0, ConnectionFactory::Type_Update_Add);
             } else {
                 qDebug() << "ConnectionFactory: addConnection -ERR " + name;
-                delete p_interface;
+                p_interface.reset();
             }
         }
     } else if(typeName.toLower() == QString("ethernet")) {
@@ -105,8 +103,8 @@ QString ConnectionFactory::getInteraceNameFromIndex(int index) {
 interfacesAbstract* ConnectionFactory::getInterace(QString name) {
     interfacesAbstract* p_interface = nullptr;
     for(auto it = interfaceList.begin(); it!=interfaceList.end(); it++) {
-        if((*it)->getInterfaceName() == name) {
-            p_interface = (*it);
+        if(it->get()->getInterfaceName() == name) {
+            p_interface = it->get();
             break;
         }
     }
@@ -118,8 +116,8 @@ interfacesAbstract* ConnectionFactory::getInterace(int index) {
     QString name = getInteraceNameFromIndex(index);
     if(!name.isEmpty()) {
         for(auto it = interfaceList.begin(); it!=interfaceList.end(); it++) {
-            if((*it)->getInterfaceName() == name) {
-                p_interface = (*it);
+            if(it->get()->getInterfaceName() == name) {
+                p_interface = it->get();
                 break;
             }
         }

@@ -9,7 +9,7 @@
 #include "device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.h"
 #include "device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.h"
 
-#define USE_DB_VIEWCONTROLLER       1
+#define USE_DB_VIEWCONTROLLER       0
 
 ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObject(parent) {
     this->softwareUpdater = new Updater();
@@ -1290,7 +1290,7 @@ QStringList ViewController::getAvailableDevTarrirAdd_DevSerialNumber() {
         for(int i=0; i<devCount; i++) {
             QStringList keyList = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(i).first;
             for(int i2 =0; i2<keyList.size(); i2++) {
-                if(keyList.at(i2) == QString("serialnumber")) {                                                                                 // TOOD:!!!!!
+                if(keyList.at(i2) == QString("serialNum")) {                                                                                 // TOOD:!!!!!
                     resList << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(i).second.at(0);
                 }
             }

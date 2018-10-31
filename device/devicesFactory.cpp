@@ -6,17 +6,15 @@
 
 DevicesFactory::DevicesFactory() {
     this->factoryType = Type_Undefined;
-    this->devShedullerTimer = new QTimer();
+    this->devShedullerTimer = std::make_unique<QTimer>();
     this->devShedullerTimer->start(100);
-    this->devMutex = new QMutex();
-    this->commandController = new CommandController();
-    connect(this->devShedullerTimer, SIGNAL(timeout()), this, SLOT(devShedullerSlot()));
+    this->devMutex = std::make_unique<QMutex>();
+    this->commandController = std::make_unique<CommandController>();
+    connect(this->devShedullerTimer.get(), SIGNAL(timeout()), this, SLOT(devShedullerSlot()));
 }
 
 DevicesFactory::~DevicesFactory() {
-    delete  devShedullerTimer;
-    delete devMutex;
-    delete commandController;
+
 }
 
 bool DevicesFactory::addNewDevice(E_DeviceType type, QPair<QStringList,QStringList>param,
@@ -271,17 +269,21 @@ DeviceAbstract * DevicesFactory::getDeviceToDeviceAbstract(int index) {
     return deviceMap.at(index).second;
 }
 
+void DevicesFactory::onReplySend() {
+    emit readReplyData();
+}
+
 void DevicesFactory::devShedullerSlot() {
     CommandController::sCommandData command;
     if(!commandController->commandsIsEmpty()) {
         if(commandController->getCommandFirstCommand().first == true) {
             devShedullerTimer->stop();
             emit writeData(commandController->getCommandFirstCommand().second.commandOptionData);
-            QTimer::singleShot(commandController->getCommandFirstCommand().second.isNeedIncreasedDelay
-                               ? delayIncreasedCommandMs : delayTypicalCommandMs,
-                               Qt::PreciseTimer, [&] {
-                emit readReplyData();
-            });
+            sendReqTimer.reset(new QTimer);
+            sendReqTimer->setSingleShot(true);
+            QObject::connect(sendReqTimer.data(), SIGNAL(timeout()), this, SLOT(onReplySend()));
+            sendReqTimer->start(commandController->getCommandFirstCommand().second.isNeedIncreasedDelay
+                                ? delayIncreasedCommandMs : delayTypicalCommandMs);
         }
     } else {
         if(!deviceMap.empty()) {

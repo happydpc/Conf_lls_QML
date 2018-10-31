@@ -20,11 +20,20 @@ Rectangle {
     property bool devIsReady: false
     property string  id: ""
 
+    property var tarArrayDinamicCreateItem: []
+
     function setInitProperty(devKeyProperty, devValueProperty) {
         for(var i=0; i<devKeyProperty.length; i++) {
             if(devKeyProperty[i] === "id") {
                 id = devValueProperty[i]
             }
+        }
+    }
+
+    function removeAll() {
+        for(var itemCounter=0; itemCounter<tarTabViewMultiple.rowCount; itemCounter++) {
+            var item = tarTabViewMultiple.model.get(itemCounter)
+            item.destroy();
         }
     }
 
@@ -132,6 +141,7 @@ Rectangle {
                 messageDialog.message = "Тарировочная таблица успешно считана"
                 messageDialog.open()
             }
+            remakeTarTable()
             readTarTable()
             break;
         case "lls_write_cal_table":
@@ -433,15 +443,20 @@ Rectangle {
 
             for(var itemCounter=0; itemCounter<tarTabViewMultiple.rowCount; itemCounter++) {
                 var item = tarTabViewMultiple.model.get(itemCounter)
-                tarArrayLitrs.push(item[roleLiters])
-                tarArrayFuelLevel.push(item[roleFuelLevel])
-                if(maxvalueFuelLevel < parseInt(item[roleFuelLevel])) {
-                    maxvalueFuelLevel = parseInt(item[roleFuelLevel])
+                if(item !== undefined) {
+                    tarArrayLitrs.push(item[roleLiters])
+                    tarArrayFuelLevel.push(item[roleFuelLevel])
+                    if(maxvalueFuelLevel < parseInt(item[roleFuelLevel])) {
+                        maxvalueFuelLevel = parseInt(item[roleFuelLevel])
+                    }
+                    if(maxValueLitrs < parseInt(item[roleLiters])) {
+                        maxValueLitrs = parseInt(item[roleLiters])
+                    }
+                    console.log(roleLiters + " " + item[roleFuelLevel] + "\nValue Litrs=" + item[roleLiters])
+                } else {
+                    tarArrayLitrs.push("0")
+                    tarArrayFuelLevel.push("0")
                 }
-                if(maxValueLitrs < parseInt(item[roleLiters])) {
-                    maxValueLitrs = parseInt(item[roleLiters])
-                }
-                console.log(roleLiters + " " + item[roleFuelLevel] + "\nValue Litrs=" + item[roleLiters])
             }
 
             var line = chartTarTableMultiple.createSeries(ChartView.SeriesTypeLine, "ID" + devId[deviceCounter], chartTarTableAxisXMultiple, chartTarTableAxisYMultiple);
@@ -518,11 +533,10 @@ Rectangle {
         timerAffterRefrashTarTable.start()
     }
 
-    function removeTarStepValue(rowIndex) {
+    function removeTarStepValue(index) {
         // если ничего не выбрано выходим
-        if(rowIndex >= 0) {
-            // удаляем строку
-            tarTabViewMultiple.model.remove(rowIndex)
+        if(index !== -1) { // удаляем
+            tarTabViewMultiple.model.remove(index)
             timerAffterRefrashTarTable.start()
         }
     }
@@ -530,8 +544,18 @@ Rectangle {
     function remakeTarTable() {
         tarListDevice.model.clear()
         for(var index = tarTabViewMultiple.columnCount-1; index>=0; index--) {
+            var delRow = tarTabViewMultiple.getColumn(index)
             tarTabViewMultiple.removeColumn(index)
+            delRow.destroy()
+            if(index <= tarArrayDinamicCreateItem.length) {
+                var column = tarArrayDinamicCreateItem[index]
+                column.destroy()
+                delete column
+                tarArrayDinamicCreateItem.shift()
+            }
+            delete delRow
         }
+        tarTabViewMultiple.model.clear()
         var tarSize = viewController.getStayedDevTarrirCount()
         var devType = []
         var devId = []
@@ -544,32 +568,35 @@ Rectangle {
         }
         // добавляем в таблицу как столблец для девайса
         for(var i2=0; i2<tarSize; i2++) {
-            var component = {}
-            component = Qt.createComponent("DevPropertyProgressTmk24TarTableDelegate.qml");
-            var tableViewColumn  = component.createObject(tarTabViewMultiple);
+            var component = Qt.createComponent("DevPropertyProgressTmk24TarTableDelegate.qml");
+            var tableViewColumn = component.createObject(tarTabViewMultiple);
             tableViewColumn.title = qsTr("Объем[ID-%1]").arg(devId[i2])
             tableViewColumn.role = "roleLiters" + i2
             tableViewColumn.width = 100
+            tarArrayDinamicCreateItem.push(tableViewColumn)
             tarTabViewMultiple.addColumn(tableViewColumn)
             console.log("addeted1 =" + tableViewColumn.role)
-            tableViewColumn.valueIsChanged.connect(function(role, text, modelChanged) {
-                var curRow = tarTabViewMultiple.currentRow
-                modelChanged[role] = text
-                tarTabViewMultiple.model.set(curRow, modelChanged)
-                remakeTarTableChart()
-            });
-            tableViewColumn  = component.createObject(tarTabViewMultiple);
+//            tableViewColumn.destroy()
+//            tableViewColumn.valueIsChanged.connect(function(role, text, modelChanged) {
+//                var curRow = tarTabViewMultiple.currentRow
+//                modelChanged[role] = text
+//                tarTabViewMultiple.model.set(curRow, modelChanged)
+//                remakeTarTableChart()
+//            });
+            component = Qt.createComponent("DevPropertyProgressTmk24TarTableDelegate.qml");
+            tableViewColumn = component.createObject(tarTabViewMultiple);
             tableViewColumn.title = qsTr("Ур.топ-ва[ID-%1]").arg(devId[i2])
             tableViewColumn.role = "roleFuelLevel" + i2
             tableViewColumn.width = 100
+            tarArrayDinamicCreateItem.push(tableViewColumn)
             tarTabViewMultiple.addColumn(tableViewColumn)
-
-            tableViewColumn.valueIsChanged.connect(function(role, text, modelChanged) {
-                var curRow = tarTabViewMultiple.currentRow
-                modelChanged[role] = text
-                tarTabViewMultiple.model.set(curRow, modelChanged)
-                remakeTarTableChart()
-            });
+//            tableViewColumn.destroy()
+//            tableViewColumn.valueIsChanged.connect(function(role, text, modelChanged) {
+//                var curRow = tarTabViewMultiple.currentRow
+//                modelChanged[role] = text
+//                tarTabViewMultiple.model.set(curRow, modelChanged)
+//                remakeTarTableChart()
+//            });
             console.log("addeted2 =" + tableViewColumn.role)
         }
     }
@@ -741,7 +768,7 @@ Rectangle {
         id: devPropertyProgressTmk24
         property bool isReady: true
         anchors.fill: parent
-        color: "transparent"
+        color: "#ffffff"
         Rectangle {
             id: barup
             color: "#ffffff"
@@ -869,15 +896,6 @@ Rectangle {
                                     height: parent.height
                                 }
                             }
-                            //                            layer.enabled: true
-                            //                            layer.effect: DropShadow {
-                            //                                transparentBorder: true
-                            //                                horizontalOffset: 0
-                            //                                verticalOffset: 1
-                            //                                color: "#e0e5ef"
-                            //                                samples: 10
-                            //                                radius: 10
-                            //                            }
                         }
 
                         Column {
@@ -923,15 +941,6 @@ Rectangle {
                                         textColor: "#888d91"
                                         enabled: devIsConnected
                                     }
-                                    //                                    layer.enabled: true
-                                    //                                    layer.effect: DropShadow {
-                                    //                                        transparentBorder: true
-                                    //                                        horizontalOffset: 0
-                                    //                                        verticalOffset: 1
-                                    //                                        color: "#e0e5ef"
-                                    //                                        samples: 10
-                                    //                                        radius: 10
-                                    //                                    }
                                 }
 
                                 Rectangle{
@@ -984,15 +993,6 @@ Rectangle {
                                             anchors.verticalCenter: parent.verticalCenter
                                         }
                                     }
-                                    //                                    layer.enabled: true
-                                    //                                    layer.effect: DropShadow {
-                                    //                                        transparentBorder: true
-                                    //                                        horizontalOffset: 0
-                                    //                                        verticalOffset: 1
-                                    //                                        color: "#e0e5ef"
-                                    //                                        samples: 10
-                                    //                                        radius: 10
-                                    //                                    }
                                 }
 
                                 Rectangle{
@@ -1033,15 +1033,6 @@ Rectangle {
                                         textColor: "#888d91"
                                         enabled: devIsConnected
                                     }
-                                    //                                    layer.enabled: true
-                                    //                                    layer.effect: DropShadow {
-                                    //                                        transparentBorder: true
-                                    //                                        horizontalOffset: 0
-                                    //                                        verticalOffset: 1
-                                    //                                        color: "#e0e5ef"
-                                    //                                        samples: 10
-                                    //                                        radius: 10
-                                    //                                    }
                                 }
 
                                 Rectangle{
@@ -1082,15 +1073,6 @@ Rectangle {
                                         textColor: "#888d91"
                                         enabled: devIsConnected
                                     }
-                                    //                                    layer.enabled: true
-                                    //                                    layer.effect: DropShadow {
-                                    //                                        transparentBorder: true
-                                    //                                        horizontalOffset: 0
-                                    //                                        verticalOffset: 1
-                                    //                                        color: "#e0e5ef"
-                                    //                                        samples: 10
-                                    //                                        radius: 10
-                                    //                                    }
                                 }
                             }
                         }
@@ -1130,15 +1112,6 @@ Rectangle {
                                     }
                                     enabled: devIsConnected
                                 }
-                                //                                layer.enabled: true
-                                //                                layer.effect: DropShadow {
-                                //                                    transparentBorder: true
-                                //                                    horizontalOffset: 0
-                                //                                    verticalOffset: 1
-                                //                                    color: "#e0e5ef"
-                                //                                    samples: 10
-                                //                                    radius: 10
-                                //                                }
                             }
                         }
 
@@ -1292,15 +1265,6 @@ Rectangle {
                                         }
                                     }
                                 }
-                                //                                layer.enabled: true
-                                //                                layer.effect: DropShadow {
-                                //                                    transparentBorder: true
-                                //                                    horizontalOffset: 0
-                                //                                    verticalOffset: 1
-                                //                                    color: "#e0e5ef"
-                                //                                    samples: 10
-                                //                                    radius: 10
-                                //                                }
                             }
                         }
                         Column {
@@ -1355,15 +1319,6 @@ Rectangle {
                                         }
                                     }
                                 }
-                                //                                layer.enabled: true
-                                //                                layer.effect: DropShadow {
-                                //                                    transparentBorder: true
-                                //                                    horizontalOffset: 0
-                                //                                    verticalOffset: 1
-                                //                                    color: "#e0e5ef"
-                                //                                    samples: 10
-                                //                                    radius: 10
-                                //                                }
                             }
                         }
                         Rectangle {
@@ -1455,83 +1410,100 @@ Rectangle {
                             Controls_1_4.TableViewColumn{width: 30 }
                         }
                         onCurrentIndexChanged: {
-                            if(stackSubProperty.currentItem == itemDevTarir) {
-                                // first check what not device in the tarClass
-                                // when show dialog and add it
-                                var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
-                                var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
-                                var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
-                                var keys = viewController.getCurrentDevPropertyKey()
-                                var values = viewController.getCurrentDevPropertyValue()
-                                var devType = ""
-                                var devId = ""
-                                if(viewController.getStayedDevTarrirCount()) {
-                                    dialogTarNotEmpty.open()
-                                    dialogTarNotEmpty.onApply.connect(function() {
-                                        dialogTarNotEmpty.close()
-                                        // clear all
-                                        for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
-                                            viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
-                                        }
-                                        // add current
-                                        var keys = viewController.getCurrentDevPropertyKey()
-                                        var values = viewController.getCurrentDevPropertyValue()
-                                        var devType = ""
-                                        var devId = ""
-                                        for(var i=0; i<keys.length; i++) {
-                                            if(keys[i] === "devTypeName"){
-                                                devType = values[i]
-                                            }
-                                            if(keys[i] === "id"){
-                                                devId = values[i]
-                                            }
-                                        }
-                                        viewController.addTarrirDev(devType, devId)
-                                        timerAffterChangeTarTable.start()
-                                    });
-                                    dialogTarNotEmpty.onDiscard.connect(function() {
-                                        for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
-                                            viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
-                                        }
-                                        for(var i=0; i<tarirDevType.length; i++) {
-                                            viewController.addTarrirDev(tarirDevType[i], tarirDevId[i])
-                                        }
-                                        // nothing add - when add current
-                                        if(tarirDevId.length === 0) {
-                                            for(var i=0; i<keys.length; i++) {
-                                                if(keys[i] === "devTypeName"){
-                                                    devType = values[i]
-                                                }
-                                                if(keys[i] === "id"){
-                                                    devId = values[i]
-                                                }
-                                            }
-                                            viewController.addTarrirDev(devType, devId)
-                                        }
-                                        timerAffterChangeTarTable.start()
-                                    });
-                                } else { // add current dev to the tarTable
-                                    for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
-                                        viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
-                                    }
-                                    for(var i=0; i<tarirDevType.length; i++) {
-                                        viewController.addTarrirDev(tarirDevType[i], tarirDevId[i])
-                                    }
-                                    // nothing add - when add current
-                                    if(tarirDevId.length === 0) {
-                                        for(var i=0; i<keys.length; i++) {
-                                            if(keys[i] === "devTypeName"){
-                                                devType = values[i]
-                                            }
-                                            if(keys[i] === "id"){
-                                                devId = values[i]
-                                            }
-                                        }
-                                        viewController.addTarrirDev(devType, devId)
-                                    }
-                                    timerAffterChangeTarTable.start()
-                                }
-                            }
+//                            if(stackSubProperty.currentItem == itemDevTarir) {
+//                                // first check what not device in the tarClass
+//                                // when show dialog and add it
+//                                var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
+//                                var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
+//                                var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
+//                                var keys = viewController.getCurrentDevPropertyKey()
+//                                var values = viewController.getCurrentDevPropertyValue()
+//                                var devType = ""
+//                                var devId = ""
+//                                if(viewController.getStayedDevTarrirCount()) {
+//                                    dialogTarNotEmpty.open()
+//                                    dialogTarNotEmpty.onApply.connect(function() {
+//                                        dialogTarNotEmpty.close()
+//                                        console.log("tarDev item -active")
+//                                        // сперва добавить всем роли
+//                                        // TODO: hack!!!
+////                                        var connDevId = viewController.getAvailableDevTarrirAdd_DevId()
+////                                        var connDevType = viewController.getAvailableDevTarrirAdd_DevType()
+////                                        for(var i=0; i<connDevId.length; i++) {
+////                                            viewController.addTarrirDev(connDevType[i], connDevId[i])
+////                                        }
+////                                        addTarStepValue(0)
+//                                        // clear tar table
+////                                        var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
+////                                        var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
+////                                        var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
+////                                        for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
+////                                            viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
+////                                        }
+////                                        var keys = viewController.getCurrentDevPropertyKey()
+////                                        var values = viewController.getCurrentDevPropertyValue()
+////                                        var devType = ""
+////                                        var devId = ""
+////                                        for(var i=0; i<keys.length; i++) {
+////                                            if(keys[i] === "devTypeName"){
+////                                                devType = values[i]
+////                                            }
+////                                            if(keys[i] === "id"){
+////                                                devId = values[i]
+////                                            }
+////                                        }
+////                                        viewController.addTarrirDev(devType, devId)
+////                                        timerAffterChangeTarTable.start()
+//                                        // clear all
+////                                        for(var index = tarTabViewMultiple.columnCount-1; index>=0; index--) {
+////                                            var delRow = tarTabViewMultiple.getColumn(index)
+////                                            tarTabViewMultiple.removeColumn(index)
+////                                            delete delRow
+////                                        }
+////                                        for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
+////                                            viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
+////                                        }
+////                                        // add current
+////                                        var keys = viewController.getCurrentDevPropertyKey()
+////                                        var values = viewController.getCurrentDevPropertyValue()
+////                                        var devType = ""
+////                                        var devId = ""
+////                                        for(var i=0; i<keys.length; i++) {
+////                                            if(keys[i] === "devTypeName"){
+////                                                devType = values[i]
+////                                            }
+////                                            if(keys[i] === "id"){
+////                                                devId = values[i]
+////                                            }
+////                                        }
+////                                        viewController.addTarrirDev(devType, devId)
+////                                        timerAffterChangeTarTable.start()
+//                                    });
+//                                    dialogTarNotEmpty.onDiscard.connect(function() {
+//                                        stackSubProperty.currentIndex = 0
+//                                    });
+//                                } else { // add current dev to the tarTable
+//                                    for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
+//                                        viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
+//                                    }
+//                                    for(var i=0; i<tarirDevType.length; i++) {
+//                                        viewController.addTarrirDev(tarirDevType[i], tarirDevId[i])
+//                                    }
+//                                    // nothing add - when add current
+//                                    if(tarirDevId.length === 0) {
+//                                        for(var i=0; i<keys.length; i++) {
+//                                            if(keys[i] === "devTypeName"){
+//                                                devType = values[i]
+//                                            }
+//                                            if(keys[i] === "id"){
+//                                                devId = values[i]
+//                                            }
+//                                        }
+//                                        viewController.addTarrirDev(devType, devId)
+//                                    }
+//                                    timerAffterChangeTarTable.start()
+//                                }
+//                            }
                         }
                         Dialog {
                             id: dialogTarNotEmpty
@@ -1597,30 +1569,12 @@ Rectangle {
                                                     }
                                                 }
                                             }
-                                            //                                            layer.enabled: true
-                                            //                                            layer.effect: DropShadow {
-                                            //                                                transparentBorder: true
-                                            //                                                horizontalOffset: 0
-                                            //                                                verticalOffset: 1
-                                            //                                                color: "#e0e5ef"
-                                            //                                                samples: 10
-                                            //                                                radius: 20
-                                            //                                            }
                                         }
                                         Button {
                                             text: "Считать настройки"
                                             id:readSetingsButton_1
                                             width: 180
                                             height: 50
-                                            //                                            layer.enabled: true
-                                            //                                            layer.effect: DropShadow {
-                                            //                                                transparentBorder: true
-                                            //                                                horizontalOffset: 0
-                                            //                                                verticalOffset: 1
-                                            //                                                color: "#e0e5ef"
-                                            //                                                samples: 10
-                                            //                                                radius: 20
-                                            //                                            }
                                             enabled: (devIsConnected && devIsReady)
                                             onClicked: {
                                                 viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
@@ -1632,15 +1586,6 @@ Rectangle {
                                             width: 180
                                             height: 50
                                             enabled: false
-                                            //                                            layer.enabled: true
-                                            //                                            layer.effect: DropShadow {
-                                            //                                                transparentBorder: true
-                                            //                                                horizontalOffset: 0
-                                            //                                                verticalOffset: 1
-                                            //                                                color: "#e0e5ef"
-                                            //                                                samples: 10
-                                            //                                                radius: 20
-                                            //                                            }
                                             onClicked: {
                                                 writeSettings()
                                             }
@@ -1681,15 +1626,6 @@ Rectangle {
                                                 }
                                             }
                                         }
-                                        //                                        layer.enabled: true
-                                        //                                        layer.effect: DropShadow {
-                                        //                                            transparentBorder: true
-                                        //                                            horizontalOffset: 0
-                                        //                                            verticalOffset: 1
-                                        //                                            color: "#e0e5ef"
-                                        //                                            samples: 10
-                                        //                                            radius: 20
-                                        //                                        }
                                     }
                                     Rectangle {
                                         width: 500
@@ -1708,15 +1644,6 @@ Rectangle {
                                                 width: 200
                                             }
                                         }
-                                        //                                        layer.enabled: true
-                                        //                                        layer.effect: DropShadow {
-                                        //                                            transparentBorder: true
-                                        //                                            horizontalOffset: 0
-                                        //                                            verticalOffset: 1
-                                        //                                            color: "#e0e5ef"
-                                        //                                            samples: 10
-                                        //                                            radius: 20
-                                        //                                        }
                                     }
                                     Rectangle {
                                         width: 500
@@ -1738,15 +1665,6 @@ Rectangle {
                                                 value: 0
                                             }
                                         }
-                                        //                                        layer.enabled: true
-                                        //                                        layer.effect: DropShadow {
-                                        //                                            transparentBorder: true
-                                        //                                            horizontalOffset: 0
-                                        //                                            verticalOffset: 1
-                                        //                                            color: "#e0e5ef"
-                                        //                                            samples: 10
-                                        //                                            radius: 20
-                                        //                                        }
                                     }
                                     Rectangle {
                                         width: 500
@@ -1768,15 +1686,6 @@ Rectangle {
                                                 value: 0
                                             }
                                         }
-                                        //                                        layer.enabled: true
-                                        //                                        layer.effect: DropShadow {
-                                        //                                            transparentBorder: true
-                                        //                                            horizontalOffset: 0
-                                        //                                            verticalOffset: 1
-                                        //                                            color: "#e0e5ef"
-                                        //                                            samples: 10
-                                        //                                            radius: 20
-                                        //                                        }
                                     }
                                     Rectangle {
                                         width: 500
@@ -1803,15 +1712,6 @@ Rectangle {
                                                 }
                                             }
                                         }
-                                        //                                        layer.enabled: true
-                                        //                                        layer.effect: DropShadow {
-                                        //                                            transparentBorder: true
-                                        //                                            horizontalOffset: 0
-                                        //                                            verticalOffset: 1
-                                        //                                            color: "#e0e5ef"
-                                        //                                            samples: 10
-                                        //                                            radius: 20
-                                        //                                        }
                                     }
 
                                     Rectangle {
@@ -1857,15 +1757,6 @@ Rectangle {
                                                 }
                                             }
                                         }
-                                        //                                        layer.enabled: true
-                                        //                                        layer.effect: DropShadow {
-                                        //                                            transparentBorder: true
-                                        //                                            horizontalOffset: 0
-                                        //                                            verticalOffset: 1
-                                        //                                            color: "#e0e5ef"
-                                        //                                            samples: 10
-                                        //                                            radius: 20
-                                        //                                        }
                                     }
 
                                     Rectangle {
@@ -1911,15 +1802,6 @@ Rectangle {
                                                 }
                                             }
                                         }
-                                        //                                        layer.enabled: true
-                                        //                                        layer.effect: DropShadow {
-                                        //                                            transparentBorder: true
-                                        //                                            horizontalOffset: 0
-                                        //                                            verticalOffset: 1
-                                        //                                            color: "#e0e5ef"
-                                        //                                            samples: 10
-                                        //                                            radius: 20
-                                        //                                        }
                                     }
                                 }
                             }
@@ -2020,30 +1902,12 @@ Rectangle {
                                                     enabled: false
                                                 }
                                             }
-                                            //                                            layer.enabled: true
-                                            //                                            layer.effect: DropShadow {
-                                            //                                                transparentBorder: true
-                                            //                                                horizontalOffset: 0
-                                            //                                                verticalOffset: 1
-                                            //                                                color: "#e0e5ef"
-                                            //                                                samples: 10
-                                            //                                                radius: 20
-                                            //                                            }
                                         }
                                         Button {
                                             text: "Считать настройки"
                                             id:readSetingsButton_2
                                             width: 180
                                             height: 50
-                                            //                                            layer.enabled: true
-                                            //                                            layer.effect: DropShadow {
-                                            //                                                transparentBorder: true
-                                            //                                                horizontalOffset: 0
-                                            //                                                verticalOffset: 1
-                                            //                                                color: "#e0e5ef"
-                                            //                                                samples: 10
-                                            //                                                radius: 20
-                                            //                                            }
                                             enabled: (devIsConnected && devIsReady)
                                             onClicked: {
                                                 viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
@@ -2055,15 +1919,6 @@ Rectangle {
                                             width: 180
                                             height: 50
                                             enabled: false
-                                            //                                            layer.enabled: true
-                                            //                                            layer.effect: DropShadow {
-                                            //                                                transparentBorder: true
-                                            //                                                horizontalOffset: 0
-                                            //                                                verticalOffset: 1
-                                            //                                                color: "#e0e5ef"
-                                            //                                                samples: 10
-                                            //                                                radius: 20
-                                            //                                            }
                                             onClicked: {
                                                 writeSettings()
                                             }
@@ -2094,15 +1949,6 @@ Rectangle {
                                                 }
                                             }
                                         }
-                                        //                                        layer.enabled: true
-                                        //                                        layer.effect: DropShadow {
-                                        //                                            transparentBorder: true
-                                        //                                            horizontalOffset: 0
-                                        //                                            verticalOffset: 1
-                                        //                                            color: "#e0e5ef"
-                                        //                                            samples: 10
-                                        //                                            radius: 20
-                                        //                                        }
                                     }
                                 }
                             }
@@ -2150,30 +1996,12 @@ Rectangle {
                                                     }
                                                 }
                                             }
-                                            //                                            layer.enabled: true
-                                            //                                            layer.effect: DropShadow {
-                                            //                                                transparentBorder: true
-                                            //                                                horizontalOffset: 0
-                                            //                                                verticalOffset: 1
-                                            //                                                color: "#e0e5ef"
-                                            //                                                samples: 10
-                                            //                                                radius: 20
-                                            //                                            }
                                         }
                                         Button {
                                             text: "Считать настройки"
                                             id:readSetingsButton_3
                                             width: 180
                                             height: 50
-                                            //                                            layer.enabled: true
-                                            //                                            layer.effect: DropShadow {
-                                            //                                                transparentBorder: true
-                                            //                                                horizontalOffset: 0
-                                            //                                                verticalOffset: 1
-                                            //                                                color: "#e0e5ef"
-                                            //                                                samples: 10
-                                            //                                                radius: 20
-                                            //                                            }
                                             enabled: (devIsConnected && devIsReady)
                                             onClicked: {
                                                 viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
@@ -2185,15 +2013,6 @@ Rectangle {
                                             width: 180
                                             height: 50
                                             enabled: false
-                                            //                                            layer.enabled: true
-                                            //                                            layer.effect: DropShadow {
-                                            //                                                transparentBorder: true
-                                            //                                                horizontalOffset: 0
-                                            //                                                verticalOffset: 1
-                                            //                                                color: "#e0e5ef"
-                                            //                                                samples: 10
-                                            //                                                radius: 20
-                                            //                                            }
                                             onClicked: {
                                                 writeSettings()
                                             }
@@ -2255,15 +2074,6 @@ Rectangle {
                                                 }
                                             }
                                         }
-                                        //                                        layer.enabled: true
-                                        //                                        layer.effect: DropShadow {
-                                        //                                            transparentBorder: true
-                                        //                                            horizontalOffset: 0
-                                        //                                            verticalOffset: 1
-                                        //                                            color: "#e0e5ef"
-                                        //                                            samples: 10
-                                        //                                            radius: 20
-                                        //                                        }
                                     }
                                     //2
                                     Rectangle {
@@ -2284,15 +2094,6 @@ Rectangle {
                                                 width: 200
                                             }
                                         }
-                                        //                                        layer.enabled: true
-                                        //                                        layer.effect: DropShadow {
-                                        //                                            transparentBorder: true
-                                        //                                            horizontalOffset: 0
-                                        //                                            verticalOffset: 1
-                                        //                                            color: "#e0e5ef"
-                                        //                                            samples: 10
-                                        //                                            radius: 20
-                                        //                                        }
                                     }
                                     //3
                                     Rectangle {
@@ -2313,15 +2114,6 @@ Rectangle {
                                                 width: 200
                                             }
                                         }
-                                        //                                        layer.enabled: true
-                                        //                                        layer.effect: DropShadow {
-                                        //                                            transparentBorder: true
-                                        //                                            horizontalOffset: 0
-                                        //                                            verticalOffset: 1
-                                        //                                            color: "#e0e5ef"
-                                        //                                            samples: 10
-                                        //                                            radius: 20
-                                        //                                        }
                                     }
                                     //4
                                     Rectangle {
@@ -2342,15 +2134,6 @@ Rectangle {
                                                 width: 200
                                             }
                                         }
-                                        //                                        layer.enabled: true
-                                        //                                        layer.effect: DropShadow {
-                                        //                                            transparentBorder: true
-                                        //                                            horizontalOffset: 0
-                                        //                                            verticalOffset: 1
-                                        //                                            color: "#e0e5ef"
-                                        //                                            samples: 10
-                                        //                                            radius: 20
-                                        //                                        }
                                     }
                                     //5
                                     Rectangle {
@@ -2371,15 +2154,6 @@ Rectangle {
                                             anchors.verticalCenter: parent.verticalCenter
                                             anchors.topMargin: 10
                                         }
-                                        //                                        layer.enabled: true
-                                        //                                        layer.effect: DropShadow {
-                                        //                                            transparentBorder: true
-                                        //                                            horizontalOffset: 0
-                                        //                                            verticalOffset: 1
-                                        //                                            color: "#e0e5ef"
-                                        //                                            samples: 10
-                                        //                                            radius: 20
-                                        //                                        }
                                     }
                                 }
                             }
@@ -2452,30 +2226,12 @@ Rectangle {
                                                     }
                                                 }
                                             }
-                                            //                                            layer.enabled: true
-                                            //                                            layer.effect: DropShadow {
-                                            //                                                transparentBorder: true
-                                            //                                                horizontalOffset: 0
-                                            //                                                verticalOffset: 1
-                                            //                                                color: "#e0e5ef"
-                                            //                                                samples: 10
-                                            //                                                radius: 20
-                                            //                                            }
                                         }
                                         Button {
                                             text: "Считать настройки"
                                             id:readSetingsButton_4
                                             width: 180
                                             height: 50
-                                            //                                            layer.enabled: true
-                                            //                                            layer.effect: DropShadow {
-                                            //                                                transparentBorder: true
-                                            //                                                horizontalOffset: 0
-                                            //                                                verticalOffset: 1
-                                            //                                                color: "#e0e5ef"
-                                            //                                                samples: 10
-                                            //                                                radius: 20
-                                            //                                            }
                                             enabled: (devIsConnected && devIsReady)
                                             onClicked: {
                                                 viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
@@ -2487,15 +2243,6 @@ Rectangle {
                                             width: 180
                                             height: 50
                                             enabled: false
-                                            //                                            layer.enabled: true
-                                            //                                            layer.effect: DropShadow {
-                                            //                                                transparentBorder: true
-                                            //                                                horizontalOffset: 0
-                                            //                                                verticalOffset: 1
-                                            //                                                color: "#e0e5ef"
-                                            //                                                samples: 10
-                                            //                                                radius: 20
-                                            //                                            }
                                             onClicked: {
                                                 writeSettings()
                                             }
@@ -2520,15 +2267,6 @@ Rectangle {
                                                 width: 300
                                             }
                                         }
-                                        //                                        layer.enabled: true
-                                        //                                        layer.effect: DropShadow {
-                                        //                                            transparentBorder: true
-                                        //                                            horizontalOffset: 0
-                                        //                                            verticalOffset: 1
-                                        //                                            color: "#e0e5ef"
-                                        //                                            samples: 10
-                                        //                                            radius: 20
-                                        //                                        }
                                     }
                                     //3
                                     Rectangle {
@@ -2549,15 +2287,6 @@ Rectangle {
                                                 width: 300
                                             }
                                         }
-                                        //                                        layer.enabled: true
-                                        //                                        layer.effect: DropShadow {
-                                        //                                            transparentBorder: true
-                                        //                                            horizontalOffset: 0
-                                        //                                            verticalOffset: 1
-                                        //                                            color: "#e0e5ef"
-                                        //                                            samples: 10
-                                        //                                            radius: 20
-                                        //                                        }
                                     }
                                 }
                             }
@@ -2656,15 +2385,6 @@ Rectangle {
                                                     }
                                                 }
                                             }
-                                            //                                            layer.enabled: true
-                                            //                                            layer.effect: DropShadow {
-                                            //                                                transparentBorder: true
-                                            //                                                horizontalOffset: 0
-                                            //                                                verticalOffset: 1
-                                            //                                                color: "#e0e5ef"
-                                            //                                                samples: 10
-                                            //                                                radius: 20
-                                            //                                            }
                                         }
 
                                         Button {
@@ -2672,15 +2392,6 @@ Rectangle {
                                             id:readSetingsButton_5
                                             width: 180
                                             height: 50
-                                            //                                            layer.enabled: true
-                                            //                                            layer.effect: DropShadow {
-                                            //                                                transparentBorder: true
-                                            //                                                horizontalOffset: 0
-                                            //                                                verticalOffset: 1
-                                            //                                                color: "#e0e5ef"
-                                            //                                                samples: 10
-                                            //                                                radius: 20
-                                            //                                            }
                                             enabled: (devIsConnected && devIsReady)
                                             onClicked: {
                                                 viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
@@ -2692,15 +2403,6 @@ Rectangle {
                                             width: 180
                                             height: 50
                                             enabled: false
-                                            //                                            layer.enabled: true
-                                            //                                            layer.effect: DropShadow {
-                                            //                                                transparentBorder: true
-                                            //                                                horizontalOffset: 0
-                                            //                                                verticalOffset: 1
-                                            //                                                color: "#e0e5ef"
-                                            //                                                samples: 10
-                                            //                                                radius: 20
-                                            //                                            }
                                             onClicked: {
                                                 writeSettings()
                                             }
@@ -2759,15 +2461,6 @@ Rectangle {
                                                 to: 254
                                             }
                                         }
-                                        //                                        layer.enabled: true
-                                        //                                        layer.effect: DropShadow {
-                                        //                                            transparentBorder: true
-                                        //                                            horizontalOffset: 0
-                                        //                                            verticalOffset: 1
-                                        //                                            color: "#e0e5ef"
-                                        //                                            samples: 10
-                                        //                                            radius: 20
-                                        //                                        }
                                     }
                                 }
                             }
@@ -2793,12 +2486,6 @@ Rectangle {
                                             width: stackSubProperty.width - 30
                                             height: stackSubProperty.height - 10
                                             color: "transparent"
-                                            //                                            layer.enabled: true
-                                            //                                            layer.effect: DropShadow {
-                                            //                                                verticalOffset: 1
-                                            //                                                color: "#e0e5ef"
-                                            //                                                radius: 20
-                                            //                                            }
                                             Rectangle {
                                                 id:tarTabRectangleMultiple
                                                 anchors.left: parent.left
@@ -2988,15 +2675,6 @@ Rectangle {
                                                 width: stackSubProperty.width -15
                                                 height: 50
                                                 color: "transparent"
-                                                //                                                layer.enabled: true
-                                                //                                                layer.effect: DropShadow {
-                                                //                                                    transparentBorder: true
-                                                //                                                    horizontalOffset: 0
-                                                //                                                    verticalOffset: 1
-                                                //                                                    color: "#e0e5ef"
-                                                //                                                    samples: 10
-                                                //                                                    radius: 10
-                                                //                                                }
                                                 Row{
                                                     MiscElems.ButtonRound {
                                                         id:tarBatButtonsMultiple
@@ -3076,25 +2754,7 @@ Rectangle {
                                                         iconCode: "\uF0FE  "
                                                         name: qsTr("Добавить/Удалить\nустройство")
                                                         onClicked: {
-                                                            addDeviceTarirDialog.parent = devPropertyProgressTmk24
                                                             addDeviceTarirDialog.open()
-                                                        }
-                                                        AddDeviceTarirDialog {
-                                                            id:addDeviceTarirDialog
-                                                            onAccepted: {
-                                                                console.log("AddDeviceTarirDialog-accepted = " + deviceTypeName.length + deviceId.length + deviceSerialNumber.length)
-                                                                var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
-                                                                var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
-                                                                var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
-                                                                // обновляем таблицу dev
-                                                                for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
-                                                                    viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
-                                                                }
-                                                                for(var devcount=0; devcount<deviceId.length; devcount++) {
-                                                                    viewController.addTarrirDev(deviceTypeName[devcount], deviceId[devcount])
-                                                                }
-                                                                timerAffterAddRemoveDevTarTable.start()
-                                                            }
                                                         }
                                                         Timer {
                                                             id: timerAffterAddRemoveDevTarTable
@@ -3281,15 +2941,6 @@ Rectangle {
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
             }
-            //            layer.enabled: true
-            //            layer.effect: DropShadow {
-            //                transparentBorder: true
-            //                horizontalOffset: 0
-            //                verticalOffset: 1
-            //                color: "#e0e5ef"
-            //                samples: 10
-            //                radius: 10
-            //            }
         }
     }
 
@@ -3317,6 +2968,25 @@ Rectangle {
         }
         onAccepted: {
             close()
+        }
+    }
+
+    AddDeviceTarirDialog {
+        id:addDeviceTarirDialog
+        onAccepted: {
+            console.log("AddDeviceTarirDialog-accepted = " + deviceTypeName.length + deviceId.length + deviceSerialNumber.length)
+            var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
+            var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
+            var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
+            //
+            for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
+                viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
+            }
+            // обновляем таблицу dev
+            for(var devcount=0; devcount<deviceId.length; devcount++) {
+                viewController.addTarrirDev(deviceTypeName[devcount], deviceId[devcount])
+            }
+            //timerAffterAddRemoveDevTarTable.start()
         }
     }
 

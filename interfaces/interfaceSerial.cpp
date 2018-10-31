@@ -2,22 +2,22 @@
 #include "QDebug"
 
 InterfaceSerial::InterfaceSerial(QString name, QPair<QStringList,QStringList>param) {
-    this->deviceFactory = new DevicesFactory();
-    this->portHandler = new QSerialPort();
+    this->deviceFactory = std::make_shared<DevicesFactory>();
+    this->portHandler = std::make_unique<QSerialPort>();
     this->name = name;
     this->param = param;
     this->isManualClosed = false;
-    connect(deviceFactory, SIGNAL(writeData(QByteArray)),
+    connect(deviceFactory.get(), SIGNAL(writeData(QByteArray)),
             this, SLOT(writeData(QByteArray)));
-    connect(deviceFactory, SIGNAL(readReplyData()), this, SLOT(readData()));
+    connect(deviceFactory.get(), SIGNAL(readReplyData()), this, SLOT(readData()));
 }
 
 InterfaceSerial::~InterfaceSerial() {
     if(portHandler->isOpen()) {
         portHandler->close();
     }
-    delete deviceFactory;
-    delete portHandler;
+    deviceFactory.reset();
+    delete portHandler.release();
 }
 
 void InterfaceSerial::initInterface()  {
@@ -40,7 +40,7 @@ bool InterfaceSerial::openInterface() {
     portHandler->setFlowControl(QSerialPort::NoFlowControl);
     res  = portHandler->open(QIODevice::ReadWrite);
     if(res) {
-        connect(portHandler, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(errorHanler(QSerialPort::SerialPortError)));
+        connect(portHandler.get(), SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(errorHanler(QSerialPort::SerialPortError)));
         isManualClosed = false;
     }
     qDebug() << "openInterface = " << ((res) ? (QString("-Ok")) : (QString("-ERR")));
@@ -56,7 +56,7 @@ void InterfaceSerial::closeInterface() {
         if(portHandler->isOpen()) {
             isManualClosed = true;
             portHandler->close();
-            disconnect(portHandler, SIGNAL(error(QSerialPort::SerialPortError)), this, NULL);
+            disconnect(portHandler.get(), SIGNAL(error(QSerialPort::SerialPortError)), this, NULL);
         }
     }
 }
@@ -152,7 +152,7 @@ QStringList InterfaceSerial::getAvailableList() {
 void InterfaceSerial::errorHanler(QSerialPort::SerialPortError err) {
     qDebug() << "InterfaseSerial -ERR=" << err;
     if(err != QSerialPort::NoError) {
-        disconnect(portHandler, SIGNAL(error(QSerialPort::SerialPortError)), this, NULL);
+        disconnect(portHandler.get(), SIGNAL(error(QSerialPort::SerialPortError)), this, NULL);
         portHandler->close();
         emit errorInterface(portHandler->portName(), tr("Ошибка интерфейса\nПроверьте соединение"));
     }
@@ -163,5 +163,5 @@ QString InterfaceSerial::getType() {
 }
 
 DevicesFactory* InterfaceSerial::getDeviceFactory() {
-    return deviceFactory;
+    return deviceFactory.get();
 }

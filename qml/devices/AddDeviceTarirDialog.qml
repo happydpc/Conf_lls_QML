@@ -1,9 +1,9 @@
 import QtQuick 2.4
-import QtQuick.Controls 2.2
-import QtQuick.Layouts 1.1
-import QtQuick.Controls.Styles 1.4
+import QtQuick.Controls 2.3
+//import QtQuick.Layouts 1.1
+//import QtGraphicalEffects 1.0
 
-import "qrc:/qml/miscElems" as MiscELems
+import "qrc:/qml/miscElems" as MiscElems
 
 Popup {
     id: addDeviceTarirDialog
@@ -13,14 +13,13 @@ Popup {
     width: 830
     height: 600
     modal: true
-    x: parent.x / 2
-    y: parent.y / 2
+    clip: true
 
     Rectangle {
         id:rootRectangle
         anchors.fill: parent
 
-        MiscELems.ButtonRound {
+        MiscElems.ButtonRound {
             id:buttonAddChecked
             textLine: 2
             widthBody: 240
@@ -46,7 +45,7 @@ Popup {
                 close()
             }
         }
-        MiscELems.ButtonRound {
+        MiscElems.ButtonRound {
             id:buttonExit
             textLine: 2
             widthBody: 200

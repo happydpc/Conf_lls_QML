@@ -2,6 +2,7 @@
 #define INTERFACESERIAL_H
 
 #include <QObject>
+#include <memory>
 #include "interfacesAbstract.h"
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
@@ -33,13 +34,12 @@ private slots:
     void readData();
     void errorHanler(QSerialPort::SerialPortError err);
 private:
-    DevicesFactory *deviceFactory;
-
+    std::shared_ptr<DevicesFactory> deviceFactory;
 private:
 
     static constexpr char* typeName = "serial";
     bool isManualClosed;
-    QSerialPort *portHandler = nullptr;
+    std::unique_ptr<QSerialPort> portHandler = nullptr;
     QString name;
     QPair<QStringList,QStringList>param;
 };

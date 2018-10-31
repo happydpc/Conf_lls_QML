@@ -46,7 +46,7 @@ signals:
 
 private:
 
-    QVector<interfacesAbstract*>interfaceList;
+    QVector<std::shared_ptr<interfacesAbstract>>interfaceList;
 
     std::unique_ptr<QMutex> lockInterface;
 

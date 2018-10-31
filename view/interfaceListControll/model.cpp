@@ -6,15 +6,13 @@ Model::Model(QObject *parent) :
     m_tree(QList<TreeItem*>()) {
 }
 
-TreeItem * Model::createTreeItem(QString nameInterface){
-    // TODO: need uniqPtr
+TreeItem * Model::createTreeItem(QString nameInterface) {
     auto res = new TreeItem(nameInterface, true);
     res->setIsCurrent(true);
     return res;
 }
 
 TreeItem * Model::createTreeSubItem(QString nameDevice) {
-    // TODO: need uniqPtr
     auto res = new TreeItem(nameDevice, false);
     connect(res, SIGNAL(currentIndexIsChanged(bool, TreeItem*)), this, SLOT(currentIndexIsChanged(bool, TreeItem*)));
     return res;

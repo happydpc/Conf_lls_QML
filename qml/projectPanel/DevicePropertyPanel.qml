@@ -26,14 +26,28 @@ Rectangle {
     // *************  full clear before load session **************/
     function setCrearAllItems() {
         try {
+            if(interfaceItemArray !== undefined) {
+                for(var len=0; len<interfaceItemArray.length; len++) {
+                    delete interfaceItemArray[len]
+                }
+            }
+            if(deviceItemArray !== undefined) {
+                for(len=0; len<deviceItemArray.length; len++) {
+                    delete deviceItemArray[len]
+                }
+            }
+            while(deviceRootView.count !== 0) {
+                var subDevItem = deviceRootView.itemAt(0)
+                delete subDevItem
+                deviceRootView.removeItem(0)
+                var subInterfaceItem = interfaceView.itemAt(0)
+                delete subInterfaceItem
+                interfaceView.removeItem(0)
+            }
             delete interfaceItemArray
             delete deviceItemArray
             interfaceItemArray = []
             deviceItemArray = []
-            while(deviceRootView.count !== 0) {
-                deviceRootView.removeItem(0)
-                interfaceView.removeItem(0)
-            }
             modeSelectView.setCurrentIndex(indexItem_Logo)
         } catch (error) {
             console.log ("Error loading QML : ")
@@ -57,8 +71,7 @@ Rectangle {
                 interfaceItemArray.push(item);
                 interfaceView.addItem(item)
                 modeSelectView.setCurrentIndex(indexItem_Intefaces)
-                var devItem = Qt.createQmlObject('import QtQuick.Controls 2.4;SwipeView{interactive:true;clip:true;}', deviceRootView);
-//                var devItem = Qt.createQmlObject('import QtQuick.Controls 2.4;SwipeView{anchors.fill:parent;interactive:false;clip:true;}', deviceRootView);
+                var devItem = Qt.createQmlObject('import QtQuick.Controls 2.4;SwipeView{interactive:false;clip:true;}', deviceRootView);
                 deviceItemArray.push([])
                 deviceRootView.addItem(devItem)
                 break;
@@ -88,6 +101,7 @@ Rectangle {
             var item = deviceRootView.itemAt(ioIndex)
             deviceRootView.removeItem(ioIndex)
             delete item
+
         } catch (error) {
             console.log ("Error loading QML : ")
             for (var i = 0; i < error.qmlErrors.length; i++) {
@@ -197,10 +211,16 @@ Rectangle {
 
     function deviceDeleted(ioIndex, devIndex) {
         try {
-            var it = deviceRootView.itemAt(ioIndex)
-            it.removeItem(devIndex)
+            var it = deviceItemArray[ioIndex][devIndex]
+            it.removeAll()
             delete deviceItemArray[ioIndex][devIndex]
             deviceItemArray[ioIndex].splice(devIndex, devIndex+1)
+            //
+            it = deviceRootView.itemAt(ioIndex)
+            var subItem = it.itemAt(devIndex)
+            it.removeItem(devIndex)
+            subItem.destroy();
+            //
             if(deviceItemArray[ioIndex].length === 0) {
                 modeSelectView.setCurrentIndex(indexItem_Intefaces)
             } else {

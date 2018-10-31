@@ -10,7 +10,7 @@ TableViewColumn {
             id:inputValue
             anchors.fill: parent
             selectionColor: "red"
-            text: model[role] === null ? "" : model[role]
+            text: model === null  ? ("") : (model[role] === undefined ? "" : model[role])
             validator: RegExpValidator { regExp: /[0-9A-F]+/ }
             onEditingFinished: {
                 valueIsChanged(role, text, modelChanged)

@@ -6,11 +6,11 @@
 #include <QDebug>
 
 SessionSecurity::SessionSecurity(QObject *parent) : QObject(parent) {
-    this->database = new Database();
+    this->database = std::make_unique<Database>();
 }
 
 SessionSecurity::~SessionSecurity() {
-    delete database;
+    delete database.release();
 }
 
 QStringList SessionSecurity::getAvailableSessions() {

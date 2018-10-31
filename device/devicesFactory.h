@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QTimer>
 #include <QMutex>
+#include <memory>
 #include "command/commandController.h"
 #include "device/deviceAbstract.h"
 
@@ -98,13 +99,14 @@ private slots:
     void lockMutextDevMap();
     void unlockMutextDevMap();
 
+    void onReplySend();
+
 private:
     QVector<QPair<QString,DeviceAbstract*>> deviceMap;
-    CommandController *commandController;
-    QTimer* devShedullerTimer;
-    QMutex* devMutex;
-    QList<ServiceDevicesAbstract*> serviceList;
-
+    std::unique_ptr<CommandController> commandController;
+    std::unique_ptr<QTimer> devShedullerTimer;
+    QScopedPointer<QTimer> sendReqTimer;
+    std::unique_ptr<QMutex> devMutex;
     E_DeviceType factoryType;
 
     struct {

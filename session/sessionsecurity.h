@@ -2,6 +2,7 @@
 #define SESSIONSECURITY_H
 
 #include <QObject>
+#include <memory>
 #include "session.h"
 #include "database/database.h"
 #include <QList>
@@ -25,7 +26,7 @@ signals:
 public slots:
 
 private:
-    Database *database;
+    std::unique_ptr<Database> database;
 };
 
 #endif // SESSIONSECURITY_H
