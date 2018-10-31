@@ -576,13 +576,12 @@ Rectangle {
             tarArrayDinamicCreateItem.push(tableViewColumn)
             tarTabViewMultiple.addColumn(tableViewColumn)
             console.log("addeted1 =" + tableViewColumn.role)
-//            tableViewColumn.destroy()
-//            tableViewColumn.valueIsChanged.connect(function(role, text, modelChanged) {
-//                var curRow = tarTabViewMultiple.currentRow
-//                modelChanged[role] = text
-//                tarTabViewMultiple.model.set(curRow, modelChanged)
-//                remakeTarTableChart()
-//            });
+            tableViewColumn.valueIsChanged.connect(function(role, text, modelChanged) {
+                var curRow = tarTabViewMultiple.currentRow
+                modelChanged[role] = text
+                tarTabViewMultiple.model.set(curRow, modelChanged)
+                remakeTarTableChart()
+            });
             component = Qt.createComponent("DevPropertyProgressTmk24TarTableDelegate.qml");
             tableViewColumn = component.createObject(tarTabViewMultiple);
             tableViewColumn.title = qsTr("Ур.топ-ва[ID-%1]").arg(devId[i2])
@@ -590,15 +589,19 @@ Rectangle {
             tableViewColumn.width = 100
             tarArrayDinamicCreateItem.push(tableViewColumn)
             tarTabViewMultiple.addColumn(tableViewColumn)
-//            tableViewColumn.destroy()
-//            tableViewColumn.valueIsChanged.connect(function(role, text, modelChanged) {
-//                var curRow = tarTabViewMultiple.currentRow
-//                modelChanged[role] = text
-//                tarTabViewMultiple.model.set(curRow, modelChanged)
-//                remakeTarTableChart()
-//            });
-            console.log("addeted2 =" + tableViewColumn.role)
+            tableViewColumn.valueIsChanged.connect(function(role, text, modelChanged) {
+                var curRow = tarTabViewMultiple.currentRow
+                modelChanged[role] = text
+                tarTabViewMultiple.model.set(curRow, modelChanged)
+                remakeTarTableChart()
+            });
         }
+        var newModel = Object()
+        for(var i=0; i<2; i++) {
+        newModel["roleLiters"+i] = "NA"
+        newModel["roleFuelLevel"+i]= "NA"
+        }
+        tarTabViewMultiple.model.set(0, newModel);
     }
 
     function writeTarTable() {
@@ -699,28 +702,16 @@ Rectangle {
 
     function readTarTable() {
         var devCount = viewController.getStayedDevTarrirCount()
-        console.log("readTarTable = " + devCount)
         var jsonArray = []
-        var tarStepMax = viewController.getTarMaxCountStep()
-        while(tarStepMax >0) {
-            jsonArray.push({});
-            tarStepMax--
-        }
         // пока не переберем все уст-ва
         for(var devIndex=0; devIndex<devCount; devIndex++) {
             var table = viewController.getTableAtDevice(devIndex)
             var parity = 0
-            var rowIndex = 0
-            // перебираем таблицу уст-ва
-            var valueFuelLevel = 0
-            var valueLiters = 0
+            var paramCounter = 0;
             var stepCount = viewController.getTarMaxCountStep() *2 // it pair
-            if(stepCount === 0 | stepCount === undefined) {
-                //messageReadTarTableEmpty.open()
-            }
-            console.log("getTable =" + table.length)
-
             for(var devTableRow=0; devTableRow<stepCount; devTableRow++) {
+                var valueFuelLevel = "0"
+                var valueLiters = "0"
                 if(parity == 0) {
                     parity = 1;
                     valueLiters = table[devTableRow]
@@ -737,15 +728,17 @@ Rectangle {
                     var roleLiters = "roleLiters" + devIndex
                     var roleFuelLevel = "roleFuelLevel" + devIndex
 
-                    var itemArray = jsonArray[rowIndex]
-                    if(itemArray === undefined) {
-                        itemArray = {}
-                        jsonArray.push(itemArray)
+                    if(jsonArray.length < paramCounter+1) {
+                        var itemCurrentRole = Object()
+                        itemCurrentRole[roleLiters] = valueLiters;
+                        itemCurrentRole[roleFuelLevel] = valueFuelLevel;
+                        jsonArray.push(itemCurrentRole)
+                    } else {
+                        var iItem = jsonArray[paramCounter]
+                        iItem[roleLiters] = valueLiters;
+                        iItem[roleFuelLevel] = valueFuelLevel;
                     }
-                    itemArray[roleLiters] = valueLiters;
-                    itemArray[roleFuelLevel] = valueFuelLevel;
-                    jsonArray[rowIndex] = itemArray
-                    rowIndex ++
+                    paramCounter++;
                 }
             }
         }
@@ -757,7 +750,6 @@ Rectangle {
                 tarTabViewMultiple.model.set(len, jsonArray[len])
             }
         }
-        timerAffterRefrashTarTable.start()
     }
 
     function changeDeviceUniqId() {
@@ -1410,112 +1402,46 @@ Rectangle {
                             Controls_1_4.TableViewColumn{width: 30 }
                         }
                         onCurrentIndexChanged: {
-//                            if(stackSubProperty.currentItem == itemDevTarir) {
-//                                // first check what not device in the tarClass
-//                                // when show dialog and add it
-//                                var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
-//                                var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
-//                                var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
-//                                var keys = viewController.getCurrentDevPropertyKey()
-//                                var values = viewController.getCurrentDevPropertyValue()
-//                                var devType = ""
-//                                var devId = ""
-//                                if(viewController.getStayedDevTarrirCount()) {
-//                                    dialogTarNotEmpty.open()
-//                                    dialogTarNotEmpty.onApply.connect(function() {
-//                                        dialogTarNotEmpty.close()
-//                                        console.log("tarDev item -active")
-//                                        // сперва добавить всем роли
-//                                        // TODO: hack!!!
-////                                        var connDevId = viewController.getAvailableDevTarrirAdd_DevId()
-////                                        var connDevType = viewController.getAvailableDevTarrirAdd_DevType()
-////                                        for(var i=0; i<connDevId.length; i++) {
-////                                            viewController.addTarrirDev(connDevType[i], connDevId[i])
-////                                        }
-////                                        addTarStepValue(0)
-//                                        // clear tar table
-////                                        var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
-////                                        var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
-////                                        var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
-////                                        for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
-////                                            viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
-////                                        }
-////                                        var keys = viewController.getCurrentDevPropertyKey()
-////                                        var values = viewController.getCurrentDevPropertyValue()
-////                                        var devType = ""
-////                                        var devId = ""
-////                                        for(var i=0; i<keys.length; i++) {
-////                                            if(keys[i] === "devTypeName"){
-////                                                devType = values[i]
-////                                            }
-////                                            if(keys[i] === "id"){
-////                                                devId = values[i]
-////                                            }
-////                                        }
-////                                        viewController.addTarrirDev(devType, devId)
-////                                        timerAffterChangeTarTable.start()
-//                                        // clear all
-////                                        for(var index = tarTabViewMultiple.columnCount-1; index>=0; index--) {
-////                                            var delRow = tarTabViewMultiple.getColumn(index)
-////                                            tarTabViewMultiple.removeColumn(index)
-////                                            delete delRow
-////                                        }
-////                                        for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
-////                                            viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
-////                                        }
-////                                        // add current
-////                                        var keys = viewController.getCurrentDevPropertyKey()
-////                                        var values = viewController.getCurrentDevPropertyValue()
-////                                        var devType = ""
-////                                        var devId = ""
-////                                        for(var i=0; i<keys.length; i++) {
-////                                            if(keys[i] === "devTypeName"){
-////                                                devType = values[i]
-////                                            }
-////                                            if(keys[i] === "id"){
-////                                                devId = values[i]
-////                                            }
-////                                        }
-////                                        viewController.addTarrirDev(devType, devId)
-////                                        timerAffterChangeTarTable.start()
-//                                    });
-//                                    dialogTarNotEmpty.onDiscard.connect(function() {
-//                                        stackSubProperty.currentIndex = 0
-//                                    });
-//                                } else { // add current dev to the tarTable
-//                                    for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
-//                                        viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
-//                                    }
-//                                    for(var i=0; i<tarirDevType.length; i++) {
-//                                        viewController.addTarrirDev(tarirDevType[i], tarirDevId[i])
-//                                    }
-//                                    // nothing add - when add current
-//                                    if(tarirDevId.length === 0) {
-//                                        for(var i=0; i<keys.length; i++) {
-//                                            if(keys[i] === "devTypeName"){
-//                                                devType = values[i]
-//                                            }
-//                                            if(keys[i] === "id"){
-//                                                devId = values[i]
-//                                            }
-//                                        }
-//                                        viewController.addTarrirDev(devType, devId)
-//                                    }
-//                                    timerAffterChangeTarTable.start()
-//                                }
-//                            }
+                            if(stackSubProperty.currentItem == itemDevTarir) {
+                                // first check what not device in the tarClass
+                                // when show dialog and add it
+                                var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
+                                var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
+                                var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
+                                if(viewController.getStayedDevTarrirCount()) {
+                                    dialogTarNotEmpty.open()
+                                }
+                                for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
+                                    viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
+                                }
+                                // add current
+                                var keys = viewController.getCurrentDevPropertyKey()
+                                var values = viewController.getCurrentDevPropertyValue()
+                                var devType = ""
+                                var devId = ""
+                                for(var i=0; i<keys.length; i++) {
+                                    if(keys[i] === "devTypeName"){
+                                        devType = values[i]
+                                    }
+                                    if(keys[i] === "id"){
+                                        devId = values[i]
+                                    }
+                                }
+                                viewController.addTarrirDev(devType, devId)
+                                timerAffterChangeTarTable.start()
+                            }
                         }
                         Dialog {
                             id: dialogTarNotEmpty
                             visible: false
                             title: "Тарировка"
-                            standardButtons: StandardButton.Close | StandardButton.Apply
+                            standardButtons: StandardButton.Close
                             Rectangle {
                                 color: "transparent"
                                 implicitWidth: 500
                                 implicitHeight: 200
                                 TextEdit{
-                                    text: "Обнаружены не сохраненные данные в процессе тарировки\nПроводить тарировку можно только на одной открытой вкладке\n(Последней открытой)\nПри этом данные на других вкладках не будут сохранены\nНачать новую тарировку на этой вкладке?\nНе сохраненые данные будут утеряны!"
+                                    text: "Обнаружены не сохраненные данные в процессе тарировки\nПроводить тарировку можно только на одной открытой вкладке\n(Последней открытой)"
                                     color: "black"
                                     anchors.centerIn: parent
                                     readOnly: true
@@ -2499,9 +2425,7 @@ Rectangle {
                                                     height: parent.height / 2
                                                     width: parent.width
 
-                                                    model: ListModel {
-                                                        id: tarTableListModelMultiple
-                                                    }
+                                                    model: ListModel {}
                                                     onCurrentRowChanged: {
                                                         tarTabViewMultiple.selection.clear()
                                                         tarTabViewMultiple.selection.select(tarTabViewMultiple.currentRow)
@@ -2986,7 +2910,7 @@ Rectangle {
             for(var devcount=0; devcount<deviceId.length; devcount++) {
                 viewController.addTarrirDev(deviceTypeName[devcount], deviceId[devcount])
             }
-            //timerAffterAddRemoveDevTarTable.start()
+            timerAffterAddRemoveDevTarTable.start()
         }
     }
 
