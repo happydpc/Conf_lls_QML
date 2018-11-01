@@ -112,7 +112,7 @@ QPair<QStringList,QStringList> Progress_tmk24::getCurrentData() {
     res.first.push_back("noiseDetected");
     res.second.push_back(QString::number(lls_data.noiseDetected));
     res.first.push_back("chartValue");
-    res.second.push_back(lls_data.cnt.isValid == true ? QString::number(lls_data.cnt.value.value_u32) : QString::number(0));
+    res.second.push_back(lls_data.freq.isValid == true ? QString::number(lls_data.freq.value.value_u32) : QString::number(0));
     return res;
 }
 
@@ -343,10 +343,10 @@ bool Progress_tmk24::makeDataToCommand(CommandController::sCommandData &commandD
                 commandData.commandOptionData.push_back((uint8_t)commandData.args.value.size());
                 for(uint8_t i=0; i<(Progress_tmk24Data::TAR_TABLE_SIZE); i++) {
                     if(i < commandData.args.value.size()) {
-                        commandData.commandOptionData.push_back((uint32_t)commandData.args.key.at(i).toUInt() & 0xFF);
-                        commandData.commandOptionData.push_back(((uint32_t)commandData.args.key.at(i).toUInt() & 0xFF00) >> 8);
                         commandData.commandOptionData.push_back((uint32_t)commandData.args.value.at(i).toUInt() & 0xFF);
                         commandData.commandOptionData.push_back(((uint32_t)commandData.args.value.at(i).toUInt() & 0xFF00) >> 8);
+                        commandData.commandOptionData.push_back((uint32_t)commandData.args.key.at(i).toUInt() & 0xFF);
+                        commandData.commandOptionData.push_back(((uint32_t)commandData.args.key.at(i).toUInt() & 0xFF00) >> 8);
                     } else {
                         commandData.commandOptionData.push_back((char)0);
                         commandData.commandOptionData.push_back((char)0);
@@ -608,13 +608,13 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                     lls_data.calibrateTable.get.table.TableSize = commandArrayReplyData.at(3);
                     int index = 0;
                     for(int i=0; i<lls_data.calibrateTable.get.table.TableSize; i++) {
-                        lls_data.calibrateTable.get.table.x[i] = (0xFF & commandArrayReplyData.at(index+4));
-                        index++;
-                        lls_data.calibrateTable.get.table.x[i] |= ((0xFF & commandArrayReplyData.at(index+4)) << 8);
-                        index++;
                         lls_data.calibrateTable.get.table.y[i] = (0xFF & commandArrayReplyData.at(index+4));
                         index++;
                         lls_data.calibrateTable.get.table.y[i] |= ((0xFF & commandArrayReplyData.at(index+4)) << 8);
+                        index++;
+                        lls_data.calibrateTable.get.table.x[i] = (0xFF & commandArrayReplyData.at(index+4));
+                        index++;
+                        lls_data.calibrateTable.get.table.x[i] |= ((0xFF & commandArrayReplyData.at(index+4)) << 8);
                         index++;
                         keys.push_back("y");
                         values.push_back(QString::number(lls_data.calibrateTable.get.table.y[i]));
@@ -950,6 +950,7 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
     QList <CommandController::sCommandData> command;
     CommandController::sCommandData tcommand;
     tcommand.operationHeader = operation;
+    tcommand.isNeedIncreasedDelay = false;
     if(operation == "set current level value as min") {
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
@@ -989,6 +990,7 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
     } else if(operation == "set current dev settings") {
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true;
+        tcommand.isNeedIncreasedDelay = true;
         tcommand.devCommand = (int)Progress_tmk24Data::lls_write_settings;
         tcommand.commandType = CommandController::E_CommandType_send_typical_request;
         // key
@@ -1009,6 +1011,7 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
     } else if(operation == "set current dev tar table") {
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true;
+        tcommand.isNeedIncreasedDelay = true;
         tcommand.devCommand = (int)Progress_tmk24Data::lls_write_cal_table;
         tcommand.commandType = CommandController::E_CommandType_send_typical_request;
         // key
@@ -1023,6 +1026,7 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
     } else if(operation == "read current dev tar table") {
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true;
+        tcommand.isNeedIncreasedDelay = true;
         tcommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
         tcommand.commandType = CommandController::E_CommandType_send_typical_request;
         command.push_back(tcommand);
@@ -1032,6 +1036,7 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
         tcommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;
         tcommand.commandType = CommandController::E_CommandType_send_typical_request;
         tcommand.isNeedAckMessage = false;
+        tcommand.isNeedIncreasedDelay = true;
         tcommand.args.key.clear();
         tcommand.args.value.clear();
         tcommand.commandOptionData.clear();

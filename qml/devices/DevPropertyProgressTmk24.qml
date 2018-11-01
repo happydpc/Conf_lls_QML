@@ -14,6 +14,7 @@ import "qrc:/qml/devices" as Devices
 
 Rectangle {
     visible: true
+    clip: true
 
     property bool isNoiseDetected: false
     property bool devIsConnected: false
@@ -31,10 +32,19 @@ Rectangle {
     }
 
     function removeAll() {
-        for(var itemCounter=0; itemCounter<tarTabViewMultiple.rowCount; itemCounter++) {
-            var item = tarTabViewMultiple.model.get(itemCounter)
-            item.destroy();
+        for(var index = tarTabViewMultiple.columnCount-1; index>=0; index--) {
+            var delRow = tarTabViewMultiple.getColumn(index)
+            tarTabViewMultiple.removeColumn(index)
+            delRow.destroy()
+            delete delRow
         }
+        while(tarArrayDinamicCreateItem.length !== 0) {
+            var column = tarArrayDinamicCreateItem[0]
+            column.destroy()
+            delete column
+            tarArrayDinamicCreateItem.shift()
+        }
+        tarTabViewMultiple.model.clear()
     }
 
     function setConnected() {
@@ -543,19 +553,7 @@ Rectangle {
 
     function remakeTarTable() {
         tarListDevice.model.clear()
-        for(var index = tarTabViewMultiple.columnCount-1; index>=0; index--) {
-            var delRow = tarTabViewMultiple.getColumn(index)
-            tarTabViewMultiple.removeColumn(index)
-            delRow.destroy()
-            if(index <= tarArrayDinamicCreateItem.length) {
-                var column = tarArrayDinamicCreateItem[index]
-                column.destroy()
-                delete column
-                tarArrayDinamicCreateItem.shift()
-            }
-            delete delRow
-        }
-        tarTabViewMultiple.model.clear()
+        removeAll()
         var tarSize = viewController.getStayedDevTarrirCount()
         var devType = []
         var devId = []
@@ -597,7 +595,7 @@ Rectangle {
             });
         }
         var newModel = Object()
-        for(var i=0; i<2; i++) {
+        for(var i=0; i<32; i++) {
         newModel["roleLiters"+i] = "NA"
         newModel["roleFuelLevel"+i]= "NA"
         }
@@ -708,10 +706,10 @@ Rectangle {
             var table = viewController.getTableAtDevice(devIndex)
             var parity = 0
             var paramCounter = 0;
+            var valueFuelLevel = "0"
+            var valueLiters = "0"
             var stepCount = viewController.getTarMaxCountStep() *2 // it pair
             for(var devTableRow=0; devTableRow<stepCount; devTableRow++) {
-                var valueFuelLevel = "0"
-                var valueLiters = "0"
                 if(parity == 0) {
                     parity = 1;
                     valueLiters = table[devTableRow]
@@ -1078,7 +1076,7 @@ Rectangle {
                                     id: chartCurrentValue
                                     anchors.fill: parent
                                     theme: ChartView.ChartThemeLight
-                                    title: "Значение CNT"
+                                    title: "Частота (Гц)"
                                     backgroundColor: devIsConnected ? "#ffffff" : "#d9d9d9"
                                     antialiasing: true
                                     property int graphLength: 1
@@ -1093,7 +1091,7 @@ Rectangle {
                                     }
                                     ValueAxis {
                                         id: chartCurrentValueLinesY
-                                        min: -0.1
+                                        min: 0
                                         max: chartCurrentValue.graphAmplitudeMax
                                         tickCount: 5
                                     }
@@ -1343,7 +1341,7 @@ Rectangle {
                             currentIndex: stackSubProperty.currentIndex
                             font.pointSize: 8
                             background: Rectangle {
-                                color: "transparent"
+                                color: "#ffffff"
                             }
 
                             MiscElems.TabButtonUp {

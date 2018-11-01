@@ -27,28 +27,12 @@ Rectangle {
     function setCrearAllItems() {
         try {
             if(interfaceItemArray !== undefined) {
-                for(var len=0; len<interfaceItemArray.length; len++) {
-                    delete interfaceItemArray[len]
+                while(interfaceItemArray.length !== 0) {
+                    intefaceDeleted(0)
                 }
             }
-            if(deviceItemArray !== undefined) {
-                for(len=0; len<deviceItemArray.length; len++) {
-                    delete deviceItemArray[len]
-                }
-            }
-            while(deviceRootView.count !== 0) {
-                var subDevItem = deviceRootView.itemAt(0)
-                delete subDevItem
-                deviceRootView.removeItem(0)
-                var subInterfaceItem = interfaceView.itemAt(0)
-                delete subInterfaceItem
-                interfaceView.removeItem(0)
-            }
-            delete interfaceItemArray
-            delete deviceItemArray
-            interfaceItemArray = []
-            deviceItemArray = []
             modeSelectView.setCurrentIndex(indexItem_Logo)
+            gc();
         } catch (error) {
             console.log ("Error loading QML : ")
             for (var i = 0; i < error.qmlErrors.length; i++) {
@@ -91,17 +75,18 @@ Rectangle {
     function intefaceDeleted(ioIndex) {
         try {
             interfaceView.removeItem(ioIndex)
+            var removeIem = interfaceItemArray[ioIndex]
+            removeIem.removeAll()
+            removeIem.destroy()
             delete interfaceItemArray[ioIndex]
             interfaceItemArray.splice(ioIndex, ioIndex+1)
+            while(deviceItemArray[ioIndex].length !== 0) {
+                deviceDeleted(ioIndex, 0)
+            }
             if(interfaceItemArray.length <=0) {
                 modeSelectView.setCurrentIndex(indexItem_Logo)
             }
-            delete deviceItemArray[ioIndex]
-            deviceItemArray.splice(ioIndex, ioIndex+1)
-            var item = deviceRootView.itemAt(ioIndex)
-            deviceRootView.removeItem(ioIndex)
-            delete item
-
+            gc();
         } catch (error) {
             console.log ("Error loading QML : ")
             for (var i = 0; i < error.qmlErrors.length; i++) {
@@ -211,22 +196,26 @@ Rectangle {
 
     function deviceDeleted(ioIndex, devIndex) {
         try {
-            var it = deviceItemArray[ioIndex][devIndex]
-            it.removeAll()
-            delete deviceItemArray[ioIndex][devIndex]
-            deviceItemArray[ioIndex].splice(devIndex, devIndex+1)
-            //
-            it = deviceRootView.itemAt(ioIndex)
-            var subItem = it.itemAt(devIndex)
-            it.removeItem(devIndex)
-            subItem.destroy();
-            //
-            if(deviceItemArray[ioIndex].length === 0) {
-                modeSelectView.setCurrentIndex(indexItem_Intefaces)
-            } else {
-                deviceRootView.setCurrentIndex(ioIndex) // ???
-                it = deviceRootView.itemAt(ioIndex)
-                it.setCurrentIndex(deviceItemArray[ioIndex].size-1)
+            if(deviceItemArray !== undefined) {
+                if(deviceItemArray[ioIndex] !== undefined) {
+                    if(deviceItemArray[ioIndex][devIndex] !== undefined) {
+                        var it = deviceRootView.itemAt(ioIndex)
+                        var subItem = it.itemAt(devIndex)
+                        it.removeItem(devIndex)
+                        subItem.removeAll()
+                        subItem.destroy();
+                        delete deviceItemArray[ioIndex][devIndex]
+                        deviceItemArray[ioIndex].splice(devIndex, devIndex+1)
+                        if(deviceItemArray[ioIndex].length === 0) {
+                            modeSelectView.setCurrentIndex(indexItem_Intefaces)
+                        } else {
+                            deviceRootView.setCurrentIndex(ioIndex) // ???
+                            it = deviceRootView.itemAt(ioIndex)
+                            it.setCurrentIndex(deviceItemArray[ioIndex].size-1)
+                        }
+                        gc();
+                    }
+                }
             }
             if(interfaceItemArray.length <=0) {
                 modeSelectView.setCurrentIndex(indexItem_Logo)
@@ -244,18 +233,9 @@ Rectangle {
 
     function setActiveDevicePanelType(devType, ioIndex, devIndex) { /****/
         try {
-//            for(var len=0; len<deviceRootView.count; len++) {
-//                for(var lenSub=0; lenSub<deviceItemArray[len].length; lenSub++) {
-//                    deviceItemArray[len][lenSub].visible = false
-//                }
-//            }
             deviceRootView.setCurrentIndex(ioIndex) // ????
             var it = deviceRootView.itemAt(ioIndex)
             it.setCurrentIndex(devIndex)
-//            it.visible = true
-//            if(isAvailableSubIndex(deviceItemArray, ioIndex, devIndex)) {
-//                deviceItemArray[ioIndex][devIndex].visible = true
-//            }
             modeSelectView.setCurrentIndex(indexItem_Devices)
         } catch (error) {
             console.log ("Error loading QML : ")

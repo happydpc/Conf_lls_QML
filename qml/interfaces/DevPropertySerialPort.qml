@@ -23,6 +23,9 @@ Rectangle {
         }
     }
 
+    function removeAll() {
+    }
+
     function setResultCheckDevice(devTypeName, devId, devSn, result) {
         addDeviceDialog.setResultCheckDevice(devTypeName, devId, devSn, result)
     }

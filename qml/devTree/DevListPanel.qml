@@ -124,6 +124,9 @@ Rectangle {
                 item.x = devicePropertyPanel.height / 6
                 item.y = devicePropertyPanel.width / 6
                 item.open()
+                item.onClosed.connect(function() {
+                    item.destroy()
+                });
             }
         }
         ButtonRound {
