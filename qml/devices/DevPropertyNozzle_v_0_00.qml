@@ -1231,7 +1231,7 @@ Rectangle {
                 anchors.centerIn: parent
             }
         }
-        onApply: {
+        onAccepted: {
             close()
         }
     }

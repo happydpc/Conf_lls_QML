@@ -710,9 +710,9 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
             // возможно обращение к несуществующему элементу
             if(commandReqData.devCommand == (uint8_t)commandArrayReplyData.at(2)) {
                 if(commandArrayReplyData.size() > 5) { // TODO: 10?
-                    Progress_tmk24Data::T_errors t_erros;
+                    Progress_tmk24Data::T_errors t_erros;                    
                     memcpy(&t_erros, (commandArrayReplyData.data() + 3), sizeof(t_erros));
-                    memcpy(&lls_data.errors, &t_erros, sizeof(lls_data.errors));
+                    memcpy(&lls_data.errors, &t_erros, sizeof(t_erros));
                     emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ExectCustomCommand, getUniqId(),
                                                 commandReqData.devCommand, QString("Normal"), QStringList(), QStringList(), commandReqData);
                     lls_data.errors.isValid = true;

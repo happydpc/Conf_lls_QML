@@ -11,19 +11,19 @@ MAKEFILE      = Makefile.Release
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DUNICODE -D_UNICODE -DWIN32 -DQT_DEPRECATED_WARNINGS -DQT_QML_DEBUG -DQT_NO_DEBUG -DQT_QUICK_LIB -DQT_CHARTS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_QML_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_SQL_LIB -DQT_CORE_LIB -DQT_NEEDS_QMAIN
+DEFINES       = -DUNICODE -D_UNICODE -DWIN32 -DQT_DEPRECATED_WARNINGS -DPROGRESS -DQT_QML_DEBUG -DQT_NO_DEBUG -DQT_QUICK_LIB -DQT_CHARTS_LIB -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_QML_LIB -DQT_NETWORK_LIB -DQT_SERIALPORT_LIB -DQT_SQL_LIB -DQT_CORE_LIB -DQT_NEEDS_QMAIN
 CFLAGS        = -fno-keep-inline-dllexport -O2 -Wall -W -Wextra $(DEFINES)
 CXXFLAGS      = -fno-keep-inline-dllexport -O2 -std=gnu++1y -Wall -W -Wextra -fexceptions -mthreads $(DEFINES)
 INCPATH       = -I..\..\Conf_lls_QML -I. -IC:\Qt\Qt5.11.1\5.11.1\mingw53_32\include -IC:\Qt\Qt5.11.1\5.11.1\mingw53_32\include\QtQuick -IC:\Qt\Qt5.11.1\5.11.1\mingw53_32\include\QtCharts -IC:\Qt\Qt5.11.1\5.11.1\mingw53_32\include\QtWidgets -IC:\Qt\Qt5.11.1\5.11.1\mingw53_32\include\QtGui -IC:\Qt\Qt5.11.1\5.11.1\mingw53_32\include\QtANGLE -IC:\Qt\Qt5.11.1\5.11.1\mingw53_32\include\QtQml -IC:\Qt\Qt5.11.1\5.11.1\mingw53_32\include\QtNetwork -IC:\Qt\Qt5.11.1\5.11.1\mingw53_32\include\QtSerialPort -IC:\Qt\Qt5.11.1\5.11.1\mingw53_32\include\QtSql -IC:\Qt\Qt5.11.1\5.11.1\mingw53_32\include\QtCore -Irelease -IC:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\win32-g++ 
 LINKER      =        g++
 LFLAGS        =        -Wl,-s -Wl,-subsystem,windows -mthreads
-LIBS        =        -lmingw32 -LC:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\libqtmain.a -LC:\openssl\lib -LC:\Utils\my_sql\mysql-5.6.11-win32\lib -LC:\Utils\postgresql\pgsql\lib -lshell32 C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\libQt5Quick.a C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\libQt5Charts.a C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\libQt5Widgets.a C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\libQt5Gui.a C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\libQt5Qml.a C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\libQt5Network.a C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\libQt5SerialPort.a C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\libQt5Sql.a C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\libQt5Core.a release\icon_res.o 
+LIBS        =        -lmingw32 -LC:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\libqtmain.a -LC:\openssl\lib -LC:\Utils\my_sql\mysql-5.6.11-win32\lib -LC:\Utils\postgresql\pgsql\lib -lshell32 C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\libQt5Quick.a C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\libQt5Charts.a C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\libQt5Widgets.a C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\libQt5Gui.a C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\libQt5Qml.a C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\libQt5Network.a C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\libQt5SerialPort.a C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\libQt5Sql.a C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\libQt5Core.a release\icon_pg_res.o 
 QMAKE         = C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmake.exe
 IDC           = idc
 IDL           = midl
 ZIP           = zip -r -9
 DEF_FILE      = 
-RES_FILE      = release\icon_res.o
+RES_FILE      = release\icon_pg_res.o
 COPY          = copy /y
 SED           = $(QMAKE) -install sed
 COPY_FILE     = copy /y
@@ -75,10 +75,42 @@ SOURCES       = ..\main.cpp \
 		..\database\database.cpp \
 		..\session\session.cpp \
 		..\session\sessionsecurity.cpp \
-		..\update\updater.cpp release\qrc_qml.cpp \
-		release\qrc_images.cpp \
+		..\update\updater.cpp \
+		..\translate\qmltranslator.cpp release\qrc_images.cpp \
 		release\qrc_font.cpp \
 		release\qrc_db.cpp \
+		release\qml_app_qml.cpp \
+		release\qml_View_qml.cpp \
+		release\qml_interfaces_AddSerialPort_qml.cpp \
+		release\qml_interfaces_DevPropertySerialPort_qml.cpp \
+		release\qml_interfaces_MessageShow_qml.cpp \
+		release\qml_devTree_DeviceItemEmpty_qml.cpp \
+		release\qml_devTree_DeviceTree_qml.cpp \
+		release\qml_devTree_EditDeviceName_qml.cpp \
+		release\qml_devTree_DevListPanel_qml.cpp \
+		release\qml_devTree_DeviceItem_qml.cpp \
+		release\qml_devTree_InterfaceItemView_qml.cpp \
+		release\qml_projectPanel_LogoPanel_qml.cpp \
+		release\qml_projectPanel_Settings_qml.cpp \
+		release\qml_projectPanel_Session_qml.cpp \
+		release\qml_projectPanel_Support_qml.cpp \
+		release\qml_projectPanel_MainMenuBar_qml.cpp \
+		release\qml_projectPanel_DevicePropertyPanel_qml.cpp \
+		release\qml_projectPanel_ProjectMainStack_qml.cpp \
+		release\qml_projectPanel_ProjectStartScreen_qml.cpp \
+		release\qml_devices_DevPropertyNozzle_v_0_00_qml.cpp \
+		release\qml_devices_AddDeviceDialog_qml.cpp \
+		release\qml_devices_DevPropertyProgressTmk4ux_qml.cpp \
+		release\qml_devices_AddDeviceTarirDialog_qml.cpp \
+		release\qml_devices_ChangeDevIdName_qml.cpp \
+		release\qml_devices_DevPropertyProgressTmk24TarTableDelegate_qml.cpp \
+		release\qml_devices_SearchDevice_qml.cpp \
+		release\qml_devices_DevPropertyProgressTmk24_qml.cpp \
+		release\qml_miscElems_Button_qml.cpp \
+		release\qml_miscElems_AnimatedAreaSeries_qml.cpp \
+		release\qml_miscElems_ButtonRound_qml.cpp \
+		release\qml_miscElems_TabButtonUp_qml.cpp \
+		release\qmlcache_loader.cpp \
 		release\moc_connectionFactory.cpp \
 		release\moc_deviceAbstract.cpp \
 		release\moc_devicesFactory.cpp \
@@ -101,7 +133,8 @@ SOURCES       = ..\main.cpp \
 		release\moc_Nozzle_Revision_0_00_Oct_2018_Data.cpp \
 		release\moc_database.cpp \
 		release\moc_sessionsecurity.cpp \
-		release\moc_updater.cpp
+		release\moc_updater.cpp \
+		release\moc_qmltranslator.cpp
 OBJECTS       = release/main.o \
 		release/connectionFactory.o \
 		release/deviceAbstract.o \
@@ -133,10 +166,42 @@ OBJECTS       = release/main.o \
 		release/session.o \
 		release/sessionsecurity.o \
 		release/updater.o \
-		release/qrc_qml.o \
+		release/qmltranslator.o \
 		release/qrc_images.o \
 		release/qrc_font.o \
 		release/qrc_db.o \
+		release/qml_app_qml.o \
+		release/qml_View_qml.o \
+		release/qml_interfaces_AddSerialPort_qml.o \
+		release/qml_interfaces_DevPropertySerialPort_qml.o \
+		release/qml_interfaces_MessageShow_qml.o \
+		release/qml_devTree_DeviceItemEmpty_qml.o \
+		release/qml_devTree_DeviceTree_qml.o \
+		release/qml_devTree_EditDeviceName_qml.o \
+		release/qml_devTree_DevListPanel_qml.o \
+		release/qml_devTree_DeviceItem_qml.o \
+		release/qml_devTree_InterfaceItemView_qml.o \
+		release/qml_projectPanel_LogoPanel_qml.o \
+		release/qml_projectPanel_Settings_qml.o \
+		release/qml_projectPanel_Session_qml.o \
+		release/qml_projectPanel_Support_qml.o \
+		release/qml_projectPanel_MainMenuBar_qml.o \
+		release/qml_projectPanel_DevicePropertyPanel_qml.o \
+		release/qml_projectPanel_ProjectMainStack_qml.o \
+		release/qml_projectPanel_ProjectStartScreen_qml.o \
+		release/qml_devices_DevPropertyNozzle_v_0_00_qml.o \
+		release/qml_devices_AddDeviceDialog_qml.o \
+		release/qml_devices_DevPropertyProgressTmk4ux_qml.o \
+		release/qml_devices_AddDeviceTarirDialog_qml.o \
+		release/qml_devices_ChangeDevIdName_qml.o \
+		release/qml_devices_DevPropertyProgressTmk24TarTableDelegate_qml.o \
+		release/qml_devices_SearchDevice_qml.o \
+		release/qml_devices_DevPropertyProgressTmk24_qml.o \
+		release/qml_miscElems_Button_qml.o \
+		release/qml_miscElems_AnimatedAreaSeries_qml.o \
+		release/qml_miscElems_ButtonRound_qml.o \
+		release/qml_miscElems_TabButtonUp_qml.o \
+		release/qmlcache_loader.o \
 		release/moc_connectionFactory.o \
 		release/moc_deviceAbstract.o \
 		release/moc_devicesFactory.o \
@@ -159,7 +224,8 @@ OBJECTS       = release/main.o \
 		release/moc_Nozzle_Revision_0_00_Oct_2018_Data.o \
 		release/moc_database.o \
 		release/moc_sessionsecurity.o \
-		release/moc_updater.o
+		release/moc_updater.o \
+		release/moc_qmltranslator.o
 
 DIST          = device/service/serviceDevicesAbstract ..\connection\connectionFactory.h \
 		..\device\deviceAbstract.h \
@@ -190,7 +256,8 @@ DIST          = device/service/serviceDevicesAbstract ..\connection\connectionFa
 		..\database\database.h \
 		..\session\session.h \
 		..\session\sessionsecurity.h \
-		..\update\updater.h ..\main.cpp \
+		..\update\updater.h \
+		..\translate\qmltranslator.h ..\main.cpp \
 		..\connection\connectionFactory.cpp \
 		..\device\deviceAbstract.cpp \
 		..\device\devicesFactory.cpp \
@@ -220,7 +287,8 @@ DIST          = device/service/serviceDevicesAbstract ..\connection\connectionFa
 		..\database\database.cpp \
 		..\session\session.cpp \
 		..\session\sessionsecurity.cpp \
-		..\update\updater.cpp
+		..\update\updater.cpp \
+		..\translate\qmltranslator.cpp
 QMAKE_TARGET  = Lls_QML_conf
 DESTDIR        = release\ #avoid trailing-slash linebreak
 TARGET         = Lls_QML_conf.exe
@@ -231,23 +299,24 @@ DESTDIR_TARGET = release\Lls_QML_conf.exe
 first: all
 all: Makefile.Release  $(DESTDIR_TARGET)
 
-$(DESTDIR_TARGET):  $(OBJECTS) release/icon_res.o
+$(DESTDIR_TARGET):  $(OBJECTS) release/icon_pg_res.o
 	$(LINKER) $(LFLAGS) -o $(DESTDIR_TARGET) object_script.Lls_QML_conf.Release  $(LIBS)
 
-release/icon_res.o: ../icon.rc
-	windres -i ..\icon.rc -o release\icon_res.o --include-dir=./.. $(DEFINES)
+release/icon_pg_res.o: ../icon_pg.rc
+	windres -i ..\icon_pg.rc -o release\icon_pg_res.o --include-dir=./.. $(DEFINES)
 
 qmake: FORCE
-	@$(QMAKE) -o Makefile.Release ..\Lls_QML_conf.pro -spec win32-g++ "CONFIG+=debug" "CONFIG+=qml_debug"
+	@$(QMAKE) -o Makefile.Release ..\Lls_QML_conf.pro -spec win32-g++ "CONFIG+=qtquickcompiler"
 
 qmake_all: FORCE
 
 dist:
-	$(ZIP) Lls_QML_conf.zip $(SOURCES) $(DIST) ..\..\Lls_QML_conf.pro C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\spec_pre.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\qdevice.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\device_config.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\common\sanitize.conf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\common\gcc-base.conf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\common\g++-base.conf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\common\angle.conf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\common\windows-vulkan.conf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\common\g++-win32.conf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\qconfig.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3danimation.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3danimation_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dcore.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dcore_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dextras.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dextras_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dinput.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dinput_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dlogic.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dlogic_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquick.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquick_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquickanimation.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquickanimation_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquickextras.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquickextras_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquickinput.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquickinput_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquickrender.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquickrender_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquickscene2d.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquickscene2d_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3drender.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3drender_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_accessibility_support_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_axbase.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_axbase_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_axcontainer.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_axcontainer_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_axserver.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_axserver_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_bluetooth.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_bluetooth_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_bootstrap_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_charts.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_charts_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_concurrent.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_concurrent_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_core.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_core_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_datavisualization.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_datavisualization_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_dbus.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_dbus_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_designer.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_designer_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_designercomponents_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_devicediscovery_support_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_edid_support_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_egl_support_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_eventdispatcher_support_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_fb_support_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_fontdatabase_support_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_gamepad.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_gamepad_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_gui.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_gui_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_help.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_help_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_location.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_location_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_multimedia.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_multimedia_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_multimediawidgets.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_multimediawidgets_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_network.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_network_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_networkauth.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_networkauth_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_nfc.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_nfc_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_opengl.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_opengl_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_openglextensions.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_openglextensions_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_packetprotocol_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_platformcompositor_support_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_positioning.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_positioning_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_positioningquick.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_positioningquick_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_printsupport.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_printsupport_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_purchasing.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_purchasing_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_qml.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_qml_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_qmldebug_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_qmldevtools_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_qmltest.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_qmltest_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_qtmultimediaquicktools_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_quick.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_quick_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_quickcontrols2.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_quickcontrols2_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_quickparticles_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_quicktemplates2_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_quickwidgets.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_quickwidgets_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_remoteobjects.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_remoteobjects_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_repparser.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_repparser_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_script.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_script_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_scripttools.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_scripttools_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_scxml.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_scxml_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_sensors.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_sensors_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_serialbus.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_serialbus_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_serialport.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_serialport_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_sql.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_sql_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_svg.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_svg_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_testlib.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_testlib_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_texttospeech.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_texttospeech_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_theme_support_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_uiplugin.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_uitools.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_uitools_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_webchannel.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_webchannel_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_websockets.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_websockets_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_widgets.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_widgets_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_windowsuiautomation_support_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_winextras.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_winextras_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_xml.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_xml_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_xmlpatterns.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_xmlpatterns_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\qt_functions.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\qt_config.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\win32-g++\qmake.conf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\spec_post.prf ..\.qmake.stash C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\exclusive_builds.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\toolchain.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\default_pre.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\win32\default_pre.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\resolve_config.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\exclusive_builds_post.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\default_post.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\build_pass.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\qml_debug.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\precompile_header.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\warn_on.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\qt.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\resources.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\moc.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\win32\opengl.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\uic.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\qmake_use.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\file_copies.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\win32\windows.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\testcase_targets.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\exceptions.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\yacc.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\lex.prf ..\Lls_QML_conf.pro ..\qml.qrc ..\images.qrc ..\font.qrc ..\database\db.qrc C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\qtmain.prl C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\Qt5Quick.prl C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\Qt5Charts.prl C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\Qt5Widgets.prl C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\Qt5Gui.prl C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\Qt5Qml.prl C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\Qt5Network.prl C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\Qt5SerialPort.prl C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\Qt5Sql.prl C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\Qt5Core.prl   ..\qml.qrc ..\images.qrc ..\font.qrc ..\database\db.qrc C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\data\dummy.cpp ..\connection\connectionFactory.h ..\device\deviceAbstract.h ..\device\devicesFactory.h ..\interfaces\interfaceBLE.h ..\interfaces\interfaceEthernet.h ..\interfaces\interfacesAbstract.h ..\interfaces\interfaceSerial.h ..\view\viewController.h ..\command\commandController.h ..\other\crc.h ..\tests\testDevReply.h ..\view\interfaceListControll\model.h ..\view\interfaceListControll\treeitem.h ..\view\radialbar.h ..\device\Progress_TMK24\Progress_tmk24Data.h ..\device\Progress_TMK24\Progress_tmk24.h ..\device\Progress_TMK4UX\Progress_tmk4UXData.h ..\device\Progress_TMK4UX\Progress_tmk4UX.h ..\device\Progress_Base\Progress_Base_Data.h ..\device\Progress_Base\Progress_BaseData.h ..\device\Progress_Base\Progress_Base.h ..\device\service\serviceDevicesAbstract.h ..\device\Progress_TMK24\Progress_tmk24Service.h ..\device\Nozzle_Revision_0_00_Oct_2018\Nozzle_Revision_0_00_Oct_2018_Data.h ..\device\Nozzle_Revision_0_00_Oct_2018\Nozzle_Revision_0_00_Oct_2018.h ..\device\Nozzle_Revision_0_00_Oct_2018\Nozzle_Revision_0_00_Service.h ..\database\database.h ..\session\session.h ..\session\sessionsecurity.h ..\update\updater.h  ..\main.cpp ..\connection\connectionFactory.cpp ..\device\deviceAbstract.cpp ..\device\devicesFactory.cpp ..\interfaces\interfaceBLE.cpp ..\interfaces\interfaceEthernet.cpp ..\interfaces\interfacesAbstract.cpp ..\interfaces\interfaceSerial.cpp ..\view\viewController.cpp ..\command\commandController.cpp ..\other\crc.cpp ..\tests\testDevReply.cpp ..\view\interfaceListControll\treeitem.cpp ..\view\interfaceListControll\model.cpp ..\view\radialbar.cpp ..\device\Progress_TMK24\Progress_tmk24Data.cpp ..\device\Progress_TMK24\Progress_tmk24.cpp ..\device\Progress_TMK4UX\Progress_tmk4UXData.cpp ..\device\Progress_TMK4UX\Progress_tmk4UX.cpp ..\device\Progress_Base\Progress_BaseData.cpp ..\device\Progress_Base\progress_base_data.cpp ..\device\Progress_Base\Progress_Base.cpp ..\device\service\serviceDevicesAbstract.cpp ..\device\Progress_TMK24\Progress_tmk24Service.cpp ..\device\Nozzle_Revision_0_00_Oct_2018\Nozzle_Revision_0_00_Oct_2018_Data.cpp ..\device\Nozzle_Revision_0_00_Oct_2018\Nozzle_Revision_0_00_Oct_2018.cpp ..\device\Nozzle_Revision_0_00_Oct_2018\Nozzle_Revision_0_00_Service.cpp ..\database\database.cpp ..\session\session.cpp ..\session\sessionsecurity.cpp ..\update\updater.cpp     
+	$(ZIP) Lls_QML_conf.zip $(SOURCES) $(DIST) ..\..\Lls_QML_conf.pro C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\spec_pre.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\qdevice.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\device_config.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\common\sanitize.conf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\common\gcc-base.conf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\common\g++-base.conf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\common\angle.conf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\common\windows-vulkan.conf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\common\g++-win32.conf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\qconfig.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3danimation.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3danimation_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dcore.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dcore_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dextras.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dextras_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dinput.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dinput_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dlogic.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dlogic_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquick.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquick_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquickanimation.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquickanimation_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquickextras.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquickextras_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquickinput.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquickinput_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquickrender.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquickrender_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquickscene2d.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3dquickscene2d_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3drender.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_3drender_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_accessibility_support_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_axbase.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_axbase_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_axcontainer.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_axcontainer_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_axserver.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_axserver_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_bluetooth.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_bluetooth_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_bootstrap_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_charts.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_charts_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_concurrent.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_concurrent_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_core.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_core_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_datavisualization.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_datavisualization_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_dbus.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_dbus_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_designer.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_designer_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_designercomponents_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_devicediscovery_support_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_edid_support_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_egl_support_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_eventdispatcher_support_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_fb_support_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_fontdatabase_support_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_gamepad.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_gamepad_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_gui.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_gui_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_help.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_help_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_location.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_location_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_multimedia.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_multimedia_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_multimediawidgets.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_multimediawidgets_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_network.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_network_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_networkauth.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_networkauth_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_nfc.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_nfc_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_opengl.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_opengl_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_openglextensions.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_openglextensions_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_packetprotocol_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_platformcompositor_support_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_positioning.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_positioning_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_positioningquick.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_positioningquick_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_printsupport.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_printsupport_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_qml.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_qml_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_qmldebug_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_qmldevtools_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_qmltest.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_qmltest_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_qtmultimediaquicktools_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_quick.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_quick_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_quickcontrols2.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_quickcontrols2_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_quickparticles_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_quicktemplates2_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_quickwidgets.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_quickwidgets_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_remoteobjects.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_remoteobjects_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_repparser.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_repparser_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_script.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_script_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_scripttools.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_scripttools_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_scxml.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_scxml_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_sensors.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_sensors_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_serialbus.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_serialbus_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_serialport.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_serialport_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_sql.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_sql_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_svg.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_svg_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_testlib.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_testlib_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_texttospeech.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_texttospeech_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_theme_support_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_uiplugin.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_uitools.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_uitools_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_webchannel.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_webchannel_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_websockets.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_websockets_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_widgets.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_widgets_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_windowsuiautomation_support_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_winextras.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_winextras_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_xml.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_xml_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_xmlpatterns.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\modules\qt_lib_xmlpatterns_private.pri C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\qt_functions.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\qt_config.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\win32-g++\qmake.conf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\spec_post.prf ..\.qmake.stash C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\exclusive_builds.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\toolchain.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\default_pre.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\win32\default_pre.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\resolve_config.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\exclusive_builds_post.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\default_post.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\build_pass.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\qml_debug.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\resources.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\qtquickcompiler.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\precompile_header.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\warn_on.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\qt.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\moc.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\win32\opengl.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\uic.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\qmake_use.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\file_copies.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\win32\windows.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\testcase_targets.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\exceptions.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\yacc.prf C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\lex.prf ..\Lls_QML_conf.pro ..\images.qrc ..\font.qrc ..\database\db.qrc C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\qtmain.prl C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\Qt5Quick.prl C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\Qt5Charts.prl C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\Qt5Widgets.prl C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\Qt5Gui.prl C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\Qt5Qml.prl C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\Qt5Network.prl C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\Qt5SerialPort.prl C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\Qt5Sql.prl C:\Qt\Qt5.11.1\5.11.1\mingw53_32\lib\Qt5Core.prl QmlLanguage_ru.ts QmlLanguage_ru.ts ..\images.qrc ..\font.qrc ..\database\db.qrc ..\qml\app.qml ..\qml\View.qml ..\qml\interfaces\AddSerialPort.qml ..\qml\interfaces\DevPropertySerialPort.qml ..\qml\interfaces\MessageShow.qml ..\qml\devTree\DeviceItemEmpty.qml ..\qml\devTree\DeviceTree.qml ..\qml\devTree\EditDeviceName.qml ..\qml\devTree\DevListPanel.qml ..\qml\devTree\DeviceItem.qml ..\qml\devTree\InterfaceItemView.qml ..\qml\projectPanel\LogoPanel.qml ..\qml\projectPanel\Settings.qml ..\qml\projectPanel\Session.qml ..\qml\projectPanel\Support.qml ..\qml\projectPanel\MainMenuBar.qml ..\qml\projectPanel\DevicePropertyPanel.qml ..\qml\projectPanel\ProjectMainStack.qml ..\qml\projectPanel\ProjectStartScreen.qml ..\qml\devices\DevPropertyNozzle_v_0_00.qml ..\qml\devices\AddDeviceDialog.qml ..\qml\devices\DevPropertyProgressTmk4ux.qml ..\qml\devices\AddDeviceTarirDialog.qml ..\qml\devices\ChangeDevIdName.qml ..\qml\devices\DevPropertyProgressTmk24TarTableDelegate.qml ..\qml\devices\SearchDevice.qml ..\qml\devices\DevPropertyProgressTmk24.qml ..\qml\miscElems\Button.qml ..\qml\miscElems\AnimatedAreaSeries.qml ..\qml\miscElems\ButtonRound.qml ..\qml\miscElems\TabButtonUp.qml ..\qml.qrc  C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\data\dummy.cpp ..\connection\connectionFactory.h ..\device\deviceAbstract.h ..\device\devicesFactory.h ..\interfaces\interfaceBLE.h ..\interfaces\interfaceEthernet.h ..\interfaces\interfacesAbstract.h ..\interfaces\interfaceSerial.h ..\view\viewController.h ..\command\commandController.h ..\other\crc.h ..\tests\testDevReply.h ..\view\interfaceListControll\model.h ..\view\interfaceListControll\treeitem.h ..\view\radialbar.h ..\device\Progress_TMK24\Progress_tmk24Data.h ..\device\Progress_TMK24\Progress_tmk24.h ..\device\Progress_TMK4UX\Progress_tmk4UXData.h ..\device\Progress_TMK4UX\Progress_tmk4UX.h ..\device\Progress_Base\Progress_Base_Data.h ..\device\Progress_Base\Progress_BaseData.h ..\device\Progress_Base\Progress_Base.h ..\device\service\serviceDevicesAbstract.h ..\device\Progress_TMK24\Progress_tmk24Service.h ..\device\Nozzle_Revision_0_00_Oct_2018\Nozzle_Revision_0_00_Oct_2018_Data.h ..\device\Nozzle_Revision_0_00_Oct_2018\Nozzle_Revision_0_00_Oct_2018.h ..\device\Nozzle_Revision_0_00_Oct_2018\Nozzle_Revision_0_00_Service.h ..\database\database.h ..\session\session.h ..\session\sessionsecurity.h ..\update\updater.h ..\translate\qmltranslator.h  ..\main.cpp ..\connection\connectionFactory.cpp ..\device\deviceAbstract.cpp ..\device\devicesFactory.cpp ..\interfaces\interfaceBLE.cpp ..\interfaces\interfaceEthernet.cpp ..\interfaces\interfacesAbstract.cpp ..\interfaces\interfaceSerial.cpp ..\view\viewController.cpp ..\command\commandController.cpp ..\other\crc.cpp ..\tests\testDevReply.cpp ..\view\interfaceListControll\treeitem.cpp ..\view\interfaceListControll\model.cpp ..\view\radialbar.cpp ..\device\Progress_TMK24\Progress_tmk24Data.cpp ..\device\Progress_TMK24\Progress_tmk24.cpp ..\device\Progress_TMK4UX\Progress_tmk4UXData.cpp ..\device\Progress_TMK4UX\Progress_tmk4UX.cpp ..\device\Progress_Base\Progress_BaseData.cpp ..\device\Progress_Base\progress_base_data.cpp ..\device\Progress_Base\Progress_Base.cpp ..\device\service\serviceDevicesAbstract.cpp ..\device\Progress_TMK24\Progress_tmk24Service.cpp ..\device\Nozzle_Revision_0_00_Oct_2018\Nozzle_Revision_0_00_Oct_2018_Data.cpp ..\device\Nozzle_Revision_0_00_Oct_2018\Nozzle_Revision_0_00_Oct_2018.cpp ..\device\Nozzle_Revision_0_00_Oct_2018\Nozzle_Revision_0_00_Service.cpp ..\database\database.cpp ..\session\session.cpp ..\session\sessionsecurity.cpp ..\update\updater.cpp ..\translate\qmltranslator.cpp     
 
 clean: compiler_clean 
-	-$(DEL_FILE) release\main.o release\connectionFactory.o release\deviceAbstract.o release\devicesFactory.o release\interfaceBLE.o release\interfaceEthernet.o release\interfacesAbstract.o release\interfaceSerial.o release\viewController.o release\commandController.o release\crc.o release\testDevReply.o release\treeitem.o release\model.o release\radialbar.o release\Progress_tmk24Data.o release\Progress_tmk24.o release\Progress_tmk4UXData.o release\Progress_tmk4UX.o release\Progress_BaseData.o release\progress_base_data.o release\Progress_Base.o release\serviceDevicesAbstract.o release\Progress_tmk24Service.o release\Nozzle_Revision_0_00_Oct_2018_Data.o release\Nozzle_Revision_0_00_Oct_2018.o release\Nozzle_Revision_0_00_Service.o release\database.o release\session.o release\sessionsecurity.o release\updater.o release\qrc_qml.o release\qrc_images.o release\qrc_font.o release\qrc_db.o release\moc_connectionFactory.o release\moc_deviceAbstract.o release\moc_devicesFactory.o release\moc_interfaceBLE.o release\moc_interfaceEthernet.o release\moc_interfacesAbstract.o release\moc_interfaceSerial.o release\moc_viewController.o release\moc_commandController.o release\moc_testDevReply.o release\moc_model.o release\moc_treeitem.o release\moc_radialbar.o release\moc_Progress_tmk24Data.o release\moc_Progress_tmk4UXData.o release\moc_Progress_Base_Data.o release\moc_Progress_BaseData.o release\moc_Progress_Base.o release\moc_serviceDevicesAbstract.o release\moc_Nozzle_Revision_0_00_Oct_2018_Data.o release\moc_database.o release\moc_sessionsecurity.o release\moc_updater.o
-	-$(DEL_FILE) release\icon_res.o
+	-$(DEL_FILE) release\main.o release\connectionFactory.o release\deviceAbstract.o release\devicesFactory.o release\interfaceBLE.o release\interfaceEthernet.o release\interfacesAbstract.o release\interfaceSerial.o release\viewController.o release\commandController.o release\crc.o release\testDevReply.o release\treeitem.o release\model.o release\radialbar.o release\Progress_tmk24Data.o release\Progress_tmk24.o release\Progress_tmk4UXData.o release\Progress_tmk4UX.o release\Progress_BaseData.o release\progress_base_data.o release\Progress_Base.o release\serviceDevicesAbstract.o release\Progress_tmk24Service.o release\Nozzle_Revision_0_00_Oct_2018_Data.o release\Nozzle_Revision_0_00_Oct_2018.o release\Nozzle_Revision_0_00_Service.o release\database.o release\session.o release\sessionsecurity.o release\updater.o release\qmltranslator.o release\qrc_images.o release\qrc_font.o release\qrc_db.o release\qml_app_qml.o release\qml_View_qml.o release\qml_interfaces_AddSerialPort_qml.o release\qml_interfaces_DevPropertySerialPort_qml.o release\qml_interfaces_MessageShow_qml.o release\qml_devTree_DeviceItemEmpty_qml.o release\qml_devTree_DeviceTree_qml.o release\qml_devTree_EditDeviceName_qml.o release\qml_devTree_DevListPanel_qml.o release\qml_devTree_DeviceItem_qml.o release\qml_devTree_InterfaceItemView_qml.o release\qml_projectPanel_LogoPanel_qml.o release\qml_projectPanel_Settings_qml.o release\qml_projectPanel_Session_qml.o release\qml_projectPanel_Support_qml.o release\qml_projectPanel_MainMenuBar_qml.o release\qml_projectPanel_DevicePropertyPanel_qml.o release\qml_projectPanel_ProjectMainStack_qml.o release\qml_projectPanel_ProjectStartScreen_qml.o release\qml_devices_DevPropertyNozzle_v_0_00_qml.o release\qml_devices_AddDeviceDialog_qml.o release\qml_devices_DevPropertyProgressTmk4ux_qml.o release\qml_devices_AddDeviceTarirDialog_qml.o release\qml_devices_ChangeDevIdName_qml.o release\qml_devices_DevPropertyProgressTmk24TarTableDelegate_qml.o release\qml_devices_SearchDevice_qml.o
+	-$(DEL_FILE) release\qml_devices_DevPropertyProgressTmk24_qml.o release\qml_miscElems_Button_qml.o release\qml_miscElems_AnimatedAreaSeries_qml.o release\qml_miscElems_ButtonRound_qml.o release\qml_miscElems_TabButtonUp_qml.o release\qmlcache_loader.o release\moc_connectionFactory.o release\moc_deviceAbstract.o release\moc_devicesFactory.o release\moc_interfaceBLE.o release\moc_interfaceEthernet.o release\moc_interfacesAbstract.o release\moc_interfaceSerial.o release\moc_viewController.o release\moc_commandController.o release\moc_testDevReply.o release\moc_model.o release\moc_treeitem.o release\moc_radialbar.o release\moc_Progress_tmk24Data.o release\moc_Progress_tmk4UXData.o release\moc_Progress_Base_Data.o release\moc_Progress_BaseData.o release\moc_Progress_Base.o release\moc_serviceDevicesAbstract.o release\moc_Nozzle_Revision_0_00_Oct_2018_Data.o release\moc_database.o release\moc_sessionsecurity.o release\moc_updater.o release\moc_qmltranslator.o
+	-$(DEL_FILE) release\icon_pg_res.o
 
 distclean: clean 
 	-$(DEL_FILE) $(DESTDIR_TARGET)
@@ -261,46 +330,9 @@ check: first
 
 benchmark: first
 
-compiler_no_pch_compiler_make_all:
-compiler_no_pch_compiler_clean:
-compiler_rcc_make_all: release/qrc_qml.cpp release/qrc_images.cpp release/qrc_font.cpp release/qrc_db.cpp
+compiler_rcc_make_all: release/qrc_images.cpp release/qrc_font.cpp release/qrc_db.cpp
 compiler_rcc_clean:
-	-$(DEL_FILE) release\qrc_qml.cpp release\qrc_images.cpp release\qrc_font.cpp release\qrc_db.cpp
-release/qrc_qml.cpp: ../qml.qrc \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/rcc.exe \
-		../qml/app.qml \
-		../qml/View.qml \
-		../qml/interfaces/AddSerialPort.qml \
-		../qml/interfaces/DevPropertySerialPort.qml \
-		../qml/interfaces/MessageShow.qml \
-		../qml/devTree/DeviceItemEmpty.qml \
-		../qml/devTree/DeviceTree.qml \
-		../qml/devTree/EditDeviceName.qml \
-		../qml/devTree/DevListPanel.qml \
-		../qml/devTree/DeviceItem.qml \
-		../qml/devTree/InterfaceItemView.qml \
-		../qml/projectPanel/LogoPanel.qml \
-		../qml/projectPanel/Settings.qml \
-		../qml/projectPanel/Session.qml \
-		../qml/projectPanel/Support.qml \
-		../qml/projectPanel/MainMenuBar.qml \
-		../qml/projectPanel/DevicePropertyPanel.qml \
-		../qml/projectPanel/ProjectMainStack.qml \
-		../qml/projectPanel/ProjectStartScreen.qml \
-		../qml/devices/DevPropertyNozzle_v_0_00.qml \
-		../qml/devices/AddDeviceDialog.qml \
-		../qml/devices/DevPropertyProgressTmk4ux.qml \
-		../qml/devices/AddDeviceTarirDialog.qml \
-		../qml/devices/ChangeDevIdName.qml \
-		../qml/devices/DevPropertyProgressTmk24TarTableDelegate.qml \
-		../qml/devices/SearchDevice.qml \
-		../qml/devices/DevPropertyProgressTmk24.qml \
-		../qml/miscElems/Button.qml \
-		../qml/miscElems/AnimatedAreaSeries.qml \
-		../qml/miscElems/ButtonRound.qml \
-		../qml/miscElems/TabButtonUp.qml
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\rcc.exe -name qml ..\qml.qrc -o release\qrc_qml.cpp
-
+	-$(DEL_FILE) release\qrc_images.cpp release\qrc_font.cpp release\qrc_db.cpp
 release/qrc_images.cpp: ../images.qrc \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/rcc.exe \
 		../images/logo/ico.png \
@@ -322,15 +354,119 @@ release/qrc_db.cpp: ../database/db.qrc \
 		../database/db
 	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\rcc.exe -name db ..\database\db.qrc -o release\qrc_db.cpp
 
+compiler_qmlcache_make_all: release/qml_app_qml.cpp release/qml_View_qml.cpp release/qml_interfaces_AddSerialPort_qml.cpp release/qml_interfaces_DevPropertySerialPort_qml.cpp release/qml_interfaces_MessageShow_qml.cpp release/qml_devTree_DeviceItemEmpty_qml.cpp release/qml_devTree_DeviceTree_qml.cpp release/qml_devTree_EditDeviceName_qml.cpp release/qml_devTree_DevListPanel_qml.cpp release/qml_devTree_DeviceItem_qml.cpp release/qml_devTree_InterfaceItemView_qml.cpp release/qml_projectPanel_LogoPanel_qml.cpp release/qml_projectPanel_Settings_qml.cpp release/qml_projectPanel_Session_qml.cpp release/qml_projectPanel_Support_qml.cpp release/qml_projectPanel_MainMenuBar_qml.cpp release/qml_projectPanel_DevicePropertyPanel_qml.cpp release/qml_projectPanel_ProjectMainStack_qml.cpp release/qml_projectPanel_ProjectStartScreen_qml.cpp release/qml_devices_DevPropertyNozzle_v_0_00_qml.cpp release/qml_devices_AddDeviceDialog_qml.cpp release/qml_devices_DevPropertyProgressTmk4ux_qml.cpp release/qml_devices_AddDeviceTarirDialog_qml.cpp release/qml_devices_ChangeDevIdName_qml.cpp release/qml_devices_DevPropertyProgressTmk24TarTableDelegate_qml.cpp release/qml_devices_SearchDevice_qml.cpp release/qml_devices_DevPropertyProgressTmk24_qml.cpp release/qml_miscElems_Button_qml.cpp release/qml_miscElems_AnimatedAreaSeries_qml.cpp release/qml_miscElems_ButtonRound_qml.cpp release/qml_miscElems_TabButtonUp_qml.cpp
+compiler_qmlcache_clean:
+	-$(DEL_FILE) release\qml_app_qml.cpp release\qml_View_qml.cpp release\qml_interfaces_AddSerialPort_qml.cpp release\qml_interfaces_DevPropertySerialPort_qml.cpp release\qml_interfaces_MessageShow_qml.cpp release\qml_devTree_DeviceItemEmpty_qml.cpp release\qml_devTree_DeviceTree_qml.cpp release\qml_devTree_EditDeviceName_qml.cpp release\qml_devTree_DevListPanel_qml.cpp release\qml_devTree_DeviceItem_qml.cpp release\qml_devTree_InterfaceItemView_qml.cpp release\qml_projectPanel_LogoPanel_qml.cpp release\qml_projectPanel_Settings_qml.cpp release\qml_projectPanel_Session_qml.cpp release\qml_projectPanel_Support_qml.cpp release\qml_projectPanel_MainMenuBar_qml.cpp release\qml_projectPanel_DevicePropertyPanel_qml.cpp release\qml_projectPanel_ProjectMainStack_qml.cpp release\qml_projectPanel_ProjectStartScreen_qml.cpp release\qml_devices_DevPropertyNozzle_v_0_00_qml.cpp release\qml_devices_AddDeviceDialog_qml.cpp release\qml_devices_DevPropertyProgressTmk4ux_qml.cpp release\qml_devices_AddDeviceTarirDialog_qml.cpp release\qml_devices_ChangeDevIdName_qml.cpp release\qml_devices_DevPropertyProgressTmk24TarTableDelegate_qml.cpp release\qml_devices_SearchDevice_qml.cpp release\qml_devices_DevPropertyProgressTmk24_qml.cpp release\qml_miscElems_Button_qml.cpp release\qml_miscElems_AnimatedAreaSeries_qml.cpp release\qml_miscElems_ButtonRound_qml.cpp release\qml_miscElems_TabButtonUp_qml.cpp
+release/qml_app_qml.cpp: ../qml/app.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_app_qml.cpp ..\qml\app.qml
+
+release/qml_View_qml.cpp: ../qml/View.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_View_qml.cpp ..\qml\View.qml
+
+release/qml_interfaces_AddSerialPort_qml.cpp: ../qml/interfaces/AddSerialPort.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_interfaces_AddSerialPort_qml.cpp ..\qml\interfaces\AddSerialPort.qml
+
+release/qml_interfaces_DevPropertySerialPort_qml.cpp: ../qml/interfaces/DevPropertySerialPort.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_interfaces_DevPropertySerialPort_qml.cpp ..\qml\interfaces\DevPropertySerialPort.qml
+
+release/qml_interfaces_MessageShow_qml.cpp: ../qml/interfaces/MessageShow.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_interfaces_MessageShow_qml.cpp ..\qml\interfaces\MessageShow.qml
+
+release/qml_devTree_DeviceItemEmpty_qml.cpp: ../qml/devTree/DeviceItemEmpty.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_devTree_DeviceItemEmpty_qml.cpp ..\qml\devTree\DeviceItemEmpty.qml
+
+release/qml_devTree_DeviceTree_qml.cpp: ../qml/devTree/DeviceTree.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_devTree_DeviceTree_qml.cpp ..\qml\devTree\DeviceTree.qml
+
+release/qml_devTree_EditDeviceName_qml.cpp: ../qml/devTree/EditDeviceName.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_devTree_EditDeviceName_qml.cpp ..\qml\devTree\EditDeviceName.qml
+
+release/qml_devTree_DevListPanel_qml.cpp: ../qml/devTree/DevListPanel.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_devTree_DevListPanel_qml.cpp ..\qml\devTree\DevListPanel.qml
+
+release/qml_devTree_DeviceItem_qml.cpp: ../qml/devTree/DeviceItem.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_devTree_DeviceItem_qml.cpp ..\qml\devTree\DeviceItem.qml
+
+release/qml_devTree_InterfaceItemView_qml.cpp: ../qml/devTree/InterfaceItemView.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_devTree_InterfaceItemView_qml.cpp ..\qml\devTree\InterfaceItemView.qml
+
+release/qml_projectPanel_LogoPanel_qml.cpp: ../qml/projectPanel/LogoPanel.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_projectPanel_LogoPanel_qml.cpp ..\qml\projectPanel\LogoPanel.qml
+
+release/qml_projectPanel_Settings_qml.cpp: ../qml/projectPanel/Settings.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_projectPanel_Settings_qml.cpp ..\qml\projectPanel\Settings.qml
+
+release/qml_projectPanel_Session_qml.cpp: ../qml/projectPanel/Session.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_projectPanel_Session_qml.cpp ..\qml\projectPanel\Session.qml
+
+release/qml_projectPanel_Support_qml.cpp: ../qml/projectPanel/Support.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_projectPanel_Support_qml.cpp ..\qml\projectPanel\Support.qml
+
+release/qml_projectPanel_MainMenuBar_qml.cpp: ../qml/projectPanel/MainMenuBar.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_projectPanel_MainMenuBar_qml.cpp ..\qml\projectPanel\MainMenuBar.qml
+
+release/qml_projectPanel_DevicePropertyPanel_qml.cpp: ../qml/projectPanel/DevicePropertyPanel.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_projectPanel_DevicePropertyPanel_qml.cpp ..\qml\projectPanel\DevicePropertyPanel.qml
+
+release/qml_projectPanel_ProjectMainStack_qml.cpp: ../qml/projectPanel/ProjectMainStack.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_projectPanel_ProjectMainStack_qml.cpp ..\qml\projectPanel\ProjectMainStack.qml
+
+release/qml_projectPanel_ProjectStartScreen_qml.cpp: ../qml/projectPanel/ProjectStartScreen.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_projectPanel_ProjectStartScreen_qml.cpp ..\qml\projectPanel\ProjectStartScreen.qml
+
+release/qml_devices_DevPropertyNozzle_v_0_00_qml.cpp: ../qml/devices/DevPropertyNozzle_v_0_00.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_devices_DevPropertyNozzle_v_0_00_qml.cpp ..\qml\devices\DevPropertyNozzle_v_0_00.qml
+
+release/qml_devices_AddDeviceDialog_qml.cpp: ../qml/devices/AddDeviceDialog.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_devices_AddDeviceDialog_qml.cpp ..\qml\devices\AddDeviceDialog.qml
+
+release/qml_devices_DevPropertyProgressTmk4ux_qml.cpp: ../qml/devices/DevPropertyProgressTmk4ux.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_devices_DevPropertyProgressTmk4ux_qml.cpp ..\qml\devices\DevPropertyProgressTmk4ux.qml
+
+release/qml_devices_AddDeviceTarirDialog_qml.cpp: ../qml/devices/AddDeviceTarirDialog.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_devices_AddDeviceTarirDialog_qml.cpp ..\qml\devices\AddDeviceTarirDialog.qml
+
+release/qml_devices_ChangeDevIdName_qml.cpp: ../qml/devices/ChangeDevIdName.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_devices_ChangeDevIdName_qml.cpp ..\qml\devices\ChangeDevIdName.qml
+
+release/qml_devices_DevPropertyProgressTmk24TarTableDelegate_qml.cpp: ../qml/devices/DevPropertyProgressTmk24TarTableDelegate.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_devices_DevPropertyProgressTmk24TarTableDelegate_qml.cpp ..\qml\devices\DevPropertyProgressTmk24TarTableDelegate.qml
+
+release/qml_devices_SearchDevice_qml.cpp: ../qml/devices/SearchDevice.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_devices_SearchDevice_qml.cpp ..\qml\devices\SearchDevice.qml
+
+release/qml_devices_DevPropertyProgressTmk24_qml.cpp: ../qml/devices/DevPropertyProgressTmk24.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_devices_DevPropertyProgressTmk24_qml.cpp ..\qml\devices\DevPropertyProgressTmk24.qml
+
+release/qml_miscElems_Button_qml.cpp: ../qml/miscElems/Button.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_miscElems_Button_qml.cpp ..\qml\miscElems\Button.qml
+
+release/qml_miscElems_AnimatedAreaSeries_qml.cpp: ../qml/miscElems/AnimatedAreaSeries.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_miscElems_AnimatedAreaSeries_qml.cpp ..\qml\miscElems\AnimatedAreaSeries.qml
+
+release/qml_miscElems_ButtonRound_qml.cpp: ../qml/miscElems/ButtonRound.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_miscElems_ButtonRound_qml.cpp ..\qml\miscElems\ButtonRound.qml
+
+release/qml_miscElems_TabButtonUp_qml.cpp: ../qml/miscElems/TabButtonUp.qml
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qml_miscElems_TabButtonUp_qml.cpp ..\qml\miscElems\TabButtonUp.qml
+
+compiler_qmlcache_loader_make_all: release/qmlcache_loader.cpp
+compiler_qmlcache_loader_clean:
+	-$(DEL_FILE) release\qmlcache_loader.cpp
+release/qmlcache_loader.cpp: ../qml.qrc 
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\qmlcachegen.exe --resource-file-mapping=D:/PROJECTs/Configure_QML/Conf_lls_QML/qml.qrc -o release\qmlcache_loader.cpp ..\qml.qrc
+
+compiler_no_pch_compiler_make_all:
+compiler_no_pch_compiler_clean:
 compiler_moc_predefs_make_all: release/moc_predefs.h
 compiler_moc_predefs_clean:
 	-$(DEL_FILE) release\moc_predefs.h
 release/moc_predefs.h: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/data/dummy.cpp
 	g++ -fno-keep-inline-dllexport -O2 -std=gnu++1y -Wall -W -Wextra -dM -E -o release\moc_predefs.h C:\Qt\Qt5.11.1\5.11.1\mingw53_32\mkspecs\features\data\dummy.cpp
 
-compiler_moc_header_make_all: release/moc_connectionFactory.cpp release/moc_deviceAbstract.cpp release/moc_devicesFactory.cpp release/moc_interfaceBLE.cpp release/moc_interfaceEthernet.cpp release/moc_interfacesAbstract.cpp release/moc_interfaceSerial.cpp release/moc_viewController.cpp release/moc_commandController.cpp release/moc_testDevReply.cpp release/moc_model.cpp release/moc_treeitem.cpp release/moc_radialbar.cpp release/moc_Progress_tmk24Data.cpp release/moc_Progress_tmk4UXData.cpp release/moc_Progress_Base_Data.cpp release/moc_Progress_BaseData.cpp release/moc_Progress_Base.cpp release/moc_serviceDevicesAbstract.cpp release/moc_Nozzle_Revision_0_00_Oct_2018_Data.cpp release/moc_database.cpp release/moc_sessionsecurity.cpp release/moc_updater.cpp
+compiler_moc_header_make_all: release/moc_connectionFactory.cpp release/moc_deviceAbstract.cpp release/moc_devicesFactory.cpp release/moc_interfaceBLE.cpp release/moc_interfaceEthernet.cpp release/moc_interfacesAbstract.cpp release/moc_interfaceSerial.cpp release/moc_viewController.cpp release/moc_commandController.cpp release/moc_testDevReply.cpp release/moc_model.cpp release/moc_treeitem.cpp release/moc_radialbar.cpp release/moc_Progress_tmk24Data.cpp release/moc_Progress_tmk4UXData.cpp release/moc_Progress_Base_Data.cpp release/moc_Progress_BaseData.cpp release/moc_Progress_Base.cpp release/moc_serviceDevicesAbstract.cpp release/moc_Nozzle_Revision_0_00_Oct_2018_Data.cpp release/moc_database.cpp release/moc_sessionsecurity.cpp release/moc_updater.cpp release/moc_qmltranslator.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) release\moc_connectionFactory.cpp release\moc_deviceAbstract.cpp release\moc_devicesFactory.cpp release\moc_interfaceBLE.cpp release\moc_interfaceEthernet.cpp release\moc_interfacesAbstract.cpp release\moc_interfaceSerial.cpp release\moc_viewController.cpp release\moc_commandController.cpp release\moc_testDevReply.cpp release\moc_model.cpp release\moc_treeitem.cpp release\moc_radialbar.cpp release\moc_Progress_tmk24Data.cpp release\moc_Progress_tmk4UXData.cpp release\moc_Progress_Base_Data.cpp release\moc_Progress_BaseData.cpp release\moc_Progress_Base.cpp release\moc_serviceDevicesAbstract.cpp release\moc_Nozzle_Revision_0_00_Oct_2018_Data.cpp release\moc_database.cpp release\moc_sessionsecurity.cpp release\moc_updater.cpp
+	-$(DEL_FILE) release\moc_connectionFactory.cpp release\moc_deviceAbstract.cpp release\moc_devicesFactory.cpp release\moc_interfaceBLE.cpp release\moc_interfaceEthernet.cpp release\moc_interfacesAbstract.cpp release\moc_interfaceSerial.cpp release\moc_viewController.cpp release\moc_commandController.cpp release\moc_testDevReply.cpp release\moc_model.cpp release\moc_treeitem.cpp release\moc_radialbar.cpp release\moc_Progress_tmk24Data.cpp release\moc_Progress_tmk4UXData.cpp release\moc_Progress_Base_Data.cpp release\moc_Progress_BaseData.cpp release\moc_Progress_Base.cpp release\moc_serviceDevicesAbstract.cpp release\moc_Nozzle_Revision_0_00_Oct_2018_Data.cpp release\moc_database.cpp release\moc_sessionsecurity.cpp release\moc_updater.cpp release\moc_qmltranslator.cpp
 release/moc_connectionFactory.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobjectdefs.h \
@@ -409,7 +545,7 @@ release/moc_connectionFactory.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCo
 		../connection/connectionFactory.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\connection\connectionFactory.h -o release\moc_connectionFactory.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\connection\connectionFactory.h -o release\moc_connectionFactory.cpp
 
 release/moc_deviceAbstract.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -469,7 +605,7 @@ release/moc_deviceAbstract.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/
 		../device/deviceAbstract.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\device\deviceAbstract.h -o release\moc_deviceAbstract.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\device\deviceAbstract.h -o release\moc_deviceAbstract.cpp
 
 release/moc_devicesFactory.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -537,7 +673,7 @@ release/moc_devicesFactory.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/
 		../device/devicesFactory.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\device\devicesFactory.h -o release\moc_devicesFactory.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\device\devicesFactory.h -o release\moc_devicesFactory.cpp
 
 release/moc_interfaceBLE.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -614,7 +750,7 @@ release/moc_interfaceBLE.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QO
 		../interfaces/interfaceBLE.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\interfaces\interfaceBLE.h -o release\moc_interfaceBLE.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\interfaces\interfaceBLE.h -o release\moc_interfaceBLE.cpp
 
 release/moc_interfaceEthernet.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -685,7 +821,7 @@ release/moc_interfaceEthernet.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCo
 		../interfaces/interfaceEthernet.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\interfaces\interfaceEthernet.h -o release\moc_interfaceEthernet.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\interfaces\interfaceEthernet.h -o release\moc_interfaceEthernet.cpp
 
 release/moc_interfacesAbstract.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -755,7 +891,7 @@ release/moc_interfacesAbstract.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtC
 		../interfaces/interfacesAbstract.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\interfaces\interfacesAbstract.h -o release\moc_interfacesAbstract.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\interfaces\interfacesAbstract.h -o release\moc_interfacesAbstract.cpp
 
 release/moc_interfaceSerial.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -832,7 +968,7 @@ release/moc_interfaceSerial.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore
 		../interfaces/interfaceSerial.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\interfaces\interfaceSerial.h -o release\moc_interfaceSerial.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\interfaces\interfaceSerial.h -o release\moc_interfaceSerial.cpp
 
 release/moc_viewController.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -978,7 +1114,7 @@ release/moc_viewController.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/
 		../view/viewController.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\view\viewController.h -o release\moc_viewController.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\view\viewController.h -o release\moc_viewController.cpp
 
 release/moc_commandController.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -1036,7 +1172,7 @@ release/moc_commandController.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCo
 		../command/commandController.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\command\commandController.h -o release\moc_commandController.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\command\commandController.h -o release\moc_commandController.cpp
 
 release/moc_testDevReply.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -1097,7 +1233,7 @@ release/moc_testDevReply.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QO
 		../tests/testDevReply.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\tests\testDevReply.h -o release\moc_testDevReply.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\tests\testDevReply.h -o release\moc_testDevReply.cpp
 
 release/moc_model.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -1152,7 +1288,7 @@ release/moc_model.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		../view/interfaceListControll/model.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\view\interfaceListControll\model.h -o release\moc_model.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\view\interfaceListControll\model.h -o release\moc_model.cpp
 
 release/moc_treeitem.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -1207,7 +1343,7 @@ release/moc_treeitem.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObjec
 		../view/interfaceListControll/treeitem.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\view\interfaceListControll\treeitem.h -o release\moc_treeitem.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\view\interfaceListControll\treeitem.h -o release\moc_treeitem.cpp
 
 release/moc_radialbar.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick/QQuickPaintedItem \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick/qquickpainteditem.h \
@@ -1319,7 +1455,7 @@ release/moc_radialbar.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick/QQui
 		../view/radialbar.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\view\radialbar.h -o release\moc_radialbar.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\view\radialbar.h -o release\moc_radialbar.cpp
 
 release/moc_Progress_tmk24Data.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -1406,7 +1542,7 @@ release/moc_Progress_tmk24Data.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtC
 		../device/Progress_TMK24/Progress_tmk24Data.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\device\Progress_TMK24\Progress_tmk24Data.h -o release\moc_Progress_tmk24Data.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\device\Progress_TMK24\Progress_tmk24Data.h -o release\moc_Progress_tmk24Data.cpp
 
 release/moc_Progress_tmk4UXData.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -1461,7 +1597,7 @@ release/moc_Progress_tmk4UXData.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/Qt
 		../device/Progress_TMK4UX/Progress_tmk4UXData.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\device\Progress_TMK4UX\Progress_tmk4UXData.h -o release\moc_Progress_tmk4UXData.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\device\Progress_TMK4UX\Progress_tmk4UXData.h -o release\moc_Progress_tmk4UXData.cpp
 
 release/moc_Progress_Base_Data.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -1516,7 +1652,7 @@ release/moc_Progress_Base_Data.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtC
 		../device/Progress_Base/Progress_Base_Data.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\device\Progress_Base\Progress_Base_Data.h -o release\moc_Progress_Base_Data.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\device\Progress_Base\Progress_Base_Data.h -o release\moc_Progress_Base_Data.cpp
 
 release/moc_Progress_BaseData.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -1571,7 +1707,7 @@ release/moc_Progress_BaseData.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCo
 		../device/Progress_Base/Progress_BaseData.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\device\Progress_Base\Progress_BaseData.h -o release\moc_Progress_BaseData.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\device\Progress_Base\Progress_BaseData.h -o release\moc_Progress_BaseData.cpp
 
 release/moc_Progress_Base.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -1626,7 +1762,7 @@ release/moc_Progress_Base.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/Q
 		../device/Progress_Base/Progress_Base.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\device\Progress_Base\Progress_Base.h -o release\moc_Progress_Base.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\device\Progress_Base\Progress_Base.h -o release\moc_Progress_Base.cpp
 
 release/moc_serviceDevicesAbstract.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -1681,7 +1817,7 @@ release/moc_serviceDevicesAbstract.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include
 		../device/service/serviceDevicesAbstract.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\device\service\serviceDevicesAbstract.h -o release\moc_serviceDevicesAbstract.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\device\service\serviceDevicesAbstract.h -o release\moc_serviceDevicesAbstract.cpp
 
 release/moc_Nozzle_Revision_0_00_Oct_2018_Data.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -1768,7 +1904,7 @@ release/moc_Nozzle_Revision_0_00_Oct_2018_Data.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw5
 		../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\device\Nozzle_Revision_0_00_Oct_2018\Nozzle_Revision_0_00_Oct_2018_Data.h -o release\moc_Nozzle_Revision_0_00_Oct_2018_Data.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\device\Nozzle_Revision_0_00_Oct_2018\Nozzle_Revision_0_00_Oct_2018_Data.h -o release\moc_Nozzle_Revision_0_00_Oct_2018_Data.cpp
 
 release/moc_database.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -1826,7 +1962,7 @@ release/moc_database.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObjec
 		../database/database.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\database\database.h -o release\moc_database.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\database\database.h -o release\moc_database.cpp
 
 release/moc_sessionsecurity.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -1920,7 +2056,7 @@ release/moc_sessionsecurity.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore
 		../session/sessionsecurity.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\session\sessionsecurity.h -o release\moc_sessionsecurity.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\session\sessionsecurity.h -o release\moc_sessionsecurity.cpp
 
 release/moc_updater.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
@@ -2020,7 +2156,64 @@ release/moc_updater.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject
 		../update/updater.h \
 		release/moc_predefs.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
-	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -IC:/Users/LOCUS/Documents/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\update\updater.h -o release\moc_updater.cpp
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\update\updater.h -o release\moc_updater.cpp
+
+release/moc_qmltranslator.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobjectdefs.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qnamespace.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qglobal.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qconfig-bootstrapped.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qconfig.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtcore-config.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsystemdetection.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qprocessordetection.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcompilerdetection.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtypeinfo.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsysinfo.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qlogging.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qflags.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasicatomic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic_bootstrap.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qgenericatomic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic_cxx11.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic_msvc.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qglobalstatic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmutex.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qnumeric.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qversiontagging.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobjectdefs_impl.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstring.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qchar.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbytearray.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qrefcount.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qarraydata.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringliteral.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringalgorithms.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringview.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringbuilder.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qlist.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qalgorithms.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qiterator.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qhashfunctions.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpair.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbytearraylist.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringlist.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qregexp.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringmatcher.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcoreevent.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qscopedpointer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmetatype.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvarlengtharray.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcontainerfwd.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject_impl.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTranslator \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtranslator.h \
+		../translate/qmltranslator.h \
+		release/moc_predefs.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
+	C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe $(DEFINES) --include release/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ..\translate\qmltranslator.h -o release\moc_qmltranslator.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -2034,7 +2227,7 @@ compiler_yacc_impl_make_all:
 compiler_yacc_impl_clean:
 compiler_lex_make_all:
 compiler_lex_clean:
-compiler_clean: compiler_rcc_clean compiler_moc_predefs_clean compiler_moc_header_clean 
+compiler_clean: compiler_rcc_clean compiler_qmlcache_clean compiler_qmlcache_loader_clean compiler_moc_predefs_clean compiler_moc_header_clean 
 
 
 
@@ -2149,14 +2342,213 @@ release/main.o: ../main.cpp C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets/Q
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qtouchdevice.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qguiapplication.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qinputmethod.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/QtQml \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/QtQmlDepends \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QtCore \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QtCoreDepends \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qabstractanimation.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qabstracteventdispatcher.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qabstractitemmodel.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qabstractnativeeventfilter.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qabstractproxymodel.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qabstractstate.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qabstracttransition.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qanimationgroup.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qarraydataops.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qarraydatapointer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbitarray.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbuffer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbytearraymatcher.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcache.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcollator.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcommandlineoption.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcommandlineparser.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcryptographichash.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qdatetime.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qdeadlinetimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qelapsedtimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qdir.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qfileinfo.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qdiriterator.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qeasingcurve.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qendian.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qeventtransition.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qexception.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qfactoryinterface.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qfileselector.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QStringList \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qfilesystemwatcher.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qfinalstate.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qfuture.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qfutureinterface.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qrunnable.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qresultstore.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qfuturesynchronizer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qfuturewatcher.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qhistorystate.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qidentityproxymodel.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qisenum.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qitemselectionmodel.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qjsonarray.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qjsonvalue.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qjsondocument.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qjsonobject.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qlibrary.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qlibraryinfo.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qversionnumber.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qlinkedlist.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qlockfile.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qloggingcategory.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmath.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmessageauthenticationcode.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmetaobject.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmimedata.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmimedatabase.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmimetype.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobjectcleanuphandler.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qoperatingsystemversion.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qparallelanimationgroup.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpauseanimation.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qplugin.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpointer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpluginloader.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qprocess.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpropertyanimation.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvariantanimation.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qqueue.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qrandom.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qreadwritelock.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qregularexpression.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qresource.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsavefile.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qscopedvaluerollback.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsemaphore.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsequentialanimationgroup.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsettings.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsharedmemory.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsignalmapper.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsignaltransition.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsocketnotifier.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsortfilterproxymodel.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstack.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstandardpaths.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstate.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstatemachine.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstorageinfo.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringlistmodel.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsystemsemaphore.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtemporarydir.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtemporaryfile.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtextboundaryfinder.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtextcodec.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qthread.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qthreadpool.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qthreadstorage.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimeline.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimezone.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtranslator.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtypetraits.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/quuid.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qwaitcondition.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qwineventnotifier.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qxmlstream.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtcoreversion.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/QtNetwork \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/QtNetworkDepends \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qtnetworkglobal.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qtnetwork-config.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qabstractnetworkcache.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qnetworkrequest.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QSharedDataPointer \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QString \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QUrl \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVariant \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qabstractsocket.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qauthenticator.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qdnslookup.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qhostaddress.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qhostinfo.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qhstspolicy.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qhttpmultipart.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QByteArray \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QIODevice \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/QNetworkRequest \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qlocalserver.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qlocalsocket.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qnetworkaccessmanager.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVector \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/QSslConfiguration \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qsslconfiguration.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qsslsocket.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qtcpsocket.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qsslerror.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qsslcertificate.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qssl.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QFlags \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/QSslPreSharedKeyAuthenticator \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qsslpresharedkeyauthenticator.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMetaType \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qnetworkconfigmanager.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qnetworkconfiguration.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qnetworkcookie.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QList \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qnetworkcookiejar.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qnetworkdatagram.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qnetworkdiskcache.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qnetworkinterface.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qnetworkproxy.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qnetworkreply.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/QNetworkAccessManager \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qnetworksession.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qsctpserver.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qtcpserver.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qsctpsocket.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qsslcertificateextension.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qsslcipher.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qssldiffiehellmanparameters.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qsslellipticcurve.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QHash \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qsslkey.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qudpsocket.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qtnetworkversion.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qtqmlglobal.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qtqml-config.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qjsengine.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qjsvalue.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmldebug.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qjsvalueiterator.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqml.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlprivate.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlparserstatus.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlpropertyvaluesource.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmllist.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlabstracturlinterceptor.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlapplicationengine.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlengine.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlerror.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlcomponent.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlcontext.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlexpression.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlscriptstring.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlextensioninterface.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlextensionplugin.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlfile.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlfileselector.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/QQmlEngine \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlincubator.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlinfo.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlnetworkaccessmanagerfactory.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlproperty.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlpropertymap.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qtqmlversion.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/QQmlApplicationEngine \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick/QQuickView \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick/qquickview.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick/qquickwindow.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick/qtquickglobal.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qtqmlglobal.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qtqml-config.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qtnetworkglobal.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qtnetwork-config.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick/qtquick-config.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick/qsgrendererinterface.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick/qsgnode.h \
@@ -2178,44 +2570,23 @@ release/main.o: ../main.cpp C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets/Q
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qquaternion.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qgenericmatrix.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qwindow.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QEvent \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMargins \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QRect \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qsurface.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qsurfaceformat.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qicon.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqml.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlprivate.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlparserstatus.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlpropertyvaluesource.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmllist.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmetaobject.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmldebug.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QDir \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qdir.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qfileinfo.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/QQmlEngine \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlengine.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qjsengine.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qjsvalue.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlerror.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/QGuiApplication \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/QQmlContext \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlcontext.h \
 		../view/viewController.h \
 		../connection/connectionFactory.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVector \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
 		../interfaces/interfacesAbstract.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QStringList \
 		../device/devicesFactory.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
 		../command/commandController.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QQueue \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qqueue.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QPair \
 		../device/deviceAbstract.h \
 		../device/service/serviceDevicesAbstract.h \
@@ -2236,39 +2607,14 @@ release/main.o: ../main.cpp C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets/Q
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql/qtsqlglobal.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/QList \
 		../update/updater.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QByteArray \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/QNetworkAccessManager \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qnetworkaccessmanager.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qnetworkrequest.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QSharedDataPointer \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QString \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QUrl \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVariant \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/QSslConfiguration \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qsslconfiguration.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qsslsocket.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qtcpsocket.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qabstractsocket.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qsslerror.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qsslcertificate.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcryptographichash.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qdatetime.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qssl.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QFlags \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/QSslPreSharedKeyAuthenticator \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qsslpresharedkeyauthenticator.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMetaType \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/QNetworkRequest \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/QNetworkReply \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork/qnetworkreply.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QIODevice \
 		../view/radialbar.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick/QQuickPaintedItem \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick/qquickpainteditem.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick/qquickitem.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml/qqmlcomponent.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QList \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qaccessible.h
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qaccessible.h \
+		../translate/qmltranslator.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTranslator
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\main.o ..\main.cpp
 
 release/connectionFactory.o: ../connection/connectionFactory.cpp ../connection/connectionFactory.h \
@@ -4527,8 +4873,120 @@ release/updater.o: ../update/updater.cpp ../update/updater.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qjsonarray.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\updater.o ..\update\updater.cpp
 
-release/qrc_qml.o: release/qrc_qml.cpp 
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qrc_qml.o release\qrc_qml.cpp
+release/qmltranslator.o: ../translate/qmltranslator.cpp ../translate/qmltranslator.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobjectdefs.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qnamespace.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qglobal.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qconfig-bootstrapped.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qconfig.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtcore-config.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsystemdetection.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qprocessordetection.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcompilerdetection.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtypeinfo.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsysinfo.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qlogging.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qflags.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasicatomic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic_bootstrap.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qgenericatomic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic_cxx11.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic_msvc.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qglobalstatic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmutex.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qnumeric.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qversiontagging.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobjectdefs_impl.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstring.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qchar.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbytearray.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qrefcount.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qarraydata.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringliteral.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringalgorithms.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringview.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringbuilder.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qlist.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qalgorithms.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qiterator.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qhashfunctions.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpair.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbytearraylist.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringlist.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qregexp.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringmatcher.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcoreevent.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qscopedpointer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmetatype.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvarlengtharray.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcontainerfwd.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject_impl.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTranslator \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtranslator.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets/QApplication \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets/qapplication.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets/qtwidgetsglobal.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qtguiglobal.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qtgui-config.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets/qtwidgets-config.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcoreapplication.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qeventloop.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qwindowdefs.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qwindowdefs_win.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsize.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qcursor.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets/qdesktopwidget.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets/qwidget.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmargins.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qpaintdevice.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qrect.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qpalette.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qcolor.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qrgb.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qrgba64.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qbrush.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvector.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qmatrix.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qpolygon.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qregion.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qdatastream.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qiodevice.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qline.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qtransform.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qpainterpath.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qimage.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qpixelformat.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qpixmap.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsharedpointer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qshareddata.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qhash.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsharedpointer_impl.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qfont.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qfontmetrics.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qfontinfo.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets/qsizepolicy.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qkeysequence.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qevent.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvariant.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmap.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qdebug.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtextstream.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qlocale.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qset.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcontiguouscache.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qurl.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qurlquery.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qfile.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qfiledevice.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qvector2d.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qtouchdevice.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qguiapplication.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qinputmethod.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qmltranslator.o ..\translate\qmltranslator.cpp
 
 release/qrc_images.o: release/qrc_images.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qrc_images.o release\qrc_images.cpp
@@ -4538,6 +4996,102 @@ release/qrc_font.o: release/qrc_font.cpp
 
 release/qrc_db.o: release/qrc_db.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qrc_db.o release\qrc_db.cpp
+
+release/qml_app_qml.o: release/qml_app_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_app_qml.o release\qml_app_qml.cpp
+
+release/qml_View_qml.o: release/qml_View_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_View_qml.o release\qml_View_qml.cpp
+
+release/qml_interfaces_AddSerialPort_qml.o: release/qml_interfaces_AddSerialPort_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_interfaces_AddSerialPort_qml.o release\qml_interfaces_AddSerialPort_qml.cpp
+
+release/qml_interfaces_DevPropertySerialPort_qml.o: release/qml_interfaces_DevPropertySerialPort_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_interfaces_DevPropertySerialPort_qml.o release\qml_interfaces_DevPropertySerialPort_qml.cpp
+
+release/qml_interfaces_MessageShow_qml.o: release/qml_interfaces_MessageShow_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_interfaces_MessageShow_qml.o release\qml_interfaces_MessageShow_qml.cpp
+
+release/qml_devTree_DeviceItemEmpty_qml.o: release/qml_devTree_DeviceItemEmpty_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_devTree_DeviceItemEmpty_qml.o release\qml_devTree_DeviceItemEmpty_qml.cpp
+
+release/qml_devTree_DeviceTree_qml.o: release/qml_devTree_DeviceTree_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_devTree_DeviceTree_qml.o release\qml_devTree_DeviceTree_qml.cpp
+
+release/qml_devTree_EditDeviceName_qml.o: release/qml_devTree_EditDeviceName_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_devTree_EditDeviceName_qml.o release\qml_devTree_EditDeviceName_qml.cpp
+
+release/qml_devTree_DevListPanel_qml.o: release/qml_devTree_DevListPanel_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_devTree_DevListPanel_qml.o release\qml_devTree_DevListPanel_qml.cpp
+
+release/qml_devTree_DeviceItem_qml.o: release/qml_devTree_DeviceItem_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_devTree_DeviceItem_qml.o release\qml_devTree_DeviceItem_qml.cpp
+
+release/qml_devTree_InterfaceItemView_qml.o: release/qml_devTree_InterfaceItemView_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_devTree_InterfaceItemView_qml.o release\qml_devTree_InterfaceItemView_qml.cpp
+
+release/qml_projectPanel_LogoPanel_qml.o: release/qml_projectPanel_LogoPanel_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_projectPanel_LogoPanel_qml.o release\qml_projectPanel_LogoPanel_qml.cpp
+
+release/qml_projectPanel_Settings_qml.o: release/qml_projectPanel_Settings_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_projectPanel_Settings_qml.o release\qml_projectPanel_Settings_qml.cpp
+
+release/qml_projectPanel_Session_qml.o: release/qml_projectPanel_Session_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_projectPanel_Session_qml.o release\qml_projectPanel_Session_qml.cpp
+
+release/qml_projectPanel_Support_qml.o: release/qml_projectPanel_Support_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_projectPanel_Support_qml.o release\qml_projectPanel_Support_qml.cpp
+
+release/qml_projectPanel_MainMenuBar_qml.o: release/qml_projectPanel_MainMenuBar_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_projectPanel_MainMenuBar_qml.o release\qml_projectPanel_MainMenuBar_qml.cpp
+
+release/qml_projectPanel_DevicePropertyPanel_qml.o: release/qml_projectPanel_DevicePropertyPanel_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_projectPanel_DevicePropertyPanel_qml.o release\qml_projectPanel_DevicePropertyPanel_qml.cpp
+
+release/qml_projectPanel_ProjectMainStack_qml.o: release/qml_projectPanel_ProjectMainStack_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_projectPanel_ProjectMainStack_qml.o release\qml_projectPanel_ProjectMainStack_qml.cpp
+
+release/qml_projectPanel_ProjectStartScreen_qml.o: release/qml_projectPanel_ProjectStartScreen_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_projectPanel_ProjectStartScreen_qml.o release\qml_projectPanel_ProjectStartScreen_qml.cpp
+
+release/qml_devices_DevPropertyNozzle_v_0_00_qml.o: release/qml_devices_DevPropertyNozzle_v_0_00_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_devices_DevPropertyNozzle_v_0_00_qml.o release\qml_devices_DevPropertyNozzle_v_0_00_qml.cpp
+
+release/qml_devices_AddDeviceDialog_qml.o: release/qml_devices_AddDeviceDialog_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_devices_AddDeviceDialog_qml.o release\qml_devices_AddDeviceDialog_qml.cpp
+
+release/qml_devices_DevPropertyProgressTmk4ux_qml.o: release/qml_devices_DevPropertyProgressTmk4ux_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_devices_DevPropertyProgressTmk4ux_qml.o release\qml_devices_DevPropertyProgressTmk4ux_qml.cpp
+
+release/qml_devices_AddDeviceTarirDialog_qml.o: release/qml_devices_AddDeviceTarirDialog_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_devices_AddDeviceTarirDialog_qml.o release\qml_devices_AddDeviceTarirDialog_qml.cpp
+
+release/qml_devices_ChangeDevIdName_qml.o: release/qml_devices_ChangeDevIdName_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_devices_ChangeDevIdName_qml.o release\qml_devices_ChangeDevIdName_qml.cpp
+
+release/qml_devices_DevPropertyProgressTmk24TarTableDelegate_qml.o: release/qml_devices_DevPropertyProgressTmk24TarTableDelegate_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_devices_DevPropertyProgressTmk24TarTableDelegate_qml.o release\qml_devices_DevPropertyProgressTmk24TarTableDelegate_qml.cpp
+
+release/qml_devices_SearchDevice_qml.o: release/qml_devices_SearchDevice_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_devices_SearchDevice_qml.o release\qml_devices_SearchDevice_qml.cpp
+
+release/qml_devices_DevPropertyProgressTmk24_qml.o: release/qml_devices_DevPropertyProgressTmk24_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_devices_DevPropertyProgressTmk24_qml.o release\qml_devices_DevPropertyProgressTmk24_qml.cpp
+
+release/qml_miscElems_Button_qml.o: release/qml_miscElems_Button_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_miscElems_Button_qml.o release\qml_miscElems_Button_qml.cpp
+
+release/qml_miscElems_AnimatedAreaSeries_qml.o: release/qml_miscElems_AnimatedAreaSeries_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_miscElems_AnimatedAreaSeries_qml.o release\qml_miscElems_AnimatedAreaSeries_qml.cpp
+
+release/qml_miscElems_ButtonRound_qml.o: release/qml_miscElems_ButtonRound_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_miscElems_ButtonRound_qml.o release\qml_miscElems_ButtonRound_qml.cpp
+
+release/qml_miscElems_TabButtonUp_qml.o: release/qml_miscElems_TabButtonUp_qml.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qml_miscElems_TabButtonUp_qml.o release\qml_miscElems_TabButtonUp_qml.cpp
+
+release/qmlcache_loader.o: release/qmlcache_loader.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\qmlcache_loader.o release\qmlcache_loader.cpp
 
 release/moc_connectionFactory.o: release/moc_connectionFactory.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\moc_connectionFactory.o release\moc_connectionFactory.cpp
@@ -4607,6 +5161,9 @@ release/moc_sessionsecurity.o: release/moc_sessionsecurity.cpp
 
 release/moc_updater.o: release/moc_updater.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\moc_updater.o release\moc_updater.cpp
+
+release/moc_qmltranslator.o: release/moc_qmltranslator.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\moc_qmltranslator.o release\moc_qmltranslator.cpp
 
 ####### Install
 

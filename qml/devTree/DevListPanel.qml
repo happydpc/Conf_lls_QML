@@ -62,7 +62,7 @@ Rectangle {
                             anchors.centerIn: parent
                         }
                     }
-                    onApply: {
+                    onAccepted: {
                         viewController.removeActiveInterface()
                         close()
                     }

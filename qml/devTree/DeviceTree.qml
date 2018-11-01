@@ -144,7 +144,7 @@ Column{
                 anchors.centerIn: parent
             }
         }
-        onApply: {
+        onAccepted: {
             viewController.removeActiveDevice()
             close()
         }

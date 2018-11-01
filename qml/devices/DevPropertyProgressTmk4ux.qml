@@ -756,7 +756,7 @@ Rectangle {
         id: dialogLevelSetEmpty
         visible: false
         title: "Смена уровня Min-Max"
-        standardButtons: StandardButton.Close | StandardButton.Apply
+        standardButtons: StandardButton.Close | StandardButton.Ok
         Rectangle {
             color: "transparent"
             implicitWidth: 250
@@ -767,7 +767,7 @@ Rectangle {
                 anchors.centerIn: parent
             }
         }
-        onApply: {
+        onAccepted: {
             viewController.setCurrentDevLevelAsEmpty()
             close()
         }
@@ -777,7 +777,7 @@ Rectangle {
         id: dialogLevelSetFull
         visible: false
         title: "Смена уровня Min-Max"
-        standardButtons: StandardButton.Close | StandardButton.Apply
+        standardButtons: StandardButton.Close | StandardButton.Ok
         Rectangle {
             color: "transparent"
             implicitWidth: 250
@@ -788,7 +788,7 @@ Rectangle {
                 anchors.centerIn: parent
             }
         }
-        onApply: {
+        onAccepted: {
             viewController.setCurrentDevLevelAsFull()
             close()
         }

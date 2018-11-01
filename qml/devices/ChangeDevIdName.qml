@@ -46,7 +46,7 @@ Popup {
                         anchors.centerIn: parent
                     }
                 }
-                onApply: {
+                onAccepted: {
                     var tNewId = newIdAddress.value
                     var tPassword = ""
                     var tCurrentId = currentId.text

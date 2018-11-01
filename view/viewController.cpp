@@ -42,9 +42,9 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
         //        addDeviceToConnection("Nozzle Rev 0.0", QStringList("id"), QStringList("1"));
     });
 
-    //    QTimer::singleShot(10000, Qt::CoarseTimer, [&] {
-    //        checkUpdateVersionSoftware();
-    //    });
+    QTimer::singleShot(60000, Qt::CoarseTimer, [&] {
+        checkUpdateVersionSoftware();
+    });
 
 #if USE_DB_VIEWCONTROLLER == 1
     qDebug() << "ViewController: -create Ok";
@@ -57,6 +57,17 @@ ViewController::~ViewController() {
     delete interfaceTree;
     delete sessionSecurity;
     delete updateIoStatusTimer;
+}
+
+QString ViewController::getTypeLogo() {
+    QString ret;
+#ifdef PROGRESS
+    ret = "progress";
+#endif
+#ifdef GLOSSAV
+    ret = "gs";
+#endif
+    return ret;
 }
 
 void ViewController::checkUpdateVersionSoftware() {

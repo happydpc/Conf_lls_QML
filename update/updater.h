@@ -13,8 +13,9 @@ class Updater : public QObject
 public:
     explicit Updater(QObject *parent = nullptr);
 
-    const double version = 6.8;
-    const char* prefix = "https://update.locuscom.tech/configure_v%1.msi";
+    const double version = 7.0;
+    const char* prefix_pg = "https://update.locuscom.tech/configure_v%1.msi";
+    const char* prefix_gs = "https://update.locuscom.tech/configure_gs_v%1.msi";
 
     void checkNewUpdate();
 

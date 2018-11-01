@@ -488,7 +488,7 @@ Rectangle {
                         width: 500
                         color: "red"
                         LogoPanel {
-
+                            id:logoPane
                         }
                     }
                 }
@@ -585,7 +585,7 @@ Rectangle {
                     anchors.centerIn: parent
                 }
             }
-            onApply: {
+            onAccepted: {
                 close()
             }
         }
@@ -607,7 +607,7 @@ Rectangle {
                     anchors.centerIn: parent
                 }
             }
-            onApply: {
+            onAccepted: {
                 close()
             }
         }

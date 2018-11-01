@@ -152,7 +152,7 @@ Rectangle {
                 messageDialog.open()
             }
             remakeTarTable()
-            readTarTable()
+            timerAffterChangeTarTable.start()
             break;
         case "lls_write_cal_table":
             if(ackMessageIsVisible) {
@@ -237,20 +237,6 @@ Rectangle {
                         chartTarCurrentValuesMultiple.animateColorUp.start()
                     }
                 }
-            } else if(keys[i] === "ReplayNotComeRs485") {
-                typeInterpolation.currentIndex = values[i]
-            } else if(keys[i] === "Rs232Error") {
-                typeFiltration.currentIndex = values[i]
-            } else if(keys[i] === "Rs485Error") {
-                filterLenghtMediana.value = values[i]
-            } else if(keys[i] === "Slave1Error") {
-                error5Label.error5 = values[i]
-            } else if(keys[i] === "Slave2Error") {
-                error6Label.error6 = values[i]
-            } else if(keys[i] === "Slave3Error") {
-                error7Label.error7 = values[i]
-            } else if(keys[i] === "Slave4Error") {
-                error8Label.error8 = values[i]
             } else if(keys[i] === "chartValue") {
                 if(chartCurrentValue.dataList.length > 50) {
                     chartCurrentValue.dataList.shift()
@@ -271,31 +257,26 @@ Rectangle {
                     chartCurrentValueLines.append(chartIter, chartCurrentValue.dataList[chartIter]);
                 }
             } else if(keys[i] === "GenFreq0") {
-                error4Label.error4 = values[i]
+                error4Label.error4 = parseInt(values[i])
             } else if(keys[i] === "MaxFreqOut") {
-                error2Label.error2 = values[i]
+                error2Label.error2 = parseInt(values[i])
             } else if(keys[i] === "MinFreqOut") {
-                error3Label.error3 = values[i]
+                error3Label.error3 = parseInt(values[i])
             } else if(keys[i] === "NotCalibrated") {
-                error1Label.error1 = values[i]
+                error1Label.error1 = parseInt(values[i])
             } else if(keys[i] === "QeueManagerError") {
-                periodicSendTime.value = values[i]
             } else if(keys[i] === "ReplayNotComeRs232") {
-                typeOutMessage.currentIndex = values[i]
             } else if(keys[i] === "ReplayNotComeRs485") {
-                typeInterpolation.currentIndex = values[i]
             } else if(keys[i] === "Rs232Error") {
-                typeFiltration.currentIndex = values[i]
             } else if(keys[i] === "Rs485Error") {
-                filterLenghtMediana.value = values[i]
             } else if(keys[i] === "Slave1Error") {
-                error5Label.error5 = values[i]
+                error5Label.error5 = parseInt(values[i])
             } else if(keys[i] === "Slave2Error") {
-                error6Label.error6 = values[i]
+                error6Label.error6 = parseInt(values[i])
             } else if(keys[i] === "Slave3Error") {
-                error7Label.error7 = values[i]
+                error7Label.error7 = parseInt(values[i])
             } else if(keys[i] === "Slave4Error") {
-                error8Label.error8 = values[i]
+                error8Label.error8 = parseInt(values[i])
             }
         }
     }
@@ -1426,6 +1407,7 @@ Rectangle {
                                     }
                                 }
                                 viewController.addTarrirDev(devType, devId)
+                                remakeTarTable()
                                 timerAffterChangeTarTable.start()
                             }
                         }
@@ -1448,11 +1430,11 @@ Rectangle {
                         }
                         Timer {
                             id: timerAffterChangeTarTable
-                            interval: 100
+                            interval: 500
                             running: false
                             repeat: false
                             onTriggered: {
-                                remakeTarTable()
+                                readTarTable()
                                 remakeTarTableChart()
                             }
                         }
@@ -1782,7 +1764,7 @@ Rectangle {
                                                                 anchors.centerIn: parent
                                                             }
                                                         }
-                                                        onApply: {
+                                                        onAccepted: {
                                                             viewController.setCurrentDevCustomCommand("set current level value as min", [], [])
                                                             close()
                                                         }
@@ -1812,7 +1794,7 @@ Rectangle {
                                                                 anchors.centerIn: parent
                                                             }
                                                         }
-                                                        onApply: {
+                                                        onAccepted: {
                                                             viewController.setCurrentDevCustomCommand("set current level value as max", [], [])
                                                             close()
                                                         }
@@ -2628,7 +2610,7 @@ Rectangle {
                                                                     anchors.centerIn: parent
                                                                 }
                                                             }
-                                                            onApply: {
+                                                            onAccepted: {
                                                                 addTarStepValue(tarTabViewMultiple.currentRow)
                                                                 close()
                                                             }
@@ -2655,7 +2637,7 @@ Rectangle {
                                                                     anchors.centerIn: parent
                                                                 }
                                                             }
-                                                            onApply: {
+                                                            onAccepted: {
                                                                 close()
                                                             }
                                                         }
@@ -2714,7 +2696,7 @@ Rectangle {
                                                                     anchors.centerIn: parent
                                                                 }
                                                             }
-                                                            onApply: {
+                                                            onAccepted: {
                                                                 remakeTarTable()
                                                                 viewController.sendReqGetTarrirAllDev()
                                                                 close()
@@ -2743,7 +2725,7 @@ Rectangle {
                                                                     anchors.centerIn: parent
                                                                 }
                                                             }
-                                                            onApply: {
+                                                            onAccepted: {
                                                                 writeTarTable()
                                                                 close()
                                                             }
@@ -2763,7 +2745,7 @@ Rectangle {
                                                                     anchors.centerIn: parent
                                                                 }
                                                             }
-                                                            onApply: {
+                                                            onAccepted: {
                                                                 close()
                                                             }
                                                         }
@@ -2782,7 +2764,7 @@ Rectangle {
                                                                     anchors.centerIn: parent
                                                                 }
                                                             }
-                                                            onApply: {
+                                                            onAccepted: {
                                                                 close()
                                                             }
                                                         }

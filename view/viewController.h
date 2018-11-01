@@ -15,6 +15,8 @@ public:
     explicit ViewController(Model *pInterfaceModel, QObject *parent = nullptr);
     ~ViewController();
 
+    Q_INVOKABLE QString getTypeLogo();
+
     Q_INVOKABLE void resetSession();
     Q_INVOKABLE bool removeSessionByName(QString sessionName);
 

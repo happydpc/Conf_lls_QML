@@ -9,7 +9,12 @@ Updater::Updater(QObject *parent) : QObject(parent) {
 }
 
 void Updater::checkNewUpdate() {
+#ifdef PROGRESS
     QUrl imageUrl("https://update.locuscom.tech/index.json");
+#endif
+#ifdef GLOSSAV
+    QUrl imageUrl("https://update.locuscom.tech/index_gs.json");
+#endif
     QNetworkRequest request(imageUrl);
     m_WebCtrl.get(request);
 }
@@ -28,8 +33,14 @@ void Updater::downloaded(QNetworkReply* pReply) {
         QJsonValue res = infoObj.value("lastVersion");
         qDebug() << "Updater: lastVersion=" << res.toString();
         if(res.toString().toDouble() > version) {
-            qDebug() << "Updater: need update" << (QString(prefix).arg(res.toString()));
-            emit needUpdate(QString(prefix).arg(res.toString()));
+#ifdef PROGRESS
+            qDebug() << "Updater: need update" << (QString(prefix_pg).arg(res.toString()));
+            emit needUpdate(QString(prefix_pg).arg(res.toString()));
+#endif
+#ifdef GLOSSAV
+            qDebug() << "Updater: need update" << (QString(prefix_gs).arg(res.toString()));
+            emit needUpdate(QString(prefix_gs).arg(res.toString()));
+#endif
         }
     }
     pReply->deleteLater();

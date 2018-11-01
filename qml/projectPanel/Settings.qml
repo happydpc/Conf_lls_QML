@@ -14,7 +14,7 @@ Dialog {
             text: qsTr("Проверить обновления?")
         }
     }
-    onApply: {
+    onAccepted: {
         viewController.checkUpdateVersionSoftware()
         close()
     }

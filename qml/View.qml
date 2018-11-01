@@ -9,6 +9,7 @@ import "qrc:/qml/projectPanel"
 
 Item {
     id: root
+
     Connections {
         target: viewController
 
@@ -57,10 +58,7 @@ Item {
         onAddDeviceFail: {
             projectPanel.devicePropertyPanel.showDeviceAddError(devName, errorMessage)
         }
-        //        onDevShowMessage: {
-        //            projectPanel.devicePropertyPanel.setDevShowMessage(typeDev, messageHeader, message)
-        //        }
-        onDevCustomCommandExecuted: { // OK
+        onDevCustomCommandExecuted: {
             try {
                 projectPanel.devicePropertyPanel.setDevCustomCommandExecuted(typeDev, ioIndex, devIndex, keys, args, ackMessageIsVisible)
             } catch (error) {
@@ -162,7 +160,7 @@ Item {
 
     Timer {
         id: timerStartScreen
-        interval: 100
+        interval: 1000
         running: true
         repeat: false
         onTriggered: {
