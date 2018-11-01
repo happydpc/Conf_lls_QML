@@ -6,6 +6,8 @@ QT += network
 CONFIG+=qml_debug
 CONFIG += c++14
 
+TRANSLATIONS += QmlLanguage_ru.ts
+
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -48,7 +50,8 @@ SOURCES += \
     database/database.cpp \
     session/session.cpp \
     session/sessionsecurity.cpp \
-    update/updater.cpp
+    update/updater.cpp \
+    translate/qmltranslator.cpp
 
 RESOURCES += \
     qml.qrc \
@@ -97,7 +100,8 @@ HEADERS += \
     database/database.h \
     session/session.h \
     session/sessionsecurity.h \
-    update/updater.h
+    update/updater.h \
+    translate/qmltranslator.h
 
 DISTFILES += \
     device/service/serviceDevicesAbstract

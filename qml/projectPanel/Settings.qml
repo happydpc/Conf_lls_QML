@@ -4,7 +4,7 @@ import QtQuick.Dialogs 1.2
 Dialog {
     visible: false
     title: "Проверка обновлений"
-    standardButtons: StandardButton.Close | StandardButton.Apply
+    standardButtons: StandardButton.Close | StandardButton.Ok
     Rectangle {
         color: "transparent"
         implicitWidth: 400

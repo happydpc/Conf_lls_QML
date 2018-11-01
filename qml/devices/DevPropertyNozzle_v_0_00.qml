@@ -1220,7 +1220,7 @@ Rectangle {
         visible: false
         title: ""
         property string message: ""
-        standardButtons: StandardButton.Apply
+        standardButtons: StandardButton.Ok
         Rectangle {
             color: "transparent"
             implicitWidth: 500

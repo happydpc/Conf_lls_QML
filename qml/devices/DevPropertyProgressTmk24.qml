@@ -1771,7 +1771,7 @@ Rectangle {
                                                         id: dialogLevelSetEmpty
                                                         visible: false
                                                         title: "Смена уровня Min-Max"
-                                                        standardButtons: StandardButton.Close | StandardButton.Apply
+                                                        standardButtons: StandardButton.Close | StandardButton.Ok
                                                         Rectangle {
                                                             color: "transparent"
                                                             implicitWidth: 250
@@ -1801,7 +1801,7 @@ Rectangle {
                                                         id: dialogLevelSetFull
                                                         visible: false
                                                         title: "Смена уровня Min-Max"
-                                                        standardButtons: StandardButton.Close | StandardButton.Apply
+                                                        standardButtons: StandardButton.Close | StandardButton.Ok
                                                         Rectangle {
                                                             color: "transparent"
                                                             implicitWidth: 250
@@ -2617,7 +2617,7 @@ Rectangle {
                                                         Dialog {
                                                             id: dialogAddTarValueWhenNoiseDetectedMultiple
                                                             title: "Добавление значения в таблицу"
-                                                            standardButtons: StandardButton.Close | StandardButton.Apply
+                                                            standardButtons: StandardButton.Close | StandardButton.Ok
                                                             Rectangle {
                                                                 color: "transparent"
                                                                 implicitWidth: 500
@@ -2644,7 +2644,7 @@ Rectangle {
                                                         Dialog {
                                                             id: dialogRemoveTarTableRowMultiple
                                                             title: "Удаление записи таблицы"
-                                                            standardButtons: StandardButton.Apply
+                                                            standardButtons: StandardButton.Ok
                                                             Rectangle {
                                                                 color: "transparent"
                                                                 implicitWidth: 500
@@ -2703,7 +2703,7 @@ Rectangle {
                                                             id: dialogReadTarTableMultiple
                                                             visible: false
                                                             title: "Чтение записей таблицы из устройства"
-                                                            standardButtons: StandardButton.Close | StandardButton.Apply
+                                                            standardButtons: StandardButton.Close | StandardButton.Ok
                                                             Rectangle {
                                                                 color: "transparent"
                                                                 implicitWidth: 500
@@ -2732,7 +2732,7 @@ Rectangle {
                                                             id: dialogWriteTarTableMultipleRequest
                                                             visible: false
                                                             title: "Запись таблицы"
-                                                            standardButtons: StandardButton.Close | StandardButton.Apply
+                                                            standardButtons: StandardButton.Close | StandardButton.Ok
                                                             Rectangle {
                                                                 color: "transparent"
                                                                 implicitWidth: 500
@@ -2752,7 +2752,7 @@ Rectangle {
                                                             id: dialogWriteTarTableMultipleWarningOverSize
                                                             visible: false
                                                             title: "Запись таблицы"
-                                                            standardButtons: StandardButton.Apply
+                                                            standardButtons: StandardButton.Ok
                                                             Rectangle {
                                                                 color: "transparent"
                                                                 implicitWidth: 500
@@ -2771,7 +2771,7 @@ Rectangle {
                                                             id: dialogWriteTarTableMultipleWarningEmpty
                                                             visible: false
                                                             title: "Запись таблицы"
-                                                            standardButtons: StandardButton.Apply
+                                                            standardButtons: StandardButton.Ok
                                                             Rectangle {
                                                                 color: "transparent"
                                                                 implicitWidth: 500

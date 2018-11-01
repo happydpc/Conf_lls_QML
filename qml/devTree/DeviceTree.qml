@@ -133,7 +133,7 @@ Column{
         id:removeDeviceDialog
         visible: false
         title: "Удалить устройство"
-        standardButtons: StandardButton.Close | StandardButton.Apply
+        standardButtons: StandardButton.Close | StandardButton.Ok
         Rectangle {
             color: "transparent"
             implicitWidth: 250

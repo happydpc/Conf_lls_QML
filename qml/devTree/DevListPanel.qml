@@ -51,7 +51,7 @@ Rectangle {
                     id:removeInterfaceDialog
                     visible: false
                     title: "Удалить интерфейс"
-                    standardButtons: StandardButton.Close | StandardButton.Apply
+                    standardButtons: StandardButton.Close | StandardButton.Ok
                     Rectangle {
                         color: "transparent"
                         implicitWidth: 250

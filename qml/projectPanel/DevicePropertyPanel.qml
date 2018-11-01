@@ -463,7 +463,7 @@ Rectangle {
 
     Rectangle {
         id: parametersRect
-        color: "transparent"
+        color: "#ffffff"
         anchors.fill: parent
         anchors.top: parent.top
 
@@ -516,7 +516,6 @@ Rectangle {
             visible: false
             title: "Добавление устройства"
             property string message: ""
-            //standardButtons: StandardButton.Accept
             Rectangle {
                 color: "transparent"
                 implicitWidth: 400
@@ -573,7 +572,7 @@ Rectangle {
             id: dialogPasswordError
             visible: false
             title: "Ошибка пароля"
-            standardButtons: StandardButton.Apply
+            standardButtons: StandardButton.Ok
             property string messageArg: ""
             width: 500
             height: 150
@@ -595,7 +594,7 @@ Rectangle {
             id: dialogTypeError
             visible: false
             title: "Ошибка типа устройства"
-            standardButtons: StandardButton.Apply
+            standardButtons: StandardButton.Ok
             property string messageArg: ""
             width: 500
             height: 150

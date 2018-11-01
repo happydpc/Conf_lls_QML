@@ -35,7 +35,7 @@ Popup {
                 id: dialogChangeId
                 visible: false
                 title: "Смена ID адреса"
-                standardButtons: StandardButton.Close | StandardButton.Apply
+                standardButtons: StandardButton.Close | StandardButton.Ok
                 Rectangle {
                     color: "transparent"
                     implicitWidth: 250
