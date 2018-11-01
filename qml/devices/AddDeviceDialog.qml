@@ -27,6 +27,16 @@ Popup {
         typeDeviceList.currentIndex = 0
     }
 
+    function searchAbort() {
+        typeFindStartButton.enabled = true
+        typeFindStopButton.enabled = false
+        typeDeviceIdProgressTmk24FindDown.readOnly = false
+        typeDeviceIdProgressTmk24FindUp.readOnly = false
+        typeDeviceProgressProgressTmk24.value = 0;
+        typeDeviceProgressProgressTmk24.visible = false
+        modeFind = modeFind_idle
+    }
+
     function setResultCheckDevice(devTypeName, devId, devSn, result) {
         var paramList = []
         var keyList = []
@@ -72,12 +82,7 @@ Popup {
                     paramList.push("")
                     viewController.checkDeviceFromConnection(typeDeviceList.currentText, keyList, paramList)
                 } else {
-                    typeDeviceProgressProgressTmk24.value = 0;
-                    typeDeviceProgressProgressTmk24.visible = false
-                    typeFindStartButton.enabled = true
-                    typeFindStopButton.enabled = false
-                    typeDeviceIdProgressTmk24FindDown.readOnly = false
-                    typeDeviceIdProgressTmk24FindUp.readOnly = false
+                    searchAbort();
                 }
                 break;
             case 1:
@@ -97,6 +102,7 @@ Popup {
         typeFindStopButton.enabled = false
         typeDeviceIdProgressTmk24FindDown.readOnly = false
         typeDeviceIdProgressTmk24FindUp.readOnly = false
+        typeDeviceList.enabled = true
     }
 
     Rectangle {
@@ -409,11 +415,7 @@ Popup {
                                                     text: "Остановить"
                                                     enabled: false
                                                     onClicked: {
-                                                        typeFindStartButton.enabled = true
-                                                        typeFindStopButton.enabled = false
-                                                        typeDeviceIdProgressTmk24FindDown.readOnly = false
-                                                        typeDeviceIdProgressTmk24FindUp.readOnly = false
-                                                        modeFind = modeFind_idle
+                                                        searchAbort()
                                                     }
                                                 }
                                             }

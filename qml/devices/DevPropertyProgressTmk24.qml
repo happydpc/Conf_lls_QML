@@ -596,8 +596,8 @@ Rectangle {
         }
         var newModel = Object()
         for(var i=0; i<32; i++) {
-        newModel["roleLiters"+i] = "NA"
-        newModel["roleFuelLevel"+i]= "NA"
+            newModel["roleLiters"+i] = "NA"
+            newModel["roleFuelLevel"+i]= "NA"
         }
         tarTabViewMultiple.model.set(0, newModel);
     }
@@ -1139,21 +1139,21 @@ Rectangle {
                                             viewController.setCurrentDevCustomCommand("read current dev errors", [], [])
                                         }
                                     }
-                                    Row{
-                                        width: 400
-                                        height: 30
-                                        Label {
-                                            id:error1Label
-                                            property bool error1: false
-                                            text: "Датчик не откалиброван:"
-                                        }
-                                        Image {
-                                            height: 32
-                                            width: 32
-                                            source: error1Label.error1 === true ? "qrc:/icon/images/icon/bad.png" : "qrc:/icon/images/icon/normal.png"
-                                        }
-                                    }
                                     Column {
+                                        Row{
+                                            width: 400
+                                            height: 30
+                                            Label {
+                                                id:error1Label
+                                                property bool error1: false
+                                                text: "Датчик не откалиброван:"
+                                            }
+                                            Image {
+                                                height: 32
+                                                width: 32
+                                                source: error1Label.error1 === true ? "qrc:/icon/images/icon/bad.png" : "qrc:/icon/images/icon/normal.png"
+                                            }
+                                        }
                                         Row{
                                             width: 400
                                             height: 30
@@ -1439,7 +1439,7 @@ Rectangle {
                                 implicitWidth: 500
                                 implicitHeight: 200
                                 TextEdit{
-                                    text: "Обнаружены не сохраненные данные в процессе тарировки\nПроводить тарировку можно только на одной открытой вкладке\n(Последней открытой)"
+                                    text: "Обнаружены несохраненные данные в процессе тарировки!\nРекомендуется выполнить запись таблицы\nВ противном случае, при переходе на другую вкладку, данные будут утеряны\n"
                                     color: "black"
                                     anchors.centerIn: parent
                                     readOnly: true
