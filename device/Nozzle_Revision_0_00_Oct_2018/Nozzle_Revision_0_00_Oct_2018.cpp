@@ -66,8 +66,6 @@ QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getPropertyData() 
     res.second.push_back(serialNumber.isEmpty() ? QString("Не присвоен") : serialNumber);
     res.first.push_back("netAddress");
     res.second.push_back(deviceIdent.id);
-    res.first.push_back("firmware");
-    res.second.push_back(versionFirmware.isEmpty() ? QString("NA") : versionFirmware);
     res.first.push_back("header");
     res.second.push_back(deviceIdent.header);
     res.first.push_back("versionFirmare");

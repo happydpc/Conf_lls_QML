@@ -12,10 +12,10 @@ public:
     Nozzle_Revision_0_00_Oct_2018_Data();
     ~Nozzle_Revision_0_00_Oct_2018_Data();
 
-    static constexpr char* logHeaderBegind = "\02\<";
-    static constexpr char* logHeaderEnd = "\03\>";
-    static constexpr char* logCommandBegind = "A<";
-    static constexpr char* logCommandEnd = "B>";
+    static constexpr char* logHeaderBegind = {"\\02\\"};
+    static constexpr char* logHeaderEnd = {"\\03\\"};
+    static constexpr char* logCommandBegind = {"\\A0\\"};
+    static constexpr char* logCommandEnd = {"\\Y9\\"};
 
     static constexpr int SERIALNUMBER_STRING_SIZE            = 12;
     static constexpr int PERSONAL_DATA_SIZE                  = 176;

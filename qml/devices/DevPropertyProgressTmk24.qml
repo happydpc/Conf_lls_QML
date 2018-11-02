@@ -202,8 +202,10 @@ Rectangle {
                 baudrateRs232Values.currentIndex = values[i]
             } else if(keys[i] === "baudrateRs485Values_value") {
                 baudrateRs485Values.currentIndex = values[i]
-            } else if(keys[i] === "masterSlaveFullCountes_value") {
-                masterSlaveFullCountes.value = values[i]
+            }  else if(keys[i] === "masterSlaveFullCountes_value") {
+              masterSlaveFullCountes.value = values[i]
+            } else if(keys[i] === "typeFuel") {
+                typeFuel.currentIndex = values[i]
             } else if(keys[i] === "masterSlaveSlaveId_1_value") {
                 masterSlaveSlaveId_1.value = values[i]
             } else if(keys[i] === "masterSlaveSlaveId_2_value") {
@@ -399,6 +401,8 @@ Rectangle {
         settings.push(baudrateRs485Values.currentIndex)
         key.push("masterSlaveFullCountes_value")
         settings.push(masterSlaveFullCountes.value)
+        key.push("typeFuel")
+        settings.push(typeFuel.currentIndex)
         key.push("masterSlaveSlaveId_1_value")
         settings.push(masterSlaveSlaveId_1.value)
         key.push("masterSlaveSlaveId_2_value")

@@ -20,16 +20,15 @@
         <file>qml/miscElems/Button.qml</file>
         <file>qml/miscElems/ButtonRound.qml</file>
         <file>qml/miscElems/TabButtonUp.qml</file>
-        <file>qml/projectPanel/DevicePropertyPanel.qml</file>
         <file>qml/projectPanel/LogoPanel.qml</file>
         <file>qml/projectPanel/MainMenuBar.qml</file>
         <file>qml/projectPanel/ProjectMainStack.qml</file>
-        <file>qml/projectPanel/ProjectStartScreen.qml</file>
         <file>qml/devTree/DevListPanel.qml</file>
         <file>qml/devTree/EditDeviceName.qml</file>
         <file>qml/interfaces/MessageShow.qml</file>
         <file>qml/projectPanel/Session.qml</file>
         <file>qml/projectPanel/Settings.qml</file>
         <file>qml/projectPanel/Support.qml</file>
+        <file>qml/projectPanel/ProjectDevicePanel.qml</file>
     </qresource>
 </RCC>

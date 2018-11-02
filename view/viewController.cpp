@@ -38,8 +38,8 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
     });
 
     QTimer::singleShot(1000, Qt::CoarseTimer, [&] {
-        //        addConnection("serial", "ttyACM0", QStringList("baudrate"), QStringList("115200"));
-        //        addDeviceToConnection("Nozzle Rev 0.0", QStringList("id"), QStringList("1"));
+                addConnection("serial", "COM8", QStringList("baudrate"), QStringList("115200"));
+                addDeviceToConnection("Nozzle Rev 0.0", QStringList("id"), QStringList("1"));
     });
 
     QTimer::singleShot(60000, Qt::CoarseTimer, [&] {
@@ -313,7 +313,7 @@ void ViewController::removeActiveDevice() {
     int indexRemove = interfaceTree->getDevIndex();
     interfaceTree->removeDeviceToConnection(interfaceTree->getIoIndex(), indexRemove);
     getDeviceFactoryByIndex(interfaceTree->getIoIndex())->removeDeviceByIndex(indexRemove);
-    emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),2, QString("Удаление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+    emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),0, QString("Удаление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
     emit deleteDeviceSuccesfull(interfaceTree->getIoIndex(), indexRemove);
     if(getDeviceCount() == 0) {
         emit interfaceSetActiveProperty(interfaceTree->getIoIndex(),
@@ -363,7 +363,7 @@ bool ViewController::addDeviceToConnection(QString ioName, QString devTypeName, 
             // make it device - "not ready"
             // while not read settings
             pInterface->getDeviceFactory()->setDeviceReInitByIndex(interfaceTree->getDevIndex());
-            emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),0, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+            emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),2, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
             emit addDeviceSuccesfull(interfaceTree->getIoIndex(),
                                      getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceTypeNameByType(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceType(interfaceTree->getDevIndex())),
                                      getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(interfaceTree->getDevIndex()).first,
@@ -596,7 +596,7 @@ void ViewController::deviceConnected(DevicesFactory::E_DeviceType type, QString 
                           getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId),
                           getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(interfaceTree->getDevIndex()));
     }
-    emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),0, QString("Устройста подключено[%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+    emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),2, QString("Устройста подключено[%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
 #if USE_DB_VIEWCONTROLLER == 1
     qDebug() << "ViewController: - deviceConnected -OK -"<<type;
 #endif
@@ -611,7 +611,7 @@ void ViewController::deviceDisconnected(DevicesFactory::E_DeviceType type, QStri
                              getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId),
                              getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceTypeNameByType(type));
     }
-    emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),2, QString("Устройство потеряно [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+    emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),0, QString("Устройство потеряно [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
 #if USE_DB_VIEWCONTROLLER == 1
     qDebug() << "ViewController: - deviceDisconnected -OK -"<<type << " " << uniqNameId;
 #endif
@@ -659,6 +659,9 @@ void ViewController::deviceReadyCurrentData(DevicesFactory::E_DeviceType type, Q
         break;
     case DevicesFactory::Type_Nozzle_rev_0_00: {
         if(isCurrentDevice(uniqNameId)) {
+            emit devReady(interfaceTree->getIoIndex(),
+                          interfaceTree->getDevIndex(),
+                          connFactory->getInterace(interfaceTree->getIoIndex())->getType());
             emit devReadyPeriodicData(connFactory->getInterace(interfaceTree->getIoIndex())->getType(),
                                       interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),
                                       getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId)).first,

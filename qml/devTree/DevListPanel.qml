@@ -94,7 +94,7 @@ Rectangle {
         height: parent.height
         color: "#f0f3f6"
     }
-    DevicePropertyPanel {
+    ProjectDevicePanel {
         id: devicePropertyPanel
         visible: true
         anchors.top: parent.top

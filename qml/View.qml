@@ -94,11 +94,7 @@ Item {
         StackView {
             id: projectStack
             anchors.fill: parent
-            initialItem: projectStartSceen
-
-            ProjectStartScreen {
-                id: projectStartSceen
-            }
+            initialItem: projectDeviceScreen
 
             Item {
                 id: projectDeviceScreen
@@ -155,16 +151,6 @@ Item {
                     }
                 }
             }
-        }
-    }
-
-    Timer {
-        id: timerStartScreen
-        interval: 1000
-        running: true
-        repeat: false
-        onTriggered: {
-            projectStack.push(projectDeviceScreen)
         }
     }
 }

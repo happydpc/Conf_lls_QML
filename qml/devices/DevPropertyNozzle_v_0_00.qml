@@ -9,22 +9,27 @@ import QtQuick.Controls 1.4 as Controls_1_4
 import QtQuick.Controls.Styles 1.4
 import CustomControls 1.0
 import QtGraphicalEffects 1.0
-
-import "qrc:/qml/miscElems" as MiscElements
+import "qrc:/qml/miscElems" as MiscElems
+import "qrc:/qml/devices" as Devices
 
 Rectangle {
-    anchors.fill: parent
     visible: true
+    clip: true
+
     property bool devIsConnected: false
     property bool devIsReady: false
+    property string id: ""
 
-    function setDisconnected() {
-        devIsConnected = false
-        setWriteSettingsIsNoAvailable()
-    }
     function setConnected() {
         devIsConnected = true
-        setWriteSettingsIsAvailable()
+        devIsReady = false
+        setWriteSettingsIsNoAvailable()
+    }
+
+    function setDisconnected() {
+        devIsConnected = true
+        devIsReady = false
+        setWriteSettingsIsNoAvailable()
     }
 
     function setReady() {
@@ -34,31 +39,39 @@ Rectangle {
     }
 
     function setPropertyes(keys, values) {
+        parseInputData(keys, values)
+    }
 
+    function setInitProperty(devKeyProperty, devValueProperty) {
+        for(var i=0; i<devKeyProperty.length; i++) {
+            if(devKeyProperty[i] === "id") {
+                id = devValueProperty[i]
+            }
+        }
+    }
+
+    function removeAll() {
+
+    }
+
+    function getId() {
+        return id;
     }
 
     function setWriteSettingsIsAvailable() {
         writeSettingsButton_1.enabled = true
         writeSettingsButton_2.enabled = true
     }
+
     function setWriteSettingsIsNoAvailable() {
         writeSettingsButton_1.enabled = false
         writeSettingsButton_2.enabled = false
     }
+
     function setDevProperty() {
         var keys = viewController.getCurrentDevPropertyKey()
         var values = viewController.getCurrentDevPropertyValue()
-        for(var i=0; i<keys.length; i++) {
-            if(keys[i] === "devTypeName"){
-                typeDeviceText.text = values[i]
-            }
-            if(keys[i] === "serialNum"){
-                snText.text = values[i]
-            }
-            if(keys[i] === "versionFirmare"){
-                versionFirmwareText.text = values[i]
-            }
-        }
+        parseInputData(keys, values)
     }
 
     function insertPeriodicData(keys, values) {
@@ -66,81 +79,22 @@ Rectangle {
     }
 
     function setCustomCommandExecuted(keys, args, ackMessageIsVisible) {
-        var i = 0;
-        if(keys.length > 0) {
-            devIsConnected = true
-        }
         switch(keys[0]) {
         case "getOtherData" :
-            for(i=0; i<keys.length; i++) {
-                if(keys[i] === "versionFirmare"){
-                    versionFirmwareText.text = args[i]
-                }
-            }
+            parseInputData(keys, args)
             break;
         case "getAccelData" :
-            for(i=0; i<keys.length; i++) {
-                if(keys[i] === "accelX"){
-                    accelXProgressBar.value = parseInt(args[i])
-                }
-                if(keys[i] === "accelY"){
-                    accelYProgressBar.value = parseInt(args[i])
-                }
-                if(keys[i] === "accelZ"){
-                    accelZProgressBar.value = parseInt(args[i])
-                }
-            }
+            parseInputData(keys, args)
             break;
         case "getNetworkData":
-            for(i=0; i<keys.length; i++) {
-                if(keys[i] === "networkCurrentIp"){
-                    networkCurrentIp.text = args[i]
-                }
-                if(keys[i] === "rssiValue") {
-                    chartRssiValue.dataList.push(args[i])
-                    chartRssiLines.clear();
-                    chartRssiValue.graphLength = chartRssiValue.dataList.length
-                    chartRssiValue.graphAmplitudeMax = 0
-                    for(var i=0; i<chartRssiValue.dataList.length; i++) {
-                        if(chartRssiValue.dataList[i] > chartRssiValue.graphAmplitudeMax) {
-                            chartRssiValue.graphAmplitudeMax = chartRssiValue.dataList[i];
-                        }
-                        if(chartRssiValue.dataList[i] < chartRssiValue.graphAmplitudeMin) {
-                            chartRssiValue.graphAmplitudeMin = chartRssiValue.dataList[i];
-                        }
-                    }
-                    for(i=0; i<chartRssiValue.dataList.length; i++) {
-                        chartRssiLines.append(i, chartRssiValue.dataList[i]);
-                    }
-                    if(chartRssiValue.dataList.length > 50) {
-                        chartRssiValue.dataList.pop()
-                    }
-                }
-            }
+            parseInputData(keys, args)
             break;
             // it last command to read the settings
         case "getNetworkConfig":
-            for(i=0; i<keys.length; i++) {
-                if(keys[i] === "networkPassword"){
-                    networkPassword.text = args[i]
-                }
-            }
+            parseInputData(keys, args)
             break;
         case "getAccelConfig":
-            for(i=0; i<keys.length; i++) {
-                if(keys[i] === "accelConfX") {
-                    accelCoefX.text = args[i]
-                }
-                if(keys[i ]=== "accelConfY") {
-                    accelCoefY.text = args[i]
-                }
-                if(keys[i] === "accelConfZ") {
-                    accelCoefZ.text = args[i]
-                }
-                if(keys[i] === "accelAngle") {
-                    accelAngle.text = args[i]
-                }
-            }
+            parseInputData(keys, args)
             if(ackMessageIsVisible) {
                 dialogInfoMessage.message = "Настройки успешно считаны"
                 dialogInfoMessage.title = "Настройки"
@@ -148,24 +102,10 @@ Rectangle {
             }
             break;
         case "getCardProperty":
-            for(i=0; i<keys.length; i++) {
-                if(keys[i] === "cardNumber"){
-                    cardNumber.text = args[i].toUpperCase()
-                }
-            }
+            parseInputData(keys, args)
             break;
         case "getBatteryProperty":
-            for(i=0; i<keys.length; i++) {
-                if(keys[i] === "powerVoltage"){
-                    batteryVoltage.value = parseFloat(args[i])
-                }
-                if(keys[i] === "powerCurrentResouresAvailable"){
-                    batteryResourseAvailable.value = parseFloat(args[i])
-                }
-                if(keys[i] === "powerCurrent"){
-                    batteryCurrent_mA.value = parseFloat(args[i])
-                }
-            }
+            parseInputData(keys, args)
             break;
         case "setNetworkPassword":
         case "setAccelConfig":
@@ -182,17 +122,79 @@ Rectangle {
         }
     }
 
-    function addLogMessage(codeMessage, message) { // TODO:!!!
-        log.append(message)
+    function parseInputData(keys, values) {
+        for(var i=0; i<keys.length; i++) {
+            if(keys[i] === "devTypeName") {
+                typeDeviceText.text = values[i]
+            } else if(keys[i] === "serialNum") {
+                snText.text = values[i]
+            } else if(keys[i] === "versionFirmare") {
+                versionFirmwareText.text = values[i]
+            }  else if(keys[i] === "accelX"){
+                accelXProgressBar.value = parseInt(values[i])
+            }
+            if(keys[i] === "accelY"){
+                accelYProgressBar.value = parseInt(values[i])
+            }
+            if(keys[i] === "accelZ"){
+                accelZProgressBar.value = parseInt(values[i])
+            } else if(keys[i] === "accelConfX") {
+                accelCoefX.text = values[i]
+            }
+            if(keys[i ]=== "accelConfY") {
+                accelCoefY.text = values[i]
+            }
+            if(keys[i] === "accelConfZ") {
+                accelCoefZ.text = values[i]
+            }
+            if(keys[i] === "accelAngle") {
+                accelAngle.text = values[i]
+            } else if(keys[i] === "networkCurrentIp"){
+                networkCurrentIp.text = values[i]
+            } else if(keys[i] === "rssiValue") {
+                chartRssiValue.dataList.push(values[i])
+                chartRssiLines.clear();
+                chartRssiValue.graphLength = chartRssiValue.dataList.length
+                chartRssiValue.graphAmplitudeMax = 0
+                for(var i=0; i<chartRssiValue.dataList.length; i++) {
+                    if(chartRssiValue.dataList[i] > chartRssiValue.graphAmplitudeMax) {
+                        chartRssiValue.graphAmplitudeMax = chartRssiValue.dataList[i];
+                    }
+                    if(chartRssiValue.dataList[i] < chartRssiValue.graphAmplitudeMin) {
+                        chartRssiValue.graphAmplitudeMin = chartRssiValue.dataList[i];
+                    }
+                }
+                for(i=0; i<chartRssiValue.dataList.length; i++) {
+                    chartRssiLines.append(i, chartRssiValue.dataList[i]);
+                }
+                if(chartRssiValue.dataList.length > 50) {
+                    chartRssiValue.dataList.pop()
+                }
+            } else if(keys[i] === "networkPassword"){
+                networkPassword.text = values[i]
+            } else if(keys[i] === "powerVoltage"){
+                batteryVoltage.value = parseFloat(values[i])
+            }
+            if(keys[i] === "powerCurrentResouresAvailable"){
+                batteryResourseAvailable.value = parseFloat(values[i])
+            }
+            if(keys[i] === "powerCurrent"){
+                batteryCurrent_mA.value = parseFloat(values[i])
+            } else if(keys[i] === "cardNumber"){
+                cardNumber.text = values[i].toUpperCase()
+            }
+        }
     }
 
-    function addDeviceLogMessage(message) {
+    function addLogMessage(codeMessage, message) {
         if(devMessageLog.length > 4096) {
-            devMessageLog.remove(0, message.length + 100)
+            devMessageLog.remove(0, 512)
         }
         if(devMessageAutoScrollSwitch.checked) {
-            devMessageLog.append(message)
-            devMessageLog.cursorPosition = devMessageLog.length-1
+            if(codeMessage === 0) {
+                devMessageLog.append(message)
+                devMessageLog.cursorPosition = devMessageLog.length-1
+            }
         } else {
             var cursorPosition = devMessageLog.cursorPosition
             devMessageLog.append(message)
@@ -208,9 +210,10 @@ Rectangle {
     }
 
     Rectangle {
-        id: devProperty
+        id: devPropertyProgressTmk24
+        property bool isReady: true
         anchors.fill: parent
-        color: "transparent"
+        color: "#ffffff"
         Rectangle {
             id: barup
             color: "#ffffff"
@@ -229,21 +232,21 @@ Rectangle {
                 currentIndex: devStackParam.currentIndex
                 font.pointSize: 8
 
-                MiscElements.TabButtonUp {
+                MiscElems.TabButtonUp {
                     name: "Текущее состояние"
                     textLine: 1
                     widthBody: 155
                     useIcon: true
                     iconCode: "\uF274  "
                 }
-                MiscElements.TabButtonUp {
+                MiscElems.TabButtonUp {
                     name: "Журнал"
                     textLine: 1
                     widthBody: 155
                     useIcon: true
                     iconCode: "\uF54A  "
                 }
-                MiscElements.TabButtonUp {
+                MiscElems.TabButtonUp {
                     name: "Настройка"
                     textLine: 1
                     widthBody: 155
@@ -254,7 +257,7 @@ Rectangle {
         }
 
         Rectangle {
-            id: spacerList
+            id:spacerList
             anchors.top: barup.bottom
             anchors.left: parent.left
             anchors.leftMargin: 20
@@ -267,36 +270,29 @@ Rectangle {
 
         SwipeView {
             id: devStackParam
-            currentIndex: tabProperty.currentIndex
             anchors.top: spacerList.bottom
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.bottom: parent.bottom
+            currentIndex: tabProperty.currentIndex
+
             Item {
                 ScrollView {
                     clip: true
                     anchors.fill: parent
-
                     Column {
-                        id: column2
                         anchors.left: parent.left
                         anchors.leftMargin: 15
                         spacing: 10
-
                         Row {
-                            id: currentDataTexted
-                            layer.enabled: true
-                            width: 800
-                            height: 50
+                            id:currentDataTexted
+                            spacing: 10
                             Row {
-                                id: currentDataTexted_1
+                                id:currentDataTexted_1
                                 clip: true
-                                anchors.left: parent.left
-                                anchors.leftMargin: 10
-                                anchors.top: parent.top
-                                anchors.topMargin: 13
                                 width: 250
                                 height: 25
+                                spacing: 10
                                 Label {
                                     id: lSn
                                     text: qsTr("Завод/ном:")
@@ -305,36 +301,27 @@ Rectangle {
                                 TextField {
                                     id: snText
                                     text: qsTr("")
-                                    anchors.left: lSn.right
-                                    anchors.leftMargin: 5
-                                    anchors.right: parent.right
+                                    width: parent.width - lSn.width - 15
                                     height: parent.height
                                     enabled: devIsConnected
                                     readOnly: true
                                 }
                             }
-
                             Row {
                                 id: currentDataTexted_2
                                 clip: true
-                                anchors.left: currentDataTexted_1.right
-                                anchors.leftMargin: 10
-                                anchors.top: parent.top
-                                anchors.topMargin: 13
                                 width: 250
                                 height: 25
+                                spacing: 10
                                 Label {
                                     id: lTypeDevice
-                                    text: qsTr("Тип:")
+                                    text: qsTr("Тип датчика:")
                                     anchors.verticalCenter: parent.verticalCenter
                                 }
-
                                 TextField {
                                     id: typeDeviceText
                                     text: qsTr("")
-                                    anchors.left: lTypeDevice.right
-                                    anchors.right: parent.right
-                                    anchors.leftMargin: 5
+                                    width: parent.width - lTypeDevice.width - 15
                                     readOnly: true
                                     enabled: devIsConnected
                                     height: parent.height
@@ -344,12 +331,9 @@ Rectangle {
                             Row {
                                 id: currentDataTexted_3
                                 clip: true
-                                anchors.left: currentDataTexted_2.right
-                                anchors.leftMargin: 10
-                                anchors.top: parent.top
-                                anchors.topMargin: 13
                                 width: 250
                                 height: 25
+                                spacing: 10
                                 Label {
                                     id: lversionFirmwareText
                                     text: qsTr("Версия ПО:")
@@ -358,21 +342,11 @@ Rectangle {
                                 TextField {
                                     id: versionFirmwareText
                                     text: qsTr("")
-                                    readOnly: true
                                     enabled: devIsConnected
-                                    anchors.left: lversionFirmwareText.right
-                                    anchors.right: parent.right
-                                    anchors.leftMargin: 5
+                                    width: parent.width - lversionFirmwareText.width - 15
+                                    readOnly: true
                                     height: parent.height
                                 }
-                            }
-                            layer.effect: DropShadow {
-                                transparentBorder: true
-                                horizontalOffset: 0
-                                verticalOffset: 1
-                                color: "#e0e5ef"
-                                samples: 10
-                                radius: 10
                             }
                         }
 
@@ -384,7 +358,7 @@ Rectangle {
                                 Rectangle {
                                     width: 150
                                     height: 150
-                                    layer.enabled: true
+
                                     radius: 15
                                     color: devIsConnected ? "#ffffff" : "#d9d9d9"
                                     Label {
@@ -431,21 +405,13 @@ Rectangle {
                                             anchors.verticalCenter: parent.verticalCenter
                                         }
                                     }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 10
-                                    }
                                 }
 
                                 Rectangle {
                                     id: cardRectangle
                                     width: 200
                                     height: 150
-                                    layer.enabled: true
+
                                     radius: 15
                                     color: devIsConnected ? "#ffffff" : "#d9d9d9"
                                     Label {
@@ -467,21 +433,13 @@ Rectangle {
                                         width: parent.width -10
                                         height: 30
                                     }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 10
-                                    }
                                 }
 
                                 Rectangle {
                                     id: networkRectangle
                                     width: 200
                                     height: 150
-                                    layer.enabled: true
+
                                     radius: 15
                                     color: devIsConnected ? "#ffffff" : "#d9d9d9"
                                     Label {
@@ -503,14 +461,6 @@ Rectangle {
                                         placeholderText: "ip адрес"
                                         readOnly: true
                                     }
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 10
-                                    }
                                 }
 
                                 Rectangle {
@@ -518,23 +468,10 @@ Rectangle {
                                     height: 150
                                     radius: 15
                                     color: devIsConnected ? "#ffffff" : "#d9d9d9"
-                                    layer.effect: DropShadow {
-                                        color: "#e0e5ef"
-                                        radius: 10
-                                        transparentBorder: true
-                                        samples: 10
-                                        verticalOffset: 1
-                                        horizontalOffset: 0
-                                    }
-                                    layer.enabled: true
                                     Label {
                                         id: levelTempLabel1
                                         color: "#888d91"
                                         text: qsTr("Акселерометр:")
-                                        anchors.left: parent.left
-                                        anchors.right: parent.right
-                                        anchors.leftMargin: 15
-                                        anchors.rightMargin: 0
                                     }
 
                                     Column {
@@ -610,7 +547,7 @@ Rectangle {
                                             id:batResourseRectangle
                                             width: 150
                                             height: 150
-                                            layer.enabled: true
+
                                             radius: 15
                                             color: devIsConnected ? "#ffffff" : "#d9d9d9"
                                             Label {
@@ -658,20 +595,12 @@ Rectangle {
                                                     anchors.verticalCenter: parent.verticalCenter
                                                 }
                                             }
-                                            layer.effect: DropShadow {
-                                                transparentBorder: true
-                                                horizontalOffset: 0
-                                                verticalOffset: 1
-                                                color: "#e0e5ef"
-                                                samples: 10
-                                                radius: 10
-                                            }
                                         }
                                         Rectangle {
                                             id:batCurrentRectangle
                                             width: 150
                                             height: 150
-                                            layer.enabled: true
+
                                             radius: 15
                                             color: devIsConnected ? "#ffffff" : "#d9d9d9"
                                             Label {
@@ -718,14 +647,6 @@ Rectangle {
                                                     anchors.verticalCenter: parent.verticalCenter
                                                 }
                                             }
-                                            layer.effect: DropShadow {
-                                                transparentBorder: true
-                                                horizontalOffset: 0
-                                                verticalOffset: 1
-                                                color: "#e0e5ef"
-                                                samples: 10
-                                                radius: 10
-                                            }
                                         }
                                     }
                                 }
@@ -767,15 +688,6 @@ Rectangle {
                                         }
                                         enabled: devIsConnected
                                     }
-                                    layer.enabled: true
-                                    layer.effect: DropShadow {
-                                        transparentBorder: true
-                                        horizontalOffset: 0
-                                        verticalOffset: 1
-                                        color: "#e0e5ef"
-                                        samples: 10
-                                        radius: 10
-                                    }
                                 }
                             }
                         }
@@ -784,8 +696,6 @@ Rectangle {
             }
 
             Item {
-                x: 0
-                y: 7
                 clip: true
                 ScrollView {
                     id:devMessageLogScroll
@@ -793,7 +703,8 @@ Rectangle {
                     TextArea {
                         id: devMessageLog
                         placeholderText: "Сообщения"
-                        anchors.fill: parent
+                        height: parent.height
+                        width: parent.width
                         wrapMode: TextEdit.Wrap
                     }
                 }
@@ -815,112 +726,92 @@ Rectangle {
                         height: devMessageAutoScrollSwitch.height
                         verticalAlignment: Text.AlignVCenter
                         text: devMessageAutoScrollSwitch.checked ? "Автопрокрутка\nвкл" : "Автопрокрутка\nвыкл"
-                        font.pixelSize: platformStyle.fontSizeMedium
-                        color: platformStyle.colorNormalLight
                     }
                 }
             }
 
             Item {
-                id:settingsItem
                 clip: true
-                Rectangle {
-                    id: subBarup
-                    height: 45
-                    color: "#fdfdfb"
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    TabBar {
-                        id: tabSubProperty
-                        height: 25
-                        anchors.left: parent.left
-                        anchors.leftMargin: 30
-                        MiscElements.TabButtonUp {
-                            name: "Акселерометр"
-                            textLine: 1
-                            widthBody: 130
-                            useIcon: true
-                            iconCode: "\\uF015  "
+                Column {
+                    anchors.fill: parent
+                    Rectangle {
+                        id: subBarup
+                        color: "#fdfdfb"
+                        height: 45
+                        width: parent.width
+                        TabBar {
+                            id:tabSubProperty
+                            height: 25
+                            anchors.left: parent.left
+                            anchors.top: parent.top
+                            anchors.topMargin: 17
+                            anchors.leftMargin: 30
+                            spacing: 5
+                            currentIndex: stackSubProperty.currentIndex
+                            font.pointSize: 8
+                            background: Rectangle {
+                                color: "#ffffff"
+                            }
+                            MiscElems.TabButtonUp {
+                                name: "Акселерометр"
+                                textLine: 1
+                                widthBody: 130
+                                useIcon: true
+                                iconCode: "\uF14E  "
+                            }
+                            MiscElems.TabButtonUp {
+                                name: "Сеть"
+                                textLine: 1
+                                widthBody: 120
+                                useIcon: true
+                                iconCode: "\uF0C1  "
+                            }
+                            MiscElems.TabButtonUp {
+                                name: "  Питание"
+                                textLine: 1
+                                useIcon: true
+                                widthBody: 130
+                                iconCode: "\uF241  "
+                            }
                         }
-                        MiscElements.TabButtonUp {
-                            name: "Сеть"
-                            textLine: 1
-                            widthBody: 120
-                            useIcon: true
-                            iconCode: "\\uF492  "
-                        }
-                        MiscElements.TabButtonUp {
-                            name: "Питание"
-                            textLine: 1
-                            widthBody: 120
-                            useIcon: true
-                            iconCode: "\\uF492  "
-                        }
-                        spacing: 5
-                        currentIndex: stackSubProperty.currentIndex
-                        anchors.top: parent.top
-                        font.pointSize: 8
-                        background: Rectangle {
-                            color: "#00000000"
-                        }
-                        anchors.topMargin: 17
                     }
-                }
 
-                SwipeView {
-                    id: stackSubProperty
-                    currentIndex: tabSubProperty.currentIndex
-                    anchors.left: subBarup.left
-                    anchors.bottom: parent.bottom
-                    anchors.right: parent.right
-                    clip: true
-                    anchors.top: subBarup.bottom
-                    Item {
-                        id: currentStackData
-                        ScrollView {
-                            Column {
-                                spacing: 10
-                                anchors.top: parent.top
-                                Row {
+                    SwipeView {
+                        id: stackSubProperty
+                        currentIndex: tabSubProperty.currentIndex
+                        clip: true
+                        height: parent.height - subBarup.height
+                        width: parent.width
+                        Item {
+                            id: currentStackData
+                            ScrollView {
+                                clip: true
+                                anchors.fill: parent
+                                Column {
+                                    spacing: 10
                                     anchors.top: parent.top
                                     anchors.topMargin: 15
-                                    width: 500
-                                    height: 100
-                                    Rectangle {
-                                        id: accelCoefRect
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+                                    Row {
                                         width: 500
-                                        height: 250
-                                        color: "#fdfdfb"
-                                        anchors.left: parent.left
-                                        layer.effect: DropShadow {
-                                            color: "#e0e5ef"
-                                            radius: 20
-                                            transparentBorder: true
-                                            samples: 10
-                                            verticalOffset: 1
-                                            horizontalOffset: 0
-                                        }
-                                        anchors.leftMargin: 15
-                                        layer.enabled: true
-                                        Label {
-                                            text: "Коэффициенты:"
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                        }
-                                        Column {
-                                            id: column3
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                            spacing: 10
-                                            anchors.top: parent.top
-                                            anchors.topMargin: 30
-                                            Row {
+                                        height: 100
+                                        Rectangle {
+                                            id: accelCoefRect
+                                            width: 500
+                                            height: 250
+                                            color: "#fdfdfb"
+                                            Column {
+                                                id: column3
+                                                anchors.top: parent.top
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
                                                 spacing: 10
                                                 Label {
+                                                    text: "Коэффициенты:"
+                                                }
+                                                Label {
                                                     text: "X:"
-                                                    anchors.verticalCenter: parent.verticalCenter
                                                 }
                                                 TextField {
                                                     id: accelCoefX
@@ -928,25 +819,16 @@ Rectangle {
                                                     width: 300
                                                     placeholderText: "введите значение"
                                                 }
-                                            }
-                                            Row {
-                                                spacing: 10
                                                 Label {
                                                     text: "Y:"
-                                                    anchors.verticalCenter: parent.verticalCenter
                                                 }
                                                 TextField {
                                                     id: accelCoefY
                                                     height: 30
                                                     width: 300
-                                                    placeholderText: "введите значение"
                                                 }
-                                            }
-                                            Row {
-                                                spacing: 10
                                                 Label {
                                                     text: "Z:"
-                                                    anchors.verticalCenter: parent.verticalCenter
                                                 }
                                                 TextField {
                                                     id: accelCoefZ
@@ -954,12 +836,8 @@ Rectangle {
                                                     width: 300
                                                     placeholderText: "введите значение"
                                                 }
-                                            }
-                                            Row {
-                                                spacing: 10
                                                 Label {
                                                     text: "Угол\nотклонения:"
-                                                    anchors.verticalCenter: parent.verticalCenter
                                                 }
                                                 TextField {
                                                     id: accelAngle
@@ -969,245 +847,145 @@ Rectangle {
                                                 }
                                             }
                                         }
-                                    }
-                                    Column {
-                                        anchors.top: parent.top
-                                        anchors.topMargin: 0
-                                        anchors.left: accelCoefRect.right
-                                        anchors.leftMargin: 15
-                                        spacing: 10
-                                        Button {
-                                            id: insertCurrentAccelValues
-                                            width: 180
-                                            height: 70
-                                            text: "Использовать\nтекущие\nзначения"
-                                            layer.effect: DropShadow {
-                                                color: "#e0e5ef"
-                                                radius: 20
-                                                transparentBorder: true
-                                                samples: 10
-                                                verticalOffset: 1
-                                                horizontalOffset: 0
-                                            }
-                                            anchors.leftMargin: 25
-                                            layer.enabled: true
-                                            enabled: devIsConnected
-                                            onClicked: {
-                                                accelCoefX.text = accelXProgressBar.value.toString()
-                                                accelCoefY.text = accelYProgressBar.value.toString()
-                                                accelCoefZ.text = accelZProgressBar.value.toString()
-                                            }
-                                        }
-                                        Button {
-                                            id: readSetingsButton_1
-                                            width: 180
-                                            height: 50
-                                            text: "Считать настройки"
-                                            layer.effect: DropShadow {
-                                                color: "#e0e5ef"
-                                                radius: 20
-                                                transparentBorder: true
-                                                samples: 10
-                                                verticalOffset: 1
-                                                horizontalOffset: 0
-                                            }
-                                            anchors.leftMargin: 25
-                                            layer.enabled: true
-                                            enabled: devIsConnected
-                                            onClicked: {
-                                                viewController.setCurrentDevCustomCommand("get current dev settings")
-                                            }
-                                        }
-                                        Button {
-                                            id: writeSettingsButton_1
-                                            width: 180
-                                            height: 50
-                                            text: "Записать настройки"
-                                            layer.effect: DropShadow {
-                                                color: "#e0e5ef"
-                                                radius: 20
-                                                transparentBorder: true
-                                                samples: 10
-                                                verticalOffset: 1
-                                                horizontalOffset: 0
-                                            }
-                                            anchors.leftMargin: 25
-                                            layer.enabled: true
-                                            onClicked: {
-                                                var keys = [];
-                                                var values = [];
-                                                keys.push("accelConfX")
-                                                values.push(accelCoefX.text)
-                                                keys.push("accelConfY")
-                                                values.push(accelCoefY.text)
-                                                keys.push("accelConfZ")
-                                                values.push(accelCoefZ.text)
-                                                keys.push("accelAngle")
-                                                values.push(accelAngle.text)
-                                                viewController.setCurrentDevCustomCommand("set current dev settings accel config", keys, values)
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    Item {
-                        id: settingsStackData
-                        ScrollView {
-                            Column {
-                                spacing: 10
-                                anchors.top: parent.top
-                                Row {
-                                    anchors.top: parent.top
-                                    anchors.topMargin: 15
-                                    width: 500
-                                    height: 100
-                                    Rectangle {
-                                        id: networlSettingsCoefRect
-                                        width: 500
-                                        height: 80
-                                        color: "#fdfdfb"
-                                        anchors.left: parent.left
-                                        layer.effect: DropShadow {
-                                            color: "#e0e5ef"
-                                            radius: 20
-                                            transparentBorder: true
-                                            samples: 10
-                                            verticalOffset: 1
-                                            horizontalOffset: 0
-                                        }
-                                        anchors.leftMargin: 15
-                                        layer.enabled: true
-                                        Label {
-                                            text: "Пароль:"
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                        }
                                         Column {
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 0
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                            spacing: 10
-                                            anchors.top: parent.top
-                                            anchors.topMargin: 30
-                                            TextField {
-                                                id: networkPassword
-                                                height: 30
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 15
-                                                width: 300
-                                                placeholderText: "введите значение"
-                                            }
-                                        }
-                                    }
-                                    Button {
-                                        id: readSetingsButton_2
-                                        width: 180
-                                        height: 50
-                                        text: "Считать настройки"
-                                        anchors.top: parent.top
-                                        anchors.topMargin: 0
-                                        anchors.left: networlSettingsCoefRect.right
-                                        layer.effect: DropShadow {
-                                            color: "#e0e5ef"
-                                            radius: 20
-                                            transparentBorder: true
-                                            samples: 10
-                                            verticalOffset: 1
-                                            horizontalOffset: 0
-                                        }
-                                        anchors.leftMargin: 25
-                                        layer.enabled: true
-                                        enabled: devIsConnected
-                                        onClicked: {
-                                            viewController.setCurrentDevCustomCommand("get current dev settings")
-                                        }
-                                    }
-
-                                    Button {
-                                        id: writeSettingsButton_2
-                                        width: 180
-                                        height: 50
-                                        text: "Записать настройки"
-                                        anchors.top: parent.top
-                                        anchors.topMargin: 60
-                                        anchors.left: networlSettingsCoefRect.right
-                                        layer.effect: DropShadow {
-                                            color: "#e0e5ef"
-                                            radius: 20
-                                            transparentBorder: true
-                                            samples: 10
-                                            verticalOffset: 1
-                                            horizontalOffset: 0
-                                        }
-                                        anchors.leftMargin: 25
-                                        layer.enabled: true
-                                        onClicked: {
-                                            writeNetworkConfig()
-                                        }
-                                    }
-                                }
-                            }
-                            anchors.fill: parent
-                            clip: true
-                        }
-                    }
-
-                    Item {
-                        id: settingsBattery
-                        ScrollView {
-                            Column {
-                                spacing: 10
-                                anchors.top: parent.top
-                                Row {
-                                    anchors.top: parent.top
-                                    anchors.topMargin: 15
-                                    width: 500
-                                    height: 100
-                                    Rectangle {
-                                        id: networlBatteryRect
-                                        width: 500
-                                        height: 80
-                                        color: "#fdfdfb"
-                                        anchors.left: parent.left
-                                        layer.effect: DropShadow {
-                                            color: "#e0e5ef"
-                                            radius: 20
-                                            transparentBorder: true
-                                            samples: 10
-                                            verticalOffset: 1
-                                            horizontalOffset: 0
-                                        }
-                                        anchors.leftMargin: 15
-                                        layer.enabled: true
-                                        Column {
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 0
-                                            anchors.horizontalCenter: parent.horizontalCenter
-                                            spacing: 10
-                                            anchors.top: parent.top
-                                            anchors.topMargin: 30
                                             Button {
-                                                id: batterySetNewAccumulate
-                                                height: 30
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 15
-                                                width: 200
-                                                text: "Новая батарея"
+                                                id: insertCurrentAccelValues
+                                                width: 180
+                                                height: 70
+                                                text: "Использовать\nтекущие\nзначения"
+                                                enabled: devIsConnected
                                                 onClicked: {
-                                                    var keys = []
-                                                    var values = []
-                                                    viewController.setCurrentDevCustomCommand("set new battery", keys, values)
+                                                    accelCoefX.text = accelXProgressBar.value.toString()
+                                                    accelCoefY.text = accelYProgressBar.value.toString()
+                                                    accelCoefZ.text = accelZProgressBar.value.toString()
+                                                }
+                                            }
+                                            Button {
+                                                id: readSetingsButton_1
+                                                width: 180
+                                                height: 50
+                                                text: "Считать настройки"
+                                                enabled: devIsConnected
+                                                onClicked: {
+                                                    viewController.setCurrentDevCustomCommand("get current dev settings")
+                                                }
+                                            }
+                                            Button {
+                                                id: writeSettingsButton_1
+                                                width: 180
+                                                height: 50
+                                                text: "Записать настройки"
+                                                onClicked: {
+                                                    var keys = [];
+                                                    var values = [];
+                                                    keys.push("accelConfX")
+                                                    values.push(accelCoefX.text)
+                                                    keys.push("accelConfY")
+                                                    values.push(accelCoefY.text)
+                                                    keys.push("accelConfZ")
+                                                    values.push(accelCoefZ.text)
+                                                    keys.push("accelAngle")
+                                                    values.push(accelAngle.text)
+                                                    viewController.setCurrentDevCustomCommand("set current dev settings accel config", keys, values)
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
-                            anchors.fill: parent
-                            clip: true
+                        }
+
+                        Item {
+                            ScrollView {
+                                clip: true
+                                anchors.fill: parent
+                                Column {
+                                    spacing: 10
+                                    anchors.top: parent.top
+                                    anchors.topMargin: 15
+                                    anchors.left: parent.left
+                                    anchors.leftMargin: 15
+                                    Row {
+                                        width: 500
+                                        height: 100
+                                        Rectangle {
+                                            id: networlSettingsCoefRect
+                                            width: 500
+                                            height: 80
+                                            color: "#fdfdfb"
+                                            Column{
+                                                anchors.top: parent.top
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                spacing: 5
+                                                Label {
+                                                    text: "Пароль:"
+                                                }
+                                                TextField {
+                                                    id: networkPassword
+                                                    height: 30
+                                                    width: 300
+                                                    placeholderText: "введите значение"
+                                                }
+                                            }
+                                        }
+                                        Column{
+                                            Button {
+                                                id: readSetingsButton_2
+                                                width: 180
+                                                height: 50
+                                                text: "Считать настройки"
+                                                enabled: devIsConnected
+                                                onClicked: {
+                                                    viewController.setCurrentDevCustomCommand("get current dev settings")
+                                                }
+                                            }
+                                            Button {
+                                                id: writeSettingsButton_2
+                                                width: 180
+                                                height: 50
+                                                text: "Записать настройки"
+                                                onClicked: {
+                                                    writeNetworkConfig()
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        Item {
+                            id: settingsBattery
+                            ScrollView {
+                                anchors.fill: parent
+                                clip: true
+                                Column {
+                                    spacing: 10
+                                    anchors.top: parent.top
+                                    clip: true
+                                    Rectangle {
+                                        id: networlBatteryRect
+                                        width: 500
+                                        height: 80
+                                        color: "#fdfdfb"
+                                        Button {
+                                            id: batterySetNewAccumulate
+                                            height: 30
+                                            width: 200
+                                            anchors.verticalCenter: parent.verticalCenter
+                                            anchors.leftMargin: 15
+                                            anchors.left: parent.left
+                                            text: "Новая батарея"
+                                            onClicked: {
+                                                var keys = []
+                                                var values = []
+                                                viewController.setCurrentDevCustomCommand("set new battery", keys, values)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -1236,36 +1014,21 @@ Rectangle {
         }
     }
 
-    Rectangle {
-        id: busyIndicator
-        width: 350
-        height: 200
-        radius: 20
-        visible: false
-        property string message: "Ожидание ответа..."
+    Column {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+        spacing: 20
+        property string message: "Ожидание ответа..."
+        visible: ((devIsConnected) && (devIsReady)) ? false : true
+        width: 350
+        height: 200
         BusyIndicator {
-            id: waitReadyIndicator
-            width: 96
-            height: 96
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
+            id:waitReadyIndicator
+            width: 110
+            height: 110
         }
         Label {
-            text: busyIndicator.message
-            anchors.top: waitReadyIndicator.bottom
-            anchors.topMargin: 20
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-        layer.enabled: true
-        layer.effect: DropShadow {
-            transparentBorder: true
-            horizontalOffset: 0
-            verticalOffset: 1
-            color: "#e0e5ef"
-            samples: 10
-            radius: 10
+            text: parent.message
         }
     }
 }

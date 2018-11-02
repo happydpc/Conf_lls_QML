@@ -49,7 +49,6 @@ private slots:
 private:
     Nozzle_Revision_0_00_Oct_2018_Data::S_dev_data dev_data;
     QString serialNumber;
-    QString versionFirmware;
     QByteArray commandArrayReplyData;
 
     struct {

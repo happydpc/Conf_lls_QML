@@ -167,6 +167,8 @@ QPair<QStringList,QStringList> Progress_tmk24::getSettings() {
         res.second.push_back(QString::number(lls_data.settings.get.value.slaveAddr[2]));
         res.first.push_back("masterSlaveSlaveId_4_value");
         res.second.push_back(QString::number(lls_data.settings.get.value.slaveAddr[3]));
+        res.first.push_back("typeFuel");
+        res.second.push_back(QString::number(lls_data.settings.get.value.waterMode));
     }
     return res;
 }
@@ -299,6 +301,8 @@ bool Progress_tmk24::makeDataToCommand(CommandController::sCommandData &commandD
                             tSettings.rs232Speed = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "baudrateRs485Values_value") {
                             tSettings.rs485Speed = commandData.args.value.at(i).toInt();
+                        } else if(commandData.args.key.at(i) == "typeFuel") {
+                            tSettings.waterMode = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "masterSlaveFullCountes_value") {
                             tSettings.slaveCount = commandData.args.value.at(i).toInt();
                         } else if(commandData.args.key.at(i) == "masterSlaveSlaveId_1_value") {

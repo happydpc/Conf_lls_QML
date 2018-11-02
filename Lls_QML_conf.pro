@@ -109,8 +109,4 @@ HEADERS += \
     update/updater.h \
     translate/qmltranslator.h
 
-DISTFILES += \
-    device/service/serviceDevicesAbstract
-    icon.rc
-
-RC_FILE += icon.rc
+DISTFILES += device/service/serviceDevicesAbstract
