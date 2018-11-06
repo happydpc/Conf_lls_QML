@@ -33,10 +33,10 @@ public:
     typedef enum {
         E_ConsoleCommandType_EmptyCommand,
         // init
-        E_ConsoleCommandType_getPassword,
         E_ConsoleCommandType_getAccelConfig,
         E_ConsoleCommandType_getNetworkConfig,
         E_ConsoleCommandType_getIsReadyCommand,
+        E_ConsoleCommandType_getSecurityData,
         // current data
         E_ConsoleCommandType_getOtherData,
         E_ConsoleCommandType_getAccelData,
@@ -44,7 +44,7 @@ public:
         E_ConsoleCommandType_getCardData,
         E_ConsoleCommandType_getBatteryData,
         // set conf
-        E_ConsoleCommandType_setPassword,
+        E_ConsoleCommandType_setSecurityData,
         E_ConsoleCommandType_setAccelConfig,
         E_ConsoleCommandType_setAccelUseCurrentValuesAsNullPoint,
         E_ConsoleCommandType_setNetworkConfig,
@@ -96,7 +96,10 @@ typedef struct{
     }sBatteryConfig;
 
     typedef struct {
-        char networkPassword[64];
+        char clientToken[64];       // TCP_CLIENT_CONF_AUTH_TOKEN - "default-token"
+        char clientUserName[64];    // TCP_CLIENT_CONF_USERNAME - "nozzletag"
+        char serverIp[64];          // TCP_CLIENT_CONF_SERVER_IP_ADDR "fd00::1"
+        uint16_t serverPort;        // TCP_CLIENT_CONF_SERVER_PORT 21000
     }sNetworkConfig;
 
     typedef struct {
@@ -107,18 +110,19 @@ typedef struct{
     }sAccelConfig;
 
     typedef struct {
+        bool passwordIsUsed;
         char password[64];
-    }sPasswordConfig;
+    }sSecurity;
 #pragma pack()
 
 #pragma pack(1)
-
+    // raw settings
     typedef struct {
         sCardConfig cardConfig;
         sNetworkConfig netConfig;
-        sPasswordConfig passConfig;
         sAccelConfig accelConfig;
         sBatteryConfig batConfig;
+        sSecurity security;
         uint16_t magic_word;
     }Nozzle_config_t;
 #pragma pack()
@@ -154,6 +158,15 @@ typedef struct{
         sValue accelX;
         sValue accelY;
         sValue accelZ;
+        sValue accelThresholdX;
+        sValue accelThresholdY;
+        sValue accelThresholdZ;
+        sValue accelDelta;
+
+        struct {
+            sValue passwordIsUsed;
+            sValueText password;
+        }security;
 
         sValueText versionFirmware;
 
@@ -161,17 +174,16 @@ typedef struct{
         sValue rssi;
         sValue networkState;
 
-        sValueText networkPassword;
-
         sValueText cardNumber;
         sValue cardState;
 
         struct {
-            struct {
-                Nozzle_config_t value;
-                bool isValid;
-            }get;
-        }settings;
+            QString clientToken;
+            QString clientUserName;
+            QString serverIp;
+            uint16_t serverPort;
+            bool isValid;
+        }networkConfig;
     }S_dev_data;
 };
 

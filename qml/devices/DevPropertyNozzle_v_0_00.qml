@@ -39,7 +39,7 @@ Rectangle {
     }
 
     function setPropertyes(keys, values) {
-        parseInputData(keys, values)
+        parseConfigData(keys, values)
     }
 
     function setInitProperty(devKeyProperty, devValueProperty) {
@@ -71,30 +71,30 @@ Rectangle {
     function setDevProperty() {
         var keys = viewController.getCurrentDevPropertyKey()
         var values = viewController.getCurrentDevPropertyValue()
-        parseInputData(keys, values)
+        parseConfigData(keys, values)
     }
 
     function insertPeriodicData(keys, values) {
-
+        parseCurrentData(keys, values)
     }
 
     function setCustomCommandExecuted(keys, args, ackMessageIsVisible) {
         switch(keys[0]) {
         case "getOtherData" :
-            parseInputData(keys, args)
+            parseCurrentData(keys, args)
             break;
         case "getAccelData" :
-            parseInputData(keys, args)
+            parseCurrentData(keys, args)
             break;
         case "getNetworkData":
-            parseInputData(keys, args)
+            parseCurrentData(keys, args)
             break;
             // it last command to read the settings
         case "getNetworkConfig":
-            parseInputData(keys, args)
+            parseConfigData(keys, args)
             break;
         case "getAccelConfig":
-            parseInputData(keys, args)
+            parseConfigData(keys, args)
             if(ackMessageIsVisible) {
                 dialogInfoMessage.message = "Настройки успешно считаны"
                 dialogInfoMessage.title = "Настройки"
@@ -102,10 +102,10 @@ Rectangle {
             }
             break;
         case "getCardProperty":
-            parseInputData(keys, args)
+            parseCurrentData(keys, args)
             break;
         case "getBatteryProperty":
-            parseInputData(keys, args)
+            parseCurrentData(keys, args)
             break;
         case "setNetworkPassword":
         case "setAccelConfig":
@@ -122,23 +122,18 @@ Rectangle {
         }
     }
 
-    function parseInputData(keys, values) {
+    function parseConfigData(keys, values) {
         for(var i=0; i<keys.length; i++) {
             if(keys[i] === "devTypeName") {
                 typeDeviceText.text = values[i]
-            } else if(keys[i] === "serialNum") {
+            }
+            if(keys[i] === "serialNum") {
                 snText.text = values[i]
-            } else if(keys[i] === "versionFirmare") {
+            }
+            if(keys[i] === "versionFirmare") {
                 versionFirmwareText.text = values[i]
-            }  else if(keys[i] === "accelX"){
-                accelXProgressBar.value = parseInt(values[i])
             }
-            if(keys[i] === "accelY"){
-                accelYProgressBar.value = parseInt(values[i])
-            }
-            if(keys[i] === "accelZ"){
-                accelZProgressBar.value = parseInt(values[i])
-            } else if(keys[i] === "accelConfX") {
+            if(keys[i] === "accelConfX") {
                 accelCoefX.text = values[i]
             }
             if(keys[i ]=== "accelConfY") {
@@ -149,30 +144,59 @@ Rectangle {
             }
             if(keys[i] === "accelAngle") {
                 accelAngle.text = values[i]
-            } else if(keys[i] === "networkCurrentIp"){
+            }
+            if(keys[i] === "networkPassword"){
+                networkPassword.text = values[i]
+            }
+            if(keys[i] === "networkClientToken") {
+                networkClientToken.text = values[i].toUpperCase()
+            } else if(keys[i] === "networkClientName") {
+                networkClientUserName.text = values[i];
+            }
+            if(keys[i] === "networkServerIp") {
+                networkServerIp.text = values[i];
+            }
+            if(keys[i] === "networkServerPort") {
+                networkServerPort.text = values[i];
+            }
+        }
+    }
+
+    function parseCurrentData(keys, values) {
+        for(var i=0; i<keys.length; i++) {
+            if(keys[i] === "accelX"){
+                accelXProgressBar.value = parseInt(values[i])
+            }
+            if(keys[i] === "accelY"){
+                accelYProgressBar.value = parseInt(values[i])
+            }
+            if(keys[i] === "accelZ"){
+                accelZProgressBar.value = parseInt(values[i])
+            }
+            if(keys[i] === "networkCurrentIp"){
                 networkCurrentIp.text = values[i]
-            } else if(keys[i] === "rssiValue") {
+            }
+            if(keys[i] === "rssiValue") {
                 chartRssiValue.dataList.push(values[i])
                 chartRssiLines.clear();
                 chartRssiValue.graphLength = chartRssiValue.dataList.length
                 chartRssiValue.graphAmplitudeMax = 0
-                for(var i=0; i<chartRssiValue.dataList.length; i++) {
-                    if(chartRssiValue.dataList[i] > chartRssiValue.graphAmplitudeMax) {
-                        chartRssiValue.graphAmplitudeMax = chartRssiValue.dataList[i];
+                for(var charhIter=0; charhIter<chartRssiValue.dataList.length; charhIter++) {
+                    if(chartRssiValue.dataList[charhIter] > chartRssiValue.graphAmplitudeMax) {
+                        chartRssiValue.graphAmplitudeMax = chartRssiValue.dataList[charhIter];
                     }
-                    if(chartRssiValue.dataList[i] < chartRssiValue.graphAmplitudeMin) {
-                        chartRssiValue.graphAmplitudeMin = chartRssiValue.dataList[i];
+                    if(chartRssiValue.dataList[charhIter] < chartRssiValue.graphAmplitudeMin) {
+                        chartRssiValue.graphAmplitudeMin = chartRssiValue.dataList[charhIter];
                     }
                 }
-                for(i=0; i<chartRssiValue.dataList.length; i++) {
-                    chartRssiLines.append(i, chartRssiValue.dataList[i]);
+                for(charhIter=0; charhIter<chartRssiValue.dataList.length; charhIter++) {
+                    chartRssiLines.append(charhIter, chartRssiValue.dataList[charhIter]);
                 }
                 if(chartRssiValue.dataList.length > 50) {
-                    chartRssiValue.dataList.pop()
+                    chartRssiValue.dataList.shift()
                 }
-            } else if(keys[i] === "networkPassword"){
-                networkPassword.text = values[i]
-            } else if(keys[i] === "powerVoltage"){
+            }
+            if(keys[i] === "powerVoltage"){
                 batteryVoltage.value = parseFloat(values[i])
             }
             if(keys[i] === "powerCurrentResouresAvailable"){
@@ -180,25 +204,26 @@ Rectangle {
             }
             if(keys[i] === "powerCurrent"){
                 batteryCurrent_mA.value = parseFloat(values[i])
-            } else if(keys[i] === "cardNumber"){
+            }
+            if(keys[i] === "cardNumber") {
                 cardNumber.text = values[i].toUpperCase()
             }
         }
     }
 
     function addLogMessage(codeMessage, message) {
-        if(devMessageLog.length > 4096) {
-            devMessageLog.remove(0, 512)
-        }
-        if(devMessageAutoScrollSwitch.checked) {
-            if(codeMessage === 0) {
-                devMessageLog.append(message)
-                devMessageLog.cursorPosition = devMessageLog.length-1
-            }
-        } else {
-            var cursorPosition = devMessageLog.cursorPosition
-            devMessageLog.append(message)
-        }
+//        if(devMessageLog.length > 4096) {
+//            devMessageLog.remove(0, 512)
+//        }
+//        if(devMessageAutoScrollSwitch.checked) {
+//            if(codeMessage === 0) {
+//                devMessageLog.append(message)
+//                devMessageLog.cursorPosition = devMessageLog.length-1
+//            }
+//        } else {
+//            var cursorPosition = devMessageLog.cursorPosition
+//            devMessageLog.append(message)
+//        }
     }
 
     function writeNetworkConfig() {
@@ -848,6 +873,7 @@ Rectangle {
                                             }
                                         }
                                         Column {
+                                            spacing: 15
                                             Button {
                                                 id: insertCurrentAccelValues
                                                 width: 180
@@ -867,7 +893,9 @@ Rectangle {
                                                 text: "Считать настройки"
                                                 enabled: devIsConnected
                                                 onClicked: {
-                                                    viewController.setCurrentDevCustomCommand("get current dev settings")
+                                                    var keys = []
+                                                    var values = []
+                                                    viewController.setCurrentDevCustomCommand("get current dev settings", keys, values)
                                                 }
                                             }
                                             Button {
@@ -896,60 +924,127 @@ Rectangle {
                         }
 
                         Item {
-                            ScrollView {
-                                clip: true
+                            Row {
                                 anchors.fill: parent
-                                Column {
-                                    spacing: 10
-                                    anchors.top: parent.top
-                                    anchors.topMargin: 15
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-                                    Row {
-                                        width: 500
-                                        height: 100
-                                        Rectangle {
-                                            id: networlSettingsCoefRect
-                                            width: 500
-                                            height: 80
-                                            color: "#fdfdfb"
-                                            Column{
-                                                anchors.top: parent.top
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 15
-                                                spacing: 5
-                                                Label {
-                                                    text: "Пароль:"
-                                                }
-                                                TextField {
-                                                    id: networkPassword
-                                                    height: 30
-                                                    width: 300
-                                                    placeholderText: "введите значение"
-                                                }
-                                            }
-                                        }
+                                ScrollView {
+                                    clip: true
+                                    width: parent.width / 2
+                                    height: parent.height
+                                    Column {
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        spacing: 10
                                         Column{
-                                            Button {
-                                                id: readSetingsButton_2
-                                                width: 180
-                                                height: 50
-                                                text: "Считать настройки"
-                                                enabled: devIsConnected
-                                                onClicked: {
-                                                    viewController.setCurrentDevCustomCommand("get current dev settings")
-                                                }
+                                            spacing: 15
+                                            //
+//                                            Label {
+//                                                text: "Пароль доступа:"
+//                                            }
+//                                            TextField {
+//                                                id: networkPassword
+//                                                height: 30
+//                                                width: 300
+//                                                placeholderText: "введите значение"
+//                                                enabled: false
+//                                            }
+                                            //
+                                            Label {
+                                                text: "TCP/IP client token:"
                                             }
-                                            Button {
-                                                id: writeSettingsButton_2
-                                                width: 180
-                                                height: 50
-                                                text: "Записать настройки"
-                                                onClicked: {
-                                                    writeNetworkConfig()
-                                                }
+                                            TextField {
+                                                id: networkClientToken
+                                                height: 30
+                                                width: 300
+                                                placeholderText: "введите значение"
                                             }
+                                            //
+                                            Label {
+                                                text: "TCP/IP client username:"
+                                            }
+                                            TextField {
+                                                id: networkClientUserName
+                                                height: 30
+                                                width: 300
+                                                placeholderText: "введите значение"
+                                            }
+                                            //
+                                            Label {
+                                                text: "TCP/IP server ip:"
+                                            }
+                                            TextField {
+                                                id: networkServerIp
+                                                height: 30
+                                                width: 300
+                                                placeholderText: "введите значение"
+                                            }
+                                            //
+                                            Label {
+                                                text: "TCP/IP server port:"
+                                            }
+                                            TextField {
+                                                id: networkServerPort
+                                                height: 30
+                                                width: 300
+                                                placeholderText: "введите значение"
+                                            }
+//                                            //
+//                                            Label {
+//                                                text: "TCP/IP IEEE802154 PANID:"
+//                                            }
+//                                            TextField {
+//                                                id: networkIeee802154Panid
+//                                                height: 30
+//                                                width: 300
+//                                                placeholderText: "введите значение"
+//                                            }
+//                                            //
+//                                            Label {
+//                                                text: "TCP/IP IEEE802154 channel:"
+//                                            }
+//                                            TextField {
+//                                                id: networkIeee802154Channel
+//                                                height: 30
+//                                                width: 300
+//                                                placeholderText: "введите значение"
+//                                            }
+//                                            //
+//                                            Label {
+//                                                text: "TCP/IP IEEE802154 prope mode:"
+//                                            }
+//                                            Switch {
+//                                                id: networkIeee802154PropeMode
+//                                                height: 30
+//                                                width: 300
+//                                                checked: true
+//                                            }
                                         }
+                                    }
+                                }
+                            }
+                            Column{
+                                anchors.right: parent.right
+                                spacing: 15
+                                width: parent.width / 2
+                                height: parent.height
+                                Button {
+                                    id: readSetingsButton_2
+                                    width: 180
+                                    height: 50
+                                    text: "Считать настройки"
+                                    enabled: devIsConnected
+                                    onClicked: {
+                                        var keys = []
+                                        var values = []
+                                        viewController.setCurrentDevCustomCommand("get current dev settings", keys, values)
+                                    }
+                                }
+                                Button {
+                                    id: writeSettingsButton_2
+                                    width: 180
+                                    height: 50
+                                    text: "Записать настройки"
+                                    onClicked: {
+                                        writeNetworkConfig()
                                     }
                                 }
                             }

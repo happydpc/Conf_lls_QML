@@ -854,10 +854,10 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message,
         case DevicesFactory::Type_Nozzle_rev_0_00: {
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_EmptyCommand) {}
             // init
-            if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getPassword) {
+            if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getSecurityData) {
                 emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
                                               interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),
-                                              QStringList("getPassword"), QStringList("normal"), commmandData.isNeedAckMessage);
+                                              QStringList("getSecurityData"), QStringList("normal"), commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getAccelConfig) { // settings
                 keys << "getAccelConfig" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceSettigns(interfaceTree->getDevIndex()).first;
@@ -910,12 +910,12 @@ void ViewController::deviceReadyCustomCommand(int indexDev, QString message,
                                               interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),
                                               keys, values, commmandData.isNeedAckMessage);
             }
-            if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setPassword) { // reply exec
+            if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setSecurityData) { // reply exec
                 keys << "E_ConsoleCommandType_setPassword" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
                 values << message.toLower() << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).second;
                 emit devCustomCommandExecuted(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(indexDev),
                                               interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),
-                                              QStringList("setNetworkPassword"), QStringList("normal"), commmandData.isNeedAckMessage);
+                                              QStringList("setSecurityData"), QStringList("normal"), commmandData.isNeedAckMessage);
             }
             if(commmandData.devCommand == Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setAccelConfig) { // reply exec
                 keys << "E_ConsoleCommandType_setAccelConfig" << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCurrentDataByIndex(interfaceTree->getDevIndex()).first;
