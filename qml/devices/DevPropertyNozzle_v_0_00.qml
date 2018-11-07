@@ -20,6 +20,17 @@ Rectangle {
     property bool devIsReady: false
     property string id: ""
 
+    //******************************************//
+    // Abstract methods ************************//
+    //******************************************//
+    function removeAll() {
+
+    }
+
+    function getId() {
+        return id;
+    }
+
     function setConnected() {
         devIsConnected = true
         devIsReady = false
@@ -48,24 +59,7 @@ Rectangle {
                 id = devValueProperty[i]
             }
         }
-    }
-
-    function removeAll() {
-
-    }
-
-    function getId() {
-        return id;
-    }
-
-    function setWriteSettingsIsAvailable() {
-        writeSettingsButton_1.enabled = true
-        writeSettingsButton_2.enabled = true
-    }
-
-    function setWriteSettingsIsNoAvailable() {
-        writeSettingsButton_1.enabled = false
-        writeSettingsButton_2.enabled = false
+        parseConfigData(devKeyProperty, devValueProperty);
     }
 
     function setDevProperty() {
@@ -122,6 +116,19 @@ Rectangle {
         }
     }
 
+    //******************************************//
+    // private methods *************************//
+    //******************************************//
+    function setWriteSettingsIsAvailable() {
+        writeSettingsButton_1.enabled = true
+        writeSettingsButton_2.enabled = true
+    }
+
+    function setWriteSettingsIsNoAvailable() {
+        writeSettingsButton_1.enabled = false
+        writeSettingsButton_2.enabled = false
+    }
+
     function parseConfigData(keys, values) {
         for(var i=0; i<keys.length; i++) {
             if(keys[i] === "devTypeName") {
@@ -149,7 +156,7 @@ Rectangle {
                 networkPassword.text = values[i]
             }
             if(keys[i] === "networkClientToken") {
-                networkClientToken.text = values[i].toUpperCase()
+                networkClientToken.text = values[i]
             } else if(keys[i] === "networkClientName") {
                 networkClientUserName.text = values[i];
             }
@@ -158,6 +165,9 @@ Rectangle {
             }
             if(keys[i] === "networkServerPort") {
                 networkServerPort.text = values[i];
+            }
+            if(keys[i] === "networkPanid") {
+                networkPanid.text = values[i];
             }
         }
     }
@@ -212,26 +222,18 @@ Rectangle {
     }
 
     function addLogMessage(codeMessage, message) {
-//        if(devMessageLog.length > 4096) {
-//            devMessageLog.remove(0, 512)
-//        }
-//        if(devMessageAutoScrollSwitch.checked) {
-//            if(codeMessage === 0) {
-//                devMessageLog.append(message)
-//                devMessageLog.cursorPosition = devMessageLog.length-1
-//            }
-//        } else {
-//            var cursorPosition = devMessageLog.cursorPosition
-//            devMessageLog.append(message)
-//        }
-    }
-
-    function writeNetworkConfig() {
-        var keys = [];
-        var values = [];
-        keys.push("networkPassword")
-        values.push(networkPassword.text)
-        viewController.setCurrentDevCustomCommand("set current dev settings net config", keys, values)
+        if(devMessageLog.length > 8196) {
+            devMessageLog.remove(0, 192)
+        }
+        if(devMessageAutoScrollSwitch.checked) {
+            if(codeMessage === 0) {
+                devMessageLog.append(message)
+                devMessageLog.cursorPosition = devMessageLog.length-1
+            }
+        } else {
+            var cursorPosition = devMessageLog.cursorPosition
+            devMessageLog.append(message)
+        }
     }
 
     Rectangle {
@@ -851,6 +853,7 @@ Rectangle {
                                                     id: accelCoefY
                                                     height: 30
                                                     width: 300
+                                                    placeholderText: "введите значение"
                                                 }
                                                 Label {
                                                     text: "Z:"
@@ -987,36 +990,16 @@ Rectangle {
                                                 width: 300
                                                 placeholderText: "введите значение"
                                             }
-//                                            //
-//                                            Label {
-//                                                text: "TCP/IP IEEE802154 PANID:"
-//                                            }
-//                                            TextField {
-//                                                id: networkIeee802154Panid
-//                                                height: 30
-//                                                width: 300
-//                                                placeholderText: "введите значение"
-//                                            }
-//                                            //
-//                                            Label {
-//                                                text: "TCP/IP IEEE802154 channel:"
-//                                            }
-//                                            TextField {
-//                                                id: networkIeee802154Channel
-//                                                height: 30
-//                                                width: 300
-//                                                placeholderText: "введите значение"
-//                                            }
-//                                            //
-//                                            Label {
-//                                                text: "TCP/IP IEEE802154 prope mode:"
-//                                            }
-//                                            Switch {
-//                                                id: networkIeee802154PropeMode
-//                                                height: 30
-//                                                width: 300
-//                                                checked: true
-//                                            }
+                                            //
+                                            Label {
+                                                text: "IEEE 802154 PANID: (hex)"
+                                            }
+                                            TextField {
+                                                id: networkPanid
+                                                height: 30
+                                                width: 300
+                                                placeholderText: "введите значение"
+                                            }
                                         }
                                     }
                                 }
@@ -1044,7 +1027,19 @@ Rectangle {
                                     height: 50
                                     text: "Записать настройки"
                                     onClicked: {
-                                        writeNetworkConfig()
+                                        var keys = [];
+                                        var values = [];
+                                        keys.push("networkClientToken");
+                                        values.push(networkClientToken.text)
+                                        keys.push("networkClientName")
+                                        values.push(networkClientUserName.text)
+                                        keys.push("networkServerIp")
+                                        values.push(networkServerIp.text)
+                                        keys.push("networkServerPort")
+                                        values.push(networkServerPort.text)
+                                        keys.push("networkPanid")
+                                        values.push(networkPanid.text)
+                                        viewController.setCurrentDevCustomCommand("set current dev settings net config", keys, values)
                                     }
                                 }
                             }

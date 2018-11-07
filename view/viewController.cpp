@@ -611,7 +611,7 @@ void ViewController::deviceDisconnected(DevicesFactory::E_DeviceType type, QStri
                              getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceIndex(uniqNameId),
                              getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceTypeNameByType(type));
     }
-    emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),0, QString("Устройство потеряно [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+    emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(), 2, QString("Устройство потеряно [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
 #if USE_DB_VIEWCONTROLLER == 1
     qDebug() << "ViewController: - deviceDisconnected -OK -"<<type << " " << uniqNameId;
 #endif

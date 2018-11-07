@@ -134,6 +134,8 @@ QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getSettings() {
     res.second.push_back(dev_data.networkConfig.isValid ? dev_data.networkConfig.serverIp : "NA");
     res.first.push_back("networkServerPort");
     res.second.push_back(dev_data.networkConfig.isValid ? QString::number(dev_data.networkConfig.serverPort) : "NA");
+    res.first.push_back("networkPanid");
+    res.second.push_back(dev_data.networkConfig.isValid ? QString::number(dev_data.networkConfig.panid, 16) : "NA");
     return res;
 }
 
@@ -200,6 +202,7 @@ bool Nozzle_Revision_0_00_Oct_2018::makeDataToCommand(CommandController::sComman
             commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
             res = true;
         }
+            break;
         case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkConfig: {
             commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
             res = true;
@@ -259,16 +262,25 @@ bool Nozzle_Revision_0_00_Oct_2018::makeDataToCommand(CommandController::sComman
             break;
 
         case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setNetworkConfig: {
-            typedef struct {
-                char networkPassword[64];
-            }sOutBatBuff;
-            sOutBatBuff tbuf;
+            Nozzle_Revision_0_00_Oct_2018_Data::sNetworkConfig t_data;
             for(int keyCount=0; keyCount<commandData.args.key.size(); keyCount++) {
-                if(commandData.args.key[keyCount] == "networkPassword") {
-                    strcpy(tbuf.networkPassword, commandData.args.value[keyCount].toUtf8());
+                if(commandData.args.key[keyCount] == "networkClientToken") {
+                    strcpy(t_data.clientToken, commandData.args.value[keyCount].toUtf8());
+                }
+                if(commandData.args.key[keyCount] == "networkClientName") {
+                    strcpy(t_data.clientUserName, commandData.args.value[keyCount].toUtf8());
+                }
+                if(commandData.args.key[keyCount] == "networkServerIp") {
+                    strcpy(t_data.serverIp, commandData.args.value[keyCount].toUtf8());
+                }
+                if(commandData.args.key[keyCount] == "networkServerPort") {
+                    t_data.serverPort = commandData.args.value[keyCount].toInt();
+                }
+                if(commandData.args.key[keyCount] == "networkPanid") {
+                    t_data.panid = commandData.args.value[keyCount].toInt(nullptr, 16);
                 }
             }
-            memcpy(tCommand.data.data, (uint8_t*)&tbuf, sizeof(tbuf));
+            memcpy(tCommand.data.data, (uint8_t*)&t_data, sizeof(t_data));
             commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
             res = true;
         }
@@ -355,10 +367,6 @@ bool Nozzle_Revision_0_00_Oct_2018::placeDataReplyToCommand(QByteArray &commandA
 void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(QByteArray data, CommandController::sCommandData commandReqData) {    
     Nozzle_Revision_0_00_Oct_2018_Data::sConsoleReplyBuff *t_reply =
             (Nozzle_Revision_0_00_Oct_2018_Data::sConsoleReplyBuff*)(data.data());
-//    qDebug() << "placeDataReplyToCommand - logCommand = "
-//             << QString((t_reply->deviceIdent == Nozzle_Revision_0_00_Oct_2018_Data::CONSOLE_DEVICE_IDENT
-//                         && t_reply->versionProtocol == Nozzle_Revision_0_00_Oct_2018_Data::CONSOLE_VERSION_PROTOCOL
-//                         && t_reply->magic_word == Nozzle_Revision_0_00_Oct_2018_Data::CONSOLE_MAGIC_WORD) ? "NORMAL REPLY" : "REPLY ERROR");
     if(t_reply->deviceIdent == Nozzle_Revision_0_00_Oct_2018_Data::CONSOLE_DEVICE_IDENT
             && t_reply->versionProtocol == Nozzle_Revision_0_00_Oct_2018_Data::CONSOLE_VERSION_PROTOCOL
             && t_reply->magic_word == Nozzle_Revision_0_00_Oct_2018_Data::CONSOLE_MAGIC_WORD) {
@@ -416,6 +424,7 @@ void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(QByteArray data, CommandCo
         emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
                                     t_reply->commandType, "Normal", QStringList(), QStringList(), commandReqData);
     }
+        break;
     case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getAccelData: {
         typedef struct {
             int x;
@@ -486,16 +495,13 @@ void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(QByteArray data, CommandCo
     }
         break;
     case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkConfig: {
-        typedef struct {
-            char clientToken[64];       // TCP_CLIENT_CONF_AUTH_TOKEN - "default-token"
-            char clientUserName[64];    // TCP_CLIENT_CONF_USERNAME - "nozzletag"
-            char serverIp[64];          // TCP_CLIENT_CONF_SERVER_IP_ADDR "fd00::1"
-            uint16_t serverPort;        // TCP_CLIENT_CONF_SERVER_PORT 21000
-        }sOutBatBuff;
-        dev_data.networkConfig.clientToken = QString::fromUtf8(((sOutBatBuff*)t_reply->data.data)->clientToken);
-        dev_data.networkConfig.clientUserName = QString::fromUtf8(((sOutBatBuff*)t_reply->data.data)->clientUserName);
-        dev_data.networkConfig.serverIp = QString::fromUtf8(((sOutBatBuff*)t_reply->data.data)->serverIp);
-        dev_data.networkConfig.serverPort = ((sOutBatBuff*)t_reply->data.data)->serverPort;
+        Nozzle_Revision_0_00_Oct_2018_Data::sNetworkConfig * t_data =
+                (Nozzle_Revision_0_00_Oct_2018_Data::sNetworkConfig*)t_reply->data.data;
+        dev_data.networkConfig.clientToken = QString::fromUtf8(t_data->clientToken);
+        dev_data.networkConfig.clientUserName = QString::fromUtf8(t_data->clientUserName);
+        dev_data.networkConfig.serverIp = QString::fromUtf8(t_data->serverIp);
+        dev_data.networkConfig.serverPort = t_data->serverPort;
+        dev_data.networkConfig.panid = t_data->panid;
         dev_data.networkConfig.isValid  = true;
 
         emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_ReadyReadProperties, getUniqId(),
@@ -596,6 +602,25 @@ CommandController::sCommandData Nozzle_Revision_0_00_Oct_2018::getCommandToGetTy
     return command;
 }
 
+QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommandListToCurrentData() {
+    QList<CommandController::sCommandData> listCommand;
+    CommandController::sCommandData command;
+    command.deviceIdent = getUniqId();
+    command.operationHeader = "typical command get current data";
+    command.isNeedAckMessage = false;
+    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getAccelData;
+    listCommand.push_back(command);
+    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getBatteryData;
+    listCommand.push_back(command);
+    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getCardData;
+    listCommand.push_back(command);
+    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkData;
+    listCommand.push_back(command);
+    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getOtherData;
+    listCommand.push_back(command);
+    return listCommand;
+}
+
 QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommandCustom(QString operation) {
     return getCommandCustom(operation, QPair<QStringList,QStringList>());
 }
@@ -677,23 +702,4 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
         qDebug() << "getCommandCustom -type unknown!";
     }
     return command;
-}
-
-QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommandListToCurrentData() {
-    QList<CommandController::sCommandData> listCommand;
-    CommandController::sCommandData command;
-    command.deviceIdent = getUniqId();
-    command.operationHeader = "typical command get current data";
-    command.isNeedAckMessage = false;
-    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getAccelData;
-    listCommand.push_back(command);
-    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getBatteryData;
-    listCommand.push_back(command);
-    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getCardData;
-    listCommand.push_back(command);
-    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkData;
-    listCommand.push_back(command);
-    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getOtherData;
-    listCommand.push_back(command);
-    return listCommand;
 }

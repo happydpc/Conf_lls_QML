@@ -90,17 +90,18 @@ typedef struct{
 
 #pragma pack(1)
     typedef struct {
+        char clientToken[32];       // TCP_CLIENT_CONF_AUTH_TOKEN - "default-token"
+        char clientUserName[32];    // TCP_CLIENT_CONF_USERNAME - "nozzletag"
+        char serverIp[46];          // TCP_CLIENT_CONF_SERVER_IP_ADDR "fd00::1"
+        uint16_t serverPort;        // TCP_CLIENT_CONF_SERVER_PORT 21000
+        uint32_t panid;
+    }sNetworkConfig;
+
+    typedef struct {
     }sCardConfig;
 
     typedef struct {
     }sBatteryConfig;
-
-    typedef struct {
-        char clientToken[64];       // TCP_CLIENT_CONF_AUTH_TOKEN - "default-token"
-        char clientUserName[64];    // TCP_CLIENT_CONF_USERNAME - "nozzletag"
-        char serverIp[64];          // TCP_CLIENT_CONF_SERVER_IP_ADDR "fd00::1"
-        uint16_t serverPort;        // TCP_CLIENT_CONF_SERVER_PORT 21000
-    }sNetworkConfig;
 
     typedef struct {
         int thresholdX;
@@ -182,6 +183,7 @@ typedef struct{
             QString clientUserName;
             QString serverIp;
             uint16_t serverPort;
+            uint32_t panid;
             bool isValid;
         }networkConfig;
     }S_dev_data;
