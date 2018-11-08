@@ -72,47 +72,55 @@ Rectangle {
         parseCurrentData(keys, values)
     }
 
-    function setCustomCommandExecuted(keys, args, ackMessageIsVisible) {
-        switch(keys[0]) {
-        case "getOtherData" :
-            parseCurrentData(keys, args)
-            break;
-        case "getAccelData" :
-            parseCurrentData(keys, args)
-            break;
-        case "getNetworkData":
-            parseCurrentData(keys, args)
-            break;
-            // it last command to read the settings
-        case "getNetworkConfig":
-            parseConfigData(keys, args)
-            break;
-        case "getAccelConfig":
-            parseConfigData(keys, args)
-            if(ackMessageIsVisible) {
-                dialogInfoMessage.message = "Настройки успешно считаны"
-                dialogInfoMessage.title = "Настройки"
-                dialogInfoMessage.open()
+    function setCustomCommandExecuted(keys, args) {
+        var ackMessageIsVisible = undefined
+        if(keys.length > 0) {
+            if(keys[0] === "typeCommand") {
+                switch(args[0]) {
+                case "getIsReadyCommand":
+                    break;
+                case "getOtherData" :
+                    parseCurrentData(keys, args)
+                    break;
+                case "getAccelData" :
+                    parseCurrentData(keys, args)
+                    break;
+                case "getNetworkData":
+                    parseCurrentData(keys, args)
+                    break;
+                    // it last command to read the settings
+                case "getNetworkConfig":
+                    parseConfigData(keys, args)
+                    break;
+                case "getAccelConfig":
+                    ackMessageIsVisible = parseConfigData(keys, args)
+                    if(ackMessageIsVisible) {
+                        dialogInfoMessage.message = "Настройки успешно считаны"
+                        dialogInfoMessage.title = "Настройки"
+                        dialogInfoMessage.open()
+                    }
+                    break;
+                case "getCardData":
+                    parseCurrentData(keys, args)
+                    break;
+                case "getBatteryData":
+                    parseCurrentData(keys, args)
+                    break;
+                case "setNetworkPassword":
+                case "setAccelConfig":
+                case "setAccelUseCurrentValuesAsNullPoint":
+                case "setNetworkConfig":
+                case "setBatteryNewAccum":
+                    ackMessageIsVisible = parseCurrentData(keys, args)
+                    if(ackMessageIsVisible) {
+                        dialogInfoMessage.message = "Настройки успешно записаны"
+                        dialogInfoMessage.title = "Настройки"
+                        dialogInfoMessage.open()
+                    }
+                    break
+                default: break;
+                }
             }
-            break;
-        case "getCardProperty":
-            parseCurrentData(keys, args)
-            break;
-        case "getBatteryProperty":
-            parseCurrentData(keys, args)
-            break;
-        case "setNetworkPassword":
-        case "setAccelConfig":
-        case "setAccelUseCurrentValuesAsNullPoint":
-        case "setNetworkConfig":
-        case "setBatteryNewAccum":
-            if(ackMessageIsVisible) {
-                dialogInfoMessage.message = "Настройки успешно записаны"
-                dialogInfoMessage.title = "Настройки"
-                dialogInfoMessage.open()
-            }
-            break
-        default: break;
         }
     }
 
@@ -130,7 +138,11 @@ Rectangle {
     }
 
     function parseConfigData(keys, values) {
+        var isNeedAckMessage = false
         for(var i=0; i<keys.length; i++) {
+            if(keys[i] === "isNeedAckMessage") {
+                isNeedAckMessage = parseInt(values[i])
+            }
             if(keys[i] === "devTypeName") {
                 typeDeviceText.text = values[i]
             }
@@ -152,9 +164,6 @@ Rectangle {
             if(keys[i] === "accelAngle") {
                 accelAngle.text = values[i]
             }
-            if(keys[i] === "networkPassword"){
-                networkPassword.text = values[i]
-            }
             if(keys[i] === "networkClientToken") {
                 networkClientToken.text = values[i]
             } else if(keys[i] === "networkClientName") {
@@ -170,11 +179,16 @@ Rectangle {
                 networkPanid.text = values[i];
             }
         }
+        return isNeedAckMessage;
     }
 
     function parseCurrentData(keys, values) {
+        var isNeedAckMessage = false
         for(var i=0; i<keys.length; i++) {
-            if(keys[i] === "accelX"){
+            if(keys[i] === "isNeedAckMessage") {
+                isNeedAckMessage = parseInt(values[i])
+            }
+            if(keys[i] === "accelX") {
                 accelXProgressBar.value = parseInt(values[i])
             }
             if(keys[i] === "accelY"){
@@ -219,11 +233,12 @@ Rectangle {
                 cardNumber.text = values[i].toUpperCase()
             }
         }
+        return isNeedAckMessage;
     }
 
     function addLogMessage(codeMessage, message) {
-        if(devMessageLog.length > 8196) {
-            devMessageLog.remove(0, 192)
+        if(devMessageLog.length > 4096) {
+            devMessageLog.remove(0, 512)
         }
         if(devMessageAutoScrollSwitch.checked) {
             if(codeMessage === 0) {
@@ -733,6 +748,7 @@ Rectangle {
                         height: parent.height
                         width: parent.width
                         wrapMode: TextEdit.Wrap
+                        renderType: Text.NativeRendering
                     }
                 }
 
@@ -940,16 +956,16 @@ Rectangle {
                                         Column{
                                             spacing: 15
                                             //
-//                                            Label {
-//                                                text: "Пароль доступа:"
-//                                            }
-//                                            TextField {
-//                                                id: networkPassword
-//                                                height: 30
-//                                                width: 300
-//                                                placeholderText: "введите значение"
-//                                                enabled: false
-//                                            }
+                                            //                                            Label {
+                                            //                                                text: "Пароль доступа:"
+                                            //                                            }
+                                            //                                            TextField {
+                                            //                                                id: networkPassword
+                                            //                                                height: 30
+                                            //                                                width: 300
+                                            //                                                placeholderText: "введите значение"
+                                            //                                                enabled: false
+                                            //                                            }
                                             //
                                             Label {
                                                 text: "TCP/IP client token:"

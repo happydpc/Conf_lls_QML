@@ -125,8 +125,7 @@ signals:
 
     void devWrongTypeIncorrect(QString typeDev, QString devNameId);
     void devUpdateLogMessage(int ioIndex, int devIndex, int codeMessage, QString message);
-    void devCustomCommandExecuted(QString typeDev, int ioIndex, int devIndex,
-                                  QStringList keys, QStringList args, bool ackMessageIsVisible);
+    void devCustomCommandExecuted(QString typeDev, int ioIndex, int devIndex, QStringList keys, QStringList args);
     void devUpdateTree(QStringList devNames, QList<int>status);
 
     void isAvailableNewVersion(QString downloadUrl);
@@ -145,9 +144,7 @@ private slots:
 
     void interfaceTreeChanged(int ioIndex, ConnectionFactory::E_ConnectionUpdateType type);
     void deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, int index);
-    void deviceReadyCustomCommand(int index, QString message,
-                                  QStringList keyCustomData, QStringList valueCustomData,
-                                  CommandController::sCommandData commmandData);
+    void deviceReadyCustomCommand(int devIndex, QString devId, QStringList devKey, QStringList devValue, CommandController::sCommandData command);
     void deviceLogMessage(int indexDev, QStringList message);
 
     bool isCurrentDevice(QString uniqNameId);

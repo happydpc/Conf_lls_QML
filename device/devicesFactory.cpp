@@ -63,8 +63,8 @@ bool DevicesFactory::addNewDevice(E_DeviceType type, QPair<QStringList,QStringLi
             }
             // TODO: может быть лучше как-то подругому перехватывать указатаель?
             connect(findDeviceByUnicIdent(devId)->second,
-                    SIGNAL(eventDeviceUpdateState(DeviceAbstract::E_DeviceEvent,QString,int,QString,QStringList,QStringList, CommandController::sCommandData)),
-                    this, SLOT(deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEvent,QString,int,QString,QStringList,QStringList, CommandController::sCommandData)));
+                    SIGNAL(eventDeviceUpdateState(DeviceAbstract::E_DeviceEvent,QString,QStringList,QStringList,CommandController::sCommandData)),
+                    this, SLOT(deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEvent,QString,QStringList,QStringList,CommandController::sCommandData)));
         }
     }
     return res;
@@ -395,73 +395,77 @@ void DevicesFactory::placeReplyDataFromInterface(QByteArray data) {
 }
 
 // сюда приходят все сигналы от девайсов (смена состояние и рез кастомных команд)
-void DevicesFactory::deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEvent eventType, QString devUniqueId,
-                                                    int command, QString operationResult,
-                                                    QStringList keyCustomData, QStringList valueCustomData,
-                                                    CommandController::sCommandData commandData) {
-    switch (eventType) {
+void DevicesFactory::deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEvent devTypeEvent, QString devId, QStringList devKey, QStringList devValue, CommandController::sCommandData command) {
+    switch (devTypeEvent) {
     case DeviceAbstract::Type_DeviceEvent_Connected:
         //
         // TODO: пересылаем на верх
         // здесь ловим изменение с неинтита на инит и готовность отдать properties
         //
-        emit deviceConnectedSignal(getDeviceType(findDeviceByUnicIdent(devUniqueId)->second->getDevTypeName()), devUniqueId);
+        emit deviceConnectedSignal(getDeviceType(findDeviceByUnicIdent(devId)->second->getDevTypeName()), devId);
         // TODO: отловить реальное изменение статус
         // чтобы не высылать после каждого пакета
-        emit deviceUpdateTree(DevicesFactory::Type_Update_ChangeStatus, findDeviceIndex(devUniqueId));
+        emit deviceUpdateTree(DevicesFactory::Type_Update_ChangeStatus, findDeviceIndex(devId));
         break;
     case DeviceAbstract::Type_DeviceEvent_Disconnected:
         //
         // TODO: пересылаем на верх
         // здесь ловим изменение с неинтита на инит и готовность отдать properties
         //
-        emit deviceDisconnectedSignal(getDeviceType(findDeviceByUnicIdent(devUniqueId)->second->getDevTypeName()), devUniqueId);
+        emit deviceDisconnectedSignal(getDeviceType(findDeviceByUnicIdent(devId)->second->getDevTypeName()), devId);
         // TODO: отловить реальное изменение статус
         // чтобы не высылать после каждого пакета
-        emit deviceUpdateTree(DevicesFactory::Type_Update_ChangeStatus, findDeviceIndex(devUniqueId));
+        emit deviceUpdateTree(DevicesFactory::Type_Update_ChangeStatus, findDeviceIndex(devId));
         break;
     case DeviceAbstract::Type_DeviceEvent_Inited:
         //
         // TODO: пересылаем на верх
         // здесь ловим изменение с неинтита на инит и готовность отдать properties
         //
-        emit deviceReadyInitSignal(getDeviceType(findDeviceByUnicIdent(devUniqueId)->second->getDevTypeName()), devUniqueId);
+        emit deviceReadyInitSignal(getDeviceType(findDeviceByUnicIdent(devId)->second->getDevTypeName()), devId);
         // TODO: отловить реальное изменение статус
         // чтобы не высылать после каждого пакета
-        emit deviceUpdateTree(DevicesFactory::Type_Update_ChangeStatus, findDeviceIndex(devUniqueId));
+        emit deviceUpdateTree(DevicesFactory::Type_Update_ChangeStatus, findDeviceIndex(devId));
         break;
     case DeviceAbstract::Type_DeviceEvent_ReadyReadProperties:
         //
         // TODO: пересылаем на верх
         // здесь ловим изменение с неинтита на инит и готовность отдать properties
         //
-        emit deviceReadyPropertiesSignal(getDeviceType(findDeviceByUnicIdent(devUniqueId)->second->getDevTypeName()), devUniqueId);
+        emit deviceReadyPropertiesSignal(getDeviceType(findDeviceByUnicIdent(devId)->second->getDevTypeName()), devId);
         // TODO: отловить реальное изменение статус
         // чтобы не высылать после каждого пакета
-        emit deviceUpdateTree(DevicesFactory::Type_Update_ChangeStatus, findDeviceIndex(devUniqueId));
+        emit deviceUpdateTree(DevicesFactory::Type_Update_ChangeStatus, findDeviceIndex(devId));
         break;
     case DeviceAbstract::Type_DeviceEvent_CurrentDataUpdated:
         // TODO: пересылаем на верх
-        emit deviceReadyCurrentDataSignal(getDeviceType(findDeviceByUnicIdent(devUniqueId)->second->getDevTypeName()), devUniqueId);
+        emit deviceReadyCurrentDataSignal(getDeviceType(findDeviceByUnicIdent(devId)->second->getDevTypeName()), devId);
         // TODO: отловить реальное изменение статус
         // чтобы не высылать после каждого пакета
-        emit deviceUpdateTree(DevicesFactory::Type_Update_ChangeStatus, findDeviceIndex(devUniqueId));
+        emit deviceUpdateTree(DevicesFactory::Type_Update_ChangeStatus, findDeviceIndex(devId));
         break;
     case DeviceAbstract::Type_DeviceEvent_PasswordError:
         // пароль не совпадает
-        emit deviceUpdateTree(DevicesFactory::Type_Update_PasswordIncorrect, findDeviceIndex(devUniqueId));
+        emit deviceUpdateTree(DevicesFactory::Type_Update_PasswordIncorrect, findDeviceIndex(devId));
         break;
     case DeviceAbstract::Type_DeviceEvent_TypeError:
         // тип не совпадает с заявленным
-        emit deviceUpdateTree(DevicesFactory::Type_Update_TypeIncorrect, findDeviceIndex(devUniqueId));
+        emit deviceUpdateTree(DevicesFactory::Type_Update_TypeIncorrect, findDeviceIndex(devId));
         // удаляем устройство
-        removeDeviceByIndex(findDeviceIndex(devUniqueId));
+        removeDeviceByIndex(findDeviceIndex(devId));
         break;
     case DeviceAbstract::Type_DeviceEvent_LogMessage:
-        emit deviceReadyLog(findDeviceIndex(devUniqueId), valueCustomData);
+        emit deviceReadyLog(findDeviceIndex(devId), devValue); // TODO: mayby rewrite key-value?
         break;
-    case DeviceAbstract::Type_DeviceEvent_ExectCustomCommand:
-        emit deviceReadyCustomCommand(findDeviceIndex(devUniqueId), operationResult, keyCustomData, valueCustomData, commandData);
+    case DeviceAbstract::Type_DeviceEvent_ExectCustomCommand: {
+        int findDevIndex = findDeviceIndex(devId);
+        if(findDevIndex >= 0) {
+            QString devTypeName = getDeviceTypeNameByType(getDeviceType(findDevIndex));
+            if(!devTypeName.isEmpty()) {
+                emit deviceReadyCustomCommand(findDevIndex, devTypeName, devKey, devValue, command);
+            }
+        }
+    }
         break;
     default: break;
     }

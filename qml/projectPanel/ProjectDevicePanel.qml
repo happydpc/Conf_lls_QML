@@ -252,10 +252,10 @@ Rectangle {
         }
     }
 
-    function setDevCustomCommandExecuted(typeDev, ioIndex, devIndex, keys, args, ackMessageIsVisible) { /****/
+    function setDevCustomCommandExecuted(typeDev, ioIndex, devIndex, keys, args) { /****/
         try {
             if(isAvailableSubIndex(deviceItemArray, ioIndex, devIndex)) {
-                deviceItemArray[ioIndex][devIndex].setCustomCommandExecuted(keys, args, ackMessageIsVisible)
+                deviceItemArray[ioIndex][devIndex].setCustomCommandExecuted(keys, args)
             }
         } catch (error) {
             console.log ("Error loading QML : ")

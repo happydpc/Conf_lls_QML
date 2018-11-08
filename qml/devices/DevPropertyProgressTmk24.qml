@@ -101,68 +101,77 @@ Rectangle {
         parseInputData(keys, values)
     }
 
-    function setCustomCommandExecuted(keys, args, ackMessageIsVisible) {
-        var i = 0;
-        switch(keys[0]) {
-        case "lls_read_settings":
-            parseInputData(keys, args)
-            if(ackMessageIsVisible) {
-                messageDialog.title = "Чтение настроек"
-                messageDialog.message = "Настройки успешно считаны"
-                messageDialog.open()
+    function setCustomCommandExecuted(keys, args) {
+        var ackMessageIsVisible = undefined
+        if(keys.length > 0) {
+            if(keys[0] === "typeCommand") {
+                switch(args[0]) {
+                case "lls_read_settings":
+                    ackMessageIsVisible = parseInputData(keys, args)
+                    if(ackMessageIsVisible) {
+                        messageDialog.title = "Чтение настроек"
+                        messageDialog.message = "Настройки успешно считаны"
+                        messageDialog.open()
+                    }
+                    break;
+                case "lls_write_settings":
+                    ackMessageIsVisible = parseInputData(keys, args)
+                    if(ackMessageIsVisible) {
+                        messageDialog.title = "Запись настроек"
+                        messageDialog.message = "Настройки успешно записаны"
+                        messageDialog.open()
+                    }
+                    break;
+                case "lls_read_errors":
+                    ackMessageIsVisible = parseInputData(keys, args)
+                    if(ackMessageIsVisible) {
+                        messageDialog.title = "Чтение ошибок"
+                        messageDialog.message = "Ошибки успешно считаны"
+                        messageDialog.open()
+                    }
+                    break;
+                case "lls_read_lvl_all":
+                    break;
+                case "lls_calibrate_max":
+                    ackMessageIsVisible = parseInputData(keys, args)
+                    if(ackMessageIsVisible) {
+                        messageDialog.title = "Калибровка"
+                        messageDialog.message = "Калибровка верхнего уровня\nуспешно успешно произведена"
+                        messageDialog.open()
+                    }
+                    break;
+                case "lls_calibrate_min":
+                    ackMessageIsVisible = parseInputData(keys, args)
+                    if(ackMessageIsVisible) {
+                        messageDialog.title = "Калибровка"
+                        messageDialog.message = "Калибровка нижнего уровня\nуспешно успешно произведена"
+                        messageDialog.open()
+                    }
+                    break;
+                case "lls_read_cal_table":
+                    ackMessageIsVisible = parseInputData(keys, args)
+                    if(ackMessageIsVisible) {
+                        messageDialog.title = "Тарировочная таблица"
+                        messageDialog.message = "Тарировочная таблица успешно считана"
+                        messageDialog.open()
+                    }
+                    remakeTarTable()
+                    timerAffterChangeTarTable.start()
+                    break;
+                case "lls_write_cal_table":
+                    ackMessageIsVisible = parseInputData(keys, args)
+                    if(ackMessageIsVisible) {
+                        messageDialog.title = "Тарировочная таблица"
+                        messageDialog.message = "Тарировочная таблица успешно записана"
+                        messageDialog.open()
+                    }
+                    break;
+                case "lls_read_lvl_all":
+                    ackMessageIsVisible = parseInputData(keys, args)
+                    break;
+                default: break;
+                }
             }
-            break;
-        case "lls_write_settings":
-            if(ackMessageIsVisible) {
-                messageDialog.title = "Запись настроек"
-                messageDialog.message = "Настройки успешно записаны"
-                messageDialog.open()
-            }
-            break;
-        case "lls_read_errors":
-            if(ackMessageIsVisible) {
-                messageDialog.title = "Чтение ошибок"
-                messageDialog.message = "Ошибки успешно считаны"
-                messageDialog.open()
-            }
-            parseInputData(keys, args)
-            break;
-
-        case "lls_read_lvl_all":
-            parseInputData(keys, args)
-            break;
-        case "lls_calibrate_max":
-            if(ackMessageIsVisible) {
-                messageDialog.title = "Калибровка"
-                messageDialog.message = "Калибровка верхнего уровня\nуспешно успешно произведена"
-                messageDialog.open()
-            }
-            break;
-        case "lls_calibrate_min":
-            if(ackMessageIsVisible) {
-                messageDialog.title = "Калибровка"
-                messageDialog.message = "Калибровка нижнего уровня\nуспешно успешно произведена"
-                messageDialog.open()
-            }
-            break;
-        case "lls_read_cal_table":
-            if(ackMessageIsVisible) {
-                messageDialog.title = "Тарировочная таблица"
-                messageDialog.message = "Тарировочная таблица успешно считана"
-                messageDialog.open()
-            }
-            remakeTarTable()
-            timerAffterChangeTarTable.start()
-            break;
-        case "lls_write_cal_table":
-            if(ackMessageIsVisible) {
-                messageDialog.title = "Тарировочная таблица"
-                messageDialog.message = "Тарировочная таблица успешно записана"
-                messageDialog.open()
-            }
-            break;
-        case "lls_read_lvl_all": break;
-        default: break;
         }
     }
 
@@ -170,76 +179,111 @@ Rectangle {
         for(var i=0; i<keys.length; i++) {
             if(keys[i] === "k1_value") {
                 k1.text = values[i]
-            } else if(keys[i] === "k2_value") {
+            }
+            if(keys[i] === "k1_value") {
+                k1.text = values[i]
+            }
+            if(keys[i] === "k2_value") {
                 k2.text = values[i]
-            } else if(keys[i] === "typeTempCompensation_value") {
+            }
+            if(keys[i] === "typeTempCompensation_value") {
                 typeTempCompensation.currentIndex = values[i]
-            } else if(keys[i] === "periodicSendType_value") {
+            }
+            if(keys[i] === "periodicSendType_value") {
                 periodicSendType.currentIndex = values[i]
-            } else if(keys[i] === "periodicSendTime_value") {
+            }
+            if(keys[i] === "periodicSendTime_value") {
                 periodicSendTime.value = values[i]
-            } else if(keys[i] === "typeOutMessage_value") {
+            }
+            if(keys[i] === "typeOutMessage_value") {
                 typeOutMessage.currentIndex = values[i]
-            } else if(keys[i] === "typeInterpolation_value") {
+            }
+            if(keys[i] === "typeInterpolation_value") {
                 typeInterpolation.currentIndex = values[i]
-            } else if(keys[i] === "typeFiltration_value") {
+            }
+            if(keys[i] === "typeFiltration_value") {
                 typeFiltration.currentIndex = values[i]
-            } else if(keys[i] === "filterLenghtMediana_value") {
+            }
+            if(keys[i] === "filterLenghtMediana_value") {
                 filterLenghtMediana.value = values[i]
-            } else if(keys[i] === "filterAvarageValueSec_value") {
+            }
+            if(keys[i] === "filterAvarageValueSec_value") {
                 filterAvarageValueSec.value = values[i]
-            } else if(keys[i] === "filterValueR_value") {
+            }
+            if(keys[i] === "filterValueR_value") {
                 filterValueR.value= values[i]
-            } else if(keys[i] === "filterValueQ_value") {
+            }
+            if(keys[i] === "filterValueQ_value") {
                 filterValueQ.value = values[i]
-            } else if(keys[i] === "minLevelValue_value") {
+            }
+            if(keys[i] === "minLevelValue_value") {
                 minLevelValue.value = values[i]
-            } else if(keys[i] === "maxLevelValue_value") {
+            }
+            if(keys[i] === "maxLevelValue_value") {
                 maxLevelValue.value = values[i]
-            } else if(keys[i] === "masterSlaveModes_value") {
+            }
+            if(keys[i] === "masterSlaveModes_value") {
                 masterSlaveModes.currentIndex = values[i]
-            } else if(keys[i] === "baudrateRs232Values_value") {
+            }
+            if(keys[i] === "baudrateRs232Values_value") {
                 baudrateRs232Values.currentIndex = values[i]
-            } else if(keys[i] === "baudrateRs485Values_value") {
+            }
+            if(keys[i] === "baudrateRs485Values_value") {
                 baudrateRs485Values.currentIndex = values[i]
-            }  else if(keys[i] === "masterSlaveFullCountes_value") {
-              masterSlaveFullCountes.value = values[i]
-            } else if(keys[i] === "typeFuel") {
+            }
+            if(keys[i] === "masterSlaveFullCountes_value") {
+                masterSlaveFullCountes.value = values[i]
+            }
+            if(keys[i] === "typeFuel") {
                 typeFuel.currentIndex = values[i]
-            } else if(keys[i] === "masterSlaveSlaveId_1_value") {
+            }
+            if(keys[i] === "masterSlaveSlaveId_1_value") {
                 masterSlaveSlaveId_1.value = values[i]
-            } else if(keys[i] === "masterSlaveSlaveId_2_value") {
+            }
+            if(keys[i] === "masterSlaveSlaveId_2_value") {
                 masterSlaveSlaveId_2.value = values[i]
-            } else if(keys[i] === "masterSlaveSlaveId_3_value") {
+            }
+            if(keys[i] === "masterSlaveSlaveId_3_value") {
                 masterSlaveSlaveId_3.value = values[i]
-            } else if(keys[i] === "masterSlaveSlaveId_4_value") {
+            }
+            if(keys[i] === "masterSlaveSlaveId_4_value") {
                 masterSlaveSlaveId_4.value = values[i]
-            } else if(keys[i] === "devTypeName"){
+            }
+            if(keys[i] === "devTypeName"){
                 typeDeviceText.text = values[i]
-            } else if(keys[i] === "serialNum"){
+            }
+            if(keys[i] === "serialNum"){
                 snText.text = values[i]
-            } else if(keys[i] === "versionFirmare"){
+            }
+            if(keys[i] === "versionFirmare"){
                 versionFirmwareText.text = values[i]
-            } else if(keys[i] === "fuelProcent") {
+            }
+            if(keys[i] === "fuelProcent") {
                 if(values[i] > 100) {
                     values[i] = 0
                 }
                 fuelLevelProgress.value = values[i]
-            } else if(keys[i] === "fuelProcent") {
-            } else if(keys[i] === "cnt") {
+            }
+            if(keys[i] === "fuelProcent") {
+            }
+            if(keys[i] === "cnt") {
                 levelCnt.value = values[i]
-            } else if(keys[i] === "freq") {
+            }
+            if(keys[i] === "freq") {
                 levelFreq.value = values[i]
-            } else if(keys[i] === "temp") {
+            }
+            if(keys[i] === "temp") {
                 levelTemp.value = values[i]
-            } else if(keys[i] === "noiseDetected") {
+            }
+            if(keys[i] === "noiseDetected") {
                 if((chartTarCurrentValuesMultiple.animateColorUp.running == false
                     & (chartTarCurrentValuesMultiple.animateColorDown.running == false))) {
                     if(values[i] == true) {
                         chartTarCurrentValuesMultiple.animateColorUp.start()
                     }
                 }
-            } else if(keys[i] === "chartValue") {
+            }
+            if(keys[i] === "chartValue") {
                 if(chartCurrentValue.dataList.length > 50) {
                     chartCurrentValue.dataList.shift()
                 }
@@ -258,26 +302,34 @@ Rectangle {
                 for(chartIter=0; chartIter<chartCurrentValue.dataList.length; chartIter++) {
                     chartCurrentValueLines.append(chartIter, chartCurrentValue.dataList[chartIter]);
                 }
-            } else if(keys[i] === "GenFreq0") {
+            }
+            if(keys[i] === "GenFreq0") {
                 error4Label.error4 = parseInt(values[i])
-            } else if(keys[i] === "MaxFreqOut") {
+            }
+            if(keys[i] === "MaxFreqOut") {
                 error2Label.error2 = parseInt(values[i])
-            } else if(keys[i] === "MinFreqOut") {
+            }
+            if(keys[i] === "MinFreqOut") {
                 error3Label.error3 = parseInt(values[i])
-            } else if(keys[i] === "NotCalibrated") {
+            }
+            if(keys[i] === "NotCalibrated") {
                 error1Label.error1 = parseInt(values[i])
-            } else if(keys[i] === "QeueManagerError") {
-            } else if(keys[i] === "ReplayNotComeRs232") {
-            } else if(keys[i] === "ReplayNotComeRs485") {
-            } else if(keys[i] === "Rs232Error") {
-            } else if(keys[i] === "Rs485Error") {
-            } else if(keys[i] === "Slave1Error") {
+            }
+            if(keys[i] === "QeueManagerError") {}
+            if(keys[i] === "ReplayNotComeRs232") {}
+            if(keys[i] === "ReplayNotComeRs485") {}
+            if(keys[i] === "Rs232Error") {}
+            if(keys[i] === "Rs485Error") {}
+            if(keys[i] === "Slave1Error") {
                 error5Label.error5 = parseInt(values[i])
-            } else if(keys[i] === "Slave2Error") {
+            }
+            if(keys[i] === "Slave2Error") {
                 error6Label.error6 = parseInt(values[i])
-            } else if(keys[i] === "Slave3Error") {
+            }
+            if(keys[i] === "Slave3Error") {
                 error7Label.error7 = parseInt(values[i])
-            } else if(keys[i] === "Slave4Error") {
+            }
+            if(keys[i] === "Slave4Error") {
                 error8Label.error8 = parseInt(values[i])
             }
         }

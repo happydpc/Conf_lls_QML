@@ -59,8 +59,8 @@ Item {
             projectPanel.devicePropertyPanel.showDeviceAddError(devName, errorMessage)
         }
         onDevCustomCommandExecuted: {
-            try {
-                projectPanel.devicePropertyPanel.setDevCustomCommandExecuted(typeDev, ioIndex, devIndex, keys, args, ackMessageIsVisible)
+            try {                
+                projectPanel.devicePropertyPanel.setDevCustomCommandExecuted(typeDev, ioIndex, devIndex, keys, args)
             } catch (error) {
                 console.log ("Error loading QML : ")
                 for (var i = 0; i < error.qmlErrors.length; i++) {

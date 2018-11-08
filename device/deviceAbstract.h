@@ -65,7 +65,6 @@ public:
 
 signals:
     void eventDeviceUpdateState(DeviceAbstract::E_DeviceEvent typeEvent, QString deviceUniqueId,
-                                int operation, QString operationResult,
                                 QStringList keyCustomData, QStringList valueCustomData,
                                 CommandController::sCommandData commandData);
 private:

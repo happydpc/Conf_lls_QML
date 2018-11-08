@@ -86,16 +86,14 @@ signals:
     void deviceCheckIsReady(DevicesFactory::E_DeviceType type, QString uniqNameId, bool isOnline);
 
     void deviceUpdateTree(DevicesFactory::E_DeviceUpdateType status, int index);
-    void deviceReadyCustomCommand(int index, QString message, QStringList keyCustomData, QStringList valueCustomData, CommandController::sCommandData);
+    void deviceReadyCustomCommand(int devIndex, QString devType, QStringList keyData, QStringList valueData, CommandController::sCommandData);
     void deviceReadyLog(int indexDev, QStringList message);
 
 private slots:
     void devShedullerSlot();
 
-    void deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEvent eventType, QString devUniqueId,
-                                        int command, QString operationResult,
-                                        QStringList keyCustomData, QStringList valueCustomData,
-                                        CommandController::sCommandData commandData);
+    void deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEvent devTypeEvent, QString devId, QStringList devKey, QStringList devValue, CommandController::sCommandData command);
+
     void lockMutextDevMap();
     void unlockMutextDevMap();
 

@@ -98,10 +98,41 @@ typedef struct{
     }sNetworkConfig;
 
     typedef struct {
+        char networkCurrentIp[64];
+        bool status;
+        int rssi;
+    }sNetworkData;
+
+    typedef struct {
     }sCardConfig;
 
     typedef struct {
+        int status;
+        char cardNumber[64];
+        uint16_t len;
+    }sCardData;
+
+    typedef struct {
     }sBatteryConfig;
+
+    typedef struct {
+        float powerVoltage;
+        float powerCurrent;
+        // тока потребленно
+        float powerCurrentAccumulate_mA;
+        // ресурс осталось
+        float  powerCurrentResouresAvailable_mA;
+    }sBatteryData;
+
+    typedef struct {
+        int x;
+        int y;
+        int z;
+    }sAccelData;
+
+    typedef struct {
+        char version[32];
+    }sOtherData;
 
     typedef struct {
         int thresholdX;
