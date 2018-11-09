@@ -76,7 +76,9 @@ SOURCES       = ../main.cpp \
 		../session/session.cpp \
 		../session/sessionsecurity.cpp \
 		../update/updater.cpp \
-		../translate/qmltranslator.cpp debug/qrc_qml.cpp \
+		../translate/qmltranslator.cpp \
+		../device/deviceCollector.cpp \
+		../device/deviceController.cpp debug/qrc_qml.cpp \
 		debug/qrc_images.cpp \
 		debug/qrc_font.cpp \
 		debug/qrc_db.cpp \
@@ -103,7 +105,9 @@ SOURCES       = ../main.cpp \
 		debug/moc_database.cpp \
 		debug/moc_sessionsecurity.cpp \
 		debug/moc_updater.cpp \
-		debug/moc_qmltranslator.cpp
+		debug/moc_qmltranslator.cpp \
+		debug/moc_deviceCollector.cpp \
+		debug/moc_deviceController.cpp
 OBJECTS       = debug/main.o \
 		debug/connectionFactory.o \
 		debug/deviceAbstract.o \
@@ -136,6 +140,8 @@ OBJECTS       = debug/main.o \
 		debug/sessionsecurity.o \
 		debug/updater.o \
 		debug/qmltranslator.o \
+		debug/deviceCollector.o \
+		debug/deviceController.o \
 		debug/qrc_qml.o \
 		debug/qrc_images.o \
 		debug/qrc_font.o \
@@ -163,7 +169,9 @@ OBJECTS       = debug/main.o \
 		debug/moc_database.o \
 		debug/moc_sessionsecurity.o \
 		debug/moc_updater.o \
-		debug/moc_qmltranslator.o
+		debug/moc_qmltranslator.o \
+		debug/moc_deviceCollector.o \
+		debug/moc_deviceController.o
 
 DIST          = device/service/serviceDevicesAbstract ../connection/connectionFactory.h \
 		../device/deviceAbstract.h \
@@ -195,7 +203,9 @@ DIST          = device/service/serviceDevicesAbstract ../connection/connectionFa
 		../session/session.h \
 		../session/sessionsecurity.h \
 		../update/updater.h \
-		../translate/qmltranslator.h ../main.cpp \
+		../translate/qmltranslator.h \
+		../device/deviceCollector.h \
+		../device/deviceController.h ../main.cpp \
 		../connection/connectionFactory.cpp \
 		../device/deviceAbstract.cpp \
 		../device/devicesFactory.cpp \
@@ -226,7 +236,9 @@ DIST          = device/service/serviceDevicesAbstract ../connection/connectionFa
 		../session/session.cpp \
 		../session/sessionsecurity.cpp \
 		../update/updater.cpp \
-		../translate/qmltranslator.cpp
+		../translate/qmltranslator.cpp \
+		../device/deviceCollector.cpp \
+		../device/deviceController.cpp
 QMAKE_TARGET  = Lls_QML_conf
 DESTDIR        = debug/ #avoid trailing-slash linebreak
 TARGET         = Lls_QML_conf.exe
@@ -249,10 +261,10 @@ qmake: FORCE
 qmake_all: FORCE
 
 dist:
-	$(ZIP) Lls_QML_conf.zip $(SOURCES) $(DIST) ../Lls_QML_conf.pro C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/spec_pre.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/qdevice.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/device_config.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/common/sanitize.conf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/common/gcc-base.conf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/common/g++-base.conf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/common/angle.conf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/common/windows-vulkan.conf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/common/g++-win32.conf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/qconfig.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3danimation.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3danimation_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dcore.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dcore_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dextras.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dextras_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dinput.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dinput_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dlogic.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dlogic_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquick.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquick_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquickanimation.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquickanimation_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquickextras.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquickextras_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquickinput.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquickinput_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquickrender.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquickrender_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquickscene2d.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquickscene2d_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3drender.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3drender_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_accessibility_support_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_axbase.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_axbase_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_axcontainer.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_axcontainer_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_axserver.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_axserver_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_bluetooth.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_bluetooth_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_bootstrap_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_charts.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_charts_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_concurrent.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_concurrent_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_core.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_core_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_datavisualization.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_datavisualization_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_dbus.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_dbus_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_designer.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_designer_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_designercomponents_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_devicediscovery_support_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_edid_support_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_egl_support_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_eventdispatcher_support_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_fb_support_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_fontdatabase_support_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_gamepad.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_gamepad_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_gui.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_gui_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_help.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_help_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_location.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_location_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_multimedia.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_multimedia_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_multimediawidgets.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_multimediawidgets_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_network.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_network_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_networkauth.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_networkauth_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_nfc.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_nfc_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_opengl.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_opengl_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_openglextensions.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_openglextensions_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_packetprotocol_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_platformcompositor_support_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_positioning.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_positioning_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_positioningquick.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_positioningquick_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_printsupport.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_printsupport_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_qml.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_qml_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_qmldebug_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_qmldevtools_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_qmltest.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_qmltest_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_qtmultimediaquicktools_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_quick.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_quick_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_quickcontrols2.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_quickcontrols2_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_quickparticles_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_quicktemplates2_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_quickwidgets.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_quickwidgets_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_remoteobjects.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_remoteobjects_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_repparser.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_repparser_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_script.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_script_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_scripttools.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_scripttools_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_scxml.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_scxml_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_sensors.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_sensors_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_serialbus.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_serialbus_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_serialport.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_serialport_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_sql.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_sql_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_svg.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_svg_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_testlib.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_testlib_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_texttospeech.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_texttospeech_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_theme_support_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_uiplugin.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_uitools.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_uitools_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_webchannel.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_webchannel_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_websockets.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_websockets_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_widgets.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_widgets_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_windowsuiautomation_support_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_winextras.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_winextras_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_xml.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_xml_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_xmlpatterns.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_xmlpatterns_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/qt_functions.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/qt_config.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++/qmake.conf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/spec_post.prf ../.qmake.stash C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/exclusive_builds.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/toolchain.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/default_pre.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/win32/default_pre.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/resolve_config.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/exclusive_builds_post.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/default_post.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/build_pass.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/qml_debug.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/precompile_header.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/warn_on.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/qt.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/resources.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/moc.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/win32/opengl.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/uic.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/qmake_use.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/file_copies.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/win32/windows.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/testcase_targets.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/exceptions.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/yacc.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/lex.prf ../Lls_QML_conf.pro ../qml.qrc ../images.qrc ../font.qrc ../database/db.qrc C:/Qt/Qt5.11.1/5.11.1/mingw53_32/lib/qtmaind.prl C:/Qt/Qt5.11.1/5.11.1/mingw53_32/lib/Qt5Quickd.prl C:/Qt/Qt5.11.1/5.11.1/mingw53_32/lib/Qt5Chartsd.prl C:/Qt/Qt5.11.1/5.11.1/mingw53_32/lib/Qt5Widgetsd.prl C:/Qt/Qt5.11.1/5.11.1/mingw53_32/lib/Qt5Guid.prl C:/Qt/Qt5.11.1/5.11.1/mingw53_32/lib/Qt5Qmld.prl C:/Qt/Qt5.11.1/5.11.1/mingw53_32/lib/Qt5Networkd.prl C:/Qt/Qt5.11.1/5.11.1/mingw53_32/lib/Qt5SerialPortd.prl C:/Qt/Qt5.11.1/5.11.1/mingw53_32/lib/Qt5Sqld.prl C:/Qt/Qt5.11.1/5.11.1/mingw53_32/lib/Qt5Cored.prl QmlLanguage_ru.ts QmlLanguage_ru.ts  ../qml.qrc ../images.qrc ../font.qrc ../database/db.qrc C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/data/dummy.cpp ../connection/connectionFactory.h ../device/deviceAbstract.h ../device/devicesFactory.h ../interfaces/interfaceBLE.h ../interfaces/interfaceEthernet.h ../interfaces/interfacesAbstract.h ../interfaces/interfaceSerial.h ../view/viewController.h ../command/commandController.h ../other/crc.h ../tests/testDevReply.h ../view/interfaceListControll/model.h ../view/interfaceListControll/treeitem.h ../view/radialbar.h ../device/Progress_TMK24/Progress_tmk24Data.h ../device/Progress_TMK24/Progress_tmk24.h ../device/Progress_TMK4UX/Progress_tmk4UXData.h ../device/Progress_TMK4UX/Progress_tmk4UX.h ../device/Progress_Base/Progress_Base_Data.h ../device/Progress_Base/Progress_BaseData.h ../device/Progress_Base/Progress_Base.h ../device/service/serviceDevicesAbstract.h ../device/Progress_TMK24/Progress_tmk24Service.h ../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.h ../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.h ../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.h ../database/database.h ../session/session.h ../session/sessionsecurity.h ../update/updater.h ../translate/qmltranslator.h  ../main.cpp ../connection/connectionFactory.cpp ../device/deviceAbstract.cpp ../device/devicesFactory.cpp ../interfaces/interfaceBLE.cpp ../interfaces/interfaceEthernet.cpp ../interfaces/interfacesAbstract.cpp ../interfaces/interfaceSerial.cpp ../view/viewController.cpp ../command/commandController.cpp ../other/crc.cpp ../tests/testDevReply.cpp ../view/interfaceListControll/treeitem.cpp ../view/interfaceListControll/model.cpp ../view/radialbar.cpp ../device/Progress_TMK24/Progress_tmk24Data.cpp ../device/Progress_TMK24/Progress_tmk24.cpp ../device/Progress_TMK4UX/Progress_tmk4UXData.cpp ../device/Progress_TMK4UX/Progress_tmk4UX.cpp ../device/Progress_Base/Progress_BaseData.cpp ../device/Progress_Base/progress_base_data.cpp ../device/Progress_Base/Progress_Base.cpp ../device/service/serviceDevicesAbstract.cpp ../device/Progress_TMK24/Progress_tmk24Service.cpp ../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.cpp ../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.cpp ../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.cpp ../database/database.cpp ../session/session.cpp ../session/sessionsecurity.cpp ../update/updater.cpp ../translate/qmltranslator.cpp     
+	$(ZIP) Lls_QML_conf.zip $(SOURCES) $(DIST) ../../Lls_QML_conf.pro C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/spec_pre.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/qdevice.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/device_config.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/common/sanitize.conf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/common/gcc-base.conf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/common/g++-base.conf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/common/angle.conf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/common/windows-vulkan.conf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/common/g++-win32.conf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/qconfig.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3danimation.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3danimation_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dcore.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dcore_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dextras.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dextras_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dinput.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dinput_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dlogic.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dlogic_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquick.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquick_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquickanimation.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquickanimation_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquickextras.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquickextras_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquickinput.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquickinput_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquickrender.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquickrender_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquickscene2d.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3dquickscene2d_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3drender.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_3drender_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_accessibility_support_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_axbase.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_axbase_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_axcontainer.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_axcontainer_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_axserver.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_axserver_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_bluetooth.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_bluetooth_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_bootstrap_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_charts.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_charts_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_concurrent.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_concurrent_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_core.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_core_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_datavisualization.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_datavisualization_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_dbus.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_dbus_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_designer.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_designer_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_designercomponents_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_devicediscovery_support_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_edid_support_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_egl_support_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_eventdispatcher_support_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_fb_support_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_fontdatabase_support_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_gamepad.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_gamepad_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_gui.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_gui_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_help.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_help_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_location.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_location_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_multimedia.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_multimedia_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_multimediawidgets.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_multimediawidgets_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_network.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_network_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_networkauth.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_networkauth_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_nfc.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_nfc_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_opengl.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_opengl_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_openglextensions.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_openglextensions_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_packetprotocol_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_platformcompositor_support_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_positioning.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_positioning_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_positioningquick.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_positioningquick_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_printsupport.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_printsupport_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_qml.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_qml_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_qmldebug_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_qmldevtools_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_qmltest.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_qmltest_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_qtmultimediaquicktools_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_quick.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_quick_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_quickcontrols2.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_quickcontrols2_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_quickparticles_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_quicktemplates2_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_quickwidgets.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_quickwidgets_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_remoteobjects.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_remoteobjects_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_repparser.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_repparser_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_script.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_script_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_scripttools.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_scripttools_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_scxml.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_scxml_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_sensors.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_sensors_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_serialbus.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_serialbus_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_serialport.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_serialport_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_sql.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_sql_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_svg.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_svg_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_testlib.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_testlib_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_texttospeech.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_texttospeech_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_theme_support_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_uiplugin.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_uitools.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_uitools_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_webchannel.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_webchannel_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_websockets.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_websockets_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_widgets.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_widgets_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_windowsuiautomation_support_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_winextras.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_winextras_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_xml.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_xml_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_xmlpatterns.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/modules/qt_lib_xmlpatterns_private.pri C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/qt_functions.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/qt_config.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++/qmake.conf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/spec_post.prf ../.qmake.stash C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/exclusive_builds.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/toolchain.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/default_pre.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/win32/default_pre.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/resolve_config.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/exclusive_builds_post.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/default_post.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/build_pass.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/qml_debug.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/precompile_header.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/warn_on.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/qt.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/resources.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/moc.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/win32/opengl.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/uic.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/qmake_use.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/file_copies.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/win32/windows.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/testcase_targets.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/exceptions.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/yacc.prf C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/lex.prf ../Lls_QML_conf.pro ../qml.qrc ../images.qrc ../font.qrc ../database/db.qrc C:/Qt/Qt5.11.1/5.11.1/mingw53_32/lib/qtmaind.prl C:/Qt/Qt5.11.1/5.11.1/mingw53_32/lib/Qt5Quickd.prl C:/Qt/Qt5.11.1/5.11.1/mingw53_32/lib/Qt5Chartsd.prl C:/Qt/Qt5.11.1/5.11.1/mingw53_32/lib/Qt5Widgetsd.prl C:/Qt/Qt5.11.1/5.11.1/mingw53_32/lib/Qt5Guid.prl C:/Qt/Qt5.11.1/5.11.1/mingw53_32/lib/Qt5Qmld.prl C:/Qt/Qt5.11.1/5.11.1/mingw53_32/lib/Qt5Networkd.prl C:/Qt/Qt5.11.1/5.11.1/mingw53_32/lib/Qt5SerialPortd.prl C:/Qt/Qt5.11.1/5.11.1/mingw53_32/lib/Qt5Sqld.prl C:/Qt/Qt5.11.1/5.11.1/mingw53_32/lib/Qt5Cored.prl QmlLanguage_ru.ts QmlLanguage_ru.ts  ../qml.qrc ../images.qrc ../font.qrc ../database/db.qrc C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/data/dummy.cpp ../connection/connectionFactory.h ../device/deviceAbstract.h ../device/devicesFactory.h ../interfaces/interfaceBLE.h ../interfaces/interfaceEthernet.h ../interfaces/interfacesAbstract.h ../interfaces/interfaceSerial.h ../view/viewController.h ../command/commandController.h ../other/crc.h ../tests/testDevReply.h ../view/interfaceListControll/model.h ../view/interfaceListControll/treeitem.h ../view/radialbar.h ../device/Progress_TMK24/Progress_tmk24Data.h ../device/Progress_TMK24/Progress_tmk24.h ../device/Progress_TMK4UX/Progress_tmk4UXData.h ../device/Progress_TMK4UX/Progress_tmk4UX.h ../device/Progress_Base/Progress_Base_Data.h ../device/Progress_Base/Progress_BaseData.h ../device/Progress_Base/Progress_Base.h ../device/service/serviceDevicesAbstract.h ../device/Progress_TMK24/Progress_tmk24Service.h ../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.h ../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.h ../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.h ../database/database.h ../session/session.h ../session/sessionsecurity.h ../update/updater.h ../translate/qmltranslator.h ../device/deviceCollector.h ../device/deviceController.h  ../main.cpp ../connection/connectionFactory.cpp ../device/deviceAbstract.cpp ../device/devicesFactory.cpp ../interfaces/interfaceBLE.cpp ../interfaces/interfaceEthernet.cpp ../interfaces/interfacesAbstract.cpp ../interfaces/interfaceSerial.cpp ../view/viewController.cpp ../command/commandController.cpp ../other/crc.cpp ../tests/testDevReply.cpp ../view/interfaceListControll/treeitem.cpp ../view/interfaceListControll/model.cpp ../view/radialbar.cpp ../device/Progress_TMK24/Progress_tmk24Data.cpp ../device/Progress_TMK24/Progress_tmk24.cpp ../device/Progress_TMK4UX/Progress_tmk4UXData.cpp ../device/Progress_TMK4UX/Progress_tmk4UX.cpp ../device/Progress_Base/Progress_BaseData.cpp ../device/Progress_Base/progress_base_data.cpp ../device/Progress_Base/Progress_Base.cpp ../device/service/serviceDevicesAbstract.cpp ../device/Progress_TMK24/Progress_tmk24Service.cpp ../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018_Data.cpp ../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.cpp ../device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.cpp ../database/database.cpp ../session/session.cpp ../session/sessionsecurity.cpp ../update/updater.cpp ../translate/qmltranslator.cpp ../device/deviceCollector.cpp ../device/deviceController.cpp     
 
 clean: compiler_clean 
-	-$(DEL_FILE) debug/main.o debug/connectionFactory.o debug/deviceAbstract.o debug/devicesFactory.o debug/interfaceBLE.o debug/interfaceEthernet.o debug/interfacesAbstract.o debug/interfaceSerial.o debug/viewController.o debug/commandController.o debug/crc.o debug/testDevReply.o debug/treeitem.o debug/model.o debug/radialbar.o debug/Progress_tmk24Data.o debug/Progress_tmk24.o debug/Progress_tmk4UXData.o debug/Progress_tmk4UX.o debug/Progress_BaseData.o debug/progress_base_data.o debug/Progress_Base.o debug/serviceDevicesAbstract.o debug/Progress_tmk24Service.o debug/Nozzle_Revision_0_00_Oct_2018_Data.o debug/Nozzle_Revision_0_00_Oct_2018.o debug/Nozzle_Revision_0_00_Service.o debug/database.o debug/session.o debug/sessionsecurity.o debug/updater.o debug/qmltranslator.o debug/qrc_qml.o debug/qrc_images.o debug/qrc_font.o debug/qrc_db.o debug/moc_connectionFactory.o debug/moc_deviceAbstract.o debug/moc_devicesFactory.o debug/moc_interfaceBLE.o debug/moc_interfaceEthernet.o debug/moc_interfacesAbstract.o debug/moc_interfaceSerial.o debug/moc_viewController.o debug/moc_commandController.o debug/moc_testDevReply.o debug/moc_model.o debug/moc_treeitem.o debug/moc_radialbar.o debug/moc_Progress_tmk24Data.o debug/moc_Progress_tmk4UXData.o debug/moc_Progress_Base_Data.o debug/moc_Progress_BaseData.o debug/moc_Progress_Base.o debug/moc_serviceDevicesAbstract.o debug/moc_Nozzle_Revision_0_00_Oct_2018_Data.o debug/moc_database.o debug/moc_sessionsecurity.o debug/moc_updater.o debug/moc_qmltranslator.o
+	-$(DEL_FILE) debug/main.o debug/connectionFactory.o debug/deviceAbstract.o debug/devicesFactory.o debug/interfaceBLE.o debug/interfaceEthernet.o debug/interfacesAbstract.o debug/interfaceSerial.o debug/viewController.o debug/commandController.o debug/crc.o debug/testDevReply.o debug/treeitem.o debug/model.o debug/radialbar.o debug/Progress_tmk24Data.o debug/Progress_tmk24.o debug/Progress_tmk4UXData.o debug/Progress_tmk4UX.o debug/Progress_BaseData.o debug/progress_base_data.o debug/Progress_Base.o debug/serviceDevicesAbstract.o debug/Progress_tmk24Service.o debug/Nozzle_Revision_0_00_Oct_2018_Data.o debug/Nozzle_Revision_0_00_Oct_2018.o debug/Nozzle_Revision_0_00_Service.o debug/database.o debug/session.o debug/sessionsecurity.o debug/updater.o debug/qmltranslator.o debug/deviceCollector.o debug/deviceController.o debug/qrc_qml.o debug/qrc_images.o debug/qrc_font.o debug/qrc_db.o debug/moc_connectionFactory.o debug/moc_deviceAbstract.o debug/moc_devicesFactory.o debug/moc_interfaceBLE.o debug/moc_interfaceEthernet.o debug/moc_interfacesAbstract.o debug/moc_interfaceSerial.o debug/moc_viewController.o debug/moc_commandController.o debug/moc_testDevReply.o debug/moc_model.o debug/moc_treeitem.o debug/moc_radialbar.o debug/moc_Progress_tmk24Data.o debug/moc_Progress_tmk4UXData.o debug/moc_Progress_Base_Data.o debug/moc_Progress_BaseData.o debug/moc_Progress_Base.o debug/moc_serviceDevicesAbstract.o debug/moc_Nozzle_Revision_0_00_Oct_2018_Data.o debug/moc_database.o debug/moc_sessionsecurity.o debug/moc_updater.o debug/moc_qmltranslator.o debug/moc_deviceCollector.o debug/moc_deviceController.o
 	-$(DEL_FILE) debug/icon_pg_res.o
 
 distclean: clean 
@@ -333,9 +345,9 @@ compiler_moc_predefs_clean:
 debug/moc_predefs.h: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/data/dummy.cpp
 	g++ -fno-keep-inline-dllexport -g -std=gnu++1y -Wall -W -Wextra -dM -E -o debug/moc_predefs.h C:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: debug/moc_connectionFactory.cpp debug/moc_deviceAbstract.cpp debug/moc_devicesFactory.cpp debug/moc_interfaceBLE.cpp debug/moc_interfaceEthernet.cpp debug/moc_interfacesAbstract.cpp debug/moc_interfaceSerial.cpp debug/moc_viewController.cpp debug/moc_commandController.cpp debug/moc_testDevReply.cpp debug/moc_model.cpp debug/moc_treeitem.cpp debug/moc_radialbar.cpp debug/moc_Progress_tmk24Data.cpp debug/moc_Progress_tmk4UXData.cpp debug/moc_Progress_Base_Data.cpp debug/moc_Progress_BaseData.cpp debug/moc_Progress_Base.cpp debug/moc_serviceDevicesAbstract.cpp debug/moc_Nozzle_Revision_0_00_Oct_2018_Data.cpp debug/moc_database.cpp debug/moc_sessionsecurity.cpp debug/moc_updater.cpp debug/moc_qmltranslator.cpp
+compiler_moc_header_make_all: debug/moc_connectionFactory.cpp debug/moc_deviceAbstract.cpp debug/moc_devicesFactory.cpp debug/moc_interfaceBLE.cpp debug/moc_interfaceEthernet.cpp debug/moc_interfacesAbstract.cpp debug/moc_interfaceSerial.cpp debug/moc_viewController.cpp debug/moc_commandController.cpp debug/moc_testDevReply.cpp debug/moc_model.cpp debug/moc_treeitem.cpp debug/moc_radialbar.cpp debug/moc_Progress_tmk24Data.cpp debug/moc_Progress_tmk4UXData.cpp debug/moc_Progress_Base_Data.cpp debug/moc_Progress_BaseData.cpp debug/moc_Progress_Base.cpp debug/moc_serviceDevicesAbstract.cpp debug/moc_Nozzle_Revision_0_00_Oct_2018_Data.cpp debug/moc_database.cpp debug/moc_sessionsecurity.cpp debug/moc_updater.cpp debug/moc_qmltranslator.cpp debug/moc_deviceCollector.cpp debug/moc_deviceController.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) debug/moc_connectionFactory.cpp debug/moc_deviceAbstract.cpp debug/moc_devicesFactory.cpp debug/moc_interfaceBLE.cpp debug/moc_interfaceEthernet.cpp debug/moc_interfacesAbstract.cpp debug/moc_interfaceSerial.cpp debug/moc_viewController.cpp debug/moc_commandController.cpp debug/moc_testDevReply.cpp debug/moc_model.cpp debug/moc_treeitem.cpp debug/moc_radialbar.cpp debug/moc_Progress_tmk24Data.cpp debug/moc_Progress_tmk4UXData.cpp debug/moc_Progress_Base_Data.cpp debug/moc_Progress_BaseData.cpp debug/moc_Progress_Base.cpp debug/moc_serviceDevicesAbstract.cpp debug/moc_Nozzle_Revision_0_00_Oct_2018_Data.cpp debug/moc_database.cpp debug/moc_sessionsecurity.cpp debug/moc_updater.cpp debug/moc_qmltranslator.cpp
+	-$(DEL_FILE) debug/moc_connectionFactory.cpp debug/moc_deviceAbstract.cpp debug/moc_devicesFactory.cpp debug/moc_interfaceBLE.cpp debug/moc_interfaceEthernet.cpp debug/moc_interfacesAbstract.cpp debug/moc_interfaceSerial.cpp debug/moc_viewController.cpp debug/moc_commandController.cpp debug/moc_testDevReply.cpp debug/moc_model.cpp debug/moc_treeitem.cpp debug/moc_radialbar.cpp debug/moc_Progress_tmk24Data.cpp debug/moc_Progress_tmk4UXData.cpp debug/moc_Progress_Base_Data.cpp debug/moc_Progress_BaseData.cpp debug/moc_Progress_Base.cpp debug/moc_serviceDevicesAbstract.cpp debug/moc_Nozzle_Revision_0_00_Oct_2018_Data.cpp debug/moc_database.cpp debug/moc_sessionsecurity.cpp debug/moc_updater.cpp debug/moc_qmltranslator.cpp debug/moc_deviceCollector.cpp debug/moc_deviceController.cpp
 debug/moc_connectionFactory.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobjectdefs.h \
@@ -391,15 +403,16 @@ debug/moc_connectionFactory.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
 		../interfaces/interfacesAbstract.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QStringList \
-		../device/devicesFactory.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		../device/deviceController.h \
+		../device/deviceCollector.h \
 		../command/commandController.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QQueue \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qqueue.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QPair \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		../device/devicesFactory.h \
 		../device/deviceAbstract.h \
 		../device/service/serviceDevicesAbstract.h \
 		../interfaces/interfaceSerial.h \
@@ -537,6 +550,7 @@ debug/moc_devicesFactory.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QO
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QQueue \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qqueue.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QPair \
+		../device/deviceCollector.h \
 		../device/deviceAbstract.h \
 		../device/service/serviceDevicesAbstract.h \
 		../device/devicesFactory.h \
@@ -595,19 +609,20 @@ debug/moc_interfaceBLE.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObj
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcontainerfwd.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject_impl.h \
 		../interfaces/interfacesAbstract.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QStringList \
-		../device/devicesFactory.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVector \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvector.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
+		../device/deviceController.h \
+		../device/deviceCollector.h \
 		../command/commandController.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QQueue \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qqueue.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QPair \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
+		../device/devicesFactory.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVector \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvector.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
 		../device/deviceAbstract.h \
 		../device/service/serviceDevicesAbstract.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort/QSerialPort \
@@ -672,19 +687,20 @@ debug/moc_interfaceEthernet.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcontainerfwd.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject_impl.h \
 		../interfaces/interfacesAbstract.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QStringList \
-		../device/devicesFactory.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVector \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvector.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
+		../device/deviceController.h \
+		../device/deviceCollector.h \
 		../command/commandController.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QQueue \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qqueue.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QPair \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
+		../device/devicesFactory.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVector \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvector.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
 		../device/deviceAbstract.h \
 		../device/service/serviceDevicesAbstract.h \
 		../interfaces/interfaceEthernet.h \
@@ -742,19 +758,20 @@ debug/moc_interfacesAbstract.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCor
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvarlengtharray.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcontainerfwd.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject_impl.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QStringList \
-		../device/devicesFactory.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVector \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvector.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
+		../device/deviceController.h \
+		../device/deviceCollector.h \
 		../command/commandController.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QQueue \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qqueue.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QPair \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
+		../device/devicesFactory.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVector \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvector.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
 		../device/deviceAbstract.h \
 		../device/service/serviceDevicesAbstract.h \
 		../interfaces/interfacesAbstract.h \
@@ -813,19 +830,20 @@ debug/moc_interfaceSerial.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/Q
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcontainerfwd.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject_impl.h \
 		../interfaces/interfacesAbstract.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QStringList \
-		../device/devicesFactory.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVector \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvector.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
+		../device/deviceController.h \
+		../device/deviceCollector.h \
 		../command/commandController.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QQueue \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qqueue.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QPair \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
+		../device/devicesFactory.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVector \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvector.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
 		../device/deviceAbstract.h \
 		../device/service/serviceDevicesAbstract.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort/QSerialPort \
@@ -895,15 +913,16 @@ debug/moc_viewController.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QO
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
 		../interfaces/interfacesAbstract.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QStringList \
-		../device/devicesFactory.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		../device/deviceController.h \
+		../device/deviceCollector.h \
 		../command/commandController.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QQueue \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qqueue.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QPair \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		../device/devicesFactory.h \
 		../device/deviceAbstract.h \
 		../device/service/serviceDevicesAbstract.h \
 		../interfaces/interfaceSerial.h \
@@ -2084,6 +2103,139 @@ debug/moc_qmltranslator.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QOb
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
 	'C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe' $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ../translate/qmltranslator.h -o debug/moc_qmltranslator.cpp
 
+debug/moc_deviceCollector.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobjectdefs.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qnamespace.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qglobal.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qconfig-bootstrapped.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qconfig.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtcore-config.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsystemdetection.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qprocessordetection.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcompilerdetection.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtypeinfo.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsysinfo.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qlogging.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qflags.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasicatomic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic_bootstrap.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qgenericatomic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic_cxx11.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic_msvc.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qglobalstatic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmutex.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qnumeric.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qversiontagging.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobjectdefs_impl.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstring.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qchar.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbytearray.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qrefcount.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qarraydata.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringliteral.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringalgorithms.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringview.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringbuilder.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qlist.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qalgorithms.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qiterator.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qhashfunctions.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpair.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbytearraylist.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringlist.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qregexp.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringmatcher.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcoreevent.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qscopedpointer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmetatype.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvarlengtharray.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcontainerfwd.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject_impl.h \
+		../command/commandController.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QQueue \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qqueue.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QPair \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
+		../device/deviceCollector.h \
+		debug/moc_predefs.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
+	'C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe' $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ../device/deviceCollector.h -o debug/moc_deviceCollector.cpp
+
+debug/moc_deviceController.cpp: C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobjectdefs.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qnamespace.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qglobal.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qconfig-bootstrapped.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qconfig.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtcore-config.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsystemdetection.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qprocessordetection.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcompilerdetection.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtypeinfo.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsysinfo.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qlogging.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qflags.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasicatomic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic_bootstrap.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qgenericatomic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic_cxx11.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic_msvc.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qglobalstatic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmutex.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qnumeric.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qversiontagging.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobjectdefs_impl.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstring.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qchar.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbytearray.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qrefcount.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qarraydata.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringliteral.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringalgorithms.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringview.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringbuilder.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qlist.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qalgorithms.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qiterator.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qhashfunctions.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpair.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbytearraylist.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringlist.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qregexp.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringmatcher.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcoreevent.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qscopedpointer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmetatype.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvarlengtharray.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcontainerfwd.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject_impl.h \
+		../device/deviceCollector.h \
+		../command/commandController.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QQueue \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qqueue.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QPair \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
+		../device/devicesFactory.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVector \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvector.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
+		../device/deviceAbstract.h \
+		../device/service/serviceDevicesAbstract.h \
+		../device/deviceController.h \
+		debug/moc_predefs.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/bin/moc.exe
+	'C:\Qt\Qt5.11.1\5.11.1\mingw53_32\bin\moc.exe' $(DEFINES) --include debug/moc_predefs.h -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/mkspecs/win32-g++ -ID:/PROJECTs/Configure_QML/Conf_lls_QML -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQuick -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCharts -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtANGLE -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtQml -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtNetwork -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSql -IC:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore -I. -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Qt5.11.1/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ../device/deviceController.h -o debug/moc_deviceController.cpp
+
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
 compiler_moc_source_make_all:
@@ -2452,11 +2604,13 @@ debug/main.o: ../main.cpp C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtWidgets/QAp
 		../connection/connectionFactory.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
 		../interfaces/interfacesAbstract.h \
-		../device/devicesFactory.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
+		../device/deviceController.h \
+		../device/deviceCollector.h \
 		../command/commandController.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QQueue \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QPair \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
+		../device/devicesFactory.h \
 		../device/deviceAbstract.h \
 		../device/service/serviceDevicesAbstract.h \
 		../interfaces/interfaceSerial.h \
@@ -2542,15 +2696,16 @@ debug/connectionFactory.o: ../connection/connectionFactory.cpp ../connection/con
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
 		../interfaces/interfacesAbstract.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QStringList \
-		../device/devicesFactory.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		../device/deviceController.h \
+		../device/deviceCollector.h \
 		../command/commandController.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QQueue \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qqueue.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QPair \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		../device/devicesFactory.h \
 		../device/deviceAbstract.h \
 		../device/service/serviceDevicesAbstract.h \
 		../interfaces/interfaceSerial.h \
@@ -2696,6 +2851,7 @@ debug/devicesFactory.o: ../device/devicesFactory.cpp ../device/devicesFactory.h 
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QQueue \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qqueue.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QPair \
+		../device/deviceCollector.h \
 		../device/deviceAbstract.h \
 		../device/service/serviceDevicesAbstract.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QtDebug \
@@ -2790,19 +2946,20 @@ debug/interfaceBLE.o: ../interfaces/interfaceBLE.cpp ../interfaces/interfaceBLE.
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcontainerfwd.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject_impl.h \
 		../interfaces/interfacesAbstract.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QStringList \
-		../device/devicesFactory.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVector \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvector.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
+		../device/deviceController.h \
+		../device/deviceCollector.h \
 		../command/commandController.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QQueue \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qqueue.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QPair \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
+		../device/devicesFactory.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVector \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvector.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
 		../device/deviceAbstract.h \
 		../device/service/serviceDevicesAbstract.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort/QSerialPort \
@@ -2865,19 +3022,20 @@ debug/interfaceEthernet.o: ../interfaces/interfaceEthernet.cpp ../interfaces/int
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcontainerfwd.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject_impl.h \
 		../interfaces/interfacesAbstract.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QStringList \
-		../device/devicesFactory.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVector \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvector.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
+		../device/deviceController.h \
+		../device/deviceCollector.h \
 		../command/commandController.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QQueue \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qqueue.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QPair \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
+		../device/devicesFactory.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVector \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvector.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
 		../device/deviceAbstract.h \
 		../device/service/serviceDevicesAbstract.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/interfaceEthernet.o ../interfaces/interfaceEthernet.cpp
@@ -2933,19 +3091,20 @@ debug/interfacesAbstract.o: ../interfaces/interfacesAbstract.cpp ../interfaces/i
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvarlengtharray.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcontainerfwd.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject_impl.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QStringList \
-		../device/devicesFactory.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVector \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvector.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
+		../device/deviceController.h \
+		../device/deviceCollector.h \
 		../command/commandController.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QQueue \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qqueue.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QPair \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
+		../device/devicesFactory.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVector \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvector.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
 		../device/deviceAbstract.h \
 		../device/service/serviceDevicesAbstract.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/interfacesAbstract.o ../interfaces/interfacesAbstract.cpp
@@ -3002,19 +3161,20 @@ debug/interfaceSerial.o: ../interfaces/interfaceSerial.cpp ../interfaces/interfa
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcontainerfwd.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject_impl.h \
 		../interfaces/interfacesAbstract.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QStringList \
-		../device/devicesFactory.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVector \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvector.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
+		../device/deviceController.h \
+		../device/deviceCollector.h \
 		../command/commandController.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QQueue \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qqueue.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QPair \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
+		../device/devicesFactory.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVector \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvector.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
 		../device/deviceAbstract.h \
 		../device/service/serviceDevicesAbstract.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtSerialPort/QSerialPort \
@@ -3094,15 +3254,16 @@ debug/viewController.o: ../view/viewController.cpp ../view/viewController.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
 		../interfaces/interfacesAbstract.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QStringList \
-		../device/devicesFactory.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
-		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		../device/deviceController.h \
+		../device/deviceCollector.h \
 		../command/commandController.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QQueue \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qqueue.h \
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QPair \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		../device/devicesFactory.h \
 		../device/deviceAbstract.h \
 		../device/service/serviceDevicesAbstract.h \
 		../interfaces/interfaceSerial.h \
@@ -4857,6 +5018,135 @@ debug/qmltranslator.o: ../translate/qmltranslator.cpp ../translate/qmltranslator
 		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtGui/qinputmethod.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/qmltranslator.o ../translate/qmltranslator.cpp
 
+debug/deviceCollector.o: ../device/deviceCollector.cpp ../device/deviceCollector.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobjectdefs.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qnamespace.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qglobal.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qconfig-bootstrapped.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qconfig.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtcore-config.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsystemdetection.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qprocessordetection.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcompilerdetection.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtypeinfo.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsysinfo.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qlogging.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qflags.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasicatomic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic_bootstrap.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qgenericatomic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic_cxx11.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic_msvc.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qglobalstatic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmutex.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qnumeric.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qversiontagging.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobjectdefs_impl.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstring.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qchar.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbytearray.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qrefcount.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qarraydata.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringliteral.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringalgorithms.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringview.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringbuilder.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qlist.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qalgorithms.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qiterator.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qhashfunctions.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpair.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbytearraylist.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringlist.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qregexp.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringmatcher.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcoreevent.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qscopedpointer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmetatype.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvarlengtharray.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcontainerfwd.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject_impl.h \
+		../command/commandController.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QQueue \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qqueue.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QPair \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/deviceCollector.o ../device/deviceCollector.cpp
+
+debug/deviceController.o: ../device/deviceController.cpp ../device/deviceController.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QObject \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobjectdefs.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qnamespace.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qglobal.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qconfig-bootstrapped.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qconfig.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtcore-config.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsystemdetection.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qprocessordetection.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcompilerdetection.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtypeinfo.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qsysinfo.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qlogging.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qflags.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasicatomic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic_bootstrap.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qgenericatomic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic_cxx11.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qatomic_msvc.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qglobalstatic.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmutex.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qnumeric.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qversiontagging.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobjectdefs_impl.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstring.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qchar.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbytearray.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qrefcount.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qarraydata.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringliteral.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringalgorithms.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringview.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringbuilder.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qlist.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qalgorithms.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qiterator.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qhashfunctions.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpair.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbytearraylist.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringlist.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qregexp.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qstringmatcher.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcoreevent.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qscopedpointer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qmetatype.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvarlengtharray.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qcontainerfwd.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qobject_impl.h \
+		../device/deviceCollector.h \
+		../command/commandController.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QQueue \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qqueue.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QPair \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QTimer \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qtimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qbasictimer.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QMutex \
+		../device/devicesFactory.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/QVector \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qvector.h \
+		C:/Qt/Qt5.11.1/5.11.1/mingw53_32/include/QtCore/qpoint.h \
+		../device/deviceAbstract.h \
+		../device/service/serviceDevicesAbstract.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/deviceController.o ../device/deviceController.cpp
+
 debug/qrc_qml.o: debug/qrc_qml.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/qrc_qml.o debug/qrc_qml.cpp
 
@@ -4940,6 +5230,12 @@ debug/moc_updater.o: debug/moc_updater.cpp
 
 debug/moc_qmltranslator.o: debug/moc_qmltranslator.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/moc_qmltranslator.o debug/moc_qmltranslator.cpp
+
+debug/moc_deviceCollector.o: debug/moc_deviceCollector.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/moc_deviceCollector.o debug/moc_deviceCollector.cpp
+
+debug/moc_deviceController.o: debug/moc_deviceController.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/moc_deviceController.o debug/moc_deviceController.cpp
 
 ####### Install
 

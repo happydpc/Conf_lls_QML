@@ -45,9 +45,9 @@ public:
     virtual bool makeDataToCommand(CommandController::sCommandData &commandData) = 0;
 
     virtual bool placeDataReplyToCommand(QByteArray &commandArrayReplyData, CommandController::sCommandData commandReqData) = 0;
-    virtual CommandController::sCommandData getCommandToCheckConnected() = 0;
-    virtual CommandController::sCommandData getCommandToGetType() = 0;
-    virtual CommandController::sCommandData getCommandtoCheckPassword() = 0;
+    virtual QList<CommandController::sCommandData> getCommandToCheckConnected() = 0;
+    virtual QList<CommandController::sCommandData> getCommandToGetType() = 0;
+    virtual QList<CommandController::sCommandData> getCommandtoCheckPassword() = 0;
     virtual QList<CommandController::sCommandData> getCommandListToInit() = 0;
     virtual QList<CommandController::sCommandData> getCommandListToUpdate() = 0;
     virtual QList<CommandController::sCommandData> getCommandListToCurrentData() = 0;

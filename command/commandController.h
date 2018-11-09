@@ -37,7 +37,7 @@ public:
         QString operationHeader;
     }sCommandData;
 
-    bool addCommandToStack(sCommandData commandData);
+    bool addCommandToStack(QList<sCommandData> devCommandData);
     QPair<bool, CommandController::sCommandData> getCommandFirstCommand();
     void removeFirstCommand();
     bool commandsIsEmpty();

@@ -94,7 +94,7 @@ typedef struct{
         char clientUserName[32];    // TCP_CLIENT_CONF_USERNAME - "nozzletag"
         char serverIp[46];          // TCP_CLIENT_CONF_SERVER_IP_ADDR "fd00::1"
         uint16_t serverPort;        // TCP_CLIENT_CONF_SERVER_PORT 21000
-        uint32_t panid;
+        uint16_t panid;
     }sNetworkConfig;
 
     typedef struct {

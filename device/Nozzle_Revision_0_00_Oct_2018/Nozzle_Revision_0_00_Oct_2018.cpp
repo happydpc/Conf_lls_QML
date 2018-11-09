@@ -611,21 +611,25 @@ QPair<bool, QPair<int,int>> Nozzle_Revision_0_00_Oct_2018::findTag(QString regEx
     return res;
 }
 
-CommandController::sCommandData Nozzle_Revision_0_00_Oct_2018::getCommandToCheckConnected() {
-    CommandController::sCommandData command;
-    command.isNeedAckMessage = false;
-    command.operationHeader = "check dev is connected";
-    command.deviceIdent = getUniqId();
-    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getIsReadyCommand;
+QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommandToCheckConnected() {
+    QList<CommandController::sCommandData> command;
+    CommandController::sCommandData simpleCommand;
+    simpleCommand.isNeedAckMessage = false;
+    simpleCommand.operationHeader = "check dev is connected";
+    simpleCommand.deviceIdent = getUniqId();
+    simpleCommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getIsReadyCommand;
+    command.push_back(simpleCommand);
     return command;
 }
 
-CommandController::sCommandData Nozzle_Revision_0_00_Oct_2018::getCommandtoCheckPassword() {
-    CommandController::sCommandData command;
-    command.deviceIdent = getUniqId();
-    command.isNeedAckMessage = false;
-    command.operationHeader = "check dev password";
-    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getSecurityData;
+QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommandtoCheckPassword() {
+    QList<CommandController::sCommandData> command;
+    CommandController::sCommandData simpleCommand;
+    simpleCommand.deviceIdent = getUniqId();
+    simpleCommand.isNeedAckMessage = false;
+    simpleCommand.operationHeader = "check dev password";
+    simpleCommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getSecurityData;
+    command.push_back(simpleCommand);
     return command;
 }
 
@@ -652,12 +656,14 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
     return getCommandListToInit();
 }
 
-CommandController::sCommandData Nozzle_Revision_0_00_Oct_2018::getCommandToGetType() {
-    CommandController::sCommandData command;
-    command.deviceIdent = getUniqId();
-    command.isNeedAckMessage = false;
-    command.operationHeader = "get dev type";
-    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_EmptyCommand;
+QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommandToGetType() {
+    QList<CommandController::sCommandData> command;
+    CommandController::sCommandData simpleCommand;
+    simpleCommand.deviceIdent = getUniqId();
+    simpleCommand.isNeedAckMessage = false;
+    simpleCommand.operationHeader = "get dev type";
+    simpleCommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_EmptyCommand;
+    command.push_back(simpleCommand);
     return command;
 }
 

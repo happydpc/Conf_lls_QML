@@ -176,7 +176,11 @@ Rectangle {
     }
 
     function parseInputData(keys, values) {
+        var isNeedAckMessage = false
         for(var i=0; i<keys.length; i++) {
+            if(keys[i] === "isNeedAckMessage") {
+                isNeedAckMessage = parseInt(values[i])
+            }
             if(keys[i] === "k1_value") {
                 k1.text = values[i]
             }
@@ -187,22 +191,22 @@ Rectangle {
                 k2.text = values[i]
             }
             if(keys[i] === "typeTempCompensation_value") {
-                typeTempCompensation.currentIndex = values[i]
+                typeTempCompensation.currentIndex = parseInt(values[i])
             }
             if(keys[i] === "periodicSendType_value") {
-                periodicSendType.currentIndex = values[i]
+                periodicSendType.currentIndex = parseInt(values[i])
             }
             if(keys[i] === "periodicSendTime_value") {
                 periodicSendTime.value = values[i]
             }
             if(keys[i] === "typeOutMessage_value") {
-                typeOutMessage.currentIndex = values[i]
+                typeOutMessage.currentIndex = parseInt(values[i])
             }
             if(keys[i] === "typeInterpolation_value") {
-                typeInterpolation.currentIndex = values[i]
+                typeInterpolation.currentIndex = parseInt(values[i])
             }
             if(keys[i] === "typeFiltration_value") {
-                typeFiltration.currentIndex = values[i]
+                typeFiltration.currentIndex = parseInt(values[i])
             }
             if(keys[i] === "filterLenghtMediana_value") {
                 filterLenghtMediana.value = values[i]
@@ -223,19 +227,19 @@ Rectangle {
                 maxLevelValue.value = values[i]
             }
             if(keys[i] === "masterSlaveModes_value") {
-                masterSlaveModes.currentIndex = values[i]
+                masterSlaveModes.currentIndex = parseInt(values[i])
             }
             if(keys[i] === "baudrateRs232Values_value") {
-                baudrateRs232Values.currentIndex = values[i]
+                baudrateRs232Values.currentIndex = parseInt(values[i])
             }
             if(keys[i] === "baudrateRs485Values_value") {
-                baudrateRs485Values.currentIndex = values[i]
+                baudrateRs485Values.currentIndex = parseInt(values[i])
             }
             if(keys[i] === "masterSlaveFullCountes_value") {
                 masterSlaveFullCountes.value = values[i]
             }
             if(keys[i] === "typeFuel") {
-                typeFuel.currentIndex = values[i]
+                typeFuel.currentIndex = parseInt(values[i])
             }
             if(keys[i] === "masterSlaveSlaveId_1_value") {
                 masterSlaveSlaveId_1.value = values[i]
@@ -333,6 +337,7 @@ Rectangle {
                 error8Label.error8 = parseInt(values[i])
             }
         }
+        return isNeedAckMessage;
     }
 
     Timer {
@@ -1496,944 +1501,990 @@ Rectangle {
                         }
 
                         Item {
-                            ScrollView {
-                                clip: true
+                            Row {
                                 anchors.fill: parent
-                                Column {
-                                    spacing: 10
-                                    anchors.top: parent.top
-                                    anchors.topMargin: 15
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-                                    Row{
-                                        height: 100
-                                        width: 500
+                                ScrollView {
+                                    clip: true
+                                    width: parent.width / 2
+                                    height: parent.height
+                                    Column {
+                                        spacing: 10
+                                        anchors.top: parent.top
+                                        anchors.topMargin: 15
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        Row{
+                                            height: 100
+                                            width: 500
+                                            Rectangle {
+                                                id:changeIdRect
+                                                width: 500
+                                                height: 100
+                                                color: "transparent"
+                                                Column{
+                                                    anchors.left: parent.left
+                                                    anchors.leftMargin: 15
+                                                    spacing: 10
+                                                    Label {
+                                                        text: "Смена сетевого адреса:"
+                                                    }
+                                                    Button {
+                                                        text: "Сменить адрес"
+                                                        id: changeIdAddr
+                                                        width: 300
+                                                        height: 30
+                                                        enabled: (devIsConnected && devIsReady)
+                                                        onClicked: {
+                                                            changeDeviceUniqId()
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
                                         Rectangle {
-                                            id:changeIdRect
                                             width: 500
                                             height: 100
-                                            color: "#fdfdfb"
+                                            color: "transparent"
                                             Column{
                                                 anchors.left: parent.left
                                                 anchors.leftMargin: 15
                                                 spacing: 10
                                                 Label {
-                                                    text: "Смена сетевого адреса:"
-                                                }
-                                                Button {
-                                                    text: "Сменить адрес"
-                                                    id: changeIdAddr
-                                                    width: 300
-                                                    height: 30
-                                                    enabled: (devIsConnected && devIsReady)
-                                                    onClicked: {
-                                                        changeDeviceUniqId()
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        Button {
-                                            text: "Считать настройки"
-                                            id:readSetingsButton_1
-                                            width: 180
-                                            height: 50
-                                            enabled: (devIsConnected && devIsReady)
-                                            onClicked: {
-                                                viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
-                                            }
-                                        }
-                                        Button {
-                                            id:writeSettingsButton_1
-                                            text: "Записать настройки"
-                                            width: 180
-                                            height: 50
-                                            enabled: false
-                                            onClicked: {
-                                                writeSettings()
-                                            }
-                                        }
-                                    }
-                                    Rectangle {
-                                        width: 500
-                                        height: 100
-                                        color: "#fdfdfb"
-                                        Column{
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            spacing: 10
-                                            Label {
-                                                text: "Самостоятельная выдача данных:"
-                                            }
-                                            ComboBox {
-                                                id: periodicSendType
-                                                height: 25
-                                                width: 300
-                                                model: ListModel {
-                                                    ListElement {
-                                                        text: "Выключена"
-                                                    }
-                                                    ListElement {
-                                                        text: "Бинарная"
-                                                    }
-                                                    ListElement {
-                                                        text: "Символьная"
-                                                    }
-                                                }
-                                                onCurrentIndexChanged: {
-                                                    if(periodicSendType.currentIndex != 0) {
-                                                        periodicSendTime.enabled = true
-                                                    } else {
-                                                        periodicSendTime.enabled = false
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    Rectangle {
-                                        width: 500
-                                        height: 100
-                                        color: "#fdfdfb"
-                                        Column{
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            spacing: 10
-                                            Label {
-                                                text: "Период выдачи данных (0-255), с:"
-                                            }
-                                            SpinBox {
-                                                id:periodicSendTime
-                                                height: 25
-                                                width: 200
-                                            }
-                                        }
-                                    }
-                                    Rectangle {
-                                        width: 500
-                                        height: 100
-                                        color: "#fdfdfb"
-                                        Column{
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            spacing: 10
-                                            Label {
-                                                text: "Мин. значение уровня (0-1023):"
-                                            }
-                                            SpinBox {
-                                                id:minLevelValue
-                                                height: 25
-                                                width: 200
-                                                to: 4095
-                                                from: 0
-                                                value: 0
-                                            }
-                                        }
-                                    }
-                                    Rectangle {
-                                        width: 500
-                                        height: 100
-                                        color: "#fdfdfb"
-                                        Column{
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            spacing: 10
-                                            Label {
-                                                text: "Макс.значение уровня (0-4095):"
-                                            }
-                                            SpinBox {
-                                                id:maxLevelValue
-                                                height: 25
-                                                width: 200
-                                                to: 4095
-                                                from: 0
-                                                value: 0
-                                            }
-                                        }
-                                    }
-                                    Rectangle {
-                                        width: 500
-                                        height: 100
-                                        color: "#fdfdfb"
-                                        Column{
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            spacing: 10
-                                            Label {
-                                                text: "Параметр в выходном сообщении датчика:"
-                                            }
-                                            ComboBox {
-                                                id: typeOutMessage
-                                                height: 25
-                                                width: 300
-                                                model: ListModel {
-                                                    ListElement {
-                                                        text: "Относительный уровень"
-                                                    }
-                                                    ListElement {
-                                                        text: "Объем (по таблице тарировки)"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    Rectangle {
-                                        width: 500
-                                        height: 100
-                                        color: "#fdfdfb"
-                                        Column{
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            spacing: 10
-                                            Label {
-                                                text: "Скорость обмена по RS232:"
-                                                id: baudrateRs232Label
-                                            }
-                                            ComboBox {
-                                                id: baudrateRs232Values
-                                                height: 25
-                                                model: ListModel {
-                                                    ListElement {
-                                                        text: "2800"
-                                                    }
-                                                    ListElement {
-                                                        text: "4800"
-                                                    }
-                                                    ListElement {
-                                                        text: "9600"
-                                                    }
-                                                    ListElement {
-                                                        text: "19200"
-                                                    }
-                                                    ListElement {
-                                                        text: "28800"
-                                                    }
-                                                    ListElement {
-                                                        text: "38400"
-                                                    }
-                                                    ListElement {
-                                                        text: "57600"
-                                                    }
-                                                    ListElement {
-                                                        text: "115200"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    Rectangle {
-                                        width: 500
-                                        height: 100
-                                        color: "#fdfdfb"
-                                        Column{
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            spacing: 10
-                                            Label {
-                                                text: "Скорость обмена по RS485:"
-                                                id: baudrateRs485Label
-                                            }
-                                            ComboBox {
-                                                id: baudrateRs485Values
-                                                height: 25
-                                                model: ListModel {
-                                                    ListElement {
-                                                        text: "2800"
-                                                    }
-                                                    ListElement {
-                                                        text: "4800"
-                                                    }
-                                                    ListElement {
-                                                        text: "9600"
-                                                    }
-                                                    ListElement {
-                                                        text: "19200"
-                                                    }
-                                                    ListElement {
-                                                        text: "28800"
-                                                    }
-                                                    ListElement {
-                                                        text: "38400"
-                                                    }
-                                                    ListElement {
-                                                        text: "57600"
-                                                    }
-                                                    ListElement {
-                                                        text: "115200"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        Item {
-                            ScrollView {
-                                clip: true
-                                anchors.fill: parent
-
-                                Column {
-                                    spacing: 10
-                                    anchors.top: parent.top
-                                    anchors.topMargin: 15
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-                                    Row{
-                                        width: 500
-                                        height: 150
-                                        Rectangle {
-                                            id:setScaleFuelLabel
-                                            width: 500
-                                            height: 150
-                                            color: "#fdfdfb"
-                                            Column{
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 15
-                                                spacing: 10
-                                                Label {
-                                                    id:emptyFullLabel
-                                                    text: qsTr("Задание границ измерения:")
-                                                }
-                                                Button {
-                                                    id: buttonEmpty
-                                                    text: "Пустой"
-                                                    width: 300
-                                                    height: 30
-                                                    enabled: (devIsConnected && devIsReady)
-                                                    onClicked: {
-                                                        dialogLevelSetEmpty.open()
-                                                    }
-                                                    Dialog {
-                                                        id: dialogLevelSetEmpty
-                                                        visible: false
-                                                        title: "Смена уровня Min-Max"
-                                                        standardButtons: StandardButton.Close | StandardButton.Ok
-                                                        Rectangle {
-                                                            color: "transparent"
-                                                            implicitWidth: 250
-                                                            implicitHeight: 100
-                                                            Text {
-                                                                text: "Присвоить уровень \"Минимум\""
-                                                                color: "black"
-                                                                anchors.centerIn: parent
-                                                            }
-                                                        }
-                                                        onAccepted: {
-                                                            viewController.setCurrentDevCustomCommand("set current level value as min", [], [])
-                                                            close()
-                                                        }
-                                                    }
-                                                }
-                                                Button {
-                                                    id: buttonFull
-                                                    text: "Полный"
-                                                    width: 300
-                                                    height: 30
-                                                    enabled: (devIsConnected && devIsReady)
-                                                    onClicked: {
-                                                        dialogLevelSetFull.open()
-                                                    }
-                                                    Dialog {
-                                                        id: dialogLevelSetFull
-                                                        visible: false
-                                                        title: "Смена уровня Min-Max"
-                                                        standardButtons: StandardButton.Close | StandardButton.Ok
-                                                        Rectangle {
-                                                            color: "transparent"
-                                                            implicitWidth: 250
-                                                            implicitHeight: 100
-                                                            Text {
-                                                                text: "Присвоить уровень \"Максимум\""
-                                                                color: "black"
-                                                                anchors.centerIn: parent
-                                                            }
-                                                        }
-                                                        onAccepted: {
-                                                            viewController.setCurrentDevCustomCommand("set current level value as max", [], [])
-                                                            close()
-                                                        }
-                                                    }
-                                                }
-                                                Button {
-                                                    id: buttonEdit
-                                                    width: 300
-                                                    height: 30
-                                                    text: "Редактировать"
-                                                    enabled: false
-                                                }
-                                            }
-                                        }
-                                        Button {
-                                            text: "Считать настройки"
-                                            id:readSetingsButton_2
-                                            width: 180
-                                            height: 50
-                                            enabled: (devIsConnected && devIsReady)
-                                            onClicked: {
-                                                viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
-                                            }
-                                        }
-                                        Button {
-                                            id:writeSettingsButton_2
-                                            text: "Записать настройки"
-                                            width: 180
-                                            height: 50
-                                            enabled: false
-                                            onClicked: {
-                                                writeSettings()
-                                            }
-                                        }
-                                    }
-                                    Rectangle {
-                                        width: 500
-                                        height: 150
-                                        color: "#fdfdfb"
-                                        Column{
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            spacing: 10
-                                            Label {
-                                                text: "Тип жидкости"
-                                            }
-                                            ComboBox {
-                                                id: typeFuel
-                                                height: 25
-                                                width: 300
-                                                model: ListModel {
-                                                    ListElement {
-                                                        text: "Топливо"
-                                                    }
-                                                    ListElement {
-                                                        text: "Вода"
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        Item {
-                            ScrollView {
-                                clip: true
-                                anchors.fill: parent
-                                Column {
-                                    spacing: 10
-                                    anchors.top: parent.top
-                                    anchors.topMargin: 15
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-                                    Row{
-                                        width: 500
-                                        height: 80
-                                        Rectangle {
-                                            id:typeInterpolationRect
-                                            width: 500
-                                            height: 80
-                                            color: "#fdfdfb"
-                                            Column{
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 15
-                                                spacing: 10
-                                                Label {
-                                                    text: "Тип интерполяции:"
+                                                    text: "Самостоятельная выдача данных:"
                                                 }
                                                 ComboBox {
-                                                    id: typeInterpolation
+                                                    id: periodicSendType
                                                     height: 25
                                                     width: 300
                                                     model: ListModel {
                                                         ListElement {
-                                                            text: "Линейная"
+                                                            text: "Выключена"
                                                         }
                                                         ListElement {
-                                                            text: "Квадратичная"
+                                                            text: "Бинарная"
                                                         }
                                                         ListElement {
-                                                            text: "Сплайновая"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        Button {
-                                            text: "Считать настройки"
-                                            id:readSetingsButton_3
-                                            width: 180
-                                            height: 50
-                                            enabled: (devIsConnected && devIsReady)
-                                            onClicked: {
-                                                viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
-                                            }
-                                        }
-                                        Button {
-                                            id:writeSettingsButton_3
-                                            text: "Записать настройки"
-                                            width: 180
-                                            height: 50
-                                            enabled: false
-                                            onClicked: {
-                                                writeSettings()
-                                            }
-                                        }
-                                    }
-                                    //1
-                                    Rectangle {
-                                        id:typeFiltrationRectangle
-                                        width: 500
-                                        height: 80
-                                        color: "#fdfdfb"
-                                        Column{
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            spacing: 10
-                                            Label {
-                                                text: "Тип фильтрации:"
-                                            }
-                                            ComboBox {
-                                                id: typeFiltration
-                                                height: 25
-                                                width: 300
-                                                model: ListModel {
-                                                    ListElement {
-                                                        text: "Выключена"
-                                                    }
-                                                    ListElement {
-                                                        text: "Усреднение"
-                                                    }
-                                                    ListElement {
-                                                        text: "Медиана"
-                                                    }
-                                                    ListElement {
-                                                        text: "Адаптивный"
-                                                    }
-                                                }
-                                                onCurrentIndexChanged: {
-                                                    if(typeFiltration.currentIndex == 0) {
-                                                        filterAvarageValueSec.enabled = false
-                                                        filterLenghtMediana.enabled = false
-                                                        filterValueQ.enabled = false
-                                                        filterValueR.enabled = false
-                                                    } else if(typeFiltration.currentIndex == 1) {
-                                                        filterAvarageValueSec.enabled = true
-                                                        filterLenghtMediana.enabled = false
-                                                        filterValueQ.enabled = false
-                                                        filterValueR.enabled = false
-                                                    } else if(typeFiltration.currentIndex == 2) {
-                                                        filterAvarageValueSec.enabled = true
-                                                        filterLenghtMediana.enabled = true
-                                                        filterValueQ.enabled = false
-                                                        filterValueR.enabled = false
-                                                    } else if(typeFiltration.currentIndex == 3) {
-                                                        filterAvarageValueSec.enabled = false
-                                                        filterLenghtMediana.enabled = false
-                                                        filterValueQ.enabled = true
-                                                        filterValueR.enabled = true
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    //2
-                                    Rectangle {
-                                        id:typeAvarageRectangle
-                                        width: 500
-                                        height: 80
-                                        color: "#fdfdfb"
-                                        Column{
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            spacing: 10
-                                            Label {
-                                                text: "Время усреднения (0-21), с:"
-                                            }
-                                            SpinBox {
-                                                id: filterAvarageValueSec
-                                                height: 25
-                                                width: 200
-                                            }
-                                        }
-                                    }
-                                    //3
-                                    Rectangle {
-                                        id:lenMedianaRectangle
-                                        width: 500
-                                        height: 80
-                                        color: "#fdfdfb"
-                                        Column{
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            spacing: 10
-                                            Label {
-                                                text: "Длина медианы (0-7):"
-                                            }
-                                            SpinBox {
-                                                id: filterLenghtMediana
-                                                height: 25
-                                                width: 200
-                                            }
-                                        }
-                                    }
-                                    //4
-                                    Rectangle {
-                                        id:covairachiaRectangle
-                                        width: 500
-                                        height: 80
-                                        color: "#fdfdfb"
-                                        Column{
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            spacing: 10
-                                            Label {
-                                                text: "Ковариация шума процесса (Q):"
-                                            }
-                                            SpinBox {
-                                                id: filterValueQ
-                                                height: 25
-                                                width: 200
-                                            }
-                                        }
-                                    }
-                                    //5
-                                    Rectangle {
-                                        width: 500
-                                        height: 80
-                                        color: "#fdfdfb"
-                                        Label {
-                                            text: "Ковариация шума измерения (R):"
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                        }
-                                        SpinBox {
-                                            id: filterValueR
-                                            height: 25
-                                            width: 200
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            anchors.verticalCenter: parent.verticalCenter
-                                            anchors.topMargin: 10
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        Item {
-                            ScrollView {
-                                clip: true
-                                anchors.fill: parent
-                                Column {
-                                    spacing: 10
-                                    anchors.top: parent.top
-                                    anchors.topMargin: 15
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-                                    //1
-                                    Row {
-                                        width: 500
-                                        height: 100
-                                        Rectangle {
-                                            id:termocomRectangle
-                                            width: 500
-                                            height: 100
-                                            color: "#fdfdfb"
-                                            Column{
-                                                spacing: 10
-                                                anchors.left: parent.left
-                                                anchors.leftMargin: 15
-                                                Label {
-                                                    text: qsTr("Температурная компенсация линейного расширения топлива\nРежим:")
-                                                }
-                                                ComboBox {
-                                                    id: typeTempCompensation
-                                                    width: 300
-                                                    height: 25
-                                                    model: ListModel {
-                                                        ListElement {
-                                                            text: "Выключен"
-                                                        }
-                                                        ListElement {
-                                                            text: "АИ-95"
-                                                        }
-                                                        ListElement {
-                                                            text: "АИ-92"
-                                                        }
-                                                        ListElement {
-                                                            text: "АИ-80 (лето)"
-                                                        }
-                                                        ListElement {
-                                                            text: "АИ-80 (зима)"
-                                                        }
-                                                        ListElement {
-                                                            text: "ДТ (лето)"
-                                                        }
-                                                        ListElement {
-                                                            text: "ДТ (зима)"
-                                                        }
-                                                        ListElement {
-                                                            text: "Пользовательский"
+                                                            text: "Символьная"
                                                         }
                                                     }
                                                     onCurrentIndexChanged: {
-                                                        if(typeTempCompensation.currentIndex == 7) {
-                                                            k1.enabled = true
-                                                            k2.enabled = true
+                                                        if(periodicSendType.currentIndex != 0) {
+                                                            periodicSendTime.enabled = true
                                                         } else {
-                                                            k1.enabled = false
-                                                            k2.enabled = false
+                                                            periodicSendTime.enabled = false
                                                         }
                                                     }
                                                 }
                                             }
                                         }
-                                        Button {
-                                            text: "Считать настройки"
-                                            id:readSetingsButton_4
-                                            width: 180
-                                            height: 50
-                                            enabled: (devIsConnected && devIsReady)
-                                            onClicked: {
-                                                viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
+                                        Rectangle {
+                                            width: 500
+                                            height: 100
+                                            color: "transparent"
+                                            Column{
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                spacing: 10
+                                                Label {
+                                                    text: "Период выдачи данных (0-255), с:"
+                                                }
+                                                SpinBox {
+                                                    id:periodicSendTime
+                                                    height: 25
+                                                    width: 200
+                                                }
                                             }
                                         }
-                                        Button {
-                                            id:writeSettingsButton_4
-                                            text: "Записать настройки"
-                                            width: 180
-                                            height: 50
-                                            enabled: false
-                                            onClicked: {
-                                                writeSettings()
+                                        Rectangle {
+                                            width: 500
+                                            height: 100
+                                            color: "transparent"
+                                            Column{
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                spacing: 10
+                                                Label {
+                                                    text: "Мин. значение уровня (0-1023):"
+                                                }
+                                                SpinBox {
+                                                    id:minLevelValue
+                                                    height: 25
+                                                    width: 200
+                                                    to: 4095
+                                                    from: 0
+                                                    value: 0
+                                                }
+                                            }
+                                        }
+                                        Rectangle {
+                                            width: 500
+                                            height: 100
+                                            color: "transparent"
+                                            Column{
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                spacing: 10
+                                                Label {
+                                                    text: "Макс.значение уровня (0-4095):"
+                                                }
+                                                SpinBox {
+                                                    id:maxLevelValue
+                                                    height: 25
+                                                    width: 200
+                                                    to: 4095
+                                                    from: 0
+                                                    value: 0
+                                                }
+                                            }
+                                        }
+                                        Rectangle {
+                                            width: 500
+                                            height: 100
+                                            color: "transparent"
+                                            Column{
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                spacing: 10
+                                                Label {
+                                                    text: "Параметр в выходном сообщении датчика:"
+                                                }
+                                                ComboBox {
+                                                    id: typeOutMessage
+                                                    height: 25
+                                                    width: 300
+                                                    model: ListModel {
+                                                        ListElement {
+                                                            text: "Относительный уровень"
+                                                        }
+                                                        ListElement {
+                                                            text: "Объем (по таблице тарировки)"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            width: 500
+                                            height: 100
+                                            color: "transparent"
+                                            Column{
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                spacing: 10
+                                                Label {
+                                                    text: "Скорость обмена по RS232:"
+                                                    id: baudrateRs232Label
+                                                }
+                                                ComboBox {
+                                                    id: baudrateRs232Values
+                                                    height: 25
+                                                    model: ListModel {
+                                                        ListElement {
+                                                            text: "2800"
+                                                        }
+                                                        ListElement {
+                                                            text: "4800"
+                                                        }
+                                                        ListElement {
+                                                            text: "9600"
+                                                        }
+                                                        ListElement {
+                                                            text: "19200"
+                                                        }
+                                                        ListElement {
+                                                            text: "28800"
+                                                        }
+                                                        ListElement {
+                                                            text: "38400"
+                                                        }
+                                                        ListElement {
+                                                            text: "57600"
+                                                        }
+                                                        ListElement {
+                                                            text: "115200"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        Rectangle {
+                                            width: 500
+                                            height: 100
+                                            color: "transparent"
+                                            Column{
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                spacing: 10
+                                                Label {
+                                                    text: "Скорость обмена по RS485:"
+                                                    id: baudrateRs485Label
+                                                }
+                                                ComboBox {
+                                                    id: baudrateRs485Values
+                                                    height: 25
+                                                    model: ListModel {
+                                                        ListElement {
+                                                            text: "2800"
+                                                        }
+                                                        ListElement {
+                                                            text: "4800"
+                                                        }
+                                                        ListElement {
+                                                            text: "9600"
+                                                        }
+                                                        ListElement {
+                                                            text: "19200"
+                                                        }
+                                                        ListElement {
+                                                            text: "28800"
+                                                        }
+                                                        ListElement {
+                                                            text: "38400"
+                                                        }
+                                                        ListElement {
+                                                            text: "57600"
+                                                        }
+                                                        ListElement {
+                                                            text: "115200"
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
-                                    //2
-                                    Rectangle {
-                                        width: 500
-                                        height: 80
-                                        color: "#fdfdfb"
-                                        Column {
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            spacing: 10
-                                            Label {
-                                                text: qsTr("K1:")
-                                            }
-                                            TextField {
-                                                id: k1
-                                                text: "0.0"
-                                                height: 25
-                                                width: 300
-                                            }
-                                        }
+                                }
+                            }
+                            Column{
+                                anchors.right: parent.right
+                                spacing: 15
+                                width: parent.width / 2
+                                height: parent.height
+                                Button {
+                                    text: "Считать настройки"
+                                    id:readSetingsButton_1
+                                    width: 180
+                                    height: 50
+                                    enabled: (devIsConnected && devIsReady)
+                                    onClicked: {
+                                        viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
                                     }
-                                    //3
-                                    Rectangle {
-                                        width: 500
-                                        height: 80
-                                        color: "#fdfdfb"
-                                        Column {
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            spacing: 10
-                                            Label {
-                                                text: qsTr("K2:")
-                                            }
-                                            TextField {
-                                                id: k2
-                                                text: "0.0"
-                                                height: 25
-                                                width: 300
-                                            }
-                                        }
+                                }
+                                Button {
+                                    id:writeSettingsButton_1
+                                    text: "Записать настройки"
+                                    width: 180
+                                    height: 50
+                                    enabled: false
+                                    onClicked: {
+                                        writeSettings()
                                     }
                                 }
                             }
                         }
 
                         Item {
-                            ScrollView {
-                                clip: true
+                            Row {
                                 anchors.fill: parent
-                                Column {
-                                    spacing: 10
-                                    anchors.top: parent.top
-                                    anchors.topMargin: 15
-                                    anchors.left: parent.left
-                                    anchors.leftMargin: 15
-                                    //1
-                                    Row {
-                                        width: 500
-                                        height: 130
+                                ScrollView {
+                                    clip: true
+                                    width: parent.width / 2
+                                    height: parent.height
+                                    Column {
+                                        spacing: 10
+                                        anchors.top: parent.top
+                                        anchors.topMargin: 15
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        Row{
+                                            width: 500
+                                            height: 150
+                                            Rectangle {
+                                                id:setScaleFuelLabel
+                                                width: 500
+                                                height: 150
+                                                color: "transparent"
+                                                Column{
+                                                    anchors.left: parent.left
+                                                    anchors.leftMargin: 15
+                                                    spacing: 10
+                                                    Label {
+                                                        id:emptyFullLabel
+                                                        text: qsTr("Задание границ измерения:")
+                                                    }
+                                                    Button {
+                                                        id: buttonEmpty
+                                                        text: "Пустой"
+                                                        width: 300
+                                                        height: 30
+                                                        enabled: (devIsConnected && devIsReady)
+                                                        onClicked: {
+                                                            dialogLevelSetEmpty.open()
+                                                        }
+                                                        Dialog {
+                                                            id: dialogLevelSetEmpty
+                                                            visible: false
+                                                            title: "Смена уровня Min-Max"
+                                                            standardButtons: StandardButton.Close | StandardButton.Ok
+                                                            Rectangle {
+                                                                color: "transparent"
+                                                                implicitWidth: 250
+                                                                implicitHeight: 100
+                                                                Text {
+                                                                    text: "Присвоить уровень \"Минимум\""
+                                                                    color: "black"
+                                                                    anchors.centerIn: parent
+                                                                }
+                                                            }
+                                                            onAccepted: {
+                                                                viewController.setCurrentDevCustomCommand("set current level value as min", [], [])
+                                                                close()
+                                                            }
+                                                        }
+                                                    }
+                                                    Button {
+                                                        id: buttonFull
+                                                        text: "Полный"
+                                                        width: 300
+                                                        height: 30
+                                                        enabled: (devIsConnected && devIsReady)
+                                                        onClicked: {
+                                                            dialogLevelSetFull.open()
+                                                        }
+                                                        Dialog {
+                                                            id: dialogLevelSetFull
+                                                            visible: false
+                                                            title: "Смена уровня Min-Max"
+                                                            standardButtons: StandardButton.Close | StandardButton.Ok
+                                                            Rectangle {
+                                                                color: "transparent"
+                                                                implicitWidth: 250
+                                                                implicitHeight: 100
+                                                                Text {
+                                                                    text: "Присвоить уровень \"Максимум\""
+                                                                    color: "black"
+                                                                    anchors.centerIn: parent
+                                                                }
+                                                            }
+                                                            onAccepted: {
+                                                                viewController.setCurrentDevCustomCommand("set current level value as max", [], [])
+                                                                close()
+                                                            }
+                                                        }
+                                                    }
+                                                    Button {
+                                                        id: buttonEdit
+                                                        width: 300
+                                                        height: 30
+                                                        text: "Редактировать"
+                                                        enabled: false
+                                                    }
+                                                }
+                                            }
+                                        }
                                         Rectangle {
-                                            id:setSlaveMasterModeRectangle
-                                            width: parent.width
-                                            height: parent.height
-                                            color: "#fdfdfb"
+                                            width: 500
+                                            height: 150
+                                            color: "transparent"
+                                            Column{
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                spacing: 10
+                                                Label {
+                                                    text: "Тип жидкости"
+                                                }
+                                                ComboBox {
+                                                    id: typeFuel
+                                                    height: 25
+                                                    width: 300
+                                                    model: ListModel {
+                                                        ListElement {
+                                                            text: "Топливо"
+                                                        }
+                                                        ListElement {
+                                                            text: "Вода"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            Column{
+                                anchors.right: parent.right
+                                spacing: 15
+                                width: parent.width / 2
+                                height: parent.height
+                                Button {
+                                    text: "Считать настройки"
+                                    id:readSetingsButton_2
+                                    width: 180
+                                    height: 50
+                                    enabled: (devIsConnected && devIsReady)
+                                    onClicked: {
+                                        viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
+                                    }
+                                }
+                                Button {
+                                    id:writeSettingsButton_2
+                                    text: "Записать настройки"
+                                    width: 180
+                                    height: 50
+                                    enabled: false
+                                    onClicked: {
+                                        writeSettings()
+                                    }
+                                }
+                            }
+                        }
+
+                        Item {
+                            Row {
+                                anchors.fill: parent
+                                ScrollView {
+                                    clip: true
+                                    width: parent.width / 2
+                                    height: parent.height
+                                    Column {
+                                        spacing: 10
+                                        anchors.top: parent.top
+                                        anchors.topMargin: 15
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        Row{
+                                            width: 500
+                                            height: 80
+                                            Rectangle {
+                                                id:typeInterpolationRect
+                                                width: 500
+                                                height: 80
+                                                color: "transparent"
+                                                Column{
+                                                    anchors.left: parent.left
+                                                    anchors.leftMargin: 15
+                                                    spacing: 10
+                                                    Label {
+                                                        text: "Тип интерполяции:"
+                                                    }
+                                                    ComboBox {
+                                                        id: typeInterpolation
+                                                        height: 25
+                                                        width: 300
+                                                        model: ListModel {
+                                                            ListElement {
+                                                                text: "Линейная"
+                                                            }
+                                                            ListElement {
+                                                                text: "Квадратичная"
+                                                            }
+                                                            ListElement {
+                                                                text: "Сплайновая"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        //1
+                                        Rectangle {
+                                            id:typeFiltrationRectangle
+                                            width: 500
+                                            height: 80
+                                            color: "transparent"
+                                            Column{
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                spacing: 10
+                                                Label {
+                                                    text: "Тип фильтрации:"
+                                                }
+                                                ComboBox {
+                                                    id: typeFiltration
+                                                    height: 25
+                                                    width: 300
+                                                    model: ListModel {
+                                                        ListElement {
+                                                            text: "Выключена"
+                                                        }
+                                                        ListElement {
+                                                            text: "Усреднение"
+                                                        }
+                                                        ListElement {
+                                                            text: "Медиана"
+                                                        }
+                                                        ListElement {
+                                                            text: "Адаптивный"
+                                                        }
+                                                    }
+                                                    onCurrentIndexChanged: {
+                                                        if(typeFiltration.currentIndex == 0) {
+                                                            filterAvarageValueSec.enabled = false
+                                                            filterLenghtMediana.enabled = false
+                                                            filterValueQ.enabled = false
+                                                            filterValueR.enabled = false
+                                                        } else if(typeFiltration.currentIndex == 1) {
+                                                            filterAvarageValueSec.enabled = true
+                                                            filterLenghtMediana.enabled = false
+                                                            filterValueQ.enabled = false
+                                                            filterValueR.enabled = false
+                                                        } else if(typeFiltration.currentIndex == 2) {
+                                                            filterAvarageValueSec.enabled = true
+                                                            filterLenghtMediana.enabled = true
+                                                            filterValueQ.enabled = false
+                                                            filterValueR.enabled = false
+                                                        } else if(typeFiltration.currentIndex == 3) {
+                                                            filterAvarageValueSec.enabled = false
+                                                            filterLenghtMediana.enabled = false
+                                                            filterValueQ.enabled = true
+                                                            filterValueR.enabled = true
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        //2
+                                        Rectangle {
+                                            id:typeAvarageRectangle
+                                            width: 500
+                                            height: 80
+                                            color: "transparent"
+                                            Column{
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                spacing: 10
+                                                Label {
+                                                    text: "Время усреднения (0-21), с:"
+                                                }
+                                                SpinBox {
+                                                    id: filterAvarageValueSec
+                                                    height: 25
+                                                    width: 200
+                                                }
+                                            }
+                                        }
+                                        //3
+                                        Rectangle {
+                                            id:lenMedianaRectangle
+                                            width: 500
+                                            height: 80
+                                            color: "transparent"
+                                            Column{
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                spacing: 10
+                                                Label {
+                                                    text: "Длина медианы (0-7):"
+                                                }
+                                                SpinBox {
+                                                    id: filterLenghtMediana
+                                                    height: 25
+                                                    width: 200
+                                                }
+                                            }
+                                        }
+                                        //4
+                                        Rectangle {
+                                            id:covairachiaRectangle
+                                            width: 500
+                                            height: 80
+                                            color: "transparent"
+                                            Column{
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                spacing: 10
+                                                Label {
+                                                    text: "Ковариация шума процесса (Q):"
+                                                }
+                                                SpinBox {
+                                                    id: filterValueQ
+                                                    height: 25
+                                                    width: 200
+                                                }
+                                            }
+                                        }
+                                        //5
+                                        Rectangle {
+                                            width: 500
+                                            height: 80
+                                            color: "transparent"
+                                            Label {
+                                                text: "Ковариация шума измерения (R):"
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                            }
+                                            SpinBox {
+                                                id: filterValueR
+                                                height: 25
+                                                width: 200
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                anchors.verticalCenter: parent.verticalCenter
+                                                anchors.topMargin: 10
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            Column{
+                                anchors.right: parent.right
+                                spacing: 15
+                                width: parent.width / 2
+                                height: parent.height
+                                Button {
+                                    text: "Считать настройки"
+                                    id:readSetingsButton_3
+                                    width: 180
+                                    height: 50
+                                    enabled: (devIsConnected && devIsReady)
+                                    onClicked: {
+                                        viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
+                                    }
+                                }
+                                Button {
+                                    id:writeSettingsButton_3
+                                    text: "Записать настройки"
+                                    width: 180
+                                    height: 50
+                                    enabled: false
+                                    onClicked: {
+                                        writeSettings()
+                                    }
+                                }
+                            }
+                        }
+
+                        Item {
+                            Row {
+                                anchors.fill: parent
+                                ScrollView {
+                                    clip: true
+                                    width: parent.width / 2
+                                    height: parent.height
+                                    Column {
+                                        spacing: 10
+                                        anchors.top: parent.top
+                                        anchors.topMargin: 15
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        //1
+                                        Row {
+                                            width: 500
+                                            height: 100
+                                            Rectangle {
+                                                id:termocomRectangle
+                                                width: 500
+                                                height: 100
+                                                color: "transparent"
+                                                Column{
+                                                    spacing: 10
+                                                    anchors.left: parent.left
+                                                    anchors.leftMargin: 15
+                                                    Label {
+                                                        text: qsTr("Температурная компенсация линейного расширения топлива\nРежим:")
+                                                    }
+                                                    ComboBox {
+                                                        id: typeTempCompensation
+                                                        width: 300
+                                                        height: 25
+                                                        model: ListModel {
+                                                            ListElement {
+                                                                text: "Выключен"
+                                                            }
+                                                            ListElement {
+                                                                text: "АИ-95"
+                                                            }
+                                                            ListElement {
+                                                                text: "АИ-92"
+                                                            }
+                                                            ListElement {
+                                                                text: "АИ-80 (лето)"
+                                                            }
+                                                            ListElement {
+                                                                text: "АИ-80 (зима)"
+                                                            }
+                                                            ListElement {
+                                                                text: "ДТ (лето)"
+                                                            }
+                                                            ListElement {
+                                                                text: "ДТ (зима)"
+                                                            }
+                                                            ListElement {
+                                                                text: "Пользовательский"
+                                                            }
+                                                        }
+                                                        onCurrentIndexChanged: {
+                                                            if(typeTempCompensation.currentIndex == 7) {
+                                                                k1.enabled = true
+                                                                k2.enabled = true
+                                                            } else {
+                                                                k1.enabled = false
+                                                                k2.enabled = false
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        //2
+                                        Rectangle {
+                                            width: 500
+                                            height: 80
+                                            color: "transparent"
                                             Column {
                                                 anchors.left: parent.left
                                                 anchors.leftMargin: 15
                                                 spacing: 10
                                                 Label {
-                                                    text: "Режим ведущий/ведомый:"
-                                                    id:labelSlaveModes
+                                                    text: qsTr("K1:")
                                                 }
-                                                ComboBox {
-                                                    id: masterSlaveModes
-                                                    width: 200
-                                                    height: 30
-                                                    model: ListModel {
-                                                        ListElement {
-                                                            text: "Выключен"
-                                                        }
-                                                        ListElement {
-                                                            text: "Ведомый"
-                                                        }
-                                                        ListElement {
-                                                            text: "Ведущий"
-                                                        }
-                                                        ListElement {
-                                                            text: "Трансляция"
-                                                        }
-                                                    }
-                                                    onCurrentIndexChanged: {
-                                                        if(masterSlaveModes.currentIndex == 2) {
-                                                            //masterSlavesAddresRectange.enabled = true
-                                                        } else {
-                                                            //masterSlavesAddresRectange.enabled = false
-                                                            masterSlaveFullCountes.value = 0
-                                                        }
-                                                    }
-                                                }
-                                                Label {
-                                                    id: masterSlaveModeCountAllLabel
-                                                    text: "Количество ведомых:"
-                                                }
-                                                SpinBox {
-                                                    id: masterSlaveFullCountes
-                                                    width: 200
+                                                TextField {
+                                                    id: k1
+                                                    text: "0.0"
                                                     height: 25
-                                                    from: 0
-                                                    to: 4
-                                                    onValueChanged: {
-                                                        if(masterSlaveFullCountes.value >= 1) {
-                                                            masterSlaveSlaveId_1.enabled = true
-                                                        } else {
-                                                            masterSlaveFullCountes.value = 0
-                                                            masterSlaveModes.currentIndex = 0
-                                                            masterSlaveSlaveId_1.enabled = false
-                                                            masterSlaveSlaveId_2.enabled = false
-                                                            masterSlaveSlaveId_3.enabled = false
-                                                            masterSlaveSlaveId_4.enabled = false
-                                                        }
-                                                        if(masterSlaveFullCountes.value >= 2) {
-                                                            masterSlaveSlaveId_2.enabled = true
-                                                        } else {
-                                                            masterSlaveSlaveId_2.enabled = false
-                                                        }
-                                                        if(masterSlaveFullCountes.value >= 3) {
-                                                            masterSlaveSlaveId_3.enabled = true
-                                                        } else {
-                                                            masterSlaveSlaveId_3.enabled = false
-                                                        }
-                                                        if(masterSlaveFullCountes.value >= 4) {
-                                                            masterSlaveSlaveId_4.enabled = true
-                                                        } else {
-                                                            masterSlaveSlaveId_4.enabled = false
-                                                        }
-                                                    }
+                                                    width: 300
                                                 }
                                             }
                                         }
-
-                                        Button {
-                                            text: "Считать настройки"
-                                            id:readSetingsButton_5
-                                            width: 180
-                                            height: 50
-                                            enabled: (devIsConnected && devIsReady)
-                                            onClicked: {
-                                                viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
-                                            }
-                                        }
-                                        Button {
-                                            id:writeSettingsButton_5
-                                            text: "Записать настройки"
-                                            width: 180
-                                            height: 50
-                                            enabled: false
-                                            onClicked: {
-                                                writeSettings()
+                                        //3
+                                        Rectangle {
+                                            width: 500
+                                            height: 80
+                                            color: "transparent"
+                                            Column {
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                spacing: 10
+                                                Label {
+                                                    text: qsTr("K2:")
+                                                }
+                                                TextField {
+                                                    id: k2
+                                                    text: "0.0"
+                                                    height: 25
+                                                    width: 300
+                                                }
                                             }
                                         }
                                     }
-                                    Rectangle {
-                                        width: 500
-                                        height: 250
-                                        color: "#fdfdfb"
-                                        Column{
-                                            anchors.left: parent.left
-                                            anchors.leftMargin: 15
-                                            spacing: 10
-                                            Label {
-                                                id: masterSlaveAddress_1
-                                                text: "Адрес ведомого №1"
-                                            }
-                                            SpinBox {
-                                                id: masterSlaveSlaveId_1
-                                                from: 1
-                                                to: 254
-                                                height: 25
-                                                width: 200
-                                            }
-                                            Label {
-                                                text: "Адрес ведомого №2"
-                                                id: masterSlaveAddress_2
-                                            }
-                                            SpinBox {
-                                                id: masterSlaveSlaveId_2
-                                                height: 25
-                                                from: 1
-                                                to: 254
-                                                width: 200
-                                            }
-                                            Label {
-                                                text: "Адрес ведомого №3"
-                                                id: masterSlaveAddress_3
-                                            }
-                                            SpinBox {
-                                                id: masterSlaveSlaveId_3
-                                                height: 25
-                                                from: 1
-                                                to: 254
-                                                width: 200
-                                            }
-                                            Label {
-                                                text: "Адрес ведомого №4"
-                                                id: masterSlaveAddress_4
-                                            }
-                                            SpinBox {
-                                                id: masterSlaveSlaveId_4
-                                                height: 25
-                                                from: 1
-                                                width: 200
-                                                to: 254
-                                            }
-                                        }
+                                }
+                            }
+                            Column{
+                                anchors.right: parent.right
+                                spacing: 15
+                                width: parent.width / 2
+                                height: parent.height
+                                Button {
+                                    text: "Считать настройки"
+                                    id:readSetingsButton_4
+                                    width: 180
+                                    height: 50
+                                    enabled: (devIsConnected && devIsReady)
+                                    onClicked: {
+                                        viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
+                                    }
+                                }
+                                Button {
+                                    id:writeSettingsButton_4
+                                    text: "Записать настройки"
+                                    width: 180
+                                    height: 50
+                                    enabled: false
+                                    onClicked: {
+                                        writeSettings()
                                     }
                                 }
                             }
                         }
 
                         Item {
+                            Row {
+                                anchors.fill: parent
+                                ScrollView {
+                                    clip: true
+                                    width: parent.width / 2
+                                    height: parent.height
+                                    Column {
+                                        spacing: 10
+                                        anchors.top: parent.top
+                                        anchors.topMargin: 15
+                                        anchors.left: parent.left
+                                        anchors.leftMargin: 15
+                                        //1
+                                        Row {
+                                            width: 500
+                                            height: 130
+                                            Rectangle {
+                                                id:setSlaveMasterModeRectangle
+                                                width: parent.width
+                                                height: parent.height
+                                                color: "transparent"
+                                                Column {
+                                                    anchors.left: parent.left
+                                                    anchors.leftMargin: 15
+                                                    spacing: 10
+                                                    Label {
+                                                        text: "Режим ведущий/ведомый:"
+                                                        id:labelSlaveModes
+                                                    }
+                                                    ComboBox {
+                                                        id: masterSlaveModes
+                                                        width: 200
+                                                        height: 30
+                                                        model: ListModel {
+                                                            ListElement {
+                                                                text: "Выключен"
+                                                            }
+                                                            ListElement {
+                                                                text: "Ведомый"
+                                                            }
+                                                            ListElement {
+                                                                text: "Ведущий"
+                                                            }
+                                                            ListElement {
+                                                                text: "Трансляция"
+                                                            }
+                                                        }
+                                                        onCurrentIndexChanged: {
+                                                            if(masterSlaveModes.currentIndex == 2) {
+                                                                //masterSlavesAddresRectange.enabled = true
+                                                            } else {
+                                                                //masterSlavesAddresRectange.enabled = false
+                                                                masterSlaveFullCountes.value = 0
+                                                            }
+                                                        }
+                                                    }
+                                                    Label {
+                                                        id: masterSlaveModeCountAllLabel
+                                                        text: "Количество ведомых:"
+                                                    }
+                                                    SpinBox {
+                                                        id: masterSlaveFullCountes
+                                                        width: 200
+                                                        height: 25
+                                                        from: 0
+                                                        to: 4
+                                                        onValueChanged: {
+                                                            if(masterSlaveFullCountes.value >= 1) {
+                                                                masterSlaveSlaveId_1.enabled = true
+                                                            } else {
+                                                                masterSlaveFullCountes.value = 0
+                                                                masterSlaveModes.currentIndex = 0
+                                                                masterSlaveSlaveId_1.enabled = false
+                                                                masterSlaveSlaveId_2.enabled = false
+                                                                masterSlaveSlaveId_3.enabled = false
+                                                                masterSlaveSlaveId_4.enabled = false
+                                                            }
+                                                            if(masterSlaveFullCountes.value >= 2) {
+                                                                masterSlaveSlaveId_2.enabled = true
+                                                            } else {
+                                                                masterSlaveSlaveId_2.enabled = false
+                                                            }
+                                                            if(masterSlaveFullCountes.value >= 3) {
+                                                                masterSlaveSlaveId_3.enabled = true
+                                                            } else {
+                                                                masterSlaveSlaveId_3.enabled = false
+                                                            }
+                                                            if(masterSlaveFullCountes.value >= 4) {
+                                                                masterSlaveSlaveId_4.enabled = true
+                                                            } else {
+                                                                masterSlaveSlaveId_4.enabled = false
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        Rectangle {
+                                            width: 500
+                                            height: 250
+                                            color: "transparent"
+                                            Column{
+                                                anchors.left: parent.left
+                                                anchors.leftMargin: 15
+                                                spacing: 10
+                                                Label {
+                                                    id: masterSlaveAddress_1
+                                                    text: "Адрес ведомого №1"
+                                                }
+                                                SpinBox {
+                                                    id: masterSlaveSlaveId_1
+                                                    from: 1
+                                                    to: 254
+                                                    height: 25
+                                                    width: 200
+                                                }
+                                                Label {
+                                                    text: "Адрес ведомого №2"
+                                                    id: masterSlaveAddress_2
+                                                }
+                                                SpinBox {
+                                                    id: masterSlaveSlaveId_2
+                                                    height: 25
+                                                    from: 1
+                                                    to: 254
+                                                    width: 200
+                                                }
+                                                Label {
+                                                    text: "Адрес ведомого №3"
+                                                    id: masterSlaveAddress_3
+                                                }
+                                                SpinBox {
+                                                    id: masterSlaveSlaveId_3
+                                                    height: 25
+                                                    from: 1
+                                                    to: 254
+                                                    width: 200
+                                                }
+                                                Label {
+                                                    text: "Адрес ведомого №4"
+                                                    id: masterSlaveAddress_4
+                                                }
+                                                SpinBox {
+                                                    id: masterSlaveSlaveId_4
+                                                    height: 25
+                                                    from: 1
+                                                    width: 200
+                                                    to: 254
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            Column{
+                                anchors.right: parent.right
+                                spacing: 15
+                                width: parent.width / 2
+                                height: parent.height
+                                Button {
+                                    text: "Считать настройки"
+                                    id:readSetingsButton_5
+                                    width: 180
+                                    height: 50
+                                    enabled: (devIsConnected && devIsReady)
+                                    onClicked: {
+                                        viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
+                                    }
+                                }
+                                Button {
+                                    id:writeSettingsButton_5
+                                    text: "Записать настройки"
+                                    width: 180
+                                    height: 50
+                                    enabled: false
+                                    onClicked: {
+                                        writeSettings()
+                                    }
+                                }
+                            }
+                        }
+                        Item {
                             id:itemDevTarir
                             ScrollView {
                                 clip: true
                                 anchors.fill: parent
-
                                 Column {
                                     spacing: 10
                                     anchors.top: parent.top

@@ -2,8 +2,8 @@
 #define INTERFACES_H
 
 #include <QObject>
-#include <QStringList>
-#include "device/devicesFactory.h"
+#include <memory>
+#include "device/deviceController.h"
 
 class interfacesAbstract : public QObject
 {
@@ -23,6 +23,9 @@ public slots:
     virtual QPair<QStringList,QStringList> getInterfaceProperty() = 0;
     virtual QStringList getAvailableList() = 0;
     virtual DevicesFactory* getDeviceFactory() = 0;
+
+protected:
+    std::shared_ptr<DeviceController> deviceController;
 
 signals:
     void errorInterface(QString conTypeName, QString errorMessage);

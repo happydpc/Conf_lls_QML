@@ -4,8 +4,10 @@ CommandController::CommandController(QObject *parent) : QObject(parent) {
 
 }
 
-bool CommandController::addCommandToStack(sCommandData devCommandData) {
-    commandQueue.enqueue(devCommandData);
+bool CommandController::addCommandToStack(QList<sCommandData> devCommandData) {
+    while(!devCommandData.isEmpty()) {
+        commandQueue.enqueue(devCommandData.takeLast());
+    }
     return !commandQueue.isEmpty();
 }
 

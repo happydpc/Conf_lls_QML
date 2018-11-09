@@ -432,6 +432,24 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
     uint8_t crcRes = 0;
     uint16_t frequency = 0;
     uint16_t value = 0;
+    if(!commandArrayReplyData.isEmpty()) {
+        if(getState() == STATE_DISCONNECTED) { // если что-то есть в ответе - меняем статус на Connected
+            emit eventDeviceUpdateState(Type_DeviceEvent_Connected, commandReqData.deviceIdent, res.first, res.second, commandReqData);
+            setState(DeviceAbstract::STATE_GET_TYPE);
+        }
+        crcRes = crc.crc8_dallas(commandArrayReplyData.data(), commandArrayReplyData.length()-1);
+        if(crcRes != (0xff & commandArrayReplyData.at(commandArrayReplyData.length()-1))) {
+            emit eventDeviceUpdateState(Type_DeviceEvent_Disconnected, commandReqData.deviceIdent, res.first, res.second, commandReqData);
+            setState(DeviceAbstract::STATE_DISCONNECTED);
+            return false;
+        } else {
+            replyIsValid = true;
+        }
+    } else {
+        state = STATE_DISCONNECTED;
+            emit eventDeviceUpdateState(Type_DeviceEvent_Disconnected, commandReqData.deviceIdent, res.first, res.second, commandReqData);
+    }
+
     // мы же знаем какую команду отправили, ее и ожидаем
     // внутри смотрим что она совпадает в пакете
     // ответ должен быть на отправленную команду
@@ -571,6 +589,9 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                             lls_data.settings.get.value = *pSettings;
                             lls_data.settings.get.isValid = true;
                             replyIsValid = true;
+                            if(getState() == STATE_GET_TYPE) {
+                                setState(DeviceAbstract::STATE_CHECK_PASSWORD);
+                            }
                         }
                     }
                 }
@@ -578,9 +599,6 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
         }
         if(replyIsValid) {
             res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
-            if(getState() == STATE_GET_TYPE) {
-                setState(DeviceAbstract::STATE_CHECK_PASSWORD);
-            }
         } else {
             res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
         }
@@ -759,9 +777,6 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
         }
         if(replyIsValid) {
             res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
-            if(getState() == STATE_GET_TYPE) {
-                setState(DeviceAbstract::STATE_CHECK_PASSWORD);
-            }
         } else {
             res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
         }
@@ -789,9 +804,6 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
         }
         if(replyIsValid) {
             res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
-            if(getState() == STATE_GET_TYPE) {
-                setState(DeviceAbstract::STATE_CHECK_PASSWORD);
-            }
         } else {
             res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
         }
@@ -820,9 +832,6 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
         }
         if(replyIsValid) {
             res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
-            if(getState() == STATE_GET_TYPE) {
-                setState(DeviceAbstract::STATE_CHECK_PASSWORD);
-            }
         } else {
             res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
         }
@@ -848,17 +857,12 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
                         lls_data.password.get.authIsNormal = false;
                     }
                     replyIsValid = true;
-                    if(getState() == STATE_CHECK_PASSWORD) {
-                        setState(STATE_START_INIT);
-                    }
+                    setState(STATE_START_INIT);
                 }
             }
         }
         if(replyIsValid) {
             res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
-            if(getState() == STATE_GET_TYPE) {
-                setState(DeviceAbstract::STATE_CHECK_PASSWORD);
-            }
         } else {
             res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
         }
@@ -916,9 +920,6 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
         }
         if(replyIsValid) {
             res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
-            if(getState() == STATE_GET_TYPE) {
-                setState(DeviceAbstract::STATE_CHECK_PASSWORD);
-            }
         } else {
             res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
         }
@@ -929,22 +930,6 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
     }
         break;
     default : break;
-    }
-
-    if(!commandArrayReplyData.isEmpty() && replyIsValid == true) {
-        if(getState() == STATE_DISCONNECTED) { // если что-то есть в ответе - меняем статус на Connected
-            emit eventDeviceUpdateState(Type_DeviceEvent_Connected, commandReqData.deviceIdent, res.first, res.second, commandReqData);
-            setState(DeviceAbstract::STATE_GET_TYPE);
-        }
-        crcRes = crc.crc8_dallas(commandArrayReplyData.data(), commandArrayReplyData.length()-1);
-        if(crcRes != (0xff & commandArrayReplyData.at(commandArrayReplyData.length()-1))) {
-            emit eventDeviceUpdateState(Type_DeviceEvent_Disconnected, commandReqData.deviceIdent, res.first, res.second, commandReqData);
-            setState(DeviceAbstract::STATE_DISCONNECTED);
-            return false;
-        }
-    } else {
-        state = STATE_DISCONNECTED;
-            emit eventDeviceUpdateState(Type_DeviceEvent_Disconnected, commandReqData.deviceIdent, res.first, res.second, commandReqData);
     }
 
     if(getState() == STATE_START_INIT) {
@@ -958,23 +943,32 @@ bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, 
     return replyIsValid;
 }
 
-CommandController::sCommandData Progress_tmk24::getCommandToCheckConnected() {
-    CommandController::sCommandData command;
-    command.deviceIdent = getUniqId();
-    command.isNeedAckMessage = false;
-    command.operationHeader = "check dev is connected";
-    command.devCommand = (int)Progress_tmk24Data::lls_read_errors;
+QList<CommandController::sCommandData> Progress_tmk24::getCommandToCheckConnected() {
+    QList<CommandController::sCommandData> command;
+    CommandController::sCommandData simpleCommand;
+
     command.commandType = CommandController::E_CommandType_send_typical_request;
+    dev.second->makeDataToCommand(command);
+    commandController->addCommandToStack(command);
+
+    simpleCommand.deviceIdent = getUniqId();
+    simpleCommand.isNeedAckMessage = false;
+    simpleCommand.operationHeader = "check dev is connected";
+    simpleCommand.devCommand = (int)Progress_tmk24Data::lls_read_errors;
+    simpleCommand.commandType = CommandController::E_CommandType_send_typical_request;
+    command.push_back(simpleCommand);
     return command;
 }
 
-CommandController::sCommandData Progress_tmk24::getCommandtoCheckPassword() {
-    CommandController::sCommandData command;
-    command.deviceIdent = getUniqId();
-    command.isNeedAckMessage = false;
-    command.operationHeader = "check dev password";
-    command.devCommand = (int)Progress_tmk24Data::lls_check_address_and_pass;
-    command.commandType = CommandController::E_CommandType_send_typical_request;
+QList<CommandController::sCommandData> Progress_tmk24::getCommandtoCheckPassword() {
+    QList<CommandController::sCommandData> command;
+    CommandController::sCommandData simpleCommand;
+    simpleCommand.deviceIdent = getUniqId();
+    simpleCommand.isNeedAckMessage = false;
+    simpleCommand.operationHeader = "check dev password";
+    simpleCommand.devCommand = (int)Progress_tmk24Data::lls_check_address_and_pass;
+    simpleCommand.commandType = CommandController::E_CommandType_send_typical_request;
+    command.push_back(simpleCommand);
     return command;
 }
 
@@ -1012,13 +1006,15 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandListToUpdate() 
     return listCommand;
 }
 
-CommandController::sCommandData Progress_tmk24::getCommandToGetType() {
-    CommandController::sCommandData command;
-    command.deviceIdent = getUniqId();
-    command.isNeedAckMessage = false;
-    command.operationHeader = "get dev type";
-    command.devCommand = (int)Progress_tmk24Data::lls_read_settings;
-    command.commandType = CommandController::E_CommandType_send_typical_request;
+QList<CommandController::sCommandData> Progress_tmk24::getCommandToGetType() {
+    QList<CommandController::sCommandData> command;
+    CommandController::sCommandData simpleCommand;
+    simpleCommand.deviceIdent = getUniqId();
+    simpleCommand.isNeedAckMessage = false;
+    simpleCommand.operationHeader = "get dev type";
+    simpleCommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;
+    simpleCommand.commandType = CommandController::E_CommandType_send_typical_request;
+    command.push_back(simpleCommand);
     return command;
 }
 

@@ -28,9 +28,9 @@ public:
     bool makeDataToCommand(CommandController::sCommandData &commandData) override;
     bool placeDataReplyToCommand(QByteArray &commandArray, CommandController::sCommandData commandReqData) override;
 
-    CommandController::sCommandData getCommandToCheckConnected() override;
-    CommandController::sCommandData getCommandToGetType() override;
-    CommandController::sCommandData getCommandtoCheckPassword() override;
+    QList<CommandController::sCommandData> getCommandToCheckConnected() override;
+    QList<CommandController::sCommandData> getCommandToGetType() override;
+    QList<CommandController::sCommandData> getCommandtoCheckPassword() override;
     QList<CommandController::sCommandData> getCommandListToInit() override;
     QList<CommandController::sCommandData> getCommandListToUpdate() override;
     QList<CommandController::sCommandData> getCommandListToCurrentData() override;

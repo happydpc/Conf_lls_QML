@@ -57,7 +57,9 @@ SOURCES += \
     session/session.cpp \
     session/sessionsecurity.cpp \
     update/updater.cpp \
-    translate/qmltranslator.cpp
+    translate/qmltranslator.cpp \
+    device/deviceCollector.cpp \
+    device/deviceController.cpp
 
 RESOURCES += \
     qml.qrc \
@@ -107,6 +109,8 @@ HEADERS += \
     session/session.h \
     session/sessionsecurity.h \
     update/updater.h \
-    translate/qmltranslator.h
+    translate/qmltranslator.h \
+    device/deviceCollector.h \
+    device/deviceController.h
 
 DISTFILES += device/service/serviceDevicesAbstract

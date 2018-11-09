@@ -72,17 +72,21 @@ bool Progress_tmk4UX::placeDataReplyToCommand(QByteArray &commandArrayReplyData,
     return res;
 }
 
-CommandController::sCommandData Progress_tmk4UX::getCommandToCheckConnected() {
-    CommandController::sCommandData command;
-    command.deviceIdent = getUniqId();
-    command.devCommand = (int)Progress_tmk4UXData::lls_read_errors;
+QList<CommandController::sCommandData> Progress_tmk4UX::getCommandToCheckConnected() {
+    QList<CommandController::sCommandData> command;
+    CommandController::sCommandData simpleCommand;
+    simpleCommand.deviceIdent = getUniqId();
+    simpleCommand.devCommand = (int)Progress_tmk4UXData::lls_read_errors;
+    command.push_back(simpleCommand);
     return command;
 }
 
-CommandController::sCommandData Progress_tmk4UX::getCommandtoCheckPassword() {
-    CommandController::sCommandData command;
-    command.deviceIdent = getUniqId();
-    command.devCommand = (int)Progress_tmk4UXData::lls_check_address_and_pass;
+QList<CommandController::sCommandData> Progress_tmk4UX::getCommandtoCheckPassword() {
+    CommandController::sCommandData simpleCommand;
+    QList<CommandController::sCommandData> command;
+    simpleCommand.deviceIdent = getUniqId();
+    simpleCommand.devCommand = (int)Progress_tmk4UXData::lls_check_address_and_pass;
+    command.push_back(simpleCommand);
     return command;
 }
 
@@ -98,21 +102,14 @@ QList<CommandController::sCommandData> Progress_tmk4UX::getCommandListToUpdate()
     return listCommand;
 }
 
-CommandController::sCommandData Progress_tmk4UX::getCommandToGetType() {
-    CommandController::sCommandData command;
-    command.deviceIdent = getUniqId();
-    command.devCommand = (int)Progress_tmk4UXData::lls_read_settings;
-    return command;
-}
+QList<CommandController::sCommandData> Progress_tmk4UX::getCommandToGetType() {}
 
 QList<CommandController::sCommandData> Progress_tmk4UX::getCommandCustom(QString operation, QPair<QStringList, QStringList> data) {
     QList <CommandController::sCommandData> command;
     return command;
 }
 
-QList<CommandController::sCommandData> Progress_tmk4UX::getCommandCustom(QString operation) {
-
-}
+QList<CommandController::sCommandData> Progress_tmk4UX::getCommandCustom(QString operation) {}
 
 QList<CommandController::sCommandData> Progress_tmk4UX::getCommandListToCurrentData() {
     QList<CommandController::sCommandData> listCommand;

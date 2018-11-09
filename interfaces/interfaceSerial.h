@@ -7,7 +7,7 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 #include <QTimer>
-#include "device/devicesFactory.h"
+#include "device/deviceController.h"
 
 class InterfaceSerial : public interfacesAbstract
 {
@@ -15,8 +15,8 @@ class InterfaceSerial : public interfacesAbstract
 public:
     InterfaceSerial(QString name, QPair<QStringList,QStringList>param);
     ~InterfaceSerial();
-public slots:
 
+public slots:
     void initInterface() override;
     bool openInterface() override;
     bool isOpen() override;
@@ -30,13 +30,8 @@ public slots:
     DevicesFactory* getDeviceFactory() override;
 
 private slots:
-    bool writeData(QByteArray data);
-    void readData();
     void errorHanler(QSerialPort::SerialPortError err);
 private:
-    std::shared_ptr<DevicesFactory> deviceFactory;
-private:
-
     static constexpr char* typeName = "serial";
     bool isManualClosed;
     std::unique_ptr<QSerialPort> portHandler = nullptr;

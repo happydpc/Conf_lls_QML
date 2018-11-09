@@ -135,12 +135,12 @@ public slots:
     void setChangedIndexInteface(int index);
 
 private slots:
-    void deviceConnected(DevicesFactory::E_DeviceType, QString uniqNameId);
-    void deviceDisconnected(DevicesFactory::E_DeviceType, QString uniqNameId);
-    void deviceReadyCurrentData(DevicesFactory::E_DeviceType, QString uniqNameId);
-    void deviceReadyProperties(DevicesFactory::E_DeviceType, QString uniqNameId);
-    void deviceReadyInit(DevicesFactory::E_DeviceType, QString uniqNameId);
-    void deviceCheckReady(DevicesFactory::E_DeviceType devType,QString devUniqNameId, bool result);
+    void deviceConnected(QString devType, QString uniqNameId);
+    void deviceDisconnected(QString devType, QString uniqNameId);
+    void deviceReadyCurrentData(QString devType, QString uniqNameId);
+    void deviceReadyProperties(QString devType, QString uniqNameId);
+    void deviceReadyInit(QString devType, QString uniqNameId);
+    void deviceCheckReady(QString devType, QString devUniqNameId, bool result);
 
     void interfaceTreeChanged(int ioIndex, ConnectionFactory::E_ConnectionUpdateType type);
     void deviceTreeChanged(DevicesFactory::E_DeviceUpdateType type, int index);
