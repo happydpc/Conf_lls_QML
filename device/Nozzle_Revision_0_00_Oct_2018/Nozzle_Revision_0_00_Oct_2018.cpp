@@ -163,6 +163,7 @@ bool Nozzle_Revision_0_00_Oct_2018::makeDataToCommand(CommandController::sComman
     bool res = false;
     Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData tCommand;
     memset(&tCommand, 0, sizeof(tCommand));
+    commandData.commandOptionData.clear();
     tCommand.commandType = (Nozzle_Revision_0_00_Oct_2018_Data::eConsoleCommandType)commandData.devCommand;
     tCommand.magic_word = Nozzle_Revision_0_00_Oct_2018_Data::CONSOLE_MAGIC_WORD;
     tCommand.deviceIdent = Nozzle_Revision_0_00_Oct_2018_Data::CONSOLE_DEVICE_IDENT;
@@ -615,9 +616,12 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
     QList<CommandController::sCommandData> command;
     CommandController::sCommandData simpleCommand;
     simpleCommand.isNeedAckMessage = false;
+    simpleCommand.delay_send_ms = 150;
     simpleCommand.operationHeader = "check dev is connected";
     simpleCommand.deviceIdent = getUniqId();
     simpleCommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getIsReadyCommand;
+    simpleCommand.commandType = CommandController::E_CommandType_send_typical_request;
+    makeDataToCommand(simpleCommand);
     command.push_back(simpleCommand);
     return command;
 }
@@ -626,29 +630,39 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
     QList<CommandController::sCommandData> command;
     CommandController::sCommandData simpleCommand;
     simpleCommand.deviceIdent = getUniqId();
+    simpleCommand.delay_send_ms = 150;
     simpleCommand.isNeedAckMessage = false;
     simpleCommand.operationHeader = "check dev password";
     simpleCommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getSecurityData;
+    simpleCommand.commandType = CommandController::E_CommandType_send_typical_request;
+    makeDataToCommand(simpleCommand);
     command.push_back(simpleCommand);
     return command;
 }
 
 QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommandListToInit() {
     QList<CommandController::sCommandData> listCommand;
-    CommandController::sCommandData command;
-    command.deviceIdent = getUniqId();
-    command.operationHeader = "init dev after connecting";
-    command.isNeedAckMessage = false;
-    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getIsReadyCommand;
-    listCommand.push_back(command);
-    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getSecurityData;
-    listCommand.push_back(command);
-    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getAccelConfig;
-    listCommand.push_back(command);
-    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkConfig;
-    listCommand.push_back(command);
-    command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getOtherData;
-    listCommand.push_back(command);
+    CommandController::sCommandData simpleCommand;
+    simpleCommand.deviceIdent = getUniqId();
+    simpleCommand.delay_send_ms = 150;
+    simpleCommand.operationHeader = "init dev after connecting";
+    simpleCommand.isNeedAckMessage = false;
+    simpleCommand.commandType = CommandController::E_CommandType_send_typical_request;
+    simpleCommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getIsReadyCommand;
+    makeDataToCommand(simpleCommand);
+    listCommand.push_back(simpleCommand);
+    simpleCommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getSecurityData;
+    makeDataToCommand(simpleCommand);
+    listCommand.push_back(simpleCommand);
+    simpleCommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getAccelConfig;
+    makeDataToCommand(simpleCommand);
+    listCommand.push_back(simpleCommand);
+    simpleCommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkConfig;
+    makeDataToCommand(simpleCommand);
+    listCommand.push_back(simpleCommand);
+    simpleCommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getOtherData;
+    makeDataToCommand(simpleCommand);
+    listCommand.push_back(simpleCommand);
     return listCommand;
 }
 
@@ -659,10 +673,13 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
 QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommandToGetType() {
     QList<CommandController::sCommandData> command;
     CommandController::sCommandData simpleCommand;
+    simpleCommand.commandType = CommandController::E_CommandType_send_typical_request;
     simpleCommand.deviceIdent = getUniqId();
+    simpleCommand.delay_send_ms = 150;
     simpleCommand.isNeedAckMessage = false;
     simpleCommand.operationHeader = "get dev type";
     simpleCommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_EmptyCommand;
+    makeDataToCommand(simpleCommand);
     command.push_back(simpleCommand);
     return command;
 }
@@ -670,18 +687,25 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
 QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommandListToCurrentData() {
     QList<CommandController::sCommandData> listCommand;
     CommandController::sCommandData command;
+    command.delay_send_ms = 150;
     command.deviceIdent = getUniqId();
     command.operationHeader = "typical command get current data";
     command.isNeedAckMessage = false;
+    command.commandType = CommandController::E_CommandType_send_typical_request;
     command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getAccelData;
+    makeDataToCommand(command);
     listCommand.push_back(command);
     command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getBatteryData;
+    makeDataToCommand(command);
     listCommand.push_back(command);
     command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getCardData;
+    makeDataToCommand(command);
     listCommand.push_back(command);
     command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkData;
+    makeDataToCommand(command);
     listCommand.push_back(command);
     command.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getOtherData;
+    makeDataToCommand(command);
     listCommand.push_back(command);
     return listCommand;
 }
@@ -694,32 +718,40 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
     QList <CommandController::sCommandData> command;
     CommandController::sCommandData tcommand;
     tcommand.operationHeader = operation;
-    tcommand.isNeedIncreasedDelay = false;
+    tcommand.delay_send_ms = 150;
+    tcommand.commandType = CommandController::E_CommandType_send_typical_request;
+    if(operation == "update device") {
+        command = getCommandListToUpdate();
+    }
     if(operation == "set current accel value as null pointe") { // TODO:!!!
     } else if(operation == "get current dev settings witout dialog") {
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = false; // что не нужен ответ на форме
-        tcommand.isNeedIncreasedDelay = true;
         tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getSecurityData;
+        makeDataToCommand(tcommand);
         command.push_back(tcommand);
         tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getAccelConfig;
+        makeDataToCommand(tcommand);
         command.push_back(tcommand);
+        makeDataToCommand(tcommand);
         tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkConfig;
         command.push_back(tcommand);
     } else if(operation == "get current dev settings") {
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
         tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getSecurityData;
+        makeDataToCommand(tcommand);
         command.push_back(tcommand);
         tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getAccelConfig;
+        makeDataToCommand(tcommand);
         command.push_back(tcommand);
         tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkConfig;
+        makeDataToCommand(tcommand);
         command.push_back(tcommand);
     } else if(operation == "set current dev settings accel config") {
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
         tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setAccelConfig;
-        tcommand.isNeedIncreasedDelay = true;
         // key
         for(auto i:data.first) {
             tcommand.args.key.push_back(i);
@@ -728,12 +760,12 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
         for(auto i:data.second) {
             tcommand.args.value.push_back(i);
         }
+        makeDataToCommand(tcommand);
         command.push_back(tcommand);
     } else if(operation == "set current dev password") {
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
         tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setSecurityData;
-        tcommand.isNeedIncreasedDelay = true;
         // key
         for(auto i:data.first) {
             tcommand.args.key.push_back(i);
@@ -742,12 +774,12 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
         for(auto i:data.second) {
             tcommand.args.value.push_back(i);
         }
+        makeDataToCommand(tcommand);
         command.push_back(tcommand);
     } else if(operation == "set current dev settings net config") {
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
         tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setNetworkConfig;
-        tcommand.isNeedIncreasedDelay = true;
         // key
         for(auto i:data.first) {
             tcommand.args.key.push_back(i);
@@ -756,12 +788,13 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
         for(auto i:data.second) {
             tcommand.args.value.push_back(i);
         }
+        makeDataToCommand(tcommand);
         command.push_back(tcommand);
     } else if(operation == "set new battery") {
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
         tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setBatteryNewAccum;
-        tcommand.isNeedIncreasedDelay = true;
+        makeDataToCommand(tcommand);
         command.push_back(tcommand);
     } else {
         qDebug() << "getCommandCustom -type unknown!";

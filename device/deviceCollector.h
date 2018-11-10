@@ -4,6 +4,7 @@
 #include <QObject>
 #include <memory>
 #include "command/commandController.h"
+#include "interfaces/interfacesAbstract.h"
 #include "QTimer"
 #include "QMutex"
 
@@ -11,29 +12,17 @@ class DeviceCollector : public QObject
 {
     Q_OBJECT
 public:
-    explicit DeviceCollector();
+    explicit DeviceCollector(interfacesAbstract *p_int_abstract);
 
-    bool getIsIdle();
     void addCommand(QList<CommandController::sCommandData> commands);
-
-
-    void checkDeviceIsOnline(QString devType, QStringList keyParam, QStringList valParam);
-    void placeReplyDataFromInterface(QByteArray data);
-    void setDeviceCommandUpdateByIndex(int index);
-    void setDeviceInitCommandByIndex(int index);
-    void setDeviceReInitByIndex(int index);
-    bool sendCustomCommadToDev(int indexDev, QString operation, QStringList keys, QStringList values);
-    bool sendCustomCommadToDev(int indexDev, QString operation);
-    void sendCustomCommandUseCallback(QString devType, QString operation, QStringList keys, QStringList values);
+    bool getIsIdle();
 
 signals:
     void deviceCheckIsReady(QString devType, QString uniqNameId, bool isOnline);
-    void writeData(QByteArray data);
-    void readReplyData();
-
+    void reqReadyReplyDataToDevice(QByteArray data, CommandController::sCommandData command);
 private slots:
-    void devShedullerSlot();
-    void onReplySend();
+    void controllHandler();
+    void readyReadReply();
 
 private:
     bool isIdle;
@@ -47,10 +36,11 @@ private:
         bool result = false;
     }checkDeviceStruct;
 
+    interfacesAbstract* int_abstract;
+    std::unique_ptr<CommandController> commandController;
+    std::unique_ptr<QTimer> reqTimerHanler;
+    bool reqIsBusy;
     QScopedPointer<QTimer> sendReqTimer;
-    int indexProcessedDev = 50;
-    const int delayTypicalCommandMs = 200;
-    const int delayIncreasedCommandMs = 300;
 };
 
 #endif // DEVICECOLLECTOR_H

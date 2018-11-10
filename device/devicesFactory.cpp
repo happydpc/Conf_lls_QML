@@ -8,15 +8,10 @@ DevicesFactory::DevicesFactory() {}
 
 DevicesFactory::~DevicesFactory() {}
 
-bool DevicesFactory::addNewDevice(QString devType, QPair<QStringList,QStringList>param,
-                                  ServiceDevicesAbstract *pDevService) {
+bool DevicesFactory::addNewDevice(QString devType, QStringList keyParam, QStringList valueParam, ServiceDevicesAbstract *pDevService) {
     bool res = false;
     QString devId;
     QString devHeader;
-    // device its once type
-    // only devices of the same
-    // type are allowed
-    // ...
     if(deviceMap.isEmpty()) {
         res = true;
     } else {
@@ -36,12 +31,12 @@ bool DevicesFactory::addNewDevice(QString devType, QPair<QStringList,QStringList
         return false;
     }
 
-    for(int i=0; i<param.first.size(); i++) {
-        if(param.first[i] == "id") {
-            devId = param.second[i];
+    for(int i=0; i<keyParam.size(); i++) {
+        if(keyParam[i] == "id") {
+            devId = valueParam[i];
         }
-        if(param.first[i] == "header") {
-            devHeader = param.second[i];
+        if(keyParam[i] == "header") {
+            devHeader = valueParam[i];
         }
     }
     if(!devId.isEmpty()) {
@@ -49,15 +44,12 @@ bool DevicesFactory::addNewDevice(QString devType, QPair<QStringList,QStringList
             if(devHeader.isEmpty()) {
                 devHeader = QString("dev_num_%2").arg(deviceMap.size());
             }
-            lockMutextDevMap();
-
             if(devType.toLower() == QString(Progress_tmk24::name).toLower()) { // TODO: need uniqPtr
-                deviceMap.push_back(QPair<QString, DeviceAbstract*>(devId, new Progress_tmk24(devId, devHeader, param, pDevService)));
+                deviceMap.push_back(QPair<QString, DeviceAbstract*>(devId, new Progress_tmk24(devId, devHeader, keyParam, valueParam, pDevService)));
             }
             if(devType.toLower() == QString(Nozzle_Revision_0_00_Oct_2018::name).toLower()) { // TODO: need uniqPtr
                 deviceMap.push_back(QPair<QString, DeviceAbstract*>(devId, new Nozzle_Revision_0_00_Oct_2018(devId, devHeader)));
             }
-            unlockMutextDevMap();
             emit deviceUpdateTree(DevicesFactory::Type_Update_Added, 0);
             // TODO: может быть лучше как-то подругому перехватывать указатаель?
             connect(findDeviceByUnicIdent(devId)->second,
@@ -69,43 +61,30 @@ bool DevicesFactory::addNewDevice(QString devType, QPair<QStringList,QStringList
 
 bool DevicesFactory::removeDevice(QString uniqDevName) {
     bool res = false;
-    lockMutextDevMap();
     QPair<QString,DeviceAbstract*>* pDev = findDeviceByUnicIdent(uniqDevName);
     if(pDev != nullptr) {
         deviceMap.erase(pDev);
         res = true;
     }
-    unlockMutextDevMap();
     emit deviceUpdateTree(DevicesFactory::Type_Update_Removed, 0);
     return res;
 }
 
 bool DevicesFactory::removeDeviceByIndex(int index) {
     bool res = false;
-    lockMutextDevMap();
     QPair<QString,DeviceAbstract*>* pDev = findDeviceByIndex(index);
     if(pDev != nullptr) {
         deviceMap.erase(pDev);
         res = true;
     }
-    unlockMutextDevMap();
     emit deviceUpdateTree(DevicesFactory::Type_Update_Removed, 0);
     return res;
 }
 
 bool DevicesFactory::removeDeviceAll() {
-    lockMutextDevMap();
     deviceMap.clear();
-    unlockMutextDevMap();
     emit deviceUpdateTree(DevicesFactory::Type_Update_Removed, 0);
     return true;
-}
-
-void DevicesFactory::lockMutextDevMap() {
-    devMutex->tryLock(1000);
-}
-void DevicesFactory::unlockMutextDevMap() {
-    devMutex->unlock();
 }
 
 int DevicesFactory::getDeviceCount() {

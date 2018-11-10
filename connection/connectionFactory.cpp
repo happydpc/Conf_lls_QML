@@ -1,8 +1,8 @@
-#include "./connection/connectionFactory.h"
+#include "connection/connectionFactory.h"
+#include "interfaces/interfaceSerial.h"
 #include <QDebug>
 
 ConnectionFactory::ConnectionFactory() {
-    this->interfaceList.clear();
     this->lockInterface = std::make_unique<QMutex>(QMutex::NonRecursive);
 }
 ConnectionFactory::~ConnectionFactory() {}
@@ -10,28 +10,17 @@ ConnectionFactory::~ConnectionFactory() {}
 bool ConnectionFactory::addConnection(QString typeName, QString name, QPair<QStringList,QStringList> param) {
     bool res = false;
     lockInterface->lock();
-    if(typeName.toLower() == QString("serial")) {
-        std::shared_ptr<interfacesAbstract> p_interface = std::make_shared<InterfaceSerial>(name, param);
-        if(p_interface.get() != nullptr) {
-            res  = p_interface->openInterface();
-            if(res) {
-                connect(p_interface.get(), SIGNAL(errorInterface(QString,QString)), this, SLOT(errorFromConnection(QString,QString)));
-                interfaceList.push_back(std::move(p_interface));
-                emit updateTree(getCountConnection() != 0 ? getCountConnection()-1 : 0, ConnectionFactory::Type_Update_Add);
-            } else {
-                qDebug() << "ConnectionFactory: addConnection -ERR " + name;
-                p_interface.reset();
-            }
-        }
-    } else if(typeName.toLower() == QString("ethernet")) {
-
-    } else if(typeName.toLower() == QString("ble")) {
-
-    } else {
-        qDebug() << "Error type create connection";
+    try {
+        std::shared_ptr<Connection> p_connection = std::make_shared<Connection>(typeName, name, param);
+        connect(p_connection.get(), &Connection::errorConnection, this, &ConnectionFactory::errorFromConnection);
+        connectionList.push_back(std::move(p_connection));
+        emit updateTree(getCountConnection() != 0 ? getCountConnection()-1 : 0, ConnectionFactory::Type_Update_Add);
+        lockInterface->unlock();
+        res = true;
+    } catch(...) {
+        lockInterface->unlock();
+        qDebug() << "ConnectionFactory: addConnection -ERR " + name;
     }
-    if(!res) qDebug() << "Error type create connection";
-    lockInterface->unlock();
     return res;
 }
 
@@ -50,9 +39,9 @@ QStringList ConnectionFactory::getAvailableName(QString typeName) {
 
 void ConnectionFactory::removeConnection(QString name) {
     lockInterface->lock();
-    for(auto it = interfaceList.begin(); it != interfaceList.end(); it++) {
-        if((*it)->getInterfaceName() == name) {
-            interfaceList.erase(it);
+    for(auto it = connectionList.begin(); it!=connectionList.end(); it++) {
+        if((*it)->getInterfaceAbstract()->getInterfaceName() == name) {
+            connectionList.erase(it);
         }
     }
     lockInterface->unlock();
@@ -61,10 +50,10 @@ void ConnectionFactory::removeConnection(QString name) {
 
 void ConnectionFactory::removeConnection(int index) {
     lockInterface->lock();
-    if(!interfaceList.isEmpty()) {
-        if(index <= interfaceList.size()-1) {
-            interfaceList[index]->closeInterface();
-            interfaceList.erase(interfaceList.begin() + index);
+    if(!connectionList.isEmpty()) {
+        if(index <= connectionList.size()-1) {
+            connectionList[index]->closeAndClear();
+            connectionList.erase(connectionList.begin() + index);
             emit updateTree(getCountConnection() != 0 ? getCountConnection()-1 : 0, ConnectionFactory::Type_Update_Removed);
         }
     }
@@ -73,56 +62,56 @@ void ConnectionFactory::removeConnection(int index) {
 
 void ConnectionFactory::removeAll() {
     lockInterface->lock();
-    if(!interfaceList.isEmpty()) {
-        for(int i=0; i<interfaceList.size(); i++) {
-            interfaceList[i]->closeInterface();
+    if(!connectionList.isEmpty()) {
+        for(int i=0; i<connectionList.size(); i++) {
+            connectionList[i].get()->closeAndClear();
         }
-        interfaceList.clear();
+        connectionList.clear();
         emit updateTree(0, ConnectionFactory::Type_Update_Removed);
     }
     lockInterface->unlock();
 }
 
 int ConnectionFactory::getCountConnection() {
-    return interfaceList.size();
+    return connectionList.size();
 }
 
 QString ConnectionFactory::getInteraceNameFromIndex(int index) {
-    QString res;
-    int counter = 0;
-    for(auto i=interfaceList.begin(); i!=interfaceList.end(); i++) {
-        if(counter == index) {
-            res = (*i)->getInterfaceName();
-            break;
+    QString res = "undefined";
+    if(!connectionList.empty()) {
+        if(index >= connectionList.size()-1) {
+            auto p_ret = connectionList.begin();
+            std::advance(p_ret, index);
+            res = p_ret->get()->getInterfaceAbstract()->getInterfaceName();
         }
-        counter++;
     }
     return res;
 }
 
 interfacesAbstract* ConnectionFactory::getInterace(QString name) {
-    interfacesAbstract* p_interface = nullptr;
-    for(auto it = interfaceList.begin(); it!=interfaceList.end(); it++) {
-        if(it->get()->getInterfaceName() == name) {
-            p_interface = it->get();
-            break;
+    for(auto it = connectionList.begin(); it!=connectionList.end(); it++) {
+        if(it->get()->getInterfaceAbstract()->getInterfaceName() == name) {
+            return it->get()->getInterfaceAbstract();
         }
     }
-    return p_interface;
+    return nullptr;
 }
 
 interfacesAbstract* ConnectionFactory::getInterace(int index) {
-    interfacesAbstract *p_interface = nullptr;
-    QString name = getInteraceNameFromIndex(index);
-    if(!name.isEmpty()) {
-        for(auto it = interfaceList.begin(); it!=interfaceList.end(); it++) {
-            if(it->get()->getInterfaceName() == name) {
-                p_interface = it->get();
-                break;
-            }
+    if(!connectionList.empty()) {
+        if(index >= connectionList.size()-1) {
+            auto p_ret = connectionList.begin();
+            std::advance(p_ret, index);
+            return p_ret->get()->getInterfaceAbstract();
         }
     }
-    return p_interface;
+    return nullptr;
+}
+
+DeviceController* ConnectionFactory::getDeviceController(int ioIndex) {
+    auto ret_it = connectionList.begin();
+    std::advance(ret_it, ioIndex);
+    return  ret_it->get()->getDeviceController();
 }
 
 //-----------------------------------------------------/

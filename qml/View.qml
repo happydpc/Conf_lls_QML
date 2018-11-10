@@ -19,9 +19,9 @@ Item {
         onDeleteInterfaceSuccesfull: {
             projectPanel.devicePropertyPanel.intefaceDeleted(ioIndex)
         }
-        onInterfaceSetActiveProperty: {
-            projectPanel.devicePropertyPanel.setActiveInterfacePanelType(ioType, ioIndex)
-        }
+//        onInterfaceSetActiveProperty: {
+//            projectPanel.devicePropertyPanel.setActiveInterfacePanelType(ioType, ioIndex)
+//        }
         onAddDeviceSuccesfull: {
             projectPanel.devicePropertyPanel.deviceAdded(ioIndex, devType, devKeyProperty, devValueProperty)
         }

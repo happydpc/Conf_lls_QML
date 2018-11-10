@@ -47,10 +47,15 @@ Popup {
                     }
                 }
                 onAccepted: {
-                    var tNewId = newIdAddress.value
-                    var tPassword = ""
-                    var tCurrentId = currentId.text
-                    viewController.setCurrentDevChangeId(tPassword, tNewId, tCurrentId)
+                    var key = []
+                    var value = []
+                    key.push("newId")
+                    key.push("password")
+                    key.push("currentId")
+                    value.push(newIdAddress.value)
+                    value.push(password.text)
+                    value.push(currentId.text)
+                    viewController.setCurrentDevChangeId("change current dev id", key, value)
                     close()
                 }
             }

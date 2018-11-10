@@ -2,21 +2,16 @@
 #include "QDebug"
 
 InterfaceSerial::InterfaceSerial(QString name, QPair<QStringList,QStringList>param) {
-    this->deviceController = std::make_shared<DeviceController>();
     this->portHandler = std::make_unique<QSerialPort>();
     this->name = name;
     this->param = param;
     this->isManualClosed = false;
-//    connect(deviceFactory.get(), SIGNAL(writeData(QByteArray)),
-//            this, SLOT(writeData(QByteArray)));
-//    connect(deviceFactory.get(), SIGNAL(readReplyData()), this, SLOT(readData()));
 }
 
 InterfaceSerial::~InterfaceSerial() {
     if(portHandler->isOpen()) {
         portHandler->close();
     }
-//    deviceFactory.reset();
     delete portHandler.release();
 }
 
@@ -61,7 +56,7 @@ void InterfaceSerial::closeInterface() {
     }
 }
 
-bool InterfaceSerial::sendData(QByteArray &pData)  {
+bool InterfaceSerial::sendData(QByteArray pData)  {
     if(!portHandler->isOpen()) {
         return false;
     }
@@ -159,9 +154,5 @@ void InterfaceSerial::errorHanler(QSerialPort::SerialPortError err) {
 }
 
 QString InterfaceSerial::getType() {
-//    return QString::fromLocal8Bit(typeName, strlen(typeName));
-}
-
-DevicesFactory* InterfaceSerial::getDeviceFactory() {
-    return deviceController.get()->getDeviceFactory();
+    return QString::fromLocal8Bit(typeName, strlen(typeName));
 }

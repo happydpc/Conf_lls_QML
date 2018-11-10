@@ -33,7 +33,7 @@ public:
             QList<QString>key;
             QList<QString>value;
         }args;
-        bool isNeedIncreasedDelay;
+        int delay_send_ms;
         QString operationHeader;
     }sCommandData;
 
@@ -48,47 +48,3 @@ private:
 };
 
 #endif // COMMANDCONTROLLER_H
-
-//typedef enum {
-//    E_CommandType_send_typical_request,
-//    E_CommandType_send_security_request,
-//    E_CommandType_command_without_request
-//}eCommandType;
-
-//typedef struct {
-//    // executed status
-//    bool isNoExecuted;
-//    bool isExecutedNormal;
-//    bool isExecutedError;
-//    // bytearray for command buf
-//    QByteArray commandOptionData;
-//    // buffer for transmit settings, firmware and other data
-//    struct {
-//        QList<QString>key;
-//        QList<QString>value;
-//    }args;
-//    bool isNeedIncreasedDelay;
-//    QString operationHeader;
-//}sData;
-
-//typedef struct {
-//    // type command (typical request, sequrity, quite request)
-//    eCommandType commandTypes;
-//    // dev command
-//    QList<int> devCommands;
-//    QList<sData>data;
-
-//    int countRepeatIfErrorExec;
-
-//    // type signal affter it exec
-//    int typeResultSignal;
-//    QString typeResultMessage;
-
-//    // uniqual ident device
-//    QString deviceIdent;
-//    QString deviceTypeName;
-
-//    // need ack what command executed?
-//    bool isNeedAckMessage;
-//    QString exectAckMessage;
-//}sCommandData;

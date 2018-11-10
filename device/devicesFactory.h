@@ -28,7 +28,7 @@ public:
 
 public slots:
 
-    bool addNewDevice(QString type, QPair<QStringList,QStringList>param, ServiceDevicesAbstract *pDevService);
+    bool addNewDevice(QString type, QStringList keyParam, QStringList valueParam, ServiceDevicesAbstract *pDevService);
     bool removeDevice(QString uniqDevName);
     bool removeDeviceByIndex(int index);
     bool removeDeviceAll();
@@ -68,11 +68,8 @@ signals:
 
 private slots:
     void deviceEventUpdateDevStatusSlot(DeviceAbstract::E_DeviceEvent devTypeEvent, QString devId, QStringList devKey, QStringList devValue, CommandController::sCommandData command);
-    void lockMutextDevMap();
-    void unlockMutextDevMap();
 private:
     QVector<QPair<QString,DeviceAbstract*>> deviceMap;
-    std::unique_ptr<QMutex> devMutex;
 };
 
 #endif // DEVICESFACTORY_H

@@ -12,8 +12,7 @@
 class Progress_tmk24 : public DeviceAbstract
 {
 public:
-    Progress_tmk24(QString uniqIdentId, QString header,
-                   QPair<QStringList,QStringList>param,
+    Progress_tmk24(QString uniqIdentId, QString header, QStringList keyValue, QStringList value,
                    ServiceDevicesAbstract *pServiceAbstract);
     ~Progress_tmk24();
 

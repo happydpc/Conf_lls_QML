@@ -5,10 +5,7 @@
 #include <QVector>
 #include <QMutex>
 #include <memory>
-#include "interfaces/interfacesAbstract.h"
-#include "interfaces/interfaceSerial.h"
-#include "interfaces/interfaceBLE.h"
-#include "interfaces/interfaceEthernet.h"
+#include "connection/connection.h"
 
 class ConnectionFactory : public QObject
 {
@@ -41,15 +38,14 @@ public slots:
 
     void errorFromConnection(QString conTypeName, QString errMessage);
 
+    DeviceController* getDeviceController(int ioIndex);
+
 signals:
     void updateTree(int ioIndex, ConnectionFactory::E_ConnectionUpdateType type);
 
 private:
-
-    QVector<std::shared_ptr<interfacesAbstract>>interfaceList;
-
+    QVector<std::shared_ptr<Connection>> connectionList;
     std::unique_ptr<QMutex> lockInterface;
-
 };
 
 #endif // CONNECTIONFACTORY_H

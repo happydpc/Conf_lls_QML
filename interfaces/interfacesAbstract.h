@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <memory>
-#include "device/deviceController.h"
 
 class interfacesAbstract : public QObject
 {
@@ -16,16 +15,12 @@ public slots:
     virtual bool openInterface() = 0;
     virtual bool isOpen() = 0;
     virtual void closeInterface() = 0;
-    virtual bool sendData(QByteArray &pData) = 0;
+    virtual bool sendData(QByteArray pData) = 0;
     virtual bool readData(QByteArray &pData) = 0;
     virtual QString getType() = 0;
     virtual QString getInterfaceName() = 0;
     virtual QPair<QStringList,QStringList> getInterfaceProperty() = 0;
     virtual QStringList getAvailableList() = 0;
-    virtual DevicesFactory* getDeviceFactory() = 0;
-
-protected:
-    std::shared_ptr<DeviceController> deviceController;
 
 signals:
     void errorInterface(QString conTypeName, QString errorMessage);

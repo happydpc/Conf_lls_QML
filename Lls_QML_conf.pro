@@ -16,7 +16,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 DEFINES += PROGRESS
 #DEFINES += GLOSSAV
-RC_FILE += icon_pg.rc
+#RC_FILE += icon_pg.rc
 #RC_FILE += icon_gs.rc
 
 
@@ -30,8 +30,6 @@ SOURCES += \
     connection/connectionFactory.cpp \
     device/deviceAbstract.cpp \
     device/devicesFactory.cpp \
-    interfaces/interfaceBLE.cpp \
-    interfaces/interfaceEthernet.cpp \
     interfaces/interfacesAbstract.cpp \
     interfaces/interfaceSerial.cpp \
     view/viewController.cpp \
@@ -59,7 +57,8 @@ SOURCES += \
     update/updater.cpp \
     translate/qmltranslator.cpp \
     device/deviceCollector.cpp \
-    device/deviceController.cpp
+    device/deviceController.cpp \
+    connection/connection.cpp
 
 RESOURCES += \
     qml.qrc \
@@ -82,8 +81,6 @@ HEADERS += \
     connection/connectionFactory.h \
     device/deviceAbstract.h \
     device/devicesFactory.h \
-    interfaces/interfaceBLE.h \
-    interfaces/interfaceEthernet.h \
     interfaces/interfacesAbstract.h \
     interfaces/interfaceSerial.h \
     view/viewController.h \
@@ -111,6 +108,7 @@ HEADERS += \
     update/updater.h \
     translate/qmltranslator.h \
     device/deviceCollector.h \
-    device/deviceController.h
+    device/deviceController.h \
+    connection/connection.h
 
 DISTFILES += device/service/serviceDevicesAbstract
