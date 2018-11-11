@@ -102,7 +102,10 @@ bool DeviceController::removeDevice(QString devId) {
     }
 }
 
-bool DeviceController::sendCustomCommadToDev(int indexDev, QString operation, QStringList keys, QStringList values) {
+//********************************************/
+// its for send deffered request
+//********************************************/
+bool DeviceController::sendCommadToDev(QString devId, QString operation, QStringList keys, QStringList values) {
     QList<CommandController::sCommandData> command;
     QPair<QStringList,QStringList> arguments;
     bool res = false;
@@ -111,8 +114,39 @@ bool DeviceController::sendCustomCommadToDev(int indexDev, QString operation, QS
         arguments.second.push_back(values.at(i));
     }
     if(devMutex->tryLock(1000)) {
-        deviceCollector->addCommand(deviceFactory->findDeviceByIndex(indexDev)->second->getCommandCustom(operation, arguments));
-        devMutex->unlock();
+        auto dev = deviceFactory->findDeviceByUnicIdent(devId);
+        if(dev != nullptr) {
+            auto devComman = dev->second->getCommandCustom(operation, arguments);
+            if(!devComman.empty()) {
+                deviceCollector->addCommand(devComman);
+            }
+            devMutex->unlock();
+        }
+        res = true;
+    }
+    return res;
+}
+
+//********************************************/
+// its for imediately exect command
+//********************************************/
+QStringList DeviceController::exeCommadToDev(QString devId, QString operation, QStringList keys, QStringList values) {
+    QList<CommandController::sCommandData> command;
+    QPair<QStringList,QStringList> arguments;
+    bool res = false;
+    for(int i=0; i<keys.size(); i++) {
+        arguments.first.push_back(keys.at(i));
+        arguments.second.push_back(values.at(i));
+    }
+    if(devMutex->tryLock(1000)) {
+        auto dev = deviceFactory->findDeviceByUnicIdent(devId);
+        if(dev != nullptr) {
+            auto devComman = dev->second->getCommandCustom(operation, arguments);
+            if(!devComman.empty()) {
+                deviceCollector->addCommand(devComman);
+            }
+            devMutex->unlock();
+        }
         res = true;
     }
     return res;

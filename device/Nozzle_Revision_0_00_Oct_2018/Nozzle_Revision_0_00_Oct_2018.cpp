@@ -710,10 +710,6 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
     return listCommand;
 }
 
-QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommandCustom(QString operation) {
-    return getCommandCustom(operation, QPair<QStringList,QStringList>());
-}
-
 QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommandCustom(QString operation, QPair<QStringList, QStringList> data) {
     QList <CommandController::sCommandData> command;
     CommandController::sCommandData tcommand;
@@ -800,4 +796,8 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
         qDebug() << "getCommandCustom -type unknown!";
     }
     return command;
+}
+
+QStringList Nozzle_Revision_0_00_Oct_2018::execCommand(QString operation, QPair<QStringList, QStringList>) {
+
 }

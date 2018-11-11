@@ -39,7 +39,7 @@ public:
     QList<CommandController::sCommandData> getCommandListToUpdate() override;
     QList<CommandController::sCommandData> getCommandListToCurrentData() override;
     QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList> data) override;
-    QList<CommandController::sCommandData> getCommandCustom(QString operation) override;
+    QStringList execCommand(QString operation, QPair<QStringList, QStringList>) override;
     QList<int> getChart() override;
     ServiceDevicesAbstract* getServiceAbstract() override;
 

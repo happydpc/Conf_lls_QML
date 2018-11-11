@@ -52,7 +52,7 @@ public:
     virtual QList<CommandController::sCommandData> getCommandListToUpdate() = 0;
     virtual QList<CommandController::sCommandData> getCommandListToCurrentData() = 0;
     virtual QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList>) = 0;
-    virtual QList<CommandController::sCommandData> getCommandCustom(QString operation) = 0;
+    virtual QStringList execCommand(QString operation, QPair<QStringList, QStringList>) = 0;
 
     virtual QList<int> getChart() = 0;
     virtual ServiceDevicesAbstract* getServiceAbstract() = 0;

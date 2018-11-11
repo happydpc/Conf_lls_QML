@@ -19,13 +19,9 @@ public slots:
     DevicesFactory* getDeviceFactory();
     DeviceCollector* getDeviceCollector();
     void resetAll();
-
-    bool sendCustomCommadToDev(int indexDev, QString operation, QStringList keys, QStringList values);
-//    bool sendCustomCommadToDev(int indexDev, QString operation);
-//    void setDeviceCommandUpdateByIndex(int index);
-//    void setDeviceInitCommandByIndex(int index);
+    bool sendCommadToDev(QString devId, QString operation, QStringList keys, QStringList values);
+    QStringList exeCommadToDev(QString devId, QString operation, QStringList keys, QStringList values);
     void setDeviceReInitByIndex(int indexDev);
-//    void sendCustomCommandUseCallback(QString devType, QString operation, QStringList keys, QStringList values);
 private slots:
     void updater();
 signals:
