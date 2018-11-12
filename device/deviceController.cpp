@@ -102,27 +102,40 @@ bool DeviceController::removeDevice(QString devId) {
     }
 }
 
+//if(typeCommand == "change device head name") {
+//        for(auto i=0; i<keys.length(); i++) {
+//            if(keys[i] == "newHeader") {
+//                res = interfaceTree->changeDeviceHeader(getCurrentInterfaceName(),
+//                                                        getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceNameWithId(interfaceTree->getDevIndex()), values[i]);
+//                getDeviceFactoryByIndex(interfaceTree->getIoIndex())->setDeviceHeader(interfaceTree->getDevIndex(), values[i]);
+//                return res;
+//            }
+//        }
+//    }
+//}
+
 //********************************************/
 // its for send deffered request
 //********************************************/
-bool DeviceController::sendCommadToDev(QString devId, QString operation, QStringList keys, QStringList values) {
+bool DeviceController::sendCommadToDev(QString operation, QStringList keys, QStringList values) {
     QList<CommandController::sCommandData> command;
     QPair<QStringList,QStringList> arguments;
     bool res = false;
     for(int i=0; i<keys.size(); i++) {
-        arguments.first.push_back(keys.at(i));
-        arguments.second.push_back(values.at(i));
-    }
-    if(devMutex->tryLock(1000)) {
-        auto dev = deviceFactory->findDeviceByUnicIdent(devId);
-        if(dev != nullptr) {
-            auto devComman = dev->second->getCommandCustom(operation, arguments);
-            if(!devComman.empty()) {
-                deviceCollector->addCommand(devComman);
+        if(keys.at(i).toLower() == "devid") {
+            if(devMutex->tryLock(1000)) {
+                auto dev = deviceFactory->findDeviceByUnicIdent(values.at(i));
+                if(dev != nullptr) {
+                    auto devComman = dev->second->getCommandCustom(operation, arguments);
+                    if(!devComman.empty()) {
+                        deviceCollector->addCommand(devComman);
+                    }
+                    devMutex->unlock();
+                }
+                res = true;
             }
-            devMutex->unlock();
+            break;
         }
-        res = true;
     }
     return res;
 }
@@ -130,24 +143,18 @@ bool DeviceController::sendCommadToDev(QString devId, QString operation, QString
 //********************************************/
 // its for imediately exect command
 //********************************************/
-QStringList DeviceController::exeCommadToDev(QString devId, QString operation, QStringList keys, QStringList values) {
-    QList<CommandController::sCommandData> command;
-    QPair<QStringList,QStringList> arguments;
-    bool res = false;
-    for(int i=0; i<keys.size(); i++) {
-        arguments.first.push_back(keys.at(i));
-        arguments.second.push_back(values.at(i));
-    }
+QStringList DeviceController::exeCommadToDev(QString operation, QStringList keys, QStringList values) {
+    QStringList res;
     if(devMutex->tryLock(1000)) {
-        auto dev = deviceFactory->findDeviceByUnicIdent(devId);
-        if(dev != nullptr) {
-            auto devComman = dev->second->getCommandCustom(operation, arguments);
-            if(!devComman.empty()) {
-                deviceCollector->addCommand(devComman);
+        for(int i=0; i<keys.size(); i++) {
+            if(keys.at(i).toLower() == "devid") {
+                auto dev = deviceFactory->findDeviceByUnicIdent(values.at(i));
+                if(dev != nullptr) {
+                    res = dev->second->execCommand(operation, QPair<QStringList,QStringList>(keys, values));
+                    devMutex->unlock();
+                }
             }
-            devMutex->unlock();
         }
-        res = true;
     }
     return res;
 }

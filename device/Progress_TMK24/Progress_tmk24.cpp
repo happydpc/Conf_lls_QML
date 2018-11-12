@@ -1156,397 +1156,393 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
         makeDataToCommand(unitCommand);
         commandList.push_back(unitCommand);
     }
+//    // TODO:
+//    if(operation == "getTarMaxCountStep") {
+//        unitCommand.deviceIdent = getUniqId();
+//        unitCommand.isNeedAckMessage = true;
+//        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
+//        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
+//        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
+//        pService->getMaxCountStep();
+//    }
+
+//    // TODO:
+//    if(operation == "getTarMaxCountStep") {
+//        unitCommand.deviceIdent = getUniqId();
+//        unitCommand.isNeedAckMessage = true;
+//        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
+//        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
+//        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
+//        pService->getMaxCountStep();
+//    }
+
+//    // TODO:
+//    if(operation == "sendReqExportTarrirAllDevToCsv") { // pathFile
+//        unitCommand.deviceIdent = getUniqId();
+//        unitCommand.isNeedAckMessage = true;
+//        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
+//        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
+//        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
+//        QStringList exportList;
+//        QString str;
+//        if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+//            Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+//            int devAll = pService->getDeviceCount();
+//            // id[devType], объем, уровень топлива
+//            for(int devCounter=0; devCounter<devAll; devCounter++) {
+//                QStringList litersList;
+//                QStringList fuelLevelList;
+//                // получаем стоблец с liters и fuelLevel
+//                QPair<QStringList,QStringList> tableData;
+//                tableData = pService->getTableAtDeviceToPair(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceIdTextByIndex(devCounter));
+//                for(int tableCounter=0; tableCounter<tableData.first.size(); tableCounter++) {
+//                    // lites
+//                    litersList << tableData.first.at(tableCounter);
+//                    // fuelLevel
+//                    fuelLevelList << tableData.second.at(tableCounter);
+//                }
+//                str.clear();
+//                str.push_back("\"" + QString("ID/Тип") + "\"" + ",");
+//                str.push_back("\"" + QString("Объем") + "\"" + ",");
+//                str.push_back("\"" + QString("Уровень") + "\"");
+//                exportList.push_back(str);
+//                for(int makeCounter=0; makeCounter<litersList.size(); makeCounter++) {
+//                    str.clear();
+//                    str.push_back("\"" + QString("ID%1[%2]").arg(pService->getDeviceProperty(devCounter).at(1)).arg(pService->getDeviceProperty(devCounter).at(0)) + "\"" + ",");
+//                    str.push_back("\"" + ((litersList.size() >= makeCounter) ? (litersList.at(makeCounter) + "\"" + ",") : QString("Нет данных")));
+//                    str.push_back("\"" + ((fuelLevelList.size() >= makeCounter) ? (fuelLevelList.at(makeCounter) + "\"") : QString("Нет данных")));
+//                    exportList.push_back(str);
+//                }
+//            }
+//            if(!exportList.empty()) {
+//                if(pathFile.size() > 0) {
+//                    if(!pathFile.contains(".csv")) {
+//                        pathFile.push_back(".csv");
+//                    }
+//                    if(pathFile.count(':') > 1) { // windows
+//                        pathFile.remove("file:///");
+//                    } else {
+//                        pathFile.remove("file://"); // unix
+//                    }
+//                    QFile file(pathFile);
+//                    if (file.open(QFile::WriteOnly | QFile::Text)) {
+//                        QTextStream s(&file);
+//                        for (int counterExport=0; counterExport<exportList.size(); ++counterExport) {
+//                            s << exportList.at(counterExport) << '\n';
+//                        }
+//                    }
+//                    file.close();
+//                }
+//            }
+//        }
+//    }
+
+//    // TODO:
+//    if(operation == "getAvailableDevTarrirAdd_DevType") {
+//        unitCommand.deviceIdent = getUniqId();
+//        unitCommand.isNeedAckMessage = true;
+//        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
+//        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
+//        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
+//        pService->getMaxCountStep();
+
+//        //    QStringList resList;
+//        //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
+//        //        int devCount = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
+//        //        for(int i=0; i<devCount; i++) {
+//        //            resList << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(i);
+//        //        }
+//        //    }
+//        //    return resList;
+//    }
+
+//    // TODO:
+//    if(operation == "getAvailableDevTarrirAdd_DevId") {
+//        unitCommand.deviceIdent = getUniqId();
+//        unitCommand.isNeedAckMessage = true;
+//        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
+//        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
+//        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
+//        pService->getMaxCountStep();
+
+//        QStringList ViewController::getAvailableDevTarrirAdd_DevId() {
+//            //    QStringList resList;
+//            //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
+//            //        int devCount = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
+//            //        for(int i=0; i<devCount; i++) {
+//            //            resList << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceIdTextByIndex(i);
+//            //        }
+//            //    }
+//            //    return resList;
+//        }
+//    }
 
 
-    // TODO:
-    if(operation == "getTarMaxCountStep") {
-        unitCommand.deviceIdent = getUniqId();
-        unitCommand.isNeedAckMessage = true;
-        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
-        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
-        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
-        pService->getMaxCountStep();
-    }
+//    // TODO:
+//    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
+//        unitCommand.deviceIdent = getUniqId();
+//        unitCommand.isNeedAckMessage = true;
+//        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
+//        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
+//        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
+//        pService->getMaxCountStep();
 
-    // TODO:
-    if(operation == "getTarMaxCountStep") {
-        unitCommand.deviceIdent = getUniqId();
-        unitCommand.isNeedAckMessage = true;
-        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
-        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
-        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
-        pService->getMaxCountStep();
-    }
+//        QStringList ViewController::getAvailableDevTarrirAdd_DevSerialNumber() {
+//            //    QStringList resList;
+//            //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
+//            //        int devCount = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
+//            //        for(int i=0; i<devCount; i++) {
+//            //            QStringList keyList = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(i).first;
+//            //            for(int i2 =0; i2<keyList.size(); i2++) {
+//            //                if(keyList.at(i2) == QString("serialNum")) {                                                                                 // TOOD:!!!!!
+//            //                    resList << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(i).second.at(0);
+//            //                }
+//            //            }
+//            //        }
+//            //    }
+//            //    return resList;
+//        }
+//    }
 
-    // TODO:
-    if(operation == "sendReqExportTarrirAllDevToCsv") { // pathFile
-        unitCommand.deviceIdent = getUniqId();
-        unitCommand.isNeedAckMessage = true;
-        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
-        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
-        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
-        QStringList exportList;
-        QString str;
-        if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
-            Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-            int devAll = pService->getDeviceCount();
-            // id[devType], объем, уровень топлива
-            for(int devCounter=0; devCounter<devAll; devCounter++) {
-                QStringList litersList;
-                QStringList fuelLevelList;
-                // получаем стоблец с liters и fuelLevel
-                QPair<QStringList,QStringList> tableData;
-                tableData = pService->getTableAtDeviceToPair(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceIdTextByIndex(devCounter));
-                for(int tableCounter=0; tableCounter<tableData.first.size(); tableCounter++) {
-                    // lites
-                    litersList << tableData.first.at(tableCounter);
-                    // fuelLevel
-                    fuelLevelList << tableData.second.at(tableCounter);
-                }
-                str.clear();
-                str.push_back("\"" + QString("ID/Тип") + "\"" + ",");
-                str.push_back("\"" + QString("Объем") + "\"" + ",");
-                str.push_back("\"" + QString("Уровень") + "\"");
-                exportList.push_back(str);
-                for(int makeCounter=0; makeCounter<litersList.size(); makeCounter++) {
-                    str.clear();
-                    str.push_back("\"" + QString("ID%1[%2]").arg(pService->getDeviceProperty(devCounter).at(1)).arg(pService->getDeviceProperty(devCounter).at(0)) + "\"" + ",");
-                    str.push_back("\"" + ((litersList.size() >= makeCounter) ? (litersList.at(makeCounter) + "\"" + ",") : QString("Нет данных")));
-                    str.push_back("\"" + ((fuelLevelList.size() >= makeCounter) ? (fuelLevelList.at(makeCounter) + "\"") : QString("Нет данных")));
-                    exportList.push_back(str);
-                }
-            }
-            if(!exportList.empty()) {
-                if(pathFile.size() > 0) {
-                    if(!pathFile.contains(".csv")) {
-                        pathFile.push_back(".csv");
-                    }
-                    if(pathFile.count(':') > 1) { // windows
-                        pathFile.remove("file:///");
-                    } else {
-                        pathFile.remove("file://"); // unix
-                    }
-                    QFile file(pathFile);
-                    if (file.open(QFile::WriteOnly | QFile::Text)) {
-                        QTextStream s(&file);
-                        for (int counterExport=0; counterExport<exportList.size(); ++counterExport) {
-                            s << exportList.at(counterExport) << '\n';
-                        }
-                    }
-                    file.close();
-                }
-            }
-        }
-    }
+//    // TODO:
+//    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
+//        unitCommand.deviceIdent = getUniqId();
+//        unitCommand.isNeedAckMessage = true;
+//        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
+//        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
+//        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
+//        pService->getMaxCountStep();
+//    QStringList ViewController::getTarCurrentDeviceData(int index) {
+//        //    QStringList res;
+//        //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
+//        //        if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+//        //            Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+//        //            if(pService != nullptr) {
+//        //                res = pService->getCurrentDataDevice(index);
+//        //            }
+//        //        }
+//        //    }
+//        //    return res;
+//    }
+//    }
 
-    // TODO:
-    if(operation == "getAvailableDevTarrirAdd_DevType") {
-        unitCommand.deviceIdent = getUniqId();
-        unitCommand.isNeedAckMessage = true;
-        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
-        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
-        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
-        pService->getMaxCountStep();
+//    // TODO:
+//    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
+//        unitCommand.deviceIdent = getUniqId();
+//        unitCommand.isNeedAckMessage = true;
+//        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
+//        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
+//        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
+//        pService->getMaxCountStep();
+//    QList<int> ViewController::getTarCurrentDeviceChartData(int index) {
+//        //    QList<int> res;
+//        //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
+//        //        if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+//        //            Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+//        //            if(pService != nullptr) {
+//        //                res = pService->getCurrentChartDataDevice(index);
+//        //            }
+//        //        }
+//        //    }
+//        //    return res;
+//    }
+//    }
 
-        //    QStringList resList;
-        //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
-        //        int devCount = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
-        //        for(int i=0; i<devCount; i++) {
-        //            resList << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(i);
-        //        }
-        //    }
-        //    return resList;
-    }
+//    // TODO:
+//    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
+//        unitCommand.deviceIdent = getUniqId();
+//        unitCommand.isNeedAckMessage = true;
+//        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
+//        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
+//        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
+//        pService->getMaxCountStep();
+//    int ViewController::getStayedDevTarrirCount() {
+//        //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
+//        //        if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+//        //            Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+//        //            if(pService != nullptr) {
+//        //                return pService->getDeviceCount();
+//        //            }
+//        //        }
+//        //    }
+//        //    return 0;
+//    }
+//    }
 
-    // TODO:
-    if(operation == "getAvailableDevTarrirAdd_DevId") {
-        unitCommand.deviceIdent = getUniqId();
-        unitCommand.isNeedAckMessage = true;
-        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
-        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
-        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
-        pService->getMaxCountStep();
+//    // TODO:
+//    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
+//        unitCommand.deviceIdent = getUniqId();
+//        unitCommand.isNeedAckMessage = true;
+//        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
+//        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
+//        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
+//        pService->getMaxCountStep();
+//    QStringList ViewController::getStayedDevTarrir_DevProperty(QString propertyName) {
+//        //    QStringList res;
+//        //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
+//        //        if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+//        //            Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+//        //            if(pService != nullptr) {
+//        //                for(int i=0; i<pService->getDeviceCount(); i++) {
+//        //                    if(propertyName.toLower() == "type") {
+//        //                        res << pService->getDeviceProperty(i).at(0); // type
+//        //                    }
+//        //                    if(propertyName.toLower() == "id") {
+//        //                        res << pService->getDeviceProperty(i).at(1); // id
+//        //                    }
+//        //                    if(propertyName.toLower() == "sn") {
+//        //                        res << pService->getDeviceProperty(i).at(2); // serialNum
+//        //                    }
+//        //                }
+//        //            }
+//        //        }
+//        //    }
+//        //    return res;
+//    }
+//    }
 
-        QStringList ViewController::getAvailableDevTarrirAdd_DevId() {
-            //    QStringList resList;
-            //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
-            //        int devCount = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
-            //        for(int i=0; i<devCount; i++) {
-            //            resList << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceIdTextByIndex(i);
-            //        }
-            //    }
-            //    return resList;
-        }
-    }
+//    // TODO:
+//    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
+//        unitCommand.deviceIdent = getUniqId();
+//        unitCommand.isNeedAckMessage = true;
+//        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
+//        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
+//        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
+//        pService->getMaxCountStep();
+//    bool ViewController::addTarrirDev(QString devTypeName, QString devId) {
+//        //    bool res = false;
+//        //    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+//        //        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+//        //        res = pService->addDevice(devTypeName, devId,"-----");
+//        //    }
+//        //    return res;
+//    }
+//    }
 
+//    // TODO:
+//    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
+//        unitCommand.deviceIdent = getUniqId();
+//        unitCommand.isNeedAckMessage = true;
+//        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
+//        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
+//        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
+//        pService->getMaxCountStep();
+//    void ViewController::removeTarrirDev(QString devTypeName, QString devId) {
+//        //    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+//        //        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+//        //        if(pService != nullptr) {
+//        //            pService->removeDevice(devTypeName, devId);
+//        //        }
+//        //    }
+//    }
+//    }
 
-    // TODO:
-    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
-        unitCommand.deviceIdent = getUniqId();
-        unitCommand.isNeedAckMessage = true;
-        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
-        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
-        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
-        pService->getMaxCountStep();
+//    // TODO:
+//    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
+//        unitCommand.deviceIdent = getUniqId();
+//        unitCommand.isNeedAckMessage = true;
+//        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
+//        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
+//        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
+//        pService->getMaxCountStep();
+//    void ViewController::setLastRealTimeValuesToStep(int indexStep) {
+//        //#if USE_DB_VIEWCONTROLLER == 1
+//        //    qDebug() << "ViewController: - setLastRealTimeValuesToStep";
+//        //#endif
+//        ////    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+//        //        //  Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+//        //        //  pService->setLastRealTimeValuesToStep(indexStep);
+//        ////    }
+//        //#if USE_DB_VIEWCONTROLLER == 1
+//        //    qDebug() << "ViewController: - setLastRealTimeValuesToStep -OK";
+//        //#endif
+//    }
+//    }
 
-        QStringList ViewController::getAvailableDevTarrirAdd_DevSerialNumber() {
-            //    QStringList resList;
-            //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
-            //        int devCount = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
-            //        for(int i=0; i<devCount; i++) {
-            //            QStringList keyList = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(i).first;
-            //            for(int i2 =0; i2<keyList.size(); i2++) {
-            //                if(keyList.at(i2) == QString("serialNum")) {                                                                                 // TOOD:!!!!!
-            //                    resList << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(i).second.at(0);
-            //                }
-            //            }
-            //        }
-            //    }
-            //    return resList;
-        }
-    }
+//    // TODO:
+//    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
+//        unitCommand.deviceIdent = getUniqId();
+//        unitCommand.isNeedAckMessage = true;
+//        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
+//        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
+//        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
+//        pService->getMaxCountStep();
+//    //1) считать таблицу с добавленных устройств
+//    // отправляем в контроллер список dev с id
+//    // указываем что считать таблицу
+//    // ожидаем ответа по очереди
+//    // когда последний опрошен, отсылаем результат в qml
+//    // если ответа небыло, значение выделить красным и вывести message
+//    void ViewController::sendReqGetTarrirAllDev() {
+//        //    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+//        //        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+//        //        if(pService != nullptr) {
+//        //            for(auto i:pService->requestGetTableFromAllDevice()) {      // TODO: плохо, можно взять пустой список и ждать ответа
+//        //                if(i.length() > 0) {
+//        //                    // отправляем всем dev из списка команду на чтение таблицы
+//        //                    DevicesFactory *pdeviceFactory = nullptr;
+//        //                    pdeviceFactory = getDeviceFactoryByIndex(interfaceTree->getIoIndex());
+//        //                    if(pdeviceFactory != nullptr) {
+//        //                        int devIndex = pdeviceFactory->findDeviceIndex(i);
+//        //                        if(devIndex >= 0) {
+//        //                            pdeviceFactory->deviceCollector->sendCustomCommadToDev(devIndex, "read current dev tar table");
+//        //                        } else {
+//        //                            qDebug() << "ViewController: - sendReqGetTarrirAllDev -ERR find device";
+//        //                        }
+//        //                    } else {
+//        //                        qDebug() << "ViewController: - sendReqGetTarrirAllDev -ERR nullprt deviceFactory";
+//        //                    }
+//        //                }
+//        //            }
+//        //        }
+//        //    }
+//    }
+//    }
 
-    // TODO:
-    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
-        unitCommand.deviceIdent = getUniqId();
-        unitCommand.isNeedAckMessage = true;
-        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
-        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
-        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
-        pService->getMaxCountStep();
-    QStringList ViewController::getTarCurrentDeviceData(int index) {
-        //    QStringList res;
-        //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
-        //        if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
-        //            Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-        //            if(pService != nullptr) {
-        //                res = pService->getCurrentDataDevice(index);
-        //            }
-        //        }
-        //    }
-        //    return res;
-    }
-    }
+//    // TODO:
+//    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
+//        unitCommand.deviceIdent = getUniqId();
+//        unitCommand.isNeedAckMessage = true;
+//        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
+//        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
+//        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
+//        pService->getMaxCountStep();
+//    QStringList ViewController::getTableAtDevice(int index) {
+//        //    QStringList res;
+//        //    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+//        //        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+//        //        if(pService != nullptr) {
+//        //            res = pService->getTableAtDevice(index);
+//        //        }
+//        //    }
+//        //    return res;
+//    }
+//    }
 
-    // TODO:
-    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
-        unitCommand.deviceIdent = getUniqId();
-        unitCommand.isNeedAckMessage = true;
-        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
-        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
-        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
-        pService->getMaxCountStep();
-    QList<int> ViewController::getTarCurrentDeviceChartData(int index) {
-        //    QList<int> res;
-        //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
-        //        if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
-        //            Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-        //            if(pService != nullptr) {
-        //                res = pService->getCurrentChartDataDevice(index);
-        //            }
-        //        }
-        //    }
-        //    return res;
-    }
-    }
-
-    // TODO:
-    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
-        unitCommand.deviceIdent = getUniqId();
-        unitCommand.isNeedAckMessage = true;
-        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
-        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
-        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
-        pService->getMaxCountStep();
-    int ViewController::getStayedDevTarrirCount() {
-        //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
-        //        if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
-        //            Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-        //            if(pService != nullptr) {
-        //                return pService->getDeviceCount();
-        //            }
-        //        }
-        //    }
-        //    return 0;
-    }
-    }
-
-    // TODO:
-    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
-        unitCommand.deviceIdent = getUniqId();
-        unitCommand.isNeedAckMessage = true;
-        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
-        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
-        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
-        pService->getMaxCountStep();
-    QStringList ViewController::getStayedDevTarrir_DevProperty(QString propertyName) {
-        //    QStringList res;
-        //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
-        //        if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
-        //            Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-        //            if(pService != nullptr) {
-        //                for(int i=0; i<pService->getDeviceCount(); i++) {
-        //                    if(propertyName.toLower() == "type") {
-        //                        res << pService->getDeviceProperty(i).at(0); // type
-        //                    }
-        //                    if(propertyName.toLower() == "id") {
-        //                        res << pService->getDeviceProperty(i).at(1); // id
-        //                    }
-        //                    if(propertyName.toLower() == "sn") {
-        //                        res << pService->getDeviceProperty(i).at(2); // serialNum
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //    return res;
-    }
-    }
-
-    // TODO:
-    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
-        unitCommand.deviceIdent = getUniqId();
-        unitCommand.isNeedAckMessage = true;
-        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
-        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
-        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
-        pService->getMaxCountStep();
-    bool ViewController::addTarrirDev(QString devTypeName, QString devId) {
-        //    bool res = false;
-        //    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
-        //        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-        //        res = pService->addDevice(devTypeName, devId,"-----");
-        //    }
-        //    return res;
-    }
-    }
-
-    // TODO:
-    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
-        unitCommand.deviceIdent = getUniqId();
-        unitCommand.isNeedAckMessage = true;
-        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
-        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
-        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
-        pService->getMaxCountStep();
-    void ViewController::removeTarrirDev(QString devTypeName, QString devId) {
-        //    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
-        //        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-        //        if(pService != nullptr) {
-        //            pService->removeDevice(devTypeName, devId);
-        //        }
-        //    }
-    }
-    }
-
-    // TODO:
-    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
-        unitCommand.deviceIdent = getUniqId();
-        unitCommand.isNeedAckMessage = true;
-        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
-        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
-        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
-        pService->getMaxCountStep();
-    void ViewController::setLastRealTimeValuesToStep(int indexStep) {
-        //#if USE_DB_VIEWCONTROLLER == 1
-        //    qDebug() << "ViewController: - setLastRealTimeValuesToStep";
-        //#endif
-        ////    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
-        //        //  Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-        //        //  pService->setLastRealTimeValuesToStep(indexStep);
-        ////    }
-        //#if USE_DB_VIEWCONTROLLER == 1
-        //    qDebug() << "ViewController: - setLastRealTimeValuesToStep -OK";
-        //#endif
-    }
-    }
-
-    // TODO:
-    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
-        unitCommand.deviceIdent = getUniqId();
-        unitCommand.isNeedAckMessage = true;
-        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
-        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
-        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
-        pService->getMaxCountStep();
-    //1) считать таблицу с добавленных устройств
-    // отправляем в контроллер список dev с id
-    // указываем что считать таблицу
-    // ожидаем ответа по очереди
-    // когда последний опрошен, отсылаем результат в qml
-    // если ответа небыло, значение выделить красным и вывести message
-    void ViewController::sendReqGetTarrirAllDev() {
-        //    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
-        //        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-        //        if(pService != nullptr) {
-        //            for(auto i:pService->requestGetTableFromAllDevice()) {      // TODO: плохо, можно взять пустой список и ждать ответа
-        //                if(i.length() > 0) {
-        //                    // отправляем всем dev из списка команду на чтение таблицы
-        //                    DevicesFactory *pdeviceFactory = nullptr;
-        //                    pdeviceFactory = getDeviceFactoryByIndex(interfaceTree->getIoIndex());
-        //                    if(pdeviceFactory != nullptr) {
-        //                        int devIndex = pdeviceFactory->findDeviceIndex(i);
-        //                        if(devIndex >= 0) {
-        //                            pdeviceFactory->deviceCollector->sendCustomCommadToDev(devIndex, "read current dev tar table");
-        //                        } else {
-        //                            qDebug() << "ViewController: - sendReqGetTarrirAllDev -ERR find device";
-        //                        }
-        //                    } else {
-        //                        qDebug() << "ViewController: - sendReqGetTarrirAllDev -ERR nullprt deviceFactory";
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-    }
-    }
-
-    // TODO:
-    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
-        unitCommand.deviceIdent = getUniqId();
-        unitCommand.isNeedAckMessage = true;
-        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
-        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
-        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
-        pService->getMaxCountStep();
-    QStringList ViewController::getTableAtDevice(int index) {
-        //    QStringList res;
-        //    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
-        //        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-        //        if(pService != nullptr) {
-        //            res = pService->getTableAtDevice(index);
-        //        }
-        //    }
-        //    return res;
-    }
-    }
-
-    // TODO:
-    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
-        unitCommand.deviceIdent = getUniqId();
-        unitCommand.isNeedAckMessage = true;
-        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
-        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
-        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
-        pService->getMaxCountStep();
-    int ViewController::getTableCountReady() {
-        //    int res = 0;
-        //    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
-        //        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
-        //        if(pService != nullptr) {
-        //            res = pService->requestGetTableFromAllDevice().size();
-        //        }
-        //    }
-        //    return res;
-    }
-    }
+//    // TODO:
+//    if(operation == "getAvailableDevTarrirAdd_DevSerialNumber") {
+//        unitCommand.deviceIdent = getUniqId();
+//        unitCommand.isNeedAckMessage = true;
+//        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
+//        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
+//        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
+//        pService->getMaxCountStep();
+//    int ViewController::getTableCountReady() {
+//        //    int res = 0;
+//        //    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
+//        //        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
+//        //        if(pService != nullptr) {
+//        //            res = pService->requestGetTableFromAllDevice().size();
+//        //        }
+//        //    }
+//        //    return res;
+//    }
+//    }
 
     return commandList;
 }
 
-QStringList Progress_tmk24::execCommand(QString operation, QPair<QStringList, QStringList>) {
-
-}
+QStringList Progress_tmk24::execCommand(QString operation, QPair<QStringList, QStringList>) {}
 
 QList<CommandController::sCommandData> Progress_tmk24::getCommandListToCurrentData() {
     QList<CommandController::sCommandData> commandList;

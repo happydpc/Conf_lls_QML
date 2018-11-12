@@ -36,7 +36,7 @@ public:
     QList<CommandController::sCommandData> getCommandListToUpdate() override;
     QList<CommandController::sCommandData> getCommandListToCurrentData() override;
     QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList> data) override;
-    QList<CommandController::sCommandData> getCommandCustom(QString operation) override;
+    QStringList execCommand(QString operation, QPair<QStringList, QStringList> data);
 
 #ifdef USE_TEST_DEV_REPLY
     bool makeDataRequestReply(QByteArray request, QByteArray &reply);

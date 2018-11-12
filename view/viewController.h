@@ -44,47 +44,41 @@ public:
     Q_INVOKABLE void checkUpdateVersionSoftware();
 
     //****************** Only PROGRESS TMK24 ***********//
-    Q_INVOKABLE void setCurrentDevChangeId(QString password, QString uniqNameIdNew, QString uniqNameIdCurrent);
+//    Q_INVOKABLE void setCurrentDevChangeId(QString password, QString uniqNameIdNew, QString uniqNameIdCurrent);
     //********************* TARING *********************//
-    Q_INVOKABLE void setTableFromFrontEnd(QString uniqNameId, QStringList valuesLiters, QStringList valuesFuelLevel);
-    Q_INVOKABLE void sendReqWriteTarrirAllDev();
-    //
-    Q_INVOKABLE int getTarMaxCountStep();
-
-    Q_INVOKABLE void sendReqExportTarrirAllDevToCsv(QString pathFile);
-
+//    Q_INVOKABLE void setTableFromFrontEnd(QString uniqNameId, QStringList valuesLiters, QStringList valuesFuelLevel);
+//    Q_INVOKABLE void sendReqWriteTarrirAllDev();
+//    Q_INVOKABLE int getTarMaxCountStep();
+//    Q_INVOKABLE void sendReqExportTarrirAllDevToCsv(QString pathFile);
     // какие устройства доступны для добавления в множественную таррировку
     // устройство с вкладки которого это начинают
     // уже должно быть туда добавленно, type, id, sn
-    Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevType();
-    Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevId();
-    Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevSerialNumber();
-
-    Q_INVOKABLE QStringList getTarCurrentDeviceData(int index);
-    Q_INVOKABLE QList<int> getTarCurrentDeviceChartData(int index);
-
+//    Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevType();
+//    Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevId();
+//    Q_INVOKABLE QStringList getAvailableDevTarrirAdd_DevSerialNumber();
+//    Q_INVOKABLE QStringList getTarCurrentDeviceData(int index);
+//    Q_INVOKABLE QList<int> getTarCurrentDeviceChartData(int index);
     // возвразщает кол-во уже добавленных уст-в
-    Q_INVOKABLE int getStayedDevTarrirCount();
-
+//    Q_INVOKABLE int getStayedDevTarrirCount();
     // возвращает устройства добавленные в структуру тарировки (но без значений), type, id, sn
-    Q_INVOKABLE QStringList getStayedDevTarrir_DevProperty(QString propertyName);
+//    Q_INVOKABLE QStringList getStayedDevTarrir_DevProperty(QString propertyName);
 
-    // добавляем датчики в таблицу тарировки
-    Q_INVOKABLE bool addTarrirDev(QString devTypeName, QString devId);
-    Q_INVOKABLE void removeTarrirDev(QString devTypeName, QString devId);
+//    // добавляем датчики в таблицу тарировки
+//    Q_INVOKABLE bool addTarrirDev(QString devTypeName, QString devId);
+//    Q_INVOKABLE void removeTarrirDev(QString devTypeName, QString devId);
 
-    // добавляет текущее значение в таблицу
-    Q_INVOKABLE void setLastRealTimeValuesToStep(int indexStep);
+//    // добавляет текущее значение в таблицу
+//    Q_INVOKABLE void setLastRealTimeValuesToStep(int indexStep);
 
-    //1) считать таблицу с добавленных устройств
-            // отправляем в контроллер список dev с id
-            // указываем что считать таблицу
-            // ожидаем ответа по очереди
-            // когда последний опрошен, отсылаем результат в qml
-            // если ответа небыло, значение выделить красным и вывести message
-    Q_INVOKABLE void sendReqGetTarrirAllDev();
-    Q_INVOKABLE QStringList getTableAtDevice(int index);
-    Q_INVOKABLE int getTableCountReady();
+//    //1) считать таблицу с добавленных устройств
+//            // отправляем в контроллер список dev с id
+//            // указываем что считать таблицу
+//            // ожидаем ответа по очереди
+//            // когда последний опрошен, отсылаем результат в qml
+//            // если ответа небыло, значение выделить красным и вывести message
+//    Q_INVOKABLE void sendReqGetTarrirAllDev();
+//    Q_INVOKABLE QStringList getTableAtDevice(int index);
+//    Q_INVOKABLE int getTableCountReady();
 
 signals:
 

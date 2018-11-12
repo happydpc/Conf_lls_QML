@@ -42,12 +42,7 @@ public:
     QStringList execCommand(QString operation, QPair<QStringList, QStringList>) override;
     QList<int> getChart() override;
     ServiceDevicesAbstract* getServiceAbstract() override;
-
     QList<QString>getCurrentOtherData();
-
-#ifdef USE_TEST_DEV_REPLY
-    bool makeDataRequestReply(QByteArray request, QByteArray &reply);
-#endif  
 private slots:
     void setDefaultValues();
 

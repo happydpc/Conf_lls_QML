@@ -203,7 +203,7 @@ bool ViewController::addConnection(QString typeName, QString name, QStringList k
 void ViewController::removeActiveInterface() {
     int indexRemove = interfaceTree->getIoIndex();
     interfaceTree->removeConnection(indexRemove);
-    connFactory.get()->getDeviceController(indexRemove)->resetAll();
+    connFactory->getDeviceController(indexRemove)->resetAll();
     connFactory->removeConnection(indexRemove);
     emit deleteInterfaceSuccesfull(indexRemove);
     if(getInterfaceCount() == 0) {
@@ -216,7 +216,7 @@ void ViewController::removeActiveDevice() {
     int indexRemove = interfaceTree->getDevIndex();
     interfaceTree->removeDeviceToConnection(interfaceTree->getIoIndex(), indexRemove);
     QString devId = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceByIndex(indexRemove)->second->getUniqId();
-    connFactory.get()->getDeviceController(indexRemove)->removeDevice(devId);
+    connFactory->getDeviceController(indexRemove)->removeDevice(devId);
     emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),0, QString("Удаление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
     emit deleteDeviceSuccesfull(interfaceTree->getIoIndex(), indexRemove);
     if(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount() == 0) {
@@ -229,7 +229,7 @@ void ViewController::removeActiveDevice() {
 
 bool ViewController::addDeviceToConnection(QString ioName, QString devTypeName, QStringList keyParam, QStringList valueParam) {
     bool res = false;
-    auto devController = connFactory.get()->getDeviceController(interfaceTree->getIoIndex());
+    auto devController = connFactory->getDeviceController(interfaceTree->getIoIndex());
     res = devController->addDevice(devTypeName, keyParam, valueParam);
     if(res) { // change current device index
         interfaceTree->addDeviceToConnection(getCurrentInterfaceName(), "init_device");
@@ -264,25 +264,19 @@ int ViewController::getInterfaceCount() {
 
 DevicesFactory* ViewController::getDeviceFactoryByIndex(int indexIterface) {
     try {
-        return connFactory.get()->getDeviceController(indexIterface)->getDeviceFactory();
-    } catch(...) {}
+        return connFactory->getDeviceController(indexIterface)->getDeviceFactory();
+    } catch(...) {} // TODO:---
 }
 
 bool ViewController::setCurrentDevCustomCommand(QString typeCommand, QStringList keys, QStringList values) {
     bool res = false;
     // сперва проверка на команды
     // которые можно выполнить сранужи
-    if(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount() > 0) {
-        if(typeCommand == "change device head name") {
-            for(auto i=0; i<keys.length(); i++) {
-                if(keys[i] == "newHeader") {
-                    res = interfaceTree->changeDeviceHeader(getCurrentInterfaceName(),
-                                                            getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceNameWithId(interfaceTree->getDevIndex()), values[i]);
-                    getDeviceFactoryByIndex(interfaceTree->getIoIndex())->setDeviceHeader(interfaceTree->getDevIndex(), values[i]);
-                    return res;
-                }
-            }
-        }
+    DeviceController *p_dev_controller = connFactory->getDeviceController(interfaceTree->getIoIndex());
+    if(p_dev_controller != nullptr) {
+        keys << "devId";
+        values << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceIdTextByIndex(interfaceTree->getDevIndex());
+        res = p_dev_controller->sendCommadToDev(typeCommand, keys, values);
     }
     return res;
 }
@@ -292,7 +286,7 @@ DeviceAbstract* ViewController::getCurrentDeviceToAbstract() {
     try {
         p_devfact = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceToDeviceAbstract(interfaceTree->getDevIndex());
     }
-    catch(...) {
+    catch(...) { // TODO:---
     }
     return p_devfact;
 }
@@ -407,7 +401,7 @@ void ViewController::disconnectToDevSignals() {
                 disconnect(p_dev_factory, &DevicesFactory::deviceReadyLog, this, &ViewController::deviceLogMessage);
             }
         }
-    }catch(...) {
+    }catch(...) { // TODO:---
     }
 }
 
@@ -426,16 +420,20 @@ void ViewController::connectToDevSignals() {
                 connect(p_dev_factory, &DevicesFactory::deviceReadyLog, this, &ViewController::deviceLogMessage);
             }
         }
-    } catch(...) {}
+    } catch(...) {} // TODO:---
 }
 
 void ViewController::setChangedIndexDevice(int interfaceIndex, int devIndex) {
     disconnectToDevSignals();
     connectToDevSignals();
-    connFactory->getDeviceController(interfaceTree->getIoIndex())->sendCustomCommadToDev(devIndex, "update device", QStringList(), QStringList());
-    emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),2, QString("Переключение устройства [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
-    emit devSetActiveDeviceProperty(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),
-                                    getDeviceFactoryByIndex(interfaceIndex)->getDeviceName(devIndex));
+    QStringList keys;
+    QStringList values;
+    keys << "devId";
+    values << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->findDeviceByIndex(interfaceIndex)->first;
+    if(connFactory->getDeviceController(interfaceTree->getIoIndex())->sendCommadToDev("update device", keys, values)) {
+        emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),2, QString("Переключение устройства [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+        emit devSetActiveDeviceProperty(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(), getDeviceFactoryByIndex(interfaceIndex)->getDeviceName(devIndex));
+    }
 }
 
 void ViewController::setChangedIndexInteface(int interfaceIndex) {
