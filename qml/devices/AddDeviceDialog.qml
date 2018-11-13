@@ -594,8 +594,7 @@ Popup {
                     paramList.push(typeDevicePasswordNozzle_v0_0.text)
                     viewController.addDeviceToConnection("", typeDeviceList.currentText, keyList, paramList)
                     modeFind = modeFind_idle
-                    typeDeviceProgressProgressTmk24.visible = false
-                    findDevListView.model.clear()
+                    close()
                     break;
                 }
             }

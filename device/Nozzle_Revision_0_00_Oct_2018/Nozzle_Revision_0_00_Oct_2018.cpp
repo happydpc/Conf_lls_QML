@@ -266,25 +266,27 @@ bool Nozzle_Revision_0_00_Oct_2018::makeDataToCommand(CommandController::sComman
         case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setNetworkConfig: {
             Nozzle_Revision_0_00_Oct_2018_Data::sNetworkConfig t_data;
             for(int keyCount=0; keyCount<commandData.args.key.size(); keyCount++) {
-                if(commandData.args.key[keyCount] == "networkClientToken") {
-                    strcpy(t_data.clientToken, commandData.args.value[keyCount].toUtf8());
+                if(!commandData.args.key.empty()) {
+                    if(commandData.args.key[keyCount] == "networkClientToken") {
+                        strcpy(t_data.clientToken, commandData.args.value[keyCount].toUtf8());
+                    }
+                    if(commandData.args.key[keyCount] == "networkClientName") {
+                        strcpy(t_data.clientUserName, commandData.args.value[keyCount].toUtf8());
+                    }
+                    if(commandData.args.key[keyCount] == "networkServerIp") {
+                        strcpy(t_data.serverIp, commandData.args.value[keyCount].toUtf8());
+                    }
+                    if(commandData.args.key[keyCount] == "networkServerPort") {
+                        t_data.serverPort = commandData.args.value[keyCount].toInt();
+                    }
+                    if(commandData.args.key[keyCount] == "networkPanid") {
+                        t_data.panid = commandData.args.value[keyCount].toInt(nullptr, 16);
+                    }
                 }
-                if(commandData.args.key[keyCount] == "networkClientName") {
-                    strcpy(t_data.clientUserName, commandData.args.value[keyCount].toUtf8());
-                }
-                if(commandData.args.key[keyCount] == "networkServerIp") {
-                    strcpy(t_data.serverIp, commandData.args.value[keyCount].toUtf8());
-                }
-                if(commandData.args.key[keyCount] == "networkServerPort") {
-                    t_data.serverPort = commandData.args.value[keyCount].toInt();
-                }
-                if(commandData.args.key[keyCount] == "networkPanid") {
-                    t_data.panid = commandData.args.value[keyCount].toInt(nullptr, 16);
-                }
+                memcpy(tCommand.data.data, (uint8_t*)&t_data, sizeof(t_data));
+                commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
+                res = true;
             }
-            memcpy(tCommand.data.data, (uint8_t*)&t_data, sizeof(t_data));
-            commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
-            res = true;
         }
             break;
         case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setBatteryNewAccum: {
@@ -714,7 +716,7 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
     QList <CommandController::sCommandData> command;
     CommandController::sCommandData tcommand;
     tcommand.operationHeader = operation;
-    tcommand.delay_send_ms = 150;
+    tcommand.delay_send_ms = 170;
     tcommand.commandType = CommandController::E_CommandType_send_typical_request;
     if(operation == "update device") {
         command = getCommandListToUpdate();
@@ -748,42 +750,27 @@ QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommand
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
         tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setAccelConfig;
-        // key
-        for(auto i:data.first) {
-            tcommand.args.key.push_back(i);
-        }
-        // value
-        for(auto i:data.second) {
-            tcommand.args.value.push_back(i);
-        }
+        // key, value
+        tcommand.args.key << data.first;
+        tcommand.args.value << data.second;
         makeDataToCommand(tcommand);
         command.push_back(tcommand);
     } else if(operation == "set current dev password") {
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
         tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setSecurityData;
-        // key
-        for(auto i:data.first) {
-            tcommand.args.key.push_back(i);
-        }
-        // value
-        for(auto i:data.second) {
-            tcommand.args.value.push_back(i);
-        }
+        // key, value
+        tcommand.args.key << data.first;
+        tcommand.args.value << data.second;
         makeDataToCommand(tcommand);
         command.push_back(tcommand);
     } else if(operation == "set current dev settings net config") {
         tcommand.deviceIdent = getUniqId();
         tcommand.isNeedAckMessage = true; // что нужен ответ на форме (сообщение ок)
         tcommand.devCommand = (int)Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setNetworkConfig;
-        // key
-        for(auto i:data.first) {
-            tcommand.args.key.push_back(i);
-        }
-        // value
-        for(auto i:data.second) {
-            tcommand.args.value.push_back(i);
-        }
+        // key, value
+        tcommand.args.key << data.first;
+        tcommand.args.value << data.second;
         makeDataToCommand(tcommand);
         command.push_back(tcommand);
     } else if(operation == "set new battery") {

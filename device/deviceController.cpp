@@ -118,15 +118,13 @@ bool DeviceController::removeDevice(QString devId) {
 // its for send deffered request
 //********************************************/
 bool DeviceController::sendCommadToDev(QString operation, QStringList keys, QStringList values) {
-    QList<CommandController::sCommandData> command;
-    QPair<QStringList,QStringList> arguments;
     bool res = false;
     for(int i=0; i<keys.size(); i++) {
         if(keys.at(i).toLower() == "devid") {
             if(devMutex->tryLock(1000)) {
                 auto dev = deviceFactory->findDeviceByUnicIdent(values.at(i));
                 if(dev != nullptr) {
-                    auto devComman = dev->second->getCommandCustom(operation, arguments);
+                    auto devComman = dev->second->getCommandCustom(operation, QPair<QStringList,QStringList>(keys, values));
                     if(!devComman.empty()) {
                         deviceCollector->addCommand(devComman);
                     }

@@ -28,13 +28,13 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
     connect(connFactory.get(), SIGNAL(updateTree(int,ConnectionFactory::E_ConnectionUpdateType)),
             this, SLOT(interfaceTreeChanged(int,ConnectionFactory::E_ConnectionUpdateType)));
 
-    QTimer * testTimer = new QTimer();
-    connect(testTimer, &QTimer::timeout, this, [=]() {
-        addConnection("serial", "COM8", QStringList("baudrate"), QStringList("115200"));
-        addDeviceToConnection("COM8", "Nozzle Rev 0.0", QStringList("id"), QStringList("1"));
-        testTimer->stop();
-    });
-    testTimer->start(1000);
+//    QTimer * testTimer = new QTimer();
+//    connect(testTimer, &QTimer::timeout, this, [=]() {
+//        addConnection("serial", "COM11", QStringList("baudrate"), QStringList("115200"));
+//        addDeviceToConnection("COM11", "Nozzle Rev 0.0", QStringList("id"), QStringList("1"));
+//        testTimer->stop();
+//    });
+//    testTimer->start(1000);
 
     //    QTimer::singleShot(60000, Qt::CoarseTimer, [&] {
     //        checkUpdateVersionSoftware();

@@ -1050,10 +1050,9 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
             unitCommand.isNeedAckMessage = true;
             unitCommand.devCommand = (int)Progress_tmk24Data::lls_write_cal_table;
             unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
-            for(auto i:data.first)  // key, string index
-                unitCommand.args.key.push_back(i);
-            for(auto i:data.second) // value, qstringList values
-                unitCommand.args.value.push_back(i);
+            // key, value
+            unitCommand.args.key << data.first;
+            unitCommand.args.value << data.second;
             makeDataToCommand(unitCommand);
             commandList.push_back(unitCommand);
         }
@@ -1111,10 +1110,9 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
         unitCommand.isNeedAckMessage = true;
         unitCommand.devCommand = (int)Progress_tmk24Data::lls_write_settings;
         unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
-        for(auto i:data.first) // key
-            unitCommand.args.key.push_back(i);
-        for(auto i:data.second) // value
-            unitCommand.args.value.push_back(i);
+        // key, value
+        unitCommand.args.key << data.first;
+        unitCommand.args.value << data.second;
         makeDataToCommand(unitCommand);
         commandList.push_back(unitCommand);
     }
@@ -1149,10 +1147,9 @@ QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString 
         unitCommand.devCommand = (int)Progress_tmk24Data::lls_write_settings;
         unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
         unitCommand.isNeedAckMessage = true;
-        for(auto i:data.first) // key, string index
-            unitCommand.args.key.push_back(i);
-        for(auto i:data.second) // value, qstringList values
-            unitCommand.args.value.push_back(i);
+        // key, value
+        unitCommand.args.key << data.first;
+        unitCommand.args.value << data.second;
         makeDataToCommand(unitCommand);
         commandList.push_back(unitCommand);
     }
