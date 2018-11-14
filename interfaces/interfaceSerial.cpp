@@ -56,11 +56,19 @@ void InterfaceSerial::closeInterface() {
     }
 }
 
-bool InterfaceSerial::sendData(QByteArray pData)  {
-    if(!portHandler->isOpen()) {
-        return false;
+bool InterfaceSerial::sendData(QByteArray data)  {
+    bool res = false;
+    if(portHandler != nullptr) {
+        if(!portHandler->isOpen()) {
+            if(!isManualClosed) {
+                openInterface();
+            }
+        }
+        if(portHandler->isOpen()) {
+            res = portHandler->write(data);
+        }
     }
-    return (bool)portHandler->write(pData);
+    return res;
 }
 
 bool InterfaceSerial::readData(QByteArray &pData) {
@@ -107,29 +115,6 @@ QPair<QStringList,QStringList> InterfaceSerial::getInterfaceProperty() {
     }
     return res;
 }
-
-//bool InterfaceSerial::writeData(QByteArray data) {
-//    bool res = false;
-//    if(portHandler != nullptr) {
-//        if(!portHandler->isOpen()) {
-//            if(!isManualClosed) {
-//                openInterface();
-//            }
-//        }
-//        if(portHandler->isOpen()) {
-//            res = portHandler->write(data);
-//        }
-//    }
-//    return res;
-//}
-
-//void InterfaceSerial::readData() {
-//    QByteArray data;
-//    if(portHandler->isOpen()) {
-//        data = portHandler->readAll();
-//    }
-//    deviceCollector->placeReplyDataFromInterface(data);
-//}
 
 QStringList InterfaceSerial::getAvailableList() {
     QStringList list;

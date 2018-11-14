@@ -14,12 +14,13 @@ class DeviceCollector : public QObject
 public:
     explicit DeviceCollector(interfacesAbstract *p_int_abstract);
 
-    void addCommand(QList<CommandController::sCommandData> commands);
-    bool getIsIdle();
+    void addCommand(const QList<CommandController::sCommandData> commands);
+    bool getIsIdle() const;
 
 signals:
     void deviceCheckIsReady(QString devType, QString uniqNameId, bool isOnline);
     void reqReadyReplyDataToDevice(QByteArray data, CommandController::sCommandData command);
+
 private slots:
     void controllHandler();
     void readyReadReply();

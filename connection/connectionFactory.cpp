@@ -14,7 +14,7 @@ bool ConnectionFactory::addConnection(QString typeName, QString name, QPair<QStr
         std::shared_ptr<Connection> p_connection = std::make_shared<Connection>(typeName, name, param);
         connect(p_connection.get(), &Connection::errorConnection, this, &ConnectionFactory::errorFromConnection);
         connectionList.push_back(std::move(p_connection));
-        emit updateTree(getCountConnection() != 0 ? getCountConnection()-1 : 0, ConnectionFactory::Type_Update_Add);
+        emit updateTree(connectionList.size() != 0 ? connectionList.size()-1 : 0, ConnectionFactory::Type_Update_Add);
         lockInterface->unlock();
         res = true;
     } catch(...) {
@@ -24,7 +24,7 @@ bool ConnectionFactory::addConnection(QString typeName, QString name, QPair<QStr
     return res;
 }
 
-QStringList ConnectionFactory::getAvailableName(QString typeName) {
+QStringList ConnectionFactory::getAvailableName(QString typeName) const {
     QStringList interfaceList;
     if(typeName == "serial") {
         interfacesAbstract* p_interface = nullptr;
@@ -45,7 +45,7 @@ void ConnectionFactory::removeConnection(QString name) {
         }
     }
     lockInterface->unlock();
-    emit updateTree(getCountConnection() != 0 ? getCountConnection()-1 : 0, ConnectionFactory::Type_Update_Removed);
+    emit updateTree(connectionList.size() != 0 ? connectionList.size()-1 : 0, ConnectionFactory::Type_Update_Removed);
 }
 
 void ConnectionFactory::removeConnection(int index) {
@@ -54,7 +54,7 @@ void ConnectionFactory::removeConnection(int index) {
         if(index <= connectionList.size()-1) {
             connectionList[index]->closeAndClear();
             connectionList.erase(connectionList.begin() + index);
-            emit updateTree(getCountConnection() != 0 ? getCountConnection()-1 : 0, ConnectionFactory::Type_Update_Removed);
+            emit updateTree(connectionList.size() != 0 ? connectionList.size()-1 : 0, ConnectionFactory::Type_Update_Removed);
         }
     }
     lockInterface->unlock();
@@ -72,14 +72,19 @@ void ConnectionFactory::removeAll() {
     lockInterface->unlock();
 }
 
-int ConnectionFactory::getCountConnection() {
-    return connectionList.size();
+int ConnectionFactory::getCountConnection() const {
+    int res = 0;
+    if(lockInterface->tryLock(100)) {
+        res = connectionList.size();
+        lockInterface->unlock();
+    }
+    return res;
 }
 
-QString ConnectionFactory::getInteraceNameFromIndex(int index) {
+QString ConnectionFactory::getInteraceNameFromIndex(int index) const {
     QString res = "undefined";
     if(!connectionList.empty()) {
-        if(index >= connectionList.size()-1) {
+        if(index <= connectionList.size()-1) {
             auto p_ret = connectionList.begin();
             std::advance(p_ret, index);
             res = p_ret->get()->getInterfaceAbstract()->getInterfaceName();
@@ -88,7 +93,7 @@ QString ConnectionFactory::getInteraceNameFromIndex(int index) {
     return res;
 }
 
-interfacesAbstract* ConnectionFactory::getInterace(QString name) {
+interfacesAbstract* ConnectionFactory::getInterace(QString name) const {
     for(auto it = connectionList.begin(); it!=connectionList.end(); it++) {
         if(it->get()->getInterfaceAbstract()->getInterfaceName() == name) {
             return it->get()->getInterfaceAbstract();
@@ -97,9 +102,9 @@ interfacesAbstract* ConnectionFactory::getInterace(QString name) {
     return nullptr;
 }
 
-interfacesAbstract* ConnectionFactory::getInterace(int index) {
+interfacesAbstract* ConnectionFactory::getInterace(int index) const {
     if(!connectionList.empty()) {
-        if(index >= connectionList.size()-1) {
+        if(index <= connectionList.size()-1) {
             auto p_ret = connectionList.begin();
             std::advance(p_ret, index);
             return p_ret->get()->getInterfaceAbstract();

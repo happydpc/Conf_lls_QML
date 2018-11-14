@@ -2,7 +2,7 @@
 #include "interfaces/interfaceSerial.h"
 #include <QDebug>
 
-Connection::Connection(QString typeName, QString name, QPair<QStringList,QStringList> param) {
+Connection::Connection(const QString typeName, const QString name, const QPair<QStringList,QStringList> param) {
     bool res = false;
     if(typeName.toLower() == QString("serial")) {
         std::shared_ptr<interfacesAbstract> p_interface = std::make_shared<InterfaceSerial>(name, param);

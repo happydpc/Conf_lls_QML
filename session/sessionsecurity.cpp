@@ -13,13 +13,13 @@ SessionSecurity::~SessionSecurity() {
     delete database.release();
 }
 
-QStringList SessionSecurity::getAvailableSessions() {
+QStringList SessionSecurity::getAvailableSessions() const {
     QStringList res;
     res = database->getSessionsCountAvailable();
     return res;
 }
 
-Session SessionSecurity::getSessionByName(QString name) {
+Session SessionSecurity::getSessionByName(const QString name) {
     auto res = getSessionAll();
     for(auto it:res) {
         if(it.getSessionName() == name) {
@@ -33,10 +33,10 @@ bool SessionSecurity::removeSession(QString sessionName) {
     return database->sendRemoveSession(sessionName);
 }
 
-QList<Session> SessionSecurity::getSessionAll() {
+QList<Session> SessionSecurity::getSessionAll() const {
     QList<Session> res;
-    QStringList jsonRes;
-    if(database->getSessionsAll(jsonRes)) {
+    QStringList jsonRes = database->getSessionsAll();
+    if(!jsonRes.empty()) {
         for(auto rootIt:jsonRes) {
             if(!rootIt.isEmpty()) {
                 // document

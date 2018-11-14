@@ -119,7 +119,7 @@ typedef struct{
         float powerVoltage;
         float powerCurrent;
         // тока потребленно
-        float powerCurrentAccumulate_mA;
+        float powerCurrentAccumulate_uAh;
         // ресурс осталось
         float  powerCurrentResouresAvailable_mA;
     }sBatteryData;
@@ -181,7 +181,7 @@ typedef struct{
         sValue powerCurrent;
         sValueText powertypeBattery;
         // тока потребленно
-        sValue powerCurrentAccumulate_mA;
+        sValue powerCurrentAccumulate_uAh;
         // ресурс осталось
         sValue powerCurrentResouresAvailable_mA;
 

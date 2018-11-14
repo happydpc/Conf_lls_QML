@@ -13,10 +13,10 @@ public:
 
     ~Database();
 
-    QStringList getSessionsCountAvailable();
-    bool getSessionsAll(QStringList &jsonResult);
-    bool sendRemoveSession(QString sessionName);
-    bool sendSaveSession(QString sessionName, QString jsonData);
+    QStringList getSessionsCountAvailable() const;
+    QStringList getSessionsAll() const;
+    bool sendRemoveSession(const QString sessionName);
+    bool sendSaveSession(const QString sessionName, const QString jsonData);
 
 private:
 

@@ -38,9 +38,9 @@ public:
     QStringList execCommand(QString operation, QPair<QStringList, QStringList>) override;
     ServiceDevicesAbstract* getServiceAbstract() override;
     QList<int> getChart() override;
-    QList<QString>getCurrentOtherData();
+    QList<QString> getCurrentOtherData() const;
     QList<QPair<QString,QByteArray>> prepareReply(QByteArray &data);
-    void parseCommandReply(QByteArray data, CommandController::sCommandData commandReqData);
+    void parseCommandReply(const QByteArray data, const CommandController::sCommandData commandReqData);
 
 private slots:
     void setDefaultValues();

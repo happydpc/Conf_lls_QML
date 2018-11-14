@@ -11,7 +11,7 @@ bool CommandController::addCommandToStack(QList<sCommandData> devCommandData) {
     return !commandQueue.isEmpty();
 }
 
-QPair<bool, CommandController::sCommandData> CommandController::getCommandFirstCommand() {
+const QPair<bool, CommandController::sCommandData> CommandController::getCommandFirstCommand() {
     bool res = false;
     CommandController::sCommandData tcommand;
     if(!commandQueue.empty()) {

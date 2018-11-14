@@ -19,7 +19,6 @@ public:
 
     Q_INVOKABLE void resetSession();
     Q_INVOKABLE bool removeSessionByName(QString sessionName);
-
     Q_INVOKABLE QStringList getListSession();
     Q_INVOKABLE QString saveCurrentSession();
     Q_INVOKABLE QString saveCurrentSessionAs(QString sessionName);

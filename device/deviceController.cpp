@@ -27,13 +27,13 @@ DeviceController::DeviceController(interfacesAbstract *p_int_abstract) {
     });
 }
 
-DevicesFactory* DeviceController::getDeviceFactory() {
+DevicesFactory* DeviceController::getDeviceFactory() const {
     DevicesFactory* p_ret_factoty = nullptr;
     p_ret_factoty = deviceFactory.get();
     return p_ret_factoty;
 }
 
-DeviceCollector* DeviceController::getDeviceCollector() {
+DeviceCollector* DeviceController::getDeviceCollector() const {
     DeviceCollector* p_ret_collector = nullptr;
     p_ret_collector = deviceCollector.get();
     return p_ret_collector;

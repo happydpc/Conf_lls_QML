@@ -22,26 +22,26 @@ public:
 
 public slots:
 
-    bool addConnection(QString typeName, QString name, QPair<QStringList,QStringList> param);
-    void removeConnection(QString name);
-    void removeConnection(int index);
+    bool addConnection(const QString typeName, const QString name, const QPair<QStringList,QStringList> param);
+    void removeConnection(const QString name);
+    void removeConnection(const int index);
     void removeAll();
 
-    QStringList getAvailableName(QString typeName);
+    QStringList getAvailableName(const QString typeName) const;
 
-    int getCountConnection();
+    int getCountConnection() const;
 
-    QString getInteraceNameFromIndex(int index);
+    QString getInteraceNameFromIndex(const int index) const;
 
-    interfacesAbstract* getInterace(QString name);
-    interfacesAbstract* getInterace(int index);
+    interfacesAbstract* getInterace(const QString name) const;
+    interfacesAbstract* getInterace(const int index) const;
 
-    void errorFromConnection(QString conTypeName, QString errMessage);
+    void errorFromConnection(const QString conTypeName, const QString errMessage);
 
-    DeviceController* getDeviceController(int ioIndex);
+    DeviceController* getDeviceController(const int ioIndex);
 
 signals:
-    void updateTree(int ioIndex, ConnectionFactory::E_ConnectionUpdateType type);
+    void updateTree(const int ioIndex, const ConnectionFactory::E_ConnectionUpdateType type);
 
 private:
     QVector<std::shared_ptr<Connection>> connectionList;

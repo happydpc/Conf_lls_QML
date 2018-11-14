@@ -14,18 +14,18 @@ public:
     explicit DeviceController(interfacesAbstract *p_int_abstract);
 
 public slots:
-    bool addDevice(QString devTypeName, QStringList keyParam, QStringList valueParam);
-    bool removeDevice(QString devId);
-    DevicesFactory* getDeviceFactory();
-    DeviceCollector* getDeviceCollector();
+    bool addDevice(const QString devTypeName, const QStringList keyParam, const QStringList valueParam);
+    bool removeDevice(const QString devId);
+    DevicesFactory* getDeviceFactory() const;
+    DeviceCollector* getDeviceCollector() const;
     void resetAll();
-    bool sendCommadToDev(QString operation, QStringList keys, QStringList values);
-    QStringList exeCommadToDev(QString operation, QStringList keys, QStringList values);
-    void setDeviceReInitByIndex(int indexDev);
+    bool sendCommadToDev(const QString operation, const QStringList keys, const QStringList values);
+    QStringList exeCommadToDev(const QString operation, const QStringList keys, const QStringList values);
+    void setDeviceReInitByIndex(const int indexDev);
 private slots:
     void updater();
 signals:
-    void readySendData(QByteArray data);
+    void readySendData(const QByteArray data);
     void readyGetData();
 
 private:

@@ -42,7 +42,7 @@ void Nozzle_Revision_0_00_Oct_2018::setDefaultValues() {
     this->dev_data.powerCurrent.isValid = false;
     this->dev_data.powerVoltage.isValid = false;
     this->dev_data.powertypeBattery.isValid = false;
-    this->dev_data.powerCurrentAccumulate_mA.isValid = false;
+    this->dev_data.powerCurrentAccumulate_uAh.isValid = false;
     this->dev_data.powerCurrentResouresAvailable_mA.isValid = false;
     this->dev_data.temperature.isValid = false;
     this->dev_data.versionFirmware.isValid = false;
@@ -98,7 +98,7 @@ QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getCurrentData() {
     res.first.push_back("powertypeBattery");
     res.second.push_back(dev_data.powertypeBattery.isValid == true ? dev_data.powertypeBattery.value : "NA");
     res.first.push_back("powerCurrentAccumulate");
-    res.second.push_back(dev_data.powerCurrentAccumulate_mA.isValid == true ? QString::number(dev_data.powerCurrentAccumulate_mA.value.value_f) : "NA");
+    res.second.push_back(dev_data.powerCurrentAccumulate_uAh.isValid == true ? QString::number(dev_data.powerCurrentAccumulate_uAh.value.value_f) : "NA");
     res.first.push_back("powerCurrentResouresAvailable");
     res.second.push_back(dev_data.powerCurrentResouresAvailable_mA.isValid == true ? QString::number(dev_data.powerCurrentResouresAvailable_mA.value.value_f) : "NA");
     res.first.push_back("powerCurrent");
@@ -340,6 +340,7 @@ QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QBy
 
 bool Nozzle_Revision_0_00_Oct_2018::placeDataReplyToCommand(QByteArray &commandArray, CommandController::sCommandData commandReqData) {
     bool res = false;
+    static int disconnect_counter = 0;
     if(!commandArray.isEmpty()) {
         commandArrayReplyData += commandArray;
         auto res = prepareReply(commandArrayReplyData);
@@ -360,8 +361,14 @@ bool Nozzle_Revision_0_00_Oct_2018::placeDataReplyToCommand(QByteArray &commandA
         }
     } else {
         qDebug() << "placeDataReplyToCommand=" << "-no reply";
-        emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Disconnected, commandReqData.deviceIdent,
+        if(disconnect_counter > 5) {
+            setState(DeviceAbstract::STATE_DISCONNECTED);
+            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Disconnected, commandReqData.deviceIdent,
                                     QStringList("Status"), QStringList("disconnected"), commandReqData);
+            disconnect_counter = 0;
+        } else {
+            disconnect_counter++;
+        }
     }
     return res;
 }
@@ -385,12 +392,12 @@ void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(QByteArray data, CommandCo
             Nozzle_Revision_0_00_Oct_2018_Data::sBatteryData *tbuf = (Nozzle_Revision_0_00_Oct_2018_Data::sBatteryData*)t_reply->data.data;
             dev_data.powerVoltage.value.value_f = tbuf->powerVoltage;
             dev_data.powerCurrent.value.value_f = tbuf->powerCurrent;
-            dev_data.powerCurrentAccumulate_mA.value.value_f = tbuf->powerCurrentAccumulate_mA;
-            dev_data.powerCurrentResouresAvailable_mA.value.value_f = tbuf->powerCurrentResouresAvailable_mA - abs(tbuf->powerCurrentAccumulate_mA);
+            dev_data.powerCurrentAccumulate_uAh.value.value_f = tbuf->powerCurrentAccumulate_uAh;
+            dev_data.powerCurrentResouresAvailable_mA.value.value_f = tbuf->powerCurrentResouresAvailable_mA - abs(tbuf->powerCurrentAccumulate_uAh / 1000);
             dev_data.powerVoltage.isValid = true;
             dev_data.powertypeBattery.isValid = true;
             dev_data.powerCurrent.isValid = true;
-            dev_data.powerCurrentAccumulate_mA.isValid = true;
+            dev_data.powerCurrentAccumulate_uAh.isValid = true;
             dev_data.powerCurrentResouresAvailable_mA.isValid = true;
             res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
         } else {

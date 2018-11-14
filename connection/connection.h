@@ -9,14 +9,13 @@
 class Connection : public QObject {
     Q_OBJECT
 public:
-    explicit Connection(QString typeName, QString name, QPair<QStringList,QStringList> param);
+    explicit Connection(const QString typeName, const QString name, const QPair<QStringList,QStringList> param);
     interfacesAbstract* getInterfaceAbstract();
+    DeviceController* getDeviceController();
     void closeAndClear();
 
-    DeviceController* getDeviceController();
-
 signals:
-    void errorConnection(QString ioType, QString message);
+    void errorConnection(const QString ioType, const QString message);
 
 private:
     std::shared_ptr<interfacesAbstract> connAbstract;

@@ -13,12 +13,10 @@ class SessionSecurity : public QObject
 public:
     explicit SessionSecurity(QObject *parent = nullptr);
     ~SessionSecurity();
-
-    QStringList getAvailableSessions();
-    bool removeSession(QString sessionName);
-    QList<Session> getSessionAll();
-    Session getSessionByName(QString name);
-
+    QStringList getAvailableSessions() const;
+    bool removeSession(const QString sessionName);
+    QList<Session> getSessionAll() const;
+    Session getSessionByName(const QString name);
     QString saveSession(Session & session);
 
 signals:

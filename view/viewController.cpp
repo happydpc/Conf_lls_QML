@@ -17,9 +17,12 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
 
     connect(softwareUpdater, SIGNAL(needUpdate(QString)), this, SLOT(updateVersion(QString)));
     this->updateIoStatusTimer = std::make_shared<QTimer>();
-    connect(updateIoStatusTimer.get(), &QTimer::timeout, [&](){
+    connect(updateIoStatusTimer.get(), &QTimer::timeout, [=](){
         for(int ioCounter=0; ioCounter<connFactory->getCountConnection(); ioCounter++) {
-            interfaceTree->setIoStatus(ioCounter, connFactory->getInterace(ioCounter)->isOpen());
+            interfacesAbstract *p_abst_interface = connFactory->getInterace(ioCounter);
+            if(p_abst_interface != nullptr) {
+                interfaceTree->setIoStatus(ioCounter, p_abst_interface->isOpen());
+            }
         }
     });
     updateIoStatusTimer->start(500);
@@ -28,13 +31,14 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
     connect(connFactory.get(), SIGNAL(updateTree(int,ConnectionFactory::E_ConnectionUpdateType)),
             this, SLOT(interfaceTreeChanged(int,ConnectionFactory::E_ConnectionUpdateType)));
 
-//    QTimer * testTimer = new QTimer();
-//    connect(testTimer, &QTimer::timeout, this, [=]() {
-//        addConnection("serial", "COM11", QStringList("baudrate"), QStringList("115200"));
-//        addDeviceToConnection("COM11", "Nozzle Rev 0.0", QStringList("id"), QStringList("1"));
-//        testTimer->stop();
-//    });
-//    testTimer->start(1000);
+    QTimer * testTimer = new QTimer();
+    connect(testTimer, &QTimer::timeout, this, [=]() {
+        if(addConnection("serial", "COM8", QStringList("baudrate"), QStringList("115200"))) {
+            addDeviceToConnection("COM8", "Nozzle Rev 0.0", QStringList("id"), QStringList("1"));
+        }
+        testTimer->stop();
+    });
+    testTimer->start(1000);
 
     //    QTimer::singleShot(60000, Qt::CoarseTimer, [&] {
     //        checkUpdateVersionSoftware();
@@ -92,83 +96,83 @@ QStringList ViewController::getListSession() {
 }
 
 bool ViewController::loadSession(QString sessionName) {
-    //    Session t_load_session = sessionSecurity->getSessionByName(sessionName);
-    //    if(t_load_session.getIsValid()) {
-    //        for(auto itInteface:t_load_session.getInterfaces()) {
-    //            if(addConnection(itInteface.typeName, itInteface.name, itInteface.propKey, itInteface.propValue)) {
-    //                for(auto itDevice:itInteface.devices) {
-    //                    addDeviceToConnection(itInteface.name, itDevice.typeName, itDevice.propKey, itDevice.propValue);
-    //                }
-    //                emit devSetActiveDeviceProperty(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),
-    //                                                getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(interfaceTree->getDevIndex()));
-    //            }
-    //        }
-    //    }
-    //    return t_load_session.getIsValid();
+    Session t_load_session = sessionSecurity->getSessionByName(sessionName);
+    if(t_load_session.getIsValid()) {
+        for(auto itInteface:t_load_session.getInterfaces()) {
+            if(addConnection(itInteface.typeName, itInteface.name, itInteface.propKey, itInteface.propValue)) {
+                for(auto itDevice:itInteface.devices) {
+                    addDeviceToConnection(itInteface.name, itDevice.typeName, itDevice.propKey, itDevice.propValue);
+                }
+                emit devSetActiveDeviceProperty(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),
+                                                getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(interfaceTree->getDevIndex()));
+            }
+        }
+    }
+    return t_load_session.getIsValid();
 }
 
 QString ViewController::saveCurrentSession() {
-    //    Session session;
-    //    Session::sDevices t_session_dev;
-    //    Session::sInterface t_session_io;
-    //    int connAll = connFactory->getCountConnection();
-    //    session.setSessionName("Сеанс_" + QDateTime::currentDateTimeUtc().toString("yyyy/M/d/hh:mm:ss:z"));
-    //    for(int ioCounter=0; ioCounter<connAll; ioCounter++) {
-    //        DevicesFactory *p_dev_factory = nullptr;
-    //        // interfaces
-    //        t_session_io.name = connFactory->getInterace(ioCounter)->getInterfaceName();
-    //        t_session_io.propKey = connFactory->getInterace(ioCounter)->getInterfaceProperty().first;
-    //        t_session_io.propValue = connFactory->getInterace(ioCounter)->getInterfaceProperty().second;
-    //        t_session_io.typeName= connFactory->getInterace(ioCounter)->getType();
-    //        session.addInterface(t_session_io);
-    //        // devices
-    //        p_dev_factory = connFactory->getInterace(ioCounter)->getDeviceFactory();
-    //        if(p_dev_factory != nullptr) {
-    //            int devAll = p_dev_factory->getDeviceCount();
-    //            for(int devCounter=0; devCounter<devAll; devCounter++) {
-    //                t_session_dev.propKey.clear();
-    //                t_session_dev.propValue.clear();
-    //                t_session_dev.typeName = p_dev_factory->getDeviceName(devCounter);
-    //                t_session_dev.propKey = p_dev_factory->getDevicePropertyByIndex(devCounter).first;
-    //                t_session_dev.propValue = p_dev_factory->getDevicePropertyByIndex(devCounter).second;
-    //                session.addDevice(t_session_dev);
-    //            }
-    //        }
-    //    }
-    //    QString resNameSession = sessionSecurity->saveSession(session);
-    //    return resNameSession;
+    Session session;
+    Session::sDevices t_session_dev;
+    Session::sInterface t_session_io;
+    int connAll = connFactory->getCountConnection();
+    session.setSessionName("Сеанс_" + QDateTime::currentDateTimeUtc().toString("yyyy/M/d/hh:mm:ss:z"));
+    for(int ioCounter=0; ioCounter<connAll; ioCounter++) {
+        DevicesFactory *p_dev_factory = nullptr;
+        // interfaces
+        t_session_io.name = connFactory->getInterace(ioCounter)->getInterfaceName();
+        t_session_io.propKey = connFactory->getInterace(ioCounter)->getInterfaceProperty().first;
+        t_session_io.propValue = connFactory->getInterace(ioCounter)->getInterfaceProperty().second;
+        t_session_io.typeName= connFactory->getInterace(ioCounter)->getType();
+        session.addInterface(t_session_io);
+        // devices
+        p_dev_factory = connFactory->getDeviceController(ioCounter)->getDeviceFactory();
+        if(p_dev_factory != nullptr) {
+            int devAll = p_dev_factory->getDeviceCount();
+            for(int devCounter=0; devCounter<devAll; devCounter++) {
+                t_session_dev.propKey.clear();
+                t_session_dev.propValue.clear();
+                t_session_dev.typeName = p_dev_factory->getDeviceName(devCounter);
+                t_session_dev.propKey = p_dev_factory->getDevicePropertyByIndex(devCounter).first;
+                t_session_dev.propValue = p_dev_factory->getDevicePropertyByIndex(devCounter).second;
+                session.addDevice(t_session_dev);
+            }
+        }
+    }
+    QString resNameSession = sessionSecurity->saveSession(session);
+    return resNameSession;
 }
 
 QString ViewController::saveCurrentSessionAs(QString sessionName) {
-    //    Session session;
-    //    Session::sDevices t_session_dev;
-    //    Session::sInterface t_session_io;
-    //    int connAll = connFactory->getCountConnection();
-    //    session.setSessionName(QString("%1_%2").arg(sessionName).arg(QDateTime::currentDateTimeUtc().toString("yyyy/M/d/hh:mm:ss:z")));
-    //    for(int ioCounter=0; ioCounter<connAll; ioCounter++) {
-    //        DevicesFactory *p_dev_factory = nullptr;
-    //        // interfaces
-    //        t_session_io.name = connFactory->getInterace(ioCounter)->getInterfaceName();
-    //        t_session_io.propKey = connFactory->getInterace(ioCounter)->getInterfaceProperty().first;
-    //        t_session_io.propValue = connFactory->getInterace(ioCounter)->getInterfaceProperty().second;
-    //        t_session_io.typeName= connFactory->getInterace(ioCounter)->getType();
-    //        session.addInterface(t_session_io);
-    //        // devices
-    //        p_dev_factory = connFactory->getInterace(ioCounter)->getDeviceFactory();
-    //        if(p_dev_factory != nullptr) {
-    //            int devAll = p_dev_factory->getDeviceCount();
-    //            for(int devCounter=0; devCounter<devAll; devCounter++) {
-    //                t_session_dev.propKey.clear();
-    //                t_session_dev.propValue.clear();
-    //                t_session_dev.typeName = p_dev_factory->getDeviceName(devCounter);
-    //                t_session_dev.propKey = p_dev_factory->getDevicePropertyByIndex(devCounter).first;
-    //                t_session_dev.propValue = p_dev_factory->getDevicePropertyByIndex(devCounter).second;
-    //                session.addDevice(t_session_dev);
-    //            }
-    //        }
-    //    }
-    //    QString resNameSession = sessionSecurity->saveSession(session);
-    //    return resNameSession;
+    Session session;
+    Session::sDevices t_session_dev;
+    Session::sInterface t_session_io;
+    int connAll = connFactory->getCountConnection();
+    session.setSessionName(QString("%1_%2").arg(sessionName).arg(QDateTime::currentDateTimeUtc().toString("yyyy/M/d/hh:mm:ss:z")));
+    for(int ioCounter=0; ioCounter<connAll; ioCounter++) {
+        DevicesFactory *p_dev_factory = nullptr;
+        // interfaces
+        t_session_io.name = connFactory->getInterace(ioCounter)->getInterfaceName();
+        t_session_io.propKey = connFactory->getInterace(ioCounter)->getInterfaceProperty().first;
+        t_session_io.propValue = connFactory->getInterace(ioCounter)->getInterfaceProperty().second;
+        t_session_io.typeName= connFactory->getInterace(ioCounter)->getType();
+        session.addInterface(t_session_io);
+        // devices
+        p_dev_factory = connFactory->getDeviceController(ioCounter)->getDeviceFactory();
+        if(p_dev_factory != nullptr) {
+            int devAll = p_dev_factory->getDeviceCount();
+            for(int devCounter=0; devCounter<devAll; devCounter++) {
+                t_session_dev.propKey.clear();
+                t_session_dev.propValue.clear();
+                t_session_dev.typeName = p_dev_factory->getDeviceName(devCounter);
+                t_session_dev.propKey = p_dev_factory->getDevicePropertyByIndex(devCounter).first;
+                t_session_dev.propValue = p_dev_factory->getDevicePropertyByIndex(devCounter).second;
+                session.addDevice(t_session_dev);
+            }
+        }
+    }
+    QString resNameSession = sessionSecurity->saveSession(session);
+    return resNameSession;
 }
 
 QStringList ViewController::getInterfaceAvailableToAdd(QString typeName) {

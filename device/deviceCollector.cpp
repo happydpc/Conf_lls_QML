@@ -36,10 +36,10 @@ void DeviceCollector::readyReadReply() {
     commandController->removeFirstCommand();
 }
 
-void DeviceCollector::addCommand(QList<CommandController::sCommandData> commands) {
+void DeviceCollector::addCommand(const QList<CommandController::sCommandData> commands) {
     commandController.get()->addCommandToStack(commands);
 }
 
-bool DeviceCollector::getIsIdle() {
+bool DeviceCollector::getIsIdle() const {
     return commandController.get()->commandsIsEmpty();
 }
