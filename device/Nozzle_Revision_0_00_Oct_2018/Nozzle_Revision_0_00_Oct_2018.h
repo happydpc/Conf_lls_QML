@@ -14,6 +14,10 @@ public:
     ~Nozzle_Revision_0_00_Oct_2018();
 
     static constexpr char* name = "Nozzle Rev 0.0";
+    static constexpr char COMMAND_START_BYTE = (char) 0xC0;
+    static constexpr char COMMAND_STOP_BYTE  = (char) 0xC5;
+    static constexpr char COMMAND_ESC_BYTE   = (char) 0xC1;
+    static constexpr char COMMAND_ESC_ESC_BYTE    = (char) 0xC2;
 
     QString getDevTypeName() override;
     QString getDevHeader() override;
@@ -50,6 +54,7 @@ private:
     Nozzle_Revision_0_00_Oct_2018_Data::S_dev_data dev_data;
     QString serialNumber;
     QByteArray commandArrayReplyData;
+    QByteArray packData(QByteArray *commandData);
 
     struct {
         QString id;

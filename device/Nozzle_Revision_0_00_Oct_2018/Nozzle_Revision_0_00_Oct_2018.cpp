@@ -171,42 +171,42 @@ bool Nozzle_Revision_0_00_Oct_2018::makeDataToCommand(CommandController::sComman
     try {
         switch(commandData.devCommand) {
         case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getIsReadyCommand: {
-            commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
+            commandData.commandOptionData.append((char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
             res = true;
         }
             break;
         case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getAccelData: {
-            commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
+            commandData.commandOptionData.append((char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
             res = true;
         }
             break;
         case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getAccelConfig: {
-            commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
+            commandData.commandOptionData.append((char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
             res = true;
         }
             break;
         case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getBatteryData: {
-            commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
+            commandData.commandOptionData.append((char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
             res = true;
         }
             break;
         case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkData: {
-            commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
+            commandData.commandOptionData.append((char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
             res = true;
         }
             break;
         case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getCardData: {
-            commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
+            commandData.commandOptionData.append((char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
             res = true;
         }
             break;
         case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getOtherData: {
-            commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
+            commandData.commandOptionData.append((char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
             res = true;
         }
             break;
         case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getNetworkConfig: {
-            commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
+            commandData.commandOptionData.append((char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
             res = true;
         }
             break;
@@ -237,7 +237,7 @@ bool Nozzle_Revision_0_00_Oct_2018::makeDataToCommand(CommandController::sComman
                 tbuf.deltaPower2 = qPow((2*mG*sin((tbuf.angle*M_PI/180)/2)), 2);
             }
             memcpy(tCommand.data.data, (uint8_t*)&tbuf, sizeof(tbuf));
-            commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
+            commandData.commandOptionData.append((char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
             res = true;
         }
             break;
@@ -258,7 +258,7 @@ bool Nozzle_Revision_0_00_Oct_2018::makeDataToCommand(CommandController::sComman
                 }
             }
             memcpy(tCommand.data.data, (uint8_t*)&tbuf, sizeof(tbuf));
-            commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
+            commandData.commandOptionData.append((char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
             res = true;
         }
             break;
@@ -284,7 +284,7 @@ bool Nozzle_Revision_0_00_Oct_2018::makeDataToCommand(CommandController::sComman
                     }
                 }
                 memcpy(tCommand.data.data, (uint8_t*)&t_data, sizeof(t_data));
-                commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
+                commandData.commandOptionData.append((char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
                 res = true;
             }
         }
@@ -296,16 +296,46 @@ bool Nozzle_Revision_0_00_Oct_2018::makeDataToCommand(CommandController::sComman
             sOutBatBuff tbuf;
             tbuf.normal = true;
             memcpy(tCommand.data.data, (uint8_t*)&tbuf, sizeof(tbuf));
-            commandData.commandOptionData.insert(0, (char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
+            commandData.commandOptionData.append((char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
             res = true;
         }
             break;
         default : break;
         }
+        commandData.commandOptionData = packData(&commandData.commandOptionData);
+
     } catch(...) {
         qDebug("Device: makeDataToCommand -catch!");
     }
     return res;
+}
+
+QByteArray Nozzle_Revision_0_00_Oct_2018::packData(QByteArray *pCommandData){
+    QByteArray outData;
+    outData.clear();
+    outData.append(COMMAND_START_BYTE);
+    for (int i=0; i<pCommandData->size(); i++) {
+        switch (pCommandData->constData()[i]) {
+            case COMMAND_ESC_BYTE:
+                outData.append(COMMAND_ESC_BYTE);
+                outData.append(COMMAND_ESC_ESC_BYTE);
+                break;
+            case COMMAND_START_BYTE:
+                outData.append(COMMAND_ESC_BYTE);
+                outData.append(COMMAND_START_BYTE);
+                break;
+            case COMMAND_STOP_BYTE:
+                outData.append(COMMAND_ESC_BYTE);
+                outData.append(COMMAND_STOP_BYTE);
+                break;
+            default:
+                outData.append(pCommandData->constData()[i]);
+                break;
+        }
+    }
+    outData.append(COMMAND_STOP_BYTE);
+
+    return outData;
 }
 
 // found dead frames and delete it
