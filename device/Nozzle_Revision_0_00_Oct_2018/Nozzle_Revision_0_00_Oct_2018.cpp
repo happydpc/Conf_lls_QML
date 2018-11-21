@@ -391,7 +391,6 @@ bool Nozzle_Revision_0_00_Oct_2018::placeDataReplyToCommand(QByteArray &commandA
             }
         }
     } else {
-        qDebug() << "placeDataReplyToCommand=" << "-no reply";
         if(disconnect_counter > 10) {
             disconnect_counter = 0;
             setState(DeviceAbstract::STATE_DISCONNECTED);
