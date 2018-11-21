@@ -325,6 +325,8 @@ Rectangle {
                     Column {
                         anchors.left: parent.left
                         anchors.leftMargin: 15
+                        anchors.top: parent.top
+                        anchors.topMargin: 15
                         spacing: 10
                         Row {
                             id:currentDataTexted

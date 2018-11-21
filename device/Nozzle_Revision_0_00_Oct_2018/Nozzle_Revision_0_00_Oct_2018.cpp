@@ -284,9 +284,9 @@ bool Nozzle_Revision_0_00_Oct_2018::makeDataToCommand(CommandController::sComman
                     }
                 }
                 memcpy(tCommand.data.data, (uint8_t*)&t_data, sizeof(t_data));
-                commandData.commandOptionData.append((char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
-                res = true;
             }
+            commandData.commandOptionData.append((char*)&tCommand, sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
+            res = true;
         }
             break;
         case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_setBatteryNewAccum: {
@@ -375,6 +375,7 @@ bool Nozzle_Revision_0_00_Oct_2018::placeDataReplyToCommand(QByteArray &commandA
         commandArrayReplyData += commandArray;
         auto res = prepareReply(commandArrayReplyData);
         for(auto it:res) {
+            disconnect_counter = 0;
             if(!it.first.isEmpty()) {
                 if(state == DeviceAbstract::STATE_DISCONNECTED) {
                     emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Connected, commandReqData.deviceIdent,
@@ -391,11 +392,11 @@ bool Nozzle_Revision_0_00_Oct_2018::placeDataReplyToCommand(QByteArray &commandA
         }
     } else {
         qDebug() << "placeDataReplyToCommand=" << "-no reply";
-        if(disconnect_counter > 5) {
+        if(disconnect_counter > 10) {
+            disconnect_counter = 0;
             setState(DeviceAbstract::STATE_DISCONNECTED);
             emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Disconnected, commandReqData.deviceIdent,
                                     QStringList("Status"), QStringList("disconnected"), commandReqData);
-            disconnect_counter = 0;
         } else {
             disconnect_counter++;
         }

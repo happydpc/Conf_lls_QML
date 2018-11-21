@@ -2,5 +2,7 @@
 /.fuse_hidden0000034a00000007
 /.fuse_hidden0000034f00000008
 /Lls_QML_conf
+build/*
 *.fuse_hidden0000032300000001
 *.pro.user.aff230b.4.8-pre1
+*pro.user

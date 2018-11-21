@@ -33,8 +33,8 @@ ViewController::ViewController(Model *pInterfaceModel, QObject *parent) : QObjec
 
     QTimer * testTimer = new QTimer();
     connect(testTimer, &QTimer::timeout, this, [=]() {
-        if(addConnection("serial", "COM8", QStringList("baudrate"), QStringList("115200"))) {
-            addDeviceToConnection("COM8", "Nozzle Rev 0.0", QStringList("id"), QStringList("1"));
+        if(addConnection("serial", "COM3", QStringList("baudrate"), QStringList("115200"))) {
+            addDeviceToConnection("COM3", "Nozzle Rev 0.0", QStringList("id"), QStringList("1"));
         }
         testTimer->stop();
     });
