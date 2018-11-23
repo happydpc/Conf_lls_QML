@@ -22,7 +22,7 @@ Rectangle {
 
     function setUpdatePeriodicValues(data) {
         devPropertyProgressTmk4ux.isReady = true
-        var values = viewController.getCurrentDevPeriodicData()
+        var values = controller.getCurrentDevPeriodicData()
         if(values.length >0) {
             levelValue.text = values[0]
             levelProgress.value = values[1]
@@ -31,7 +31,7 @@ Rectangle {
             tempValue.text = values[4]
         }
         //-- chart
-        var list = viewController.getCurrentDevChart()
+        var list = controller.getCurrentDevChart()
         series1.clear();
         graph.graphLength = list.length
         graph.graphAmplitudeMax = 0
@@ -768,7 +768,7 @@ Rectangle {
             }
         }
         onAccepted: {
-            viewController.setCurrentDevLevelAsEmpty()
+            controller.setCurrentDevLevelAsEmpty()
             close()
         }
     }
@@ -789,7 +789,7 @@ Rectangle {
             }
         }
         onAccepted: {
-            viewController.setCurrentDevLevelAsFull()
+            controller.setCurrentDevLevelAsFull()
             close()
         }
     }

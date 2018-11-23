@@ -63,8 +63,8 @@ Rectangle {
     }
 
     function setDevProperty() {
-        var keys = viewController.getCurrentDevPropertyKey()
-        var values = viewController.getCurrentDevPropertyValue()
+        var keys = controller.getCurrentDevPropertyKey()
+        var values = controller.getCurrentDevPropertyValue()
         parseConfigData(keys, values)
     }
 
@@ -916,7 +916,7 @@ Rectangle {
                                                 onClicked: {
                                                     var keys = []
                                                     var values = []
-                                                    viewController.setCurrentDevCustomCommand("get current dev settings", keys, values)
+                                                    controller.setCurrentDevCustomCommand("get current dev settings", keys, values)
                                                 }
                                             }
                                             Button {
@@ -935,7 +935,7 @@ Rectangle {
                                                     values.push(accelCoefZ.text)
                                                     keys.push("accelAngle")
                                                     values.push(accelAngle.text)
-                                                    viewController.setCurrentDevCustomCommand("set current dev settings accel config", keys, values)
+                                                    controller.setCurrentDevCustomCommand("set current dev settings accel config", keys, values)
                                                 }
                                             }
                                         }
@@ -1036,7 +1036,7 @@ Rectangle {
                                     onClicked: {
                                         var keys = []
                                         var values = []
-                                        viewController.setCurrentDevCustomCommand("get current dev settings", keys, values)
+                                        controller.setCurrentDevCustomCommand("get current dev settings", keys, values)
                                     }
                                 }
                                 Button {
@@ -1057,7 +1057,7 @@ Rectangle {
                                         values.push(networkServerPort.text)
                                         keys.push("networkPanid")
                                         values.push(networkPanid.text)
-                                        viewController.setCurrentDevCustomCommand("set current dev settings net config", keys, values)
+                                        controller.setCurrentDevCustomCommand("set current dev settings net config", keys, values)
                                     }
                                 }
                             }
@@ -1088,7 +1088,7 @@ Rectangle {
                                             onClicked: {
                                                 var keys = []
                                                 var values = []
-                                                viewController.setCurrentDevCustomCommand("set new battery", keys, values)
+                                                controller.setCurrentDevCustomCommand("set new battery", keys, values)
                                             }
                                         }
                                     }

@@ -1,15 +1,15 @@
-#ifndef SESSION_H
-#define SESSION_H
+#ifndef SESSION_PROPERTY_H
+#define SESSION_PROPERTY_H
 
 #include <QObject>
 #include <QVector>
 #include <QPair>
 
-class Session
+class SessionProperty
 {
 public:
-    Session();
-    Session(QString sessionName);
+    SessionProperty();
+    SessionProperty(QString sessionName);
 
     typedef struct {
         QString typeName;
@@ -35,7 +35,6 @@ public:
     bool getIsValid();
 
     QList<sInterface> getInterfaces();
-//    QList<sDevices> getDevices();
 
 private:
     bool isValid;
@@ -44,4 +43,4 @@ private:
     QList<sInterface> session;
 };
 
-#endif // SESSION_H
+#endif

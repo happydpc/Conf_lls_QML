@@ -11,7 +11,7 @@
 class DeviceController : public QObject {
     Q_OBJECT
 public:
-    explicit DeviceController(interfacesAbstract *p_int_abstract);
+    explicit DeviceController(ioAbstract *p_int_abstract);
 
 public slots:
     bool addDevice(const QString devTypeName, const QStringList keyParam, const QStringList valueParam);
@@ -35,8 +35,8 @@ private:
     // root - interfaces
     // second list - same types services (tmk24, nozzle...and etc)
     QList<std::shared_ptr<ServiceDevicesAbstract>> serviceList;
-    std::unique_ptr<QTimer> updateTimer;
-    std::unique_ptr<QMutex> devMutex;
+    std::shared_ptr<QTimer> updateTimer;
+    std::shared_ptr<QMutex> devMutex;
 };
 
 #endif // DEVICECONTROLLER_H

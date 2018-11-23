@@ -28,13 +28,13 @@ public slots:
     void removeAll();
 
     QStringList getAvailableName(const QString typeName) const;
-
     int getCountConnection() const;
 
-    QString getInteraceNameFromIndex(const int index) const;
+    QString getIoName(int ioIndex) const;
+    bool getIoNameIsExist(QString ioName) const;
 
-    interfacesAbstract* getInterace(const QString name) const;
-    interfacesAbstract* getInterace(const int index) const;
+    ioAbstract* getIoAbstract(const QString ioName);
+    ioAbstract* getIoAbstract(const int ioIndex);
 
     void errorFromConnection(const QString conTypeName, const QString errMessage);
 
@@ -45,7 +45,7 @@ signals:
 
 private:
     QVector<std::shared_ptr<Connection>> connectionList;
-    std::unique_ptr<QMutex> lockInterface;
+    std::shared_ptr<QMutex> lockInterface;
 };
 
 #endif // CONNECTIONFACTORY_H

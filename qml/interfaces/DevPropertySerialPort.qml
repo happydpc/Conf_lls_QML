@@ -65,7 +65,7 @@ Rectangle {
             id: addDevButton
             text: qsTr("Добавить устройство")
             onClicked: {
-                var list = viewController.getDeviceAvailableType()
+                var list = controller.getDeviceAvailableType()
                 addDeviceDialog.setListAvailableDevices(list)
                 addDeviceDialog.open()
             }

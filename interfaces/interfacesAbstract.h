@@ -4,11 +4,11 @@
 #include <QObject>
 #include <memory>
 
-class interfacesAbstract : public QObject
+class ioAbstract : public QObject
 {
     Q_OBJECT
 public:
-    explicit interfacesAbstract(QObject *parent = nullptr);
+    explicit ioAbstract(QObject *parent = nullptr);
 
 public slots:
     virtual void initInterface() = 0;

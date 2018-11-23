@@ -55,7 +55,7 @@ Popup {
                     value.push(newIdAddress.value)
                     value.push(password.text)
                     value.push(currentId.text)
-                    viewController.setCurrentDevChangeId("change current dev id", key, value)
+                    controller.setCurrentDevChangeId("change current dev id", key, value)
                     close()
                 }
             }
@@ -120,8 +120,8 @@ Popup {
     }
 
     onOpened: {
-        var devPropertyKey = viewController.getCurrentDevPropertyKey()
-        var devPropertyValue = viewController.getCurrentDevPropertyValue()
+        var devPropertyKey = controller.getCurrentDevPropertyKey()
+        var devPropertyValue = controller.getCurrentDevPropertyValue()
         var devId = 0
         for(var i=0; i<devPropertyValue.length; i++) {
             if(devPropertyKey[i] === "id"){

@@ -12,7 +12,7 @@ class DeviceCollector : public QObject
 {
     Q_OBJECT
 public:
-    explicit DeviceCollector(interfacesAbstract *p_int_abstract);
+    explicit DeviceCollector(ioAbstract *p_int_abstract);
 
     void addCommand(const QList<CommandController::sCommandData> commands);
     bool getIsIdle() const;
@@ -37,9 +37,9 @@ private:
         bool result = false;
     }checkDeviceStruct;
 
-    interfacesAbstract* int_abstract;
-    std::unique_ptr<CommandController> commandController;
-    std::unique_ptr<QTimer> reqTimerHanler;
+    ioAbstract* int_abstract;
+    std::shared_ptr<CommandController> commandController;
+    std::shared_ptr<QTimer> reqTimerHanler;
     bool reqIsBusy;
     QScopedPointer<QTimer> sendReqTimer;
 };

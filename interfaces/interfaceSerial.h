@@ -9,7 +9,7 @@
 #include <QTimer>
 #include "device/deviceController.h"
 
-class InterfaceSerial : public interfacesAbstract
+class InterfaceSerial : public ioAbstract
 {
     Q_OBJECT
 public:
@@ -33,7 +33,7 @@ private slots:
 private:
     static constexpr char* typeName = "serial";
     bool isManualClosed;
-    std::unique_ptr<QSerialPort> portHandler = nullptr;
+    std::shared_ptr<QSerialPort> portHandler = nullptr;
     QString name;
     QPair<QStringList,QStringList>param;
 };

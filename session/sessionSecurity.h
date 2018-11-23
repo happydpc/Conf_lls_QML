@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <memory>
-#include "session.h"
+#include "sessionProperty.h"
 #include "database/database.h"
 #include <QList>
 
@@ -15,15 +15,17 @@ public:
     ~SessionSecurity();
     QStringList getAvailableSessions() const;
     bool removeSession(const QString sessionName);
-    QList<Session> getSessionAll() const;
-    Session getSessionByName(const QString name);
-    QString saveSession(Session & session);
+    QList<SessionProperty> getSessionAll() const;
+    SessionProperty getSessionByName(const QString name);
+    QString saveSession(SessionProperty & session);
 
 signals:
 
 public slots:
 
 private:
+
+    SessionProperty sess;
     std::unique_ptr<Database> database;
 };
 

@@ -35,9 +35,8 @@ public:
 
 signals:
     void treeChanged();
-
-    void currentIndexIsChangedDevice(int interfaceIndex, int deviceIndex);
-    void currentIndexIsChangedInteface(int index);
+    void indexDevIsChanged(int ioIndex, int devIndex);
+    void indexIoIsChanged(int ioIndex, int devIndex);
 
 
 private slots:

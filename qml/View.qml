@@ -10,31 +10,51 @@ import "qrc:/qml/projectPanel"
 Item {
     id: root
 
-    Connections {
-        target: viewController
+//    void addIoSucces(QString ioType, QStringList keyProperty, QStringList valueProperty);
+//    void removeIoSucces(int ioIndex);
+//    void onAddDevSucces(int ioIndex, QString devType, QStringList devKeyProperty, QStringList devValueProperty);
+//    void onRemoveDeviceSucces(int ioIndex, int devIndex);
+//    void onIoTreeIsEmpty();
+//    void onDevSetActiveDeviceProperty(QString devType, int ioIndex, int devIndex);
+//    void onIoReadyProperties(QString ioType, int ioIndex, QStringList keyProperty, QStringList valueProperty);
+//    void onDevReadyProperties(QString typeDev, int ioIndex, int devIndex, QStringList keys, QStringList values);
+//    void onDevReadyPeriodicData(QString typeDev, int ioIndex, int devIndex, QStringList keys, QStringList values);
+//    void onDevConnected(int ioIndex, int devIndex, QString typeDev);
+//    void onDevReady(int ioIndex, int devIndex, QString typeDev);
+//    void onDevDisconnected(int ioIndex, int devIndex, QString typeDev);
+//    void onAddIoFail();
+//    void onAddDeviceFail(QString devName, QString errorMessage);
+//    void onDevCommandExecuted(QString typeDev, int ioIndex, int devIndex, QStringList keys, QStringList args);
+//    void onDevUpdateLogMessage(int ioIndex, int devIndex, QString codeMessage, QString message);
+//    void onDevReadyCheckCommand(int ioIndex, QString devTypeName, QString devId, QString devSn, QString result);
+//    void devUpdateLogMessage(int ioIndex, int devIndex, int codeMessage, QString message);
+//    void devReadyCheckCommand(int ioIndex, QString devTypeName, QString devId, QString devSn, bool result);
+//    void ioSetActiveProperty(int ioIndex, QString ioType);
+//    void ioAndDeviceListIsEmpty();
+//    void isAvailableNewVersion(QString downloadUrl);
 
-        onAddInterfaceSuccesfull: {
+    Connections {
+        target: controller
+
+        onAddIoSucces: {
             projectPanel.devicePropertyPanel.intefaceAdded(ioType, keyProperty, valueProperty)
         }
-        onDeleteInterfaceSuccesfull: {
+        onRemoveIoSucces: {
             projectPanel.devicePropertyPanel.intefaceDeleted(ioIndex)
         }
-//        onInterfaceSetActiveProperty: {
-//            projectPanel.devicePropertyPanel.setActiveInterfacePanelType(ioType, ioIndex)
-//        }
-        onAddDeviceSuccesfull: {
+        onAddDevSucces: {
             projectPanel.devicePropertyPanel.deviceAdded(ioIndex, devType, devKeyProperty, devValueProperty)
         }
-        onDeleteDeviceSuccesfull: {
+        onRemoveDeviceSucces: {
             projectPanel.devicePropertyPanel.deviceDeleted(ioIndex, devIndex)
         }
-        onInterfaceAndDeviceListIsEmpty: {
+        onIoTreeIsEmpty: {
             projectPanel.devicePropertyPanel.setActiveLogoPanel()
         }
         onDevSetActiveDeviceProperty: {
             projectPanel.devicePropertyPanel.setActiveDevicePanelType(devType, ioIndex, devIndex)
         }
-        onInterfaceReadyProperties: {
+        onIoReadyProperties: {
             projectPanel.devicePropertyPanel.setInterfaceProperites(ioType, ioIndex, keyProperty, valueProperty)
         }
         onDevReadyProperties: {
@@ -52,13 +72,13 @@ Item {
         onDevDisconnected: {
             projectPanel.devicePropertyPanel.setDevDisconnected(ioIndex, devIndex, typeDev)
         }
-        onAddConnectionFail: {
+        onAddIoFail: {
             projectPanel.devicePropertyPanel.dialogAddInterfaceFail.open()
         }
         onAddDeviceFail: {
             projectPanel.devicePropertyPanel.showDeviceAddError(devName, errorMessage)
         }
-        onDevCustomCommandExecuted: {
+        onDevCommandExecuted: {
             try {                
                 projectPanel.devicePropertyPanel.setDevCustomCommandExecuted(typeDev, ioIndex, devIndex, keys, args)
             } catch (error) {
@@ -77,7 +97,7 @@ Item {
         onDevReadyCheckCommand: {
             projectPanel.devicePropertyPanel.intefaceSetResultCheckDevice(ioIndex, devTypeName, devId, devSn, result)
         }
-        onClearAllFrontEndItems: {
+        onRemoveAllContent: {
             projectPanel.devicePropertyPanel.setCrearAllItems()
         }
         onIsAvailableNewVersion: {
@@ -124,7 +144,7 @@ Item {
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
                     onAddNewConnection: {
-                        var list = viewController.getInterfaceAvailableToAdd("serial")
+                        var list = controller.getAvailableIoToAdd("serial")
                         console.log("Available interface-" + list)
                         addInterface.setListInterfaces(list)
                         addInterface.open()
@@ -140,8 +160,7 @@ Item {
                         var keyList = []
                         keyList.push("baudrate")
                         paramList.push(baudrate)
-                        var res = viewController.addConnection("serial", name, keyList, paramList)
-                        console.log("addConnectionaddInterface=" + res)
+                        var res = controller.addIo("serial", name, keyList, paramList)
                         if(res) {
                             close()
                         }

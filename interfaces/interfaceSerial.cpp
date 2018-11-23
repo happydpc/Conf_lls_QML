@@ -2,7 +2,7 @@
 #include "QDebug"
 
 InterfaceSerial::InterfaceSerial(QString name, QPair<QStringList,QStringList>param) {
-    this->portHandler = std::make_unique<QSerialPort>();
+    this->portHandler = std::make_shared<QSerialPort>();
     this->name = name;
     this->param = param;
     this->isManualClosed = false;
@@ -12,7 +12,7 @@ InterfaceSerial::~InterfaceSerial() {
     if(portHandler->isOpen()) {
         portHandler->close();
     }
-    delete portHandler.release();
+    portHandler.reset();
 }
 
 void InterfaceSerial::initInterface()  {

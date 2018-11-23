@@ -34,8 +34,8 @@ Column{
                         }
                         onClicked: {
                             modelData.isCurrent = true
-                            var keys = viewController.getCurrentDevPropertyKey()
-                            var values = viewController.getCurrentDevPropertyValue()
+                            var keys = controller.getCurrentDevPropertyKey()
+                            var values = controller.getCurrentDevPropertyValue()
                             for(var i=0; i<keys.length; i++) {
                                 if(keys[i] === "header"){
                                     editDeviceName.setDeviceName(values[i])
@@ -145,7 +145,7 @@ Column{
             }
         }
         onAccepted: {
-            viewController.removeActiveDevice()
+            controller.removeActiveDevice()
             close()
         }
     }

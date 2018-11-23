@@ -3,7 +3,7 @@
 #include <QDebug>
 
 ConnectionFactory::ConnectionFactory() {
-    this->lockInterface = std::make_unique<QMutex>(QMutex::NonRecursive);
+    this->lockInterface = std::make_shared<QMutex>(QMutex::NonRecursive);
 }
 ConnectionFactory::~ConnectionFactory() {}
 
@@ -27,7 +27,7 @@ bool ConnectionFactory::addConnection(QString typeName, QString name, QPair<QStr
 QStringList ConnectionFactory::getAvailableName(QString typeName) const {
     QStringList interfaceList;
     if(typeName == "serial") {
-        interfacesAbstract* p_interface = nullptr;
+        ioAbstract* p_interface = nullptr;
         p_interface = new InterfaceSerial("", QPair<QStringList,QStringList>());
         if(p_interface != nullptr) {
             interfaceList = p_interface->getAvailableList();
@@ -81,34 +81,40 @@ int ConnectionFactory::getCountConnection() const {
     return res;
 }
 
-QString ConnectionFactory::getInteraceNameFromIndex(int index) const {
-    QString res = "undefined";
+QString ConnectionFactory::getIoName(int ioIndex) const {
     if(!connectionList.empty()) {
-        if(index <= connectionList.size()-1) {
+        if(ioIndex <= connectionList.size()-1) {
             auto p_ret = connectionList.begin();
-            std::advance(p_ret, index);
-            res = p_ret->get()->getInterfaceAbstract()->getInterfaceName();
+            std::advance(p_ret, ioIndex);
+            return p_ret->get()->getInterfaceAbstract()->getInterfaceName();
         }
     }
-    return res;
+    return QString("undefined");
 }
 
-interfacesAbstract* ConnectionFactory::getInterace(QString name) const {
+bool ConnectionFactory::getIoNameIsExist(QString ioName) const{
+    for(auto it = connectionList.begin(); it != connectionList.end(); it++) {
+        if(it->get()->getInterfaceAbstract()->getInterfaceName() == ioName) {
+            return true;
+        }
+    }
+    return false;
+}
+
+ioAbstract* ConnectionFactory::getIoAbstract(QString ioName) {
     for(auto it = connectionList.begin(); it!=connectionList.end(); it++) {
-        if(it->get()->getInterfaceAbstract()->getInterfaceName() == name) {
+        if(it->get()->getInterfaceAbstract()->getInterfaceName() == ioName) {
             return it->get()->getInterfaceAbstract();
         }
     }
     return nullptr;
 }
 
-interfacesAbstract* ConnectionFactory::getInterace(int index) const {
-    if(!connectionList.empty()) {
-        if(index <= connectionList.size()-1) {
-            auto p_ret = connectionList.begin();
-            std::advance(p_ret, index);
-            return p_ret->get()->getInterfaceAbstract();
-        }
+ioAbstract* ConnectionFactory::getIoAbstract(const int ioIndex) {
+    if(ioIndex <= connectionList.size()-1) {
+        auto p_ret = connectionList.begin();
+        std::advance(p_ret, ioIndex);
+        return p_ret->get()->getInterfaceAbstract();
     }
     return nullptr;
 }

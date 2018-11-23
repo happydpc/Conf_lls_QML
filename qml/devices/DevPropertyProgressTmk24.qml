@@ -353,8 +353,8 @@ Rectangle {
     }
 
     function updateCurrentTarTableChart() {
-        var devCount = viewController.getStayedDevTarrirCount()
-        var devId = viewController.getStayedDevTarrir_DevProperty("id")
+        var devCount = controller.getStayedDevTarrirCount()
+        var devId = controller.getStayedDevTarrir_DevProperty("id")
         var colorArray = []
         colorArray.push("#f34b4b")
         colorArray.push("#4bd5f3")
@@ -372,7 +372,7 @@ Rectangle {
         var maxGraphAmplitude = 0
 
         for(var devIter=0; devIter<devCount; devIter++) {
-            var res = viewController.getTarCurrentDeviceData(devIter)
+            var res = controller.getTarCurrentDeviceData(devIter)
             if(res !== undefined) {
                 var dataArray = tarListDevice.model.get(devIter)
                 if(dataArray !== undefined) {
@@ -382,7 +382,7 @@ Rectangle {
                 }
             }
             //-- chart
-            chartArray = viewController.getTarCurrentDeviceChartData(devIter)
+            chartArray = controller.getTarCurrentDeviceChartData(devIter)
             if(chartArray !== undefined) {
                 var maxGraphLen = chartArray.length
                 for(var chartIter=0; chartIter<chartArray.length; chartIter++) {
@@ -468,7 +468,7 @@ Rectangle {
         settings.push(masterSlaveSlaveId_3.value)
         key.push("masterSlaveSlaveId_4_value")
         settings.push(masterSlaveSlaveId_4.value)
-        viewController.setCurrentDevCustomCommand("set current dev settings", key, settings)
+        controller.setCurrentDevCustomCommand("set current dev settings", key, settings)
     }
 
     function remakeTarTableChart() {
@@ -482,11 +482,11 @@ Rectangle {
         colorArray.push("#be4bf3")
         colorArray.push("#0d8741")
 
-        var tarSize = viewController.getStayedDevTarrirCount()
+        var tarSize = controller.getStayedDevTarrirCount()
         for(var deviceCounter=0; deviceCounter<tarSize; deviceCounter++) {
             var roleLiters = "roleLiters" + deviceCounter
             var roleFuelLevel = "roleFuelLevel" + deviceCounter
-            var devId = viewController.getStayedDevTarrir_DevProperty("id")
+            var devId = controller.getStayedDevTarrir_DevProperty("id")
 
             var maxvalueFuelLevel = 0;
             var maxValueLitrs = 0;
@@ -539,13 +539,13 @@ Rectangle {
         // создаем строку и заносим в нее текущие значения по устройствам
         // пока не переберем все уст-ва
         var itemValue = {}
-        var devCount = viewController.getStayedDevTarrirCount()
-        var devId = viewController.getStayedDevTarrir_DevProperty("id")
+        var devCount = controller.getStayedDevTarrirCount()
+        var devId = controller.getStayedDevTarrir_DevProperty("id")
 
         for(var devIndex=0; devIndex<devCount; devIndex++) {
             var valueFuelLevel = 0
             var valueLiters = 0
-            var value = viewController.getTarCurrentDeviceData(devIndex)
+            var value = controller.getTarCurrentDeviceData(devIndex)
             var roleLiters = "roleLiters" + devIndex
             var roleFuelLevel = "roleFuelLevel" + devIndex
 
@@ -596,13 +596,13 @@ Rectangle {
     function remakeTarTable() {
         tarListDevice.model.clear()
         removeAll()
-        var tarSize = viewController.getStayedDevTarrirCount()
+        var tarSize = controller.getStayedDevTarrirCount()
         var devType = []
         var devId = []
         var devSn = []
-        devType = viewController.getStayedDevTarrir_DevProperty("type")
-        devId =  viewController.getStayedDevTarrir_DevProperty("id")
-        devSn = viewController.getStayedDevTarrir_DevProperty("sn")
+        devType = controller.getStayedDevTarrir_DevProperty("type")
+        devId =  controller.getStayedDevTarrir_DevProperty("id")
+        devSn = controller.getStayedDevTarrir_DevProperty("sn")
         for(var i=0; i<tarSize; i++) { // добавляем на list with current data
             tarListDevice.model.append({"devTyp":devType[i],"devId":devId[i],"devSn":devSn[i],"valueCnt":"0","valueFuelLevel":"0"})
         }
@@ -645,13 +645,13 @@ Rectangle {
     }
 
     function writeTarTable() {
-        var devCount = viewController.getStayedDevTarrirCount()
+        var devCount = controller.getStayedDevTarrirCount()
         var devType = []
         var devId = []
         var devSn = []
-        devType = viewController.getStayedDevTarrir_DevProperty("type")
-        devId =  viewController.getStayedDevTarrir_DevProperty("id")
-        devSn = viewController.getStayedDevTarrir_DevProperty("sn")
+        devType = controller.getStayedDevTarrir_DevProperty("type")
+        devId =  controller.getStayedDevTarrir_DevProperty("id")
+        devSn = controller.getStayedDevTarrir_DevProperty("sn")
 
         // считываем данные по ролям
         for(var count=0; count<devCount; count++) {
@@ -687,19 +687,19 @@ Rectangle {
                 jsonArrayCnt.push(valueFuelLevel)
                 jsonArrayLiters.push(valueLiters)
             }
-            viewController.setTableFromFrontEnd(devId[count], jsonArrayLiters, jsonArrayCnt)
+            controller.setTableFromFrontEnd(devId[count], jsonArrayLiters, jsonArrayCnt)
         }
-        viewController.sendReqWriteTarrirAllDev()
+        controller.sendReqWriteTarrirAllDev()
     }
 
     function saveTarTableToCsv(pathFile) {
-        var devCount = viewController.getStayedDevTarrirCount()
+        var devCount = controller.getStayedDevTarrirCount()
         var devType = []
         var devId = []
         var devSn = []
-        devType = viewController.getStayedDevTarrir_DevProperty("type")
-        devId =  viewController.getStayedDevTarrir_DevProperty("id")
-        devSn = viewController.getStayedDevTarrir_DevProperty("sn")
+        devType = controller.getStayedDevTarrir_DevProperty("type")
+        devId =  controller.getStayedDevTarrir_DevProperty("id")
+        devSn = controller.getStayedDevTarrir_DevProperty("sn")
 
         // считываем данные по ролям
         for(var count=0; count<devCount; count++) {
@@ -735,22 +735,22 @@ Rectangle {
                 jsonArrayCnt.push(valueFuelLevel)
                 jsonArrayLiters.push(valueLiters)
             }
-            viewController.setTableFromFrontEnd(devId[count], jsonArrayLiters, jsonArrayCnt)
+            controller.setTableFromFrontEnd(devId[count], jsonArrayLiters, jsonArrayCnt)
         }
-        viewController.sendReqExportTarrirAllDevToCsv(pathFile)
+        controller.sendReqExportTarrirAllDevToCsv(pathFile)
     }
 
     function readTarTable() {
-        var devCount = viewController.getStayedDevTarrirCount()
+        var devCount = controller.getStayedDevTarrirCount()
         var jsonArray = []
         // пока не переберем все уст-ва
         for(var devIndex=0; devIndex<devCount; devIndex++) {
-            var table = viewController.getTableAtDevice(devIndex)
+            var table = controller.getTableAtDevice(devIndex)
             var parity = 0
             var paramCounter = 0;
             var valueFuelLevel = "0"
             var valueLiters = "0"
-            var stepCount = viewController.getTarMaxCountStep() *2 // it pair
+            var stepCount = controller.getTarMaxCountStep() *2 // it pair
             for(var devTableRow=0; devTableRow<stepCount; devTableRow++) {
                 if(parity == 0) {
                     parity = 1;
@@ -1178,7 +1178,7 @@ Rectangle {
 
                                         enabled: devIsConnected
                                         onClicked: {
-                                            viewController.setCurrentDevCustomCommand("read current dev errors", [], [])
+                                            controller.setCurrentDevCustomCommand("read current dev errors", [], [])
                                         }
                                     }
                                     Column {
@@ -1445,18 +1445,18 @@ Rectangle {
                             if(stackSubProperty.currentItem == itemDevTarir) {
                                 // first check what not device in the tarClass
                                 // when show dialog and add it
-                                var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
-                                var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
-                                var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
-                                if(viewController.getStayedDevTarrirCount()) {
+                                var tarirDevType = controller.getStayedDevTarrir_DevProperty("type")
+                                var tarirDevId =  controller.getStayedDevTarrir_DevProperty("id")
+                                var tarirDevSn = controller.getStayedDevTarrir_DevProperty("sn")
+                                if(controller.getStayedDevTarrirCount()) {
                                     dialogTarNotEmpty.open()
                                 }
                                 for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
-                                    viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
+                                    controller.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
                                 }
                                 // add current
-                                var keys = viewController.getCurrentDevPropertyKey()
-                                var values = viewController.getCurrentDevPropertyValue()
+                                var keys = controller.getCurrentDevPropertyKey()
+                                var values = controller.getCurrentDevPropertyValue()
                                 var devType = ""
                                 var devId = ""
                                 for(var i=0; i<keys.length; i++) {
@@ -1467,7 +1467,7 @@ Rectangle {
                                         devId = values[i]
                                     }
                                 }
-                                viewController.addTarrirDev(devType, devId)
+                                controller.addTarrirDev(devType, devId)
                                 remakeTarTable()
                                 timerAffterChangeTarTable.start()
                             }
@@ -1768,7 +1768,7 @@ Rectangle {
                                     height: 50
                                     enabled: (devIsConnected && devIsReady)
                                     onClicked: {
-                                        viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
+                                        controller.setCurrentDevCustomCommand("get current dev settings", [], [])
                                     }
                                 }
                                 Button {
@@ -1838,7 +1838,7 @@ Rectangle {
                                                                 }
                                                             }
                                                             onAccepted: {
-                                                                viewController.setCurrentDevCustomCommand("set current level value as min", [], [])
+                                                                controller.setCurrentDevCustomCommand("set current level value as min", [], [])
                                                                 close()
                                                             }
                                                         }
@@ -1868,7 +1868,7 @@ Rectangle {
                                                                 }
                                                             }
                                                             onAccepted: {
-                                                                viewController.setCurrentDevCustomCommand("set current level value as max", [], [])
+                                                                controller.setCurrentDevCustomCommand("set current level value as max", [], [])
                                                                 close()
                                                             }
                                                         }
@@ -1924,7 +1924,7 @@ Rectangle {
                                     height: 50
                                     enabled: (devIsConnected && devIsReady)
                                     onClicked: {
-                                        viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
+                                        controller.setCurrentDevCustomCommand("get current dev settings", [], [])
                                     }
                                 }
                                 Button {
@@ -2139,7 +2139,7 @@ Rectangle {
                                     height: 50
                                     enabled: (devIsConnected && devIsReady)
                                     onClicked: {
-                                        viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
+                                        controller.setCurrentDevCustomCommand("get current dev settings", [], [])
                                     }
                                 }
                                 Button {
@@ -2282,7 +2282,7 @@ Rectangle {
                                     height: 50
                                     enabled: (devIsConnected && devIsReady)
                                     onClicked: {
-                                        viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
+                                        controller.setCurrentDevCustomCommand("get current dev settings", [], [])
                                     }
                                 }
                                 Button {
@@ -2465,7 +2465,7 @@ Rectangle {
                                     height: 50
                                     enabled: (devIsConnected && devIsReady)
                                     onClicked: {
-                                        viewController.setCurrentDevCustomCommand("get current dev settings", [], [])
+                                        controller.setCurrentDevCustomCommand("get current dev settings", [], [])
                                     }
                                 }
                                 Button {
@@ -2805,7 +2805,7 @@ Rectangle {
                                                             }
                                                             onAccepted: {
                                                                 remakeTarTable()
-                                                                viewController.sendReqGetTarrirAllDev()
+                                                                controller.sendReqGetTarrirAllDev()
                                                                 close()
                                                             }
                                                         }
@@ -2986,16 +2986,16 @@ Rectangle {
         id:addDeviceTarirDialog
         onAccepted: {
             console.log("AddDeviceTarirDialog-accepted = " + deviceTypeName.length + deviceId.length + deviceSerialNumber.length)
-            var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
-            var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
-            var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
+            var tarirDevType = controller.getStayedDevTarrir_DevProperty("type")
+            var tarirDevId =  controller.getStayedDevTarrir_DevProperty("id")
+            var tarirDevSn = controller.getStayedDevTarrir_DevProperty("sn")
             //
             for(var tarcount=0; tarcount<tarirDevType.length; tarcount++) {
-                viewController.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
+                controller.removeTarrirDev(tarirDevType[tarcount], tarirDevId[tarcount])
             }
             // обновляем таблицу dev
             for(var devcount=0; devcount<deviceId.length; devcount++) {
-                viewController.addTarrirDev(deviceTypeName[devcount], deviceId[devcount])
+                controller.addTarrirDev(deviceTypeName[devcount], deviceId[devcount])
             }
             timerAffterAddRemoveDevTarTable.start()
         }

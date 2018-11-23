@@ -51,7 +51,7 @@ Popup {
                         paramList.push(typeDeviceIdProgressTmk24.text)
                         keyList.push("password")
                         paramList.push(typeDevicePasswordProgressTmk24.text)
-                        viewController.addDeviceToConnection(typeDeviceList.currentText, keyList, paramList)
+                        controller.addDeviceToConnection(typeDeviceList.currentText, keyList, paramList)
                         close()
                     }
                     break;
@@ -80,7 +80,7 @@ Popup {
                     paramList.push(typeFindStartButton.findIdValues.toString())
                     keyList.push("password")
                     paramList.push("")
-                    viewController.checkDeviceFromConnection(typeDeviceList.currentText, keyList, paramList)
+                    controller.checkDeviceFromConnection(typeDeviceList.currentText, keyList, paramList)
                 } else {
                     searchAbort();
                 }
@@ -402,7 +402,7 @@ Popup {
                                                         paramList.push(findIdValues)
                                                         keyList.push("password")
                                                         paramList.push("")
-                                                        viewController.checkDeviceFromConnection(typeDeviceList.currentText, keyList, paramList)
+                                                        controller.checkDeviceFromConnection(typeDeviceList.currentText, keyList, paramList)
 
                                                     }
                                                 }
@@ -559,7 +559,7 @@ Popup {
                         paramList.push(typeDeviceIdProgressTmk24.text)
                         keyList.push("password")
                         paramList.push(typeDevicePasswordProgressTmk24.text)
-                        viewController.checkDeviceFromConnection(typeDeviceList.currentText, keyList, paramList)
+                        controller.checkDeviceFromConnection(typeDeviceList.currentText, keyList, paramList)
                         modeFind = modeFind_add_once
                         break;
                     case 1: // find device
@@ -573,7 +573,7 @@ Popup {
                             paramList.push(item.deviceId)
                             keyList.push("password")
                             paramList.push("")
-                            viewController.addDeviceToConnection(typeDeviceList.currentText, keyList, paramList)
+                            controller.addDeviceToConnection(typeDeviceList.currentText, keyList, paramList)
                         }
                         modeFind = modeFind_idle
                         typeDeviceProgressProgressTmk24.value = 0
@@ -592,7 +592,7 @@ Popup {
                     paramList.push(typeDeviceIdNozzle_v0_0.text)
                     keyList.push("password")
                     paramList.push(typeDevicePasswordNozzle_v0_0.text)
-                    viewController.addDeviceToConnection("", typeDeviceList.currentText, keyList, paramList)
+                    controller.addDeviceToConnection("", typeDeviceList.currentText, keyList, paramList)
                     modeFind = modeFind_idle
                     close()
                     break;

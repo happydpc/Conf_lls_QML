@@ -6,7 +6,7 @@ Rectangle {
     property string typeLogo: ""
 
     Component.onCompleted: {
-        typeLogo = viewController.getTypeLogo()
+        typeLogo = controller.getTypeLogo()
     }
 
     anchors.fill: parent

@@ -41,7 +41,7 @@ Rectangle {
                 id: scrollDeviceList
                 width: 20
             }
-            model: programmModel.tree
+            model: ioTreeModel.tree
             delegate: InterfaceItemView {
                 onEventSelectInterface: {}
                 onEventDeleteInterface: {
@@ -63,7 +63,7 @@ Rectangle {
                         }
                     }
                     onAccepted: {
-                        viewController.removeActiveInterface()
+                        controller.removeActiveInterface()
                         close()
                     }
                 }

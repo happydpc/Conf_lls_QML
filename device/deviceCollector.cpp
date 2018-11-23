@@ -1,11 +1,11 @@
 #include "deviceCollector.h"
 
-DeviceCollector::DeviceCollector(interfacesAbstract *p_int_abstract) {
+DeviceCollector::DeviceCollector(ioAbstract *p_int_abstract) {
     this->int_abstract = p_int_abstract;
     this->reqIsBusy = false;
     this->isIdle = false;
-    this->reqTimerHanler = std::make_unique<QTimer>();
-    this->commandController = std::make_unique<CommandController>();
+    this->reqTimerHanler = std::make_shared<QTimer>();
+    this->commandController = std::make_shared<CommandController>();
     connect(reqTimerHanler.get(), &QTimer::timeout, this, &DeviceCollector::controllHandler);
     reqTimerHanler.get()->start(50);
 }

@@ -51,7 +51,7 @@ Popup {
                         var value = []
                         key.push("newHeader")
                         value.push(devHeaderText.text)
-                        viewController.setCurrentDevCustomCommand("change device head name", key, value)
+                        controller.setCurrentDevCustomCommand("change device head name", key, value)
                         close()
                     }
                 }

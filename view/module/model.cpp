@@ -196,7 +196,7 @@ void Model::currentIndexIsChanged(bool, TreeItem *pSender) {
                 it->setIsCurrent(true);
                 setIoIndex(index);
                 setDevIndex(0);
-                emit currentIndexIsChangedInteface(index);
+                emit indexIoIsChanged(index, 0);
             } else {
                 it->setIsCurrent(false);
             }
@@ -213,7 +213,7 @@ void Model::currentIndexIsChanged(bool, TreeItem *pSender) {
                     it2->setIsCurrent(true);
                     setDevIndex(indexChild);
                     setIoIndex(indexParent);
-                    emit currentIndexIsChangedDevice(indexParent, indexChild);
+                    emit indexDevIsChanged(indexParent, indexChild);
                 } else {
                     it2->setIsCurrent(false);
                 }

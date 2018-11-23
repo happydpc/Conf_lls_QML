@@ -4,7 +4,7 @@ QT += charts qml
 QT += sql
 QT += network
 CONFIG+=qml_debug
-CONFIG += c++14
+CONFIG += c++17
 
 TRANSLATIONS += QmlLanguage_ru.ts
 
@@ -32,13 +32,12 @@ SOURCES += \
     device/devicesFactory.cpp \
     interfaces/interfacesAbstract.cpp \
     interfaces/interfaceSerial.cpp \
-    view/viewController.cpp \
     command/commandController.cpp \
     other/crc.cpp \
     tests/testDevReply.cpp \
-    view/interfaceListControll/treeitem.cpp \
-    view/interfaceListControll/model.cpp \
-    view/radialbar.cpp \
+    view/module/treeitem.cpp \
+    view/module/model.cpp \
+    view/module/radialbar.cpp \
     device/Progress_TMK24/Progress_tmk24Data.cpp \
     device/Progress_TMK24/Progress_tmk24.cpp \
     device/Progress_TMK4UX/Progress_tmk4UXData.cpp \
@@ -52,13 +51,16 @@ SOURCES += \
     device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.cpp \
     device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.cpp \
     database/database.cpp \
-    session/session.cpp \
-    session/sessionsecurity.cpp \
     update/updater.cpp \
     translate/qmltranslator.cpp \
     device/deviceCollector.cpp \
     device/deviceController.cpp \
-    connection/connection.cpp
+    connection/connection.cpp \
+    view/controller.cpp \
+    view/peripherals.cpp \
+    view/session.cpp \
+    session/sessionProperty.cpp \
+    session/sessionSecurity.cpp
 
 RESOURCES += \
     qml.qrc \
@@ -81,15 +83,14 @@ HEADERS += \
     connection/connectionFactory.h \
     device/deviceAbstract.h \
     device/devicesFactory.h \
-    interfaces/interfacesAbstract.h \
+    interfaces/interfaceAbstract.h \
     interfaces/interfaceSerial.h \
-    view/viewController.h \
     command/commandController.h \
     other/crc.h \
     tests/testDevReply.h \
-    view/interfaceListControll/model.h \
-    view/interfaceListControll/treeitem.h \
-    view/radialbar.h \
+    view/module/model.h \
+    view/module/treeitem.h \
+    view/module/radialbar.h \
     device/Progress_TMK24/Progress_tmk24Data.h \
     device/Progress_TMK24/Progress_tmk24.h \
     device/Progress_TMK4UX/Progress_tmk4UXData.h \
@@ -103,12 +104,16 @@ HEADERS += \
     device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.h \
     device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.h \
     database/database.h \
-    session/session.h \
-    session/sessionsecurity.h \
     update/updater.h \
     translate/qmltranslator.h \
     device/deviceCollector.h \
     device/deviceController.h \
-    connection/connection.h
+    connection/connection.h \
+    view/controller.h \
+    view/peripherals.h \
+    view/session.h \
+    session/sessionProperty.h \
+    session/sessionSecurity.h \
+    interfaces/interfacesAbstract.h
 
 DISTFILES += device/service/serviceDevicesAbstract

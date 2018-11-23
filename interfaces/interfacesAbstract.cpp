@@ -1,4 +1,4 @@
 #include "./interfaces/interfacesAbstract.h"
 
-interfacesAbstract::interfacesAbstract(QObject *parent) : QObject(parent) {
+ioAbstract::ioAbstract(QObject *parent) : QObject(parent) {
 }

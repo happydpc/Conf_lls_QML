@@ -15,7 +15,7 @@ Dialog {
         }
     }
     onAccepted: {
-        viewController.checkUpdateVersionSoftware()
+        controller.checkUpdateVersionSoftware()
         close()
     }
 }

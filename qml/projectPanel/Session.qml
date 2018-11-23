@@ -14,7 +14,7 @@ Popup {
     property int sessionSelectMode: 0
 
     function loadSessionTree() {
-        var sessionList = viewController.getListSession()
+        var sessionList = controller.getListSession()
         openSessionListView.model.clear()
         for(var i=0; i<sessionList.length; i++) {
             openSessionListView.model.append({"sessionName":sessionList[i]})
@@ -90,7 +90,7 @@ Popup {
                                             var list = openSessionListView.model.get(index)
                                             var res = list["sessionName"]
                                             if(res !== undefined) {
-                                                if(viewController.removeSessionByName(res)) {
+                                                if(controller.removeSessionByName(res)) {
                                                     loadSessionTree()
                                                 }
                                             }
@@ -107,8 +107,8 @@ Popup {
                                         anchors.leftMargin: 5
                                         onClicked: {
                                             var list = openSessionListView.model.get(index)
-                                            viewController.resetSession()
-                                            viewController.loadSession(list["sessionName"])
+                                            controller.resetSession()
+                                            controller.loadSession(list["sessionName"])
                                             close()
                                         }
                                     }
@@ -151,7 +151,7 @@ Popup {
                             height: 50
                             enabled: saveSessionAsName.text.length
                             onClicked: {
-                                var res = viewController.saveCurrentSessionAs(saveSessionAsName.text)
+                                var res = controller.saveCurrentSessionAs(saveSessionAsName.text)
                                 if(res.length !==0) {
                                     saveSessionAsName.text = res
                                     var timer = Qt.createQmlObject('import QtQuick 2.4;Timer{interval: 1500;running:true;repeat: false;}', parent);
@@ -193,7 +193,7 @@ Popup {
                     useIcon: true
                     onClicked: {
                         sessionSelectMode = 1
-                        var res = viewController.saveCurrentSession()
+                        var res = controller.saveCurrentSession()
                         if(res.length !==0) {
                             saveSessionSimpleName.text = res
                             var timer = Qt.createQmlObject('import QtQuick 2.4;Timer{interval: 1200;running:true;repeat: false;}', parent);

@@ -274,12 +274,12 @@ Popup {
     onOpened: {
         tarDevListView.model.clear()
         availableDevListView.model.clear()
-        var connDevType = viewController.getAvailableDevTarrirAdd_DevType()
-        var connDevId = viewController.getAvailableDevTarrirAdd_DevId()
-        var connDevSn = viewController.getAvailableDevTarrirAdd_DevSerialNumber()
-        var tarirDevType = viewController.getStayedDevTarrir_DevProperty("type")
-        var tarirDevId =  viewController.getStayedDevTarrir_DevProperty("id")
-        var tarirDevSn = viewController.getStayedDevTarrir_DevProperty("sn")
+        var connDevType = controller.getAvailableDevTarrirAdd_DevType()
+        var connDevId = controller.getAvailableDevTarrirAdd_DevId()
+        var connDevSn = controller.getAvailableDevTarrirAdd_DevSerialNumber()
+        var tarirDevType = controller.getStayedDevTarrir_DevProperty("type")
+        var tarirDevId =  controller.getStayedDevTarrir_DevProperty("id")
+        var tarirDevSn = controller.getStayedDevTarrir_DevProperty("sn")
         // available list
         for(var i=0; i<connDevType.length; i++) {
             var isCopy = false
