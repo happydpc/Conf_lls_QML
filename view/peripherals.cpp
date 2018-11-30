@@ -9,34 +9,16 @@ QStringList Peripherals::getAvailableIo(const QString typeIoName) const {
     return connFactory->getAvailableName(typeIoName);
 }
 
-//// a non-optimized way of checking for prime numbers:
-//bool is_prime (int x) {
-//  for (int i=2; i<x; ++i) if (x%i==0) return false;
-//  return true;
-//}
-
-//int main ()
-//{
-//  // call function asynchronously:
-//  std::future<bool> fut = std::async (is_prime,444444443);
-
-//  // do something while waiting for function to set future:
-//  std::cout << "checking, please wait";
-//  std::chrono::milliseconds span (100);
-//  while (fut.wait_for(span)==std::future_status::timeout)
-//    std::cout << '.' << std::flush;
-
-//  bool x = fut.get();     // retrieve return value
-
-//  std::cout << "\n444444443 " << (x?"is":"is not") << " prime.\n";
-
-//  return 0;
-
-
-//  std::packaged_task<int()> task([]{ return 7; }); // wrap the function
-//     std::future<int> f1 = task.get_future();  // get a future
-//     std::thread t(std::move(task)); // launch on a thread
-//}
+bool Peripherals::devSendCustomCommand(const QString ioName, const QString devIdName,
+                                       QString commandType, QStringList keys, QStringList params)
+{
+    bool res = false;
+    DeviceController *p_dev_controller = connFactory->getDeviceController(ioName);
+    if(p_dev_controller != nullptr) {
+        res = p_dev_controller->sendCommadToDev(commandType, keys, params);
+    }
+    return res;
+}
 
 std::future<bool> Peripherals::addIo(const QString typeIoName,
                         const QString ioName,
@@ -45,21 +27,13 @@ std::future<bool> Peripherals::addIo(const QString typeIoName,
     connFactory->addConnection(typeIoName, ioName, QPair<QStringList,QStringList>(keyParam, valueParam));
     auto acknowledge = [&]() {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
-        bool result = false;
+        bool res = false;
         ioAbstract * p_interface = nullptr;
         p_interface = connFactory->getIoAbstract(ioName);
         if(p_interface != nullptr) {
-//                emit addInterfaceSuccesfull(p_interface->getType(),
-//                                            p_interface->getInterfaceProperty().first,
-//                                            p_interface->getInterfaceProperty().second);
-//                emit interfaceSetActiveProperty((connFactory->getCountConnection()) ? (connFactory->getCountConnection()-1) : (connFactory->getCountConnection()),
-//                                                connFactory->getInterace((connFactory->getCountConnection()>=1) ? (connFactory->getCountConnection()-1) : (connFactory->getCountConnection()))->getType());
-//                interfaceTree->addConnection(name);
-            result = true;
-        } else {
-             //emit addConnectionFail(name);
+            res = true;
         }
-        return result;
+        return res;
     };
     std::packaged_task<bool()> task(acknowledge);
     auto future = task.get_future();
@@ -107,8 +81,16 @@ QString Peripherals::getCurrentDevName() const {
 
 }
 
-QStringList Peripherals::getDevType() const {
+QString Peripherals::getDevType() const {
 
+}
+
+QPair<QString, QString> Peripherals::getDevProperty(const QString ioName, const QString devName) const {
+    QPair<QString, QString> res;
+    res.first << deviceController();
+    p_interface->getType(),
+                                      p_interface->getInterfaceProperty().first,
+                                       p_interface->getInterfaceProperty().second);
 }
 
 void Peripherals::indexDevIsChanged(int ioIndex, int devIndex) {

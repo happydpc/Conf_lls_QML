@@ -2,11 +2,11 @@
 
 Controller::Controller(QObject *parent) : QObject(parent) {
     this->peripherals = std::make_shared<Peripherals>();
-    connect(&ioTreeModel, &Model::indexIoIsChanged, peripherals.get(), &Peripherals::indexIoIsChanged);
-    connect(&ioTreeModel, &Model::indexDevIsChanged, peripherals.get(), &Peripherals::indexDevIsChanged);
+    connect(&ioTreeModel, &ModelDevTree::indexIoIsChanged, peripherals.get(), &Peripherals::indexIoIsChanged);
+    connect(&ioTreeModel, &ModelDevTree::indexDevIsChanged, peripherals.get(), &Peripherals::indexDevIsChanged);
 }
 
-Model* Controller::getIoTreeModel() {
+ModelDevTree* Controller::getIoTreeModel() {
     return &ioTreeModel;
 }
 
@@ -15,8 +15,20 @@ QStringList Controller::getAvailableIoToAdd(QString typeName) {
 }
 
 bool Controller::addIo(QString typeIoName, QString ioName, QStringList keys, QStringList params) {
-    auto res = peripherals->addIo(typeIoName, ioName, keys, params);
-    return res.get();
+    bool res = false;
+    auto handler = peripherals->addIo(typeIoName, ioName, keys, params);
+    res = handler.get();
+    if(res) {
+        peripherals->getCurrentIoName()
+        emit addIoSucces(typeIoName, p_interface->getType(),
+                                    p_interface->getInterfaceProperty().first,
+                                    p_interface->getInterfaceProperty().second);
+        emit interfaceSetActiveProperty((connFactory->getCountConnection()) ? (connFactory->getCountConnection()-1) : (connFactory->getCountConnection()),
+                                        connFactory->getInterace((connFactory->getCountConnection()>=1) ? (connFactory->getCountConnection()-1) : (connFactory->getCountConnection()))->getType());
+        interfaceTree->addConnection(name);
+    } else {
+        emit addConnectionFail(name);
+    }
 }
 
 void Controller::removeActiveIo() {
@@ -38,17 +50,9 @@ QStringList Controller::getDevAvailableType() const {
     return peripherals->getDevType();
 }
 
-bool Controller::devExecCommand(QString comandType, QStringList keys, QStringList params) {
-//    bool res = false;
-//    // сперва проверка на команды
-//    // которые можно выполнить сранужи
-//    DeviceController *p_dev_controller = connFactory->getDeviceController(interfaceTree->getIoIndex());
-//    if(p_dev_controller != nullptr) {
-//        keys << "devId";
-//        params << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceIdTextByIndex(interfaceTree->getDevIndex());
-//        res = p_dev_controller->sendCommadToDev(typeCommand, keys, params);
-//    }
-//    return res;
+bool Controller::devExecCommand(const QString ioName, const QString devIdName, const QString commandType,
+                                const QStringList keys, const QStringList params) {
+    return peripherals->devSendCustomCommand(ioName, devIdName, commandType, keys, params);
 }
 
 void Controller::eventFromPeripheral(const int ioIndex, const int devIndex, const QStringList keys, const QStringList param) {

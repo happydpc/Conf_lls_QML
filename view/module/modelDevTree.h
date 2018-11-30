@@ -1,15 +1,15 @@
-#ifndef MODEL_H
-#define MODEL_H
+#ifndef MODEL_DEV_TREE_H
+#define MODEL_DEV_TREE_H
 
 #include <QObject>
 
 class TreeItem;
 
-class Model : public QObject
+class ModelDevTree : public QObject
 {
     Q_OBJECT
 public:
-    explicit Model(QObject *parent = 0);
+    explicit ModelDevTree(QObject *parent = 0);
 
     Q_PROPERTY(QList<QObject*> tree READ treeAsQObjects NOTIFY treeChanged)
     const QList<TreeItem*> &tree() const;
@@ -60,4 +60,4 @@ private:
     sIndex curIndex = {0, 0};
 };
 
-#endif // MODEL_H
+#endif // MODEL_DEV_TREE_H

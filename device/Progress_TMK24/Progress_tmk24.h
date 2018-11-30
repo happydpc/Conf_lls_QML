@@ -16,7 +16,7 @@ public:
                    ServiceDevicesAbstract *pServiceAbstract);
     ~Progress_tmk24();
 
-    static constexpr char* name = "PROGRESS TMK24";
+    static constexpr char* name = (char*)"PROGRESS TMK24";
 
     QString getDevTypeName() override;
     QString getDevHeader() override;

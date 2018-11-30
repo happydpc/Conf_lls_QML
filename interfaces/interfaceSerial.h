@@ -31,7 +31,7 @@ public slots:
 private slots:
     void errorHanler(QSerialPort::SerialPortError err);
 private:
-    static constexpr char* typeName = "serial";
+    static constexpr char* typeName = (char*)"serial";
     bool isManualClosed;
     std::shared_ptr<QSerialPort> portHandler = nullptr;
     QString name;

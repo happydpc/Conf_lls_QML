@@ -36,7 +36,6 @@ SOURCES += \
     other/crc.cpp \
     tests/testDevReply.cpp \
     view/module/treeitem.cpp \
-    view/module/model.cpp \
     view/module/radialbar.cpp \
     device/Progress_TMK24/Progress_tmk24Data.cpp \
     device/Progress_TMK24/Progress_tmk24.cpp \
@@ -60,7 +59,8 @@ SOURCES += \
     view/peripherals.cpp \
     view/session.cpp \
     session/sessionProperty.cpp \
-    session/sessionSecurity.cpp
+    session/sessionSecurity.cpp \
+    view/module/modelDevTree.cpp
 
 RESOURCES += \
     qml.qrc \
@@ -88,7 +88,6 @@ HEADERS += \
     command/commandController.h \
     other/crc.h \
     tests/testDevReply.h \
-    view/module/model.h \
     view/module/treeitem.h \
     view/module/radialbar.h \
     device/Progress_TMK24/Progress_tmk24Data.h \
@@ -114,6 +113,7 @@ HEADERS += \
     view/session.h \
     session/sessionProperty.h \
     session/sessionSecurity.h \
-    interfaces/interfacesAbstract.h
+    interfaces/interfacesAbstract.h \
+    view/module/modelDevTree.h
 
 DISTFILES += device/service/serviceDevicesAbstract

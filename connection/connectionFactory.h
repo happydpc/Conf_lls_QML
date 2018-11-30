@@ -38,6 +38,7 @@ public slots:
 
     void errorFromConnection(const QString conTypeName, const QString errMessage);
 
+    DeviceController* getDeviceController(const QString ioName);
     DeviceController* getDeviceController(const int ioIndex);
 
 signals:

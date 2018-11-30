@@ -119,6 +119,15 @@ ioAbstract* ConnectionFactory::getIoAbstract(const int ioIndex) {
     return nullptr;
 }
 
+DeviceController* ConnectionFactory::getDeviceController(const QString ioName) {
+    for(auto it = connectionList.begin(); it!=connectionList.end(); it++) {
+        if(it->get()->getInterfaceAbstract()->getInterfaceName() == ioName) {
+            return it->get()->getDeviceController();
+        }
+    }
+    return nullptr;
+}
+
 DeviceController* ConnectionFactory::getDeviceController(int ioIndex) {
     auto ret_it = connectionList.begin();
     std::advance(ret_it, ioIndex);
