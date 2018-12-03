@@ -20,75 +20,55 @@ QPair<QStringList, QStringList> Peripherals::getIoProperty(int ioIndex) const {
 //    QPair<QStringList, QStringList>res;
 }
 
-bool Peripherals::devSendCustomCommand(const QString ioName, const QString devIdName,
-                                       QString commandType, QStringList keys, QStringList params)
-{
-//    bool res = false;
-//    DeviceController *p_dev_controller = connFactory->getDeviceController(ioName);
-//    if(p_dev_controller != nullptr) {
-//        res = p_dev_controller->sendCommadToDev(commandType, keys, params);
-//    }
-//    return res;
-}
-
 bool Peripherals::addIo(const QString typeIoName,
                         const QString ioName,
                         const QStringList keyParam,
-                        const QStringList valueParam)
-{
+                        const QStringList valueParam) {
     return connComposition->addIo(connFactory->createConnection(typeIoName, ioName, QPair<QStringList,QStringList>(keyParam, valueParam)));
 }
 
-bool Peripherals::removeIo(const QString ioName) {
-    connComposition->removeIo(ioName);
+void Peripherals::removeIo(int ioIndex) {
+    connComposition->removeIo(ioIndex);
 }
 
-QString Peripherals::getCurrentIoName() const {
-    connComposition->removeDev();
-}
-
-bool Peripherals::addDev(const QString ioName, const QString devName, const QStringList keyParam, const QStringList valueParam) {
-//    connFactory->createConnection(ioName, )
-//    bool res = false;
-//    auto devController = connFactory->getDeviceController(interfaceTree->getIoIndex());
-//    res = devController->addDevice(devTypeName, keyParam, valueParam);
-//    if(res) { // change current device index
-//        interfaceTree->addDeviceToConnection(getCurrentInterfaceName(), "init_device");
-//        interfaceTree->changeDeviceHeader(getCurrentInterfaceName(), "init_device",
-//                                          getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceHeader(interfaceTree->getDevIndex()));
-//        interfaceTree->changeDeviceName(getCurrentInterfaceName(), "init_device",
-//                                        getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceNameWithId(interfaceTree->getDevIndex()));
-//        connect(interfaceTree, SIGNAL(currentIndexIsChangedDevice(int,int)), this, SLOT(setChangedIndexDevice(int,int)));
+bool Peripherals::addDev(int ioIndex, const QString devTypeName, const QStringList keyParam, const QStringList valueParam) {
+    bool res = false;
+    std::shared_ptr<DevicesFactory> devFactory = std::make_shared<DevicesFactory>();
+    auto dev = devFactory->newDevice(devTypeName, keyParam, valueParam, nullptr);
+    if(dev != nullptr) {
+        connComposition->addDev(ioIndex, dev);
 //        emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),2, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
 //        emit addDeviceSuccesfull(interfaceTree->getIoIndex(),
 //                                 getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(interfaceTree->getIoIndex()),
 //                                 getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(interfaceTree->getDevIndex()).first,
 //                                 getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(interfaceTree->getDevIndex()).second);
-//    } else {
+    } else {
 //        emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(), 2, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
 //        emit addDeviceFail(devTypeName, "Не получилось добавить одно или более устройств\nВозможные причины:\n 1) такой адрес уже используется\n 2) устройство отличается от типа уже добавленных устройств");
+    }
+    return res;
+}
+
+void Peripherals::removeDev(int ioIndex, int devIndex) {
+
+}
+
+QString Peripherals::getDevType(int ioIndex, int devIndex) const {
+
+}
+
+QPair<QString, QString> Peripherals::getDevProperty(int ioIndex, int devIndex) const {
+
+}
+
+bool Peripherals::devExecCommand(int ioIndex, int devIndex,
+                                 QString comandType, QStringList keys, QStringList params) {
+    bool res = false;
+//    DeviceController *p_dev_controller = connFactory->getDeviceController(ioName);
+//    if(p_dev_controller != nullptr) {
+//        res = p_dev_controller->sendCommadToDev(commandType, keys, params);
 //    }
-//    return res;
-}
-
-bool Peripherals::removeDev(QString ioName, QString devName) {
-
-}
-
-QString Peripherals::getCurrentDevName() const {
-
-}
-
-QString Peripherals::getDevType() const {
-
-}
-
-QPair<QString, QString> Peripherals::getDevProperty(const QString ioName, const QString devName) const {
-//    QPair<QString, QString> res;
-//    res.first << deviceController();
-//    p_interface->getType(),
-//    p_interface->getInterfaceProperty().first,
-//    p_interface->getInterfaceProperty().second);
+    return res;
 }
 
 void Peripherals::indexDevIsChanged(int ioIndex, int devIndex) {

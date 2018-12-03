@@ -11,50 +11,46 @@ class Controller : public QObject
 public:
     explicit Controller(QObject *parent = nullptr);
 
-    Q_INVOKABLE QStringList getAvailableIoToAdd(const QString typeName);
+    // io
     Q_INVOKABLE bool addIo(const QString typeIoName, const QString ioName, const QStringList keys, const QStringList params);
     Q_INVOKABLE void removeIo(int ioIndex);
-    Q_INVOKABLE void removeDev(int ioIndex, int devIndex);
+    Q_INVOKABLE QStringList getIoAddTypes(const QString typeName);
+    // dev
     Q_INVOKABLE bool addDevToIo(const int ioIndex, const QString devTypeName, const QStringList keyParam, const QStringList valueParam);
-    Q_INVOKABLE QStringList getDevAvailableType() const;
-    Q_INVOKABLE bool devExecCommand(const QString ioName, const QString devIdName, const QString commandType,
+    Q_INVOKABLE void removeDev(int ioIndex, int devIndex);
+    Q_INVOKABLE QStringList getDevAddTypes() const;
+    Q_INVOKABLE bool devExecCommand(int ioIndex, int devIndex, const QString commandType,
                                     const QStringList keys, const QStringList params);
-
+    // logo, form
     Q_INVOKABLE QString getTypeLogo() const;
 
+    // io/dev tree
     Q_INVOKABLE ModelDevTree* getIoTreeModel();
 
 signals:
     // io
     void addIoSucces(QString ioType, QStringList keyProperty, QStringList valueProperty);
     void addIoFail(QString ioType, QString ioName);
-    void ioUpdateProperty(QString ioType, QStringList keyProperty, QStringList valueProperty);
-    void ioReadyProperties(QString ioType, int ioIndex, QStringList keyProperty, QStringList valueProperty);
+    void ioUpdateProperty(QString ioType, int ioIndex, QStringList keyProperty, QStringList valueProperty);
     void removeIoSucces(int ioIndex);
-    void ioSetActiveProperty(int ioIndex, QStringList keyProperty, QStringList valueProperty);
+    void ioActivate(int ioIndex, QStringList keyProperty, QStringList valueProperty);
     void ioTreeIsEmpty();
 
     // dev
     void addDevSucces(int ioIndex, QString devType, QStringList devKeyProperty, QStringList devValueProperty);
     void addDeviceFail(QString devName, QString errorMessage);
-    void removeDeviceSucces(int ioIndex, int devIndex);
-    void devSetActiveDeviceProperty(QString devType, int ioIndex, int devIndex);
-    void devReadyProperties(QString typeDev, int ioIndex, int devIndex, QStringList keys, QStringList values);
-    void devReadyPeriodicData(QString typeDev, int ioIndex, int devIndex, QStringList keys, QStringList values);
+    void removeDevSucces(int ioIndex, int devIndex);
+    void devExecComamndReady(int ioIndex, int devIndex, QStringList keys, QStringList values);
     void devConnected(int ioIndex, int devIndex, QString typeDev);
     void devReady(int ioIndex, int devIndex, QString typeDev);
     void devDisconnected(int ioIndex, int devIndex, QString typeDev);
+    void devActivateProperty(QString devType, int ioIndex, int devIndex);
+    void devUpdatePeriodicData(QString devType, int ioIndex, int devIndex, QStringList keys, QStringList values);
     void devUpdateLogMessage(int ioIndex, int devIndex, QString codeMessage, QString message);
-    void devReadyCheckCommand(int ioIndex, QString devTypeName, QString devId, QString devSn, QString result);
-    void devReadyCheckCommand(int ioIndex, QString devTypeName, QString devId, QString devSn, bool result);
-    void removeAllContent();
-    void devUpdateLogMessage(int ioIndex, int devIndex, int codeMessage, QString message);
+    void ioAndDeviceFullFlushData();
 
-    void ioAndDeviceListIsEmpty();
+    // update
     void isAvailableNewVersion(QString downloadUrl);
-
-private slots:
-    void eventFromPeripheral(const int ioIndex, const int devIndex, const QStringList keys, const QStringList param);
 
 private:
     ModelDevTree ioTreeModel;

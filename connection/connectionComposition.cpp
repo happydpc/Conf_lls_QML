@@ -7,7 +7,7 @@ ConnectionComposition::ConnectionComposition() {
 }
 
 bool ConnectionComposition::addIo(IoAbstract * io) {
-
+    ioList.push_back(io);
 }
 
 void ConnectionComposition::removeIo(int ioIndex) {
@@ -29,19 +29,19 @@ void ConnectionComposition::removeDev(int ioIndex, int devIndex) {
 
 }
 
-bool ConnectionComposition::getIoIsConnected(int ioIndex) {
+bool ConnectionComposition::getIoIsConnected(int ioIndex) const {
 
 }
 
-bool ConnectionComposition::getDevIsConnected(int ioIndex, int devIndex) {
+bool ConnectionComposition::getDevIsConnected(int ioIndex, int devIndex) const {
 
 }
 
-uint16_t ConnectionComposition::getIoCount() {
+uint16_t ConnectionComposition::getIoCount() const {
 
 }
 
-uint16_t ConnectionComposition::getDevCount(int ioIndex) {
+uint16_t ConnectionComposition::getDevCount(int ioIndex) const {
 
 }
 
@@ -53,25 +53,6 @@ bool ConnectionComposition::devSendCustomCommand(int ioIndex, int devIndex, cons
                                                  const QStringList &keys, const QStringList &params) {
 
 }
-
-//bool res = false;
-//if(typeName.toLower() == QString("serial")) {
-//    std::shared_ptr<IoAbstract> p_interface = std::make_shared<IoSerial>(name, param);
-//    if(p_interface.get() != nullptr) {
-//        res  = p_interface->openInterface();
-//        this->connAbstract = std::move(p_interface);
-//        this->deviceController = std::make_shared<DeviceController>(connAbstract.get());
-//        if(res) {
-//            connect(p_interface.get(), &IoAbstract::errorInterface, this, [&](QString ioTypeName, QString message) {
-//                emit errorConnection(ioTypeName, message);
-//            });
-//        }
-//    }
-//}
-//if(!res) {
-//    qDebug() << "addConnection -ERR " + name;
-//    throw QString("error create connection");
-//}
 
 //IoAbstract* ConnectionComposition::getInterfaceAbstract(){
 //    return connAbstract.get();

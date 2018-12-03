@@ -24,6 +24,25 @@ IoAbstract* ConnectionFactory::createConnection(const QString ioTypeName, const 
 //    return res;
 }
 
+//bool res = false;
+//if(typeName.toLower() == QString("serial")) {
+//    std::shared_ptr<IoAbstract> p_interface = std::make_shared<IoSerial>(name, param);
+//    if(p_interface.get() != nullptr) {
+//        res  = p_interface->openInterface();
+//        this->connAbstract = std::move(p_interface);
+//        this->deviceController = std::make_shared<DeviceController>(connAbstract.get());
+//        if(res) {
+//            connect(p_interface.get(), &IoAbstract::errorInterface, this, [&](QString ioTypeName, QString message) {
+//                emit errorConnection(ioTypeName, message);
+//            });
+//        }
+//    }
+//}
+//if(!res) {
+//    qDebug() << "addConnection -ERR " + name;
+//    throw QString("error create connection");
+//}
+
 QStringList ConnectionFactory::getAvailableName(QString typeName) const {
     QStringList interfaceList;
     if(typeName == "serial") {
