@@ -13,9 +13,9 @@ public:
 
     Q_INVOKABLE QStringList getAvailableIoToAdd(const QString typeName);
     Q_INVOKABLE bool addIo(const QString typeIoName, const QString ioName, const QStringList keys, const QStringList params);
-    Q_INVOKABLE void removeActiveIo();
-    Q_INVOKABLE void removeActiveDev();
-    Q_INVOKABLE bool addDevToIo(const QString ioName, const QString devTypeName, const QStringList keyParam, const QStringList valueParam);
+    Q_INVOKABLE void removeIo(int ioIndex);
+    Q_INVOKABLE void removeDev(int ioIndex, int devIndex);
+    Q_INVOKABLE bool addDevToIo(const int ioIndex, const QString devTypeName, const QStringList keyParam, const QStringList valueParam);
     Q_INVOKABLE QStringList getDevAvailableType() const;
     Q_INVOKABLE bool devExecCommand(const QString ioName, const QString devIdName, const QString commandType,
                                     const QStringList keys, const QStringList params);
@@ -27,11 +27,11 @@ public:
 signals:
     // io
     void addIoSucces(QString ioType, QStringList keyProperty, QStringList valueProperty);
-    void addIoFail();
+    void addIoFail(QString ioType, QString ioName);
     void ioUpdateProperty(QString ioType, QStringList keyProperty, QStringList valueProperty);
     void ioReadyProperties(QString ioType, int ioIndex, QStringList keyProperty, QStringList valueProperty);
     void removeIoSucces(int ioIndex);
-    void ioSetActiveProperty(int ioIndex, QString ioType);
+    void ioSetActiveProperty(int ioIndex, QStringList keyProperty, QStringList valueProperty);
     void ioTreeIsEmpty();
 
     // dev

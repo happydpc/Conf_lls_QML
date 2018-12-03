@@ -1,6 +1,6 @@
 #include "deviceCollector.h"
 
-DeviceCollector::DeviceCollector(ioAbstract *p_int_abstract) {
+DeviceCollector::DeviceCollector(IoAbstract *p_int_abstract) {
     this->int_abstract = p_int_abstract;
     this->reqIsBusy = false;
     this->isIdle = false;

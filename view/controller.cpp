@@ -14,40 +14,33 @@ QStringList Controller::getAvailableIoToAdd(QString typeName) {
     return peripherals->getAvailableIo(typeName);
 }
 
-bool Controller::addIo(QString typeIoName, QString ioName, QStringList keys, QStringList params) {
-    bool res = false;
-    auto handler = peripherals->addIo(typeIoName, ioName, keys, params);
-    res = handler.get();
+bool Controller::addIo(QString ioTypeName, QString ioName, QStringList keys, QStringList params) {
+    bool res = peripherals->addIo(ioTypeName, ioName, keys, params);
     if(res) {
-        peripherals->getCurrentIoName()
-        emit addIoSucces(typeIoName, p_interface->getType(),
-                                    p_interface->getInterfaceProperty().first,
-                                    p_interface->getInterfaceProperty().second);
-        emit interfaceSetActiveProperty((connFactory->getCountConnection()) ? (connFactory->getCountConnection()-1) : (connFactory->getCountConnection()),
-                                        connFactory->getInterace((connFactory->getCountConnection()>=1) ? (connFactory->getCountConnection()-1) : (connFactory->getCountConnection()))->getType());
-        interfaceTree->addConnection(name);
+        ioTreeModel.addConnection(ioName);
+        auto property = peripherals->getIoProperty(ioTreeModel.getIoIndex());
+        emit addIoSucces(ioTypeName, property.first, property.second);
+        emit ioSetActiveProperty(ioTreeModel.getIoIndex(), property.first, property.second);
     } else {
-        emit addConnectionFail(name);
+        emit addIoFail(ioTypeName, ioName);
     }
+    return res;
 }
 
-void Controller::removeActiveIo() {
-    peripherals->removeIo(peripherals->getCurrentIoName());
+void Controller::removeIo(int ioIndex) {
+    peripherals->removeIo(ioIndex);
 }
 
-bool Controller::addDevToIo(QString ioName, QString devTypeName, QStringList keys, QStringList param) {
-    auto res = peripherals->addDev(ioName, devTypeName, keys, param);
-    if(res.get()) {
-
-    }
+bool Controller::addDevToIo(int ioIndex, QString devTypeName, QStringList keys, QStringList param) {
+    return peripherals->addDev(ioIndex, devTypeName, keys, param);
 }
 
-void Controller::removeActiveDev() {
-    peripherals->removeDev(peripherals->getCurrentIoName(), peripherals->getCurrentDevName());
+void Controller::removeDev(int ioIndex, int devIndex) {
+    peripherals->removeDev(ioIndex, devIndex);
 }
 
 QStringList Controller::getDevAvailableType() const {
-    return peripherals->getDevType();
+//    return peripherals->getDevType();
 }
 
 bool Controller::devExecCommand(const QString ioName, const QString devIdName, const QString commandType,

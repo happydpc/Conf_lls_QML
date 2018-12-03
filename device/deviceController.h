@@ -4,14 +4,14 @@
 #include <QObject>
 #include "device/deviceCollector.h"
 #include "device/devicesFactory.h"
-#include "interfaces/interfacesAbstract.h"
+#include "interfaces/ioAbstract.h"
 #include <memory>
 #include <QTimer>
 
 class DeviceController : public QObject {
     Q_OBJECT
 public:
-    explicit DeviceController(ioAbstract *p_int_abstract);
+    explicit DeviceController(IoAbstract *p_int_abstract);
 
 public slots:
     bool addDevice(const QString devTypeName, const QStringList keyParam, const QStringList valueParam);

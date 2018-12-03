@@ -4,6 +4,7 @@
 #include <QObject>
 #include <future>
 #include "connection/connectionFactory.h"
+#include "connection/connectionComposition.h"
 #include "device/deviceController.h"
 
 class Peripherals : public QObject
@@ -13,28 +14,28 @@ public:
     explicit Peripherals(QObject *parent = nullptr);
 
     // io
-    QStringList getAvailableIo(const QString typeIoName) const ;
-    std::future<bool> addIo(const QString typeIoName, const QString ioName, const QStringList keyParam, const QStringList valueParam);
-    bool removeIo(const QString ioName);
-    QString getCurrentIoName() const;
+    bool addIo(const QString typeIoName, const QString ioName, const QStringList keyParam, const QStringList valueParam);
+    bool removeIo(int ioIndex);
+    QStringList getAvailableIo(const QString IoTypeName) const;
+    QPair<QStringList, QStringList> getIoProperty(int ioIndex) const;
 
     // dev
-    std::future<bool> addDev(const QString ioName, const QString devName, const QStringList keyParam, const QStringList valueParam);
-    bool removeDev(const QString ioName, const QString devName);
-    QString getCurrentDevName() const;
-    QString getDevType() const;
-    QPair<QString, QString> getDevProperty(const QString ioName, const QString devName) const;
+    bool addDev(int ioIndex, const QString devName, const QStringList keyParam, const QStringList valueParam);
+    bool removeDev(int ioIndex, int devIndex);
+    QString getDevType(int ioIndex, int devIndex) const;
+    QPair<QString, QString> getDevProperty(int ioIndex, int devIndex) const;
 
-    bool devSendCustomCommand(const QString ioName, const QString devName,
-                              QString comandType, QStringList keys, QStringList params);
+    bool devSendCustomCommand(const QString ioName, const QString devName, QString comandType,
+                              QStringList keys, QStringList params);
 
 public slots:
     void indexDevIsChanged(int ioIndex, int devIndex);
     void indexIoIsChanged(int ioIndex, int devIndex);
+
 private:
     std::shared_ptr<ConnectionFactory> connFactory;
-    std::shared_ptr<DeviceController> deviceController;
-    std::shared_ptr<QTimer> updateIoStatusTimer;
+    std::shared_ptr<ConnectionComposition> connComposition;
+    std::shared_ptr<QTimer> updateStatusTimer;
 };
 
 #endif // PERIPHERALS_H

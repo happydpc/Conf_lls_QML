@@ -30,8 +30,6 @@ SOURCES += \
     connection/connectionFactory.cpp \
     device/deviceAbstract.cpp \
     device/devicesFactory.cpp \
-    interfaces/interfacesAbstract.cpp \
-    interfaces/interfaceSerial.cpp \
     command/commandController.cpp \
     other/crc.cpp \
     tests/testDevReply.cpp \
@@ -54,13 +52,15 @@ SOURCES += \
     translate/qmltranslator.cpp \
     device/deviceCollector.cpp \
     device/deviceController.cpp \
-    connection/connection.cpp \
     view/controller.cpp \
     view/peripherals.cpp \
     view/session.cpp \
     session/sessionProperty.cpp \
     session/sessionSecurity.cpp \
-    view/module/modelDevTree.cpp
+    view/module/modelDevTree.cpp \
+    connection/connectionComposition.cpp \
+    interfaces/ioAbstract.cpp \
+    interfaces/ioSerial.cpp
 
 RESOURCES += \
     qml.qrc \
@@ -84,7 +84,6 @@ HEADERS += \
     device/deviceAbstract.h \
     device/devicesFactory.h \
     interfaces/interfaceAbstract.h \
-    interfaces/interfaceSerial.h \
     command/commandController.h \
     other/crc.h \
     tests/testDevReply.h \
@@ -107,13 +106,14 @@ HEADERS += \
     translate/qmltranslator.h \
     device/deviceCollector.h \
     device/deviceController.h \
-    connection/connection.h \
     view/controller.h \
     view/peripherals.h \
     view/session.h \
     session/sessionProperty.h \
     session/sessionSecurity.h \
-    interfaces/interfacesAbstract.h \
-    view/module/modelDevTree.h
+    view/module/modelDevTree.h \
+    connection/connectionComposition.h \
+    interfaces/ioAbstract.h \
+    interfaces/ioSerial.h
 
 DISTFILES += device/service/serviceDevicesAbstract

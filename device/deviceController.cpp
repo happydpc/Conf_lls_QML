@@ -4,7 +4,7 @@
 #include "device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Service.h"
 #include "device/Nozzle_Revision_0_00_Oct_2018/Nozzle_Revision_0_00_Oct_2018.h"
 
-DeviceController::DeviceController(ioAbstract *p_int_abstract) {
+DeviceController::DeviceController(IoAbstract *p_int_abstract) {
     this->deviceFactory = std::make_shared<DevicesFactory>();
     this->deviceCollector = std::make_shared<DeviceCollector>(p_int_abstract);
     this->updateTimer = std::make_shared<QTimer>();

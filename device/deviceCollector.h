@@ -4,7 +4,7 @@
 #include <QObject>
 #include <memory>
 #include "command/commandController.h"
-#include "interfaces/interfacesAbstract.h"
+#include "interfaces/ioAbstract.h"
 #include "QTimer"
 #include "QMutex"
 
@@ -12,7 +12,7 @@ class DeviceCollector : public QObject
 {
     Q_OBJECT
 public:
-    explicit DeviceCollector(ioAbstract *p_int_abstract);
+    explicit DeviceCollector(IoAbstract *p_int_abstract);
 
     void addCommand(const QList<CommandController::sCommandData> commands);
     bool getIsIdle() const;
@@ -37,7 +37,7 @@ private:
         bool result = false;
     }checkDeviceStruct;
 
-    ioAbstract* int_abstract;
+    IoAbstract* int_abstract;
     std::shared_ptr<CommandController> commandController;
     std::shared_ptr<QTimer> reqTimerHanler;
     bool reqIsBusy;

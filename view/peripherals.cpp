@@ -1,76 +1,74 @@
 #include "peripherals.h"
 
-Peripherals::Peripherals(QObject *parent) : QObject(parent)
-{
+Peripherals::Peripherals(QObject *parent) : QObject(parent) {
     this->connFactory = std::make_shared<ConnectionFactory>();
+    this->connComposition = std::make_shared<ConnectionComposition>();
+    this->updateStatusTimer = std::make_shared<QTimer>();
+    this->updateStatusTimer->start(100);
+
+    connect(this->updateStatusTimer.get(), &QTimer::timeout, [&]() {
+
+    });
 }
 
 QStringList Peripherals::getAvailableIo(const QString typeIoName) const {
     return connFactory->getAvailableName(typeIoName);
 }
 
+QPair<QStringList, QStringList> Peripherals::getIoProperty(int ioIndex) const {
+//    connComposition->getDevIsConnected()
+//    QPair<QStringList, QStringList>res;
+}
+
 bool Peripherals::devSendCustomCommand(const QString ioName, const QString devIdName,
                                        QString commandType, QStringList keys, QStringList params)
 {
-    bool res = false;
-    DeviceController *p_dev_controller = connFactory->getDeviceController(ioName);
-    if(p_dev_controller != nullptr) {
-        res = p_dev_controller->sendCommadToDev(commandType, keys, params);
-    }
-    return res;
+//    bool res = false;
+//    DeviceController *p_dev_controller = connFactory->getDeviceController(ioName);
+//    if(p_dev_controller != nullptr) {
+//        res = p_dev_controller->sendCommadToDev(commandType, keys, params);
+//    }
+//    return res;
 }
 
-std::future<bool> Peripherals::addIo(const QString typeIoName,
+bool Peripherals::addIo(const QString typeIoName,
                         const QString ioName,
                         const QStringList keyParam,
-                        const QStringList valueParam) {
-    connFactory->addConnection(typeIoName, ioName, QPair<QStringList,QStringList>(keyParam, valueParam));
-    auto acknowledge = [&]() {
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-        bool res = false;
-        ioAbstract * p_interface = nullptr;
-        p_interface = connFactory->getIoAbstract(ioName);
-        if(p_interface != nullptr) {
-            res = true;
-        }
-        return res;
-    };
-    std::packaged_task<bool()> task(acknowledge);
-    auto future = task.get_future();
-    std::thread thread(std::move(task));
-    thread.detach();
-    return std::move(future);
+                        const QStringList valueParam)
+{
+    return connComposition->addIo(connFactory->createConnection(typeIoName, ioName, QPair<QStringList,QStringList>(keyParam, valueParam)));
 }
 
 bool Peripherals::removeIo(const QString ioName) {
-
+    connComposition->removeIo(ioName);
 }
 
 QString Peripherals::getCurrentIoName() const {
-
+    connComposition->removeDev();
 }
 
-std::future<bool> Peripherals::addDev(const QString ioName, const QString devName, const QStringList keyParam, const QStringList valueParam) {
-    //    bool res = false;
-    //    auto devController = connFactory->getDeviceController(interfaceTree->getIoIndex());
-    //    res = devController->addDevice(devTypeName, keyParam, valueParam);
-    //    if(res) { // change current device index
-    //        interfaceTree->addDeviceToConnection(getCurrentInterfaceName(), "init_device");
-    //        interfaceTree->changeDeviceHeader(getCurrentInterfaceName(), "init_device",
-    //                                          getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceHeader(interfaceTree->getDevIndex()));
-    //        interfaceTree->changeDeviceName(getCurrentInterfaceName(), "init_device",
-    //                                        getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceNameWithId(interfaceTree->getDevIndex()));
-    //        connect(interfaceTree, SIGNAL(currentIndexIsChangedDevice(int,int)), this, SLOT(setChangedIndexDevice(int,int)));
-    //        emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),2, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
-    //        emit addDeviceSuccesfull(interfaceTree->getIoIndex(),
-    //                                 getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(interfaceTree->getIoIndex()),
-    //                                 getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(interfaceTree->getDevIndex()).first,
-    //                                 getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(interfaceTree->getDevIndex()).second);
-    //    } else {
-    //        emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(), 2, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
-    //        emit addDeviceFail(devTypeName, "Не получилось добавить одно или более устройств\nВозможные причины:\n 1) такой адрес уже используется\n 2) устройство отличается от типа уже добавленных устройств");
-    //    }
-    //    return res;
+bool Peripherals::addDev(const QString ioName, const QString devName, const QStringList keyParam, const QStringList valueParam) {
+//    connFactory->createConnection(ioName, )
+//    bool res = false;
+//    auto devController = connFactory->getDeviceController(interfaceTree->getIoIndex());
+//    res = devController->addDevice(devTypeName, keyParam, valueParam);
+//    if(res) { // change current device index
+//        interfaceTree->addDeviceToConnection(getCurrentInterfaceName(), "init_device");
+//        interfaceTree->changeDeviceHeader(getCurrentInterfaceName(), "init_device",
+//                                          getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceHeader(interfaceTree->getDevIndex()));
+//        interfaceTree->changeDeviceName(getCurrentInterfaceName(), "init_device",
+//                                        getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceNameWithId(interfaceTree->getDevIndex()));
+//        connect(interfaceTree, SIGNAL(currentIndexIsChangedDevice(int,int)), this, SLOT(setChangedIndexDevice(int,int)));
+//        emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(),2, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+//        emit addDeviceSuccesfull(interfaceTree->getIoIndex(),
+//                                 getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(interfaceTree->getIoIndex()),
+//                                 getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(interfaceTree->getDevIndex()).first,
+//                                 getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(interfaceTree->getDevIndex()).second);
+//    } else {
+//        emit devUpdateLogMessage(interfaceTree->getIoIndex(), interfaceTree->getDevIndex(), 2, QString("Добавление устройста [%1]").arg(QTime::currentTime().toString("HH:mm:ss")));
+//        emit addDeviceFail(devTypeName, "Не получилось добавить одно или более устройств\nВозможные причины:\n 1) такой адрес уже используется\n 2) устройство отличается от типа уже добавленных устройств");
+//    }
+//    return res;
 }
 
 bool Peripherals::removeDev(QString ioName, QString devName) {
@@ -86,11 +84,11 @@ QString Peripherals::getDevType() const {
 }
 
 QPair<QString, QString> Peripherals::getDevProperty(const QString ioName, const QString devName) const {
-    QPair<QString, QString> res;
-    res.first << deviceController();
-    p_interface->getType(),
-                                      p_interface->getInterfaceProperty().first,
-                                       p_interface->getInterfaceProperty().second);
+//    QPair<QString, QString> res;
+//    res.first << deviceController();
+//    p_interface->getType(),
+//    p_interface->getInterfaceProperty().first,
+//    p_interface->getInterfaceProperty().second);
 }
 
 void Peripherals::indexDevIsChanged(int ioIndex, int devIndex) {
@@ -110,7 +108,7 @@ void Peripherals::indexIoIsChanged(int ioIndex, int devIndex) {
 //    }
 //    //deviceTreeChanged(DevicesFactory::Type_Update_RamakeAfterChangeInterface, interfaceTree->getDevIndex());
 ////    if(connFactory->getCountConnection() >0) {
-////        ioAbstract *p_interface = nullptr;
+////        IoAbstract *p_interface = nullptr;
 ////        interfaceTree->setIoStatus(ioIndex, connFactory->getInterace(ioIndex)->isOpen());
 ////        p_interface = connFactory->getInterace(interfaceTree->getIoIndex());
 ////        if(p_interface != nullptr) {
