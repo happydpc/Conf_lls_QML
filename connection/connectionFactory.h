@@ -5,7 +5,7 @@
 #include <QVector>
 #include <QMutex>
 #include <memory>
-#include "connection/connectionComposition.h"
+#include "interfaces/ioAbstract.h"
 
 class ConnectionFactory : public QObject
 {

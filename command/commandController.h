@@ -2,49 +2,31 @@
 #define COMMANDCONTROLLER_H
 
 #include <QObject>
-#include <QQueue>
-#include <QPair>
+#include <deque>
+#include <thread>
+#include <mutex>
+#include <memory>
+#include "command.h"
+#include "../view/peripherals.h"
 
 class CommandController : public QObject
 {
     Q_OBJECT
 public:
     explicit CommandController(QObject *parent = nullptr);
+    ~CommandController();
 
-    typedef enum {
-        E_CommandType_send_typical_request,
-        E_CommandType_send_security_request,
-        E_CommandType_command_without_request
-    }eCommandType;
-
-    typedef struct {
-        eCommandType commandType;
-        // uniqual ident device
-        QString deviceIdent;
-        QString deviceTypeName;
-        // dev command
-        int devCommand;
-        // need ack what command executed?
-        bool isNeedAckMessage;
-        // bytearray for command buf
-        QByteArray commandOptionData;
-        // buffer for transmit settings, firmware and other data
-        struct {
-            QList<QString>key;
-            QList<QString>value;
-        }args;
-        int delay_send_ms;
-        QString operationHeader;
-    }sCommandData;
-
-    bool addCommandToStack(const QList<sCommandData> devCommandData);
-    const QPair<bool, CommandController::sCommandData> getCommandFirstCommand();
+    bool addCommandToStack(const QList<Command*> command);
+    Command* getFirstCommand() const;
     void removeFirstCommand();
-    bool commandsIsEmpty();
+    bool getIsEmpty();
 
+    static void handlerFunction(std::mutex* pMutex, std::deque<Command*>* commandQueue);
+    static void commandInterprerator(Command* command, Peripherals* peripherals);
 private:
-
-    QQueue<sCommandData> commandQueue;
+    std::shared_ptr<std::deque<Command*>> commandQueue;
+    std::shared_ptr<std::thread> handlerThread;
+    std::shared_ptr<std::mutex> lock;
 };
 
 #endif // COMMANDCONTROLLER_H

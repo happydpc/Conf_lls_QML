@@ -18,7 +18,7 @@ TreeItem * ModelDevTree::createTreeSubItem(QString nameDevice) {
     return res;
 }
 
-void ModelDevTree::addConnection(QString connectionName) {
+void ModelDevTree::addIo(QString connectionName) {
     if(!m_tree.empty()) {
         for(auto it:m_tree) {
             it->setIsCurrent(false);
@@ -32,7 +32,7 @@ void ModelDevTree::addConnection(QString connectionName) {
     setIoIndex(m_tree.size()-1);
 }
 
-void ModelDevTree::removeConnection(int indexConnection) {
+void ModelDevTree::removeIo(int indexConnection) {
     disconnectaFullTree();
     m_tree.removeAt(indexConnection);
     if(!m_tree.empty()) {
@@ -54,21 +54,21 @@ void ModelDevTree::removeAll() {
     treeChanged();
 }
 
-void ModelDevTree::addDeviceToConnection(QString connName, QString devName) {
-    for(auto it: m_tree) {
-        if(it->content() == connName) {
+void ModelDevTree::addDevToIo(int ioIndex, QString devName) {
+    if(!m_tree.empty()) {
+        if(ioIndex < (m_tree.size()-1)) {
             TreeItem * tDevItem = createTreeSubItem(devName);
             tDevItem->setIsCurrent(true);
-            it->addChildItem(std::move(tDevItem));
-            it->setIsParent(true);
-            it->setIsOpen(true);
-            setDevIndex(it->childItems().size()-1);
+            m_tree[ioIndex]->addChildItem(std::move(tDevItem));
+            m_tree[ioIndex]->setIsParent(true);
+            m_tree[ioIndex]->setIsOpen(true);
+            setDevIndex(m_tree[ioIndex]->childItems().size()-1);
             treeChanged();
         }
     }
 }
 
-bool ModelDevTree::changeDeviceName(QString nameConnection, QString devName, QString devNewName) {
+bool ModelDevTree::changeDevName(QString nameConnection, QString devName, QString devNewName) {
     bool res = false;
     for(auto it: m_tree) {
         if(it->content() == nameConnection) {
@@ -84,7 +84,7 @@ bool ModelDevTree::changeDeviceName(QString nameConnection, QString devName, QSt
     return res;
 }
 
-bool ModelDevTree::changeDeviceHeader(QString nameConnection, QString devName, QString devNewHeader) {
+bool ModelDevTree::changeDevHeader(QString nameConnection, QString devName, QString devNewHeader) {
     bool res = false;
     for(auto it: m_tree) {
         if(it->content() == nameConnection) {
@@ -100,7 +100,7 @@ bool ModelDevTree::changeDeviceHeader(QString nameConnection, QString devName, Q
     return res;
 }
 
-void ModelDevTree::removeDeviceToConnection(int indexConnection, int indexDevice) {
+void ModelDevTree::removeDevToConnection(int indexConnection, int indexDevice) {
     disconnectaFullTree();
     m_tree.at(indexConnection)->removeChildByIndexChild(indexDevice);
     connectFullTree();
@@ -116,11 +116,11 @@ void ModelDevTree::removeDeviceToConnection(int indexConnection, int indexDevice
     treeChanged();
 }
 
-const QList<TreeItem *> &ModelDevTree::tree() const{
+const QList<TreeItem *> &ModelDevTree::tree() const {
     return m_tree;
 }
 
-const QList<QObject *> ModelDevTree::treeAsQObjects() const{
+const QList<QObject *> ModelDevTree::treeAsQObjects() const {
     QList<QObject *> res;
     res.reserve(m_tree.count());
     for(auto i : m_tree)

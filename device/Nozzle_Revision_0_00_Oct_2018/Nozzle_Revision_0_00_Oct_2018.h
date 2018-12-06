@@ -29,22 +29,22 @@ public:
     void setState(DeviceAbstract::E_State) override;
     QPair<QStringList,QStringList> getSettings() override;
     QPair<QStringList,QStringList> getErrors() override;
-    bool makeDataToCommand(CommandController::sCommandData &commandData) override;
-    bool placeDataReplyToCommand(QByteArray &commandArray, CommandController::sCommandData commandReqData) override;
+//    bool makeDataToCommand(CommandController::sCommandData &commandData) override;
+//    bool placeDataReplyToCommand(QByteArray &commandArray, CommandController::sCommandData commandReqData) override;
 
-    QList<CommandController::sCommandData> getCommandToCheckConnected() override;
-    QList<CommandController::sCommandData> getCommandToGetType() override;
-    QList<CommandController::sCommandData> getCommandtoCheckPassword() override;
-    QList<CommandController::sCommandData> getCommandListToInit() override;
-    QList<CommandController::sCommandData> getCommandListToUpdate() override;
-    QList<CommandController::sCommandData> getCommandListToCurrentData() override;
-    QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList> data) override;
+//    QList<CommandController::sCommandData> getCommandToCheckConnected() override;
+//    QList<CommandController::sCommandData> getCommandToGetType() override;
+//    QList<CommandController::sCommandData> getCommandtoCheckPassword() override;
+//    QList<CommandController::sCommandData> getCommandListToInit() override;
+//    QList<CommandController::sCommandData> getCommandListToUpdate() override;
+//    QList<CommandController::sCommandData> getCommandListToCurrentData() override;
+//    QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList> data) override;
     QStringList execCommand(QString operation, QPair<QStringList, QStringList>) override;
     ServiceDevicesAbstract* getServiceAbstract() override;
     QList<int> getChart() override;
     QList<QString> getCurrentOtherData() const;
     QList<QPair<QString,QByteArray>> prepareReply(QByteArray &data);
-    void parseCommandReply(const QByteArray data, const CommandController::sCommandData commandReqData);
+//    void parseCommandReply(const QByteArray data, const CommandController::sCommandData commandReqData);
 
 private slots:
     void setDefaultValues();

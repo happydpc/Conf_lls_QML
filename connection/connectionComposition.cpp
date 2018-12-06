@@ -22,9 +22,10 @@ QPair<QString, QString> ConnectionComposition::getIoProperty(int ioIndex) const 
 
 }
 
-bool ConnectionComposition::addDev(DeviceAbstract & dev) {
+bool ConnectionComposition::addDev(int ioIndex, DeviceAbstract * dev) {
 
 }
+
 void ConnectionComposition::removeDev(int ioIndex, int devIndex) {
 
 }
@@ -49,19 +50,7 @@ QPair<QString, QString> ConnectionComposition::getDevProperty(int ioIndex, int d
 
 }
 
-bool ConnectionComposition::devSendCustomCommand(int ioIndex, int devIndex, const QString &comandType,
+bool ConnectionComposition::devExecFutureCommand(int ioIndex, int devIndex, const QString &comandType,
                                                  const QStringList &keys, const QStringList &params) {
 
 }
-
-//IoAbstract* ConnectionComposition::getInterfaceAbstract(){
-//    return connAbstract.get();
-//}
-
-//void ConnectionComposition::closeAndClear() {
-//    connAbstract.get()->closeInterface();
-//}
-
-//DeviceController* ConnectionComposition::getDeviceController() {
-//    return deviceController.get();
-//}

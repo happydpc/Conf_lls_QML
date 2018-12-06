@@ -37,8 +37,6 @@ SOURCES += \
     view/module/radialbar.cpp \
     device/Progress_TMK24/Progress_tmk24Data.cpp \
     device/Progress_TMK24/Progress_tmk24.cpp \
-    device/Progress_TMK4UX/Progress_tmk4UXData.cpp \
-    device/Progress_TMK4UX/Progress_tmk4UX.cpp \
     device/Progress_Base/Progress_BaseData.cpp \
     device/Progress_Base/progress_base_data.cpp \
     device/Progress_Base/Progress_Base.cpp \
@@ -50,8 +48,6 @@ SOURCES += \
     database/database.cpp \
     update/updater.cpp \
     translate/qmltranslator.cpp \
-    device/deviceCollector.cpp \
-    device/deviceController.cpp \
     view/controller.cpp \
     view/peripherals.cpp \
     view/session.cpp \
@@ -60,7 +56,8 @@ SOURCES += \
     view/module/modelDevTree.cpp \
     connection/connectionComposition.cpp \
     interfaces/ioAbstract.cpp \
-    interfaces/ioSerial.cpp
+    interfaces/ioSerial.cpp \
+    command/command.cpp
 
 RESOURCES += \
     qml.qrc \
@@ -91,8 +88,6 @@ HEADERS += \
     view/module/radialbar.h \
     device/Progress_TMK24/Progress_tmk24Data.h \
     device/Progress_TMK24/Progress_tmk24.h \
-    device/Progress_TMK4UX/Progress_tmk4UXData.h \
-    device/Progress_TMK4UX/Progress_tmk4UX.h \
     device/Progress_Base/Progress_Base_Data.h \
     device/Progress_Base/Progress_BaseData.h \
     device/Progress_Base/Progress_Base.h \
@@ -104,8 +99,6 @@ HEADERS += \
     database/database.h \
     update/updater.h \
     translate/qmltranslator.h \
-    device/deviceCollector.h \
-    device/deviceController.h \
     view/controller.h \
     view/peripherals.h \
     view/session.h \
@@ -114,6 +107,7 @@ HEADERS += \
     view/module/modelDevTree.h \
     connection/connectionComposition.h \
     interfaces/ioAbstract.h \
-    interfaces/ioSerial.h
+    interfaces/ioSerial.h \
+    command/command.h
 
 DISTFILES += device/service/serviceDevicesAbstract

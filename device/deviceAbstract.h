@@ -2,7 +2,6 @@
 #define DEVICEABSTRACT_H
 
 #include <QObject>
-#include "command/commandController.h"
 #include "service/serviceDevicesAbstract.h"
 
 class DeviceAbstract : public QObject
@@ -42,16 +41,16 @@ public:
     virtual QPair<QStringList,QStringList> getErrors() = 0;
     virtual E_State getState() = 0;
     virtual void setState(DeviceAbstract::E_State) = 0;
-    virtual bool makeDataToCommand(CommandController::sCommandData &commandData) = 0;
 
-    virtual bool placeDataReplyToCommand(QByteArray &commandArrayReplyData, CommandController::sCommandData commandReqData) = 0;
-    virtual QList<CommandController::sCommandData> getCommandToCheckConnected() = 0;
-    virtual QList<CommandController::sCommandData> getCommandToGetType() = 0;
-    virtual QList<CommandController::sCommandData> getCommandtoCheckPassword() = 0;
-    virtual QList<CommandController::sCommandData> getCommandListToInit() = 0;
-    virtual QList<CommandController::sCommandData> getCommandListToUpdate() = 0;
-    virtual QList<CommandController::sCommandData> getCommandListToCurrentData() = 0;
-    virtual QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList>) = 0;
+//    virtual bool makeDataToCommand(Command &commandData) = 0;
+//    virtual bool placeDataReplyToCommand(QByteArray &commandArrayReplyData, CommandController::sCommandData commandReqData) = 0;
+//    virtual QList<CommandController::sCommandData> getCommandToCheckConnected() = 0;
+//    virtual QList<CommandController::sCommandData> getCommandToGetType() = 0;
+//    virtual QList<CommandController::sCommandData> getCommandtoCheckPassword() = 0;
+//    virtual QList<CommandController::sCommandData> getCommandListToInit() = 0;
+//    virtual QList<CommandController::sCommandData> getCommandListToUpdate() = 0;
+//    virtual QList<CommandController::sCommandData> getCommandListToCurrentData() = 0;
+//    virtual QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList>) = 0;
     virtual QStringList execCommand(QString operation, QPair<QStringList, QStringList>) = 0;
 
     virtual QList<int> getChart() = 0;
@@ -61,12 +60,11 @@ public:
     void setPriority(int value);
 
     DeviceAbstract::E_State state;
-    ServiceDevicesAbstract* serviceAbstact;
 
 signals:
-    void eventDeviceUpdateState(DeviceAbstract::E_DeviceEvent typeEvent, QString deviceUniqueId,
-                                QStringList keyCustomData, QStringList valueCustomData,
-                                CommandController::sCommandData commandData);
+//    void eventDeviceUpdateState(DeviceAbstract::E_DeviceEvent typeEvent, QString deviceUniqueId,
+//                                QStringList keyCustomData, QStringList valueCustomData,
+//                                CommandController::sCommandData commandData);
 private:
     int priority = 0;
 };

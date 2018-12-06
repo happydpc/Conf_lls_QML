@@ -2,8 +2,9 @@
 #define CONTROLLER_H
 
 #include <QObject>
+#include <memory>
 #include "view/module/modelDevTree.h"
-#include "view/peripherals.h"
+#include "command/commandController.h"
 
 class Controller : public QObject
 {
@@ -29,32 +30,32 @@ public:
 
 signals:
     // io
-    void addIoSucces(QString ioType, QStringList keyProperty, QStringList valueProperty);
-    void addIoFail(QString ioType, QString ioName);
-    void ioUpdateProperty(QString ioType, int ioIndex, QStringList keyProperty, QStringList valueProperty);
-    void removeIoSucces(int ioIndex);
-    void ioActivate(int ioIndex, QStringList keyProperty, QStringList valueProperty);
-    void ioTreeIsEmpty();
+    void addIoSuccesSignal(QString ioType, QStringList keyProperty, QStringList valueProperty);
+    void addIoFailSignal(QString ioType, QString ioName);
+    void ioUpdatePropertySignal(QString ioType, int ioIndex, QStringList keyProperty, QStringList valueProperty);
+    void removeIoSuccesSignal(int ioIndex);
+    void ioActivateSignal(int ioIndex, QStringList keyProperty, QStringList valueProperty);
+    void ioTreeIsEmptySignal();
 
     // dev
-    void addDevSucces(int ioIndex, QString devType, QStringList devKeyProperty, QStringList devValueProperty);
-    void addDeviceFail(QString devName, QString errorMessage);
-    void removeDevSucces(int ioIndex, int devIndex);
-    void devExecComamndReady(int ioIndex, int devIndex, QStringList keys, QStringList values);
-    void devConnected(int ioIndex, int devIndex, QString typeDev);
-    void devReady(int ioIndex, int devIndex, QString typeDev);
-    void devDisconnected(int ioIndex, int devIndex, QString typeDev);
-    void devActivateProperty(QString devType, int ioIndex, int devIndex);
-    void devUpdatePeriodicData(QString devType, int ioIndex, int devIndex, QStringList keys, QStringList values);
-    void devUpdateLogMessage(int ioIndex, int devIndex, QString codeMessage, QString message);
-    void ioAndDeviceFullFlushData();
+    void addDevSuccesSignal(int ioIndex, QString devType, QStringList devKeyProperty, QStringList devValueProperty);
+    void addDevFailSignal(QString devName, QString errorMessage);
+    void removeDevSuccesSignal(int ioIndex, int devIndex);
+    void devExecComamndReadySignal(int ioIndex, int devIndex, QStringList keys, QStringList values);
+    void devConnectedSignal(int ioIndex, int devIndex, QString typeDev);
+    void devReadySignal(int ioIndex, int devIndex, QString typeDev);
+    void devDisconnectedSignal(int ioIndex, int devIndex, QString typeDev);
+    void devActivatePropertySignal(QString devType, int ioIndex, int devIndex);
+    void devUpdatePeriodicDataSignal(QString devType, int ioIndex, int devIndex, QStringList keys, QStringList values);
+    void devUpdateLogMessageSignal(int ioIndex, int devIndex, QString codeMessage, QString message);
+    void ioAndDevFullFlushDataSignal();
 
     // update
-    void isAvailableNewVersion(QString downloadUrl);
+    void isAvailableNewVersionSignal(QString downloadUrl);
 
 private:
     ModelDevTree ioTreeModel;
-    std::shared_ptr<Peripherals> peripherals;
+    std::shared_ptr<CommandController> commandController;
 };
 
 #endif // CONTROLLER_H

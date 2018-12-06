@@ -7,7 +7,6 @@
 #include <QtSerialPort/QSerialPort>
 #include <QtSerialPort/QSerialPortInfo>
 #include <QTimer>
-#include "device/deviceController.h"
 
 class IoSerial : public IoAbstract
 {

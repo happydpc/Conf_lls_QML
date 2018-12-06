@@ -7,7 +7,8 @@
 class Progress_tmk24Service : public ServiceDevicesAbstract
 {
 public:
-    explicit Progress_tmk24Service(QString owDeviceName);
+    Progress_tmk24Service(QString ownDeviceName);
+    ~Progress_tmk24Service();
 
     bool addDevice(QString devTypeName, QString devId, QString devSn);
     void removeDevice(QString devTypeName, QString devId);

@@ -1,7 +1,10 @@
 #include "Progress_tmk24Service.h"
 
-Progress_tmk24Service::Progress_tmk24Service(QString owDeviceName) {
-    this->ownDeviceName = owDeviceName;
+Progress_tmk24Service::Progress_tmk24Service(QString ownDeviceName) {
+    this->ownDeviceName = ownDeviceName;
+}
+
+Progress_tmk24Service::~Progress_tmk24Service() {
 }
 
 bool Progress_tmk24Service::addDevice(QString devTypeName, QString devId, QString devSn) {

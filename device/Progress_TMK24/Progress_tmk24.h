@@ -8,12 +8,12 @@
 #include "../service/serviceDevicesAbstract.h"
 #include "device/deviceAbstract.h"
 #include "command/commandController.h"
+#include <memory>
 
 class Progress_tmk24 : public DeviceAbstract
 {
 public:
-    Progress_tmk24(QString uniqIdentId, QString header, QStringList keyValue, QStringList value,
-                   ServiceDevicesAbstract *pServiceAbstract);
+    explicit Progress_tmk24(QString uniqIdentId, QString header, QStringList keyValue, QStringList value);
     ~Progress_tmk24();
 
     static constexpr char* name = (char*)"PROGRESS TMK24";
@@ -29,16 +29,16 @@ public:
     QPair<QStringList,QStringList> getSettings() override;
     QPair<QStringList,QStringList> getErrors() override;
     QString getUniqId() override;
-    bool makeDataToCommand(CommandController::sCommandData &commandData) override;
-    bool placeDataReplyToCommand(QByteArray &commandArrayReplyData, CommandController::sCommandData commandReqData) override;
+//    bool makeDataToCommand(CommandController::sCommandData &commandData) override;
+//    bool placeDataReplyToCommand(QByteArray &commandArrayReplyData, CommandController::sCommandData commandReqData) override;
 
-    QList<CommandController::sCommandData> getCommandToCheckConnected() override;
-    QList<CommandController::sCommandData> getCommandToGetType() override;
-    QList<CommandController::sCommandData> getCommandtoCheckPassword() override;
-    QList<CommandController::sCommandData> getCommandListToInit() override;
-    QList<CommandController::sCommandData> getCommandListToUpdate() override;
-    QList<CommandController::sCommandData> getCommandListToCurrentData() override;
-    QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList> data) override;
+//    QList<CommandController::sCommandData> getCommandToCheckConnected() override;
+//    QList<CommandController::sCommandData> getCommandToGetType() override;
+//    QList<CommandController::sCommandData> getCommandtoCheckPassword() override;
+//    QList<CommandController::sCommandData> getCommandListToInit() override;
+//    QList<CommandController::sCommandData> getCommandListToUpdate() override;
+//    QList<CommandController::sCommandData> getCommandListToCurrentData() override;
+//    QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList> data) override;
     QStringList execCommand(QString operation, QPair<QStringList, QStringList>) override;
     QList<int> getChart() override;
     ServiceDevicesAbstract* getServiceAbstract() override;
@@ -47,6 +47,7 @@ private slots:
     void setDefaultValues();
 
 private:
+    std::shared_ptr<ServiceDevicesAbstract> service;
     Progress_tmk24Data::T_calibrationTable calibrationTable;
     Progress_tmk24Data::T_settings settings;
     Progress_tmk24Data::S_lls_data lls_data;

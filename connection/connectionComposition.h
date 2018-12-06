@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include "interfaces/ioAbstract.h"
-#include "device/deviceController.h"
+#include "device/deviceAbstract.h"
 #include <memory.h>
 
 class ConnectionComposition : public QObject {
@@ -17,16 +17,16 @@ public:
     uint16_t getIoCount() const ;
     QPair<QString, QString> getIoProperty(int ioIndex) const;
 
-    bool addDev(int ioIndex, DeviceAbstract * dev);
+    bool addDev(int ioIndex, DeviceAbstract* dev);
     void removeDev(int ioIndex, int devIndex);
     uint16_t getDevCount(int ioIndex) const;
 
-    bool getIoIsConnected(int ioIndex) const ;
+    bool getIoIsConnected(int ioIndex) const;
     bool getDevIsConnected(int ioIndex, int devIndex) const;
 
     QPair<QString, QString> getDevProperty(int ioIndex, int devIndex) const;
 
-    bool devSendCustomCommand(int ioIndex, int devIndex, const QString &comandType,
+    bool devExecFutureCommand(int ioIndex, int devIndex, const QString &comandType,
                               const QStringList &keys, const QStringList &params);
 
 private:

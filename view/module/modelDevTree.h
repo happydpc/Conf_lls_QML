@@ -15,22 +15,19 @@ public:
     const QList<TreeItem*> &tree() const;
     const QList<QObject*> treeAsQObjects() const;
 
-    void addConnection(QString name);
-    void removeConnection(int index);
+    void addIo(QString ioName);
+    void removeIo(int ioIndex);
+    void addDevToIo(int ioIndex, QString devName);
+    void removeDevToConnection(int indexConnection, int indexDevice);
+    bool changeDevName(QString nameConnection, QString devName, QString devNewName);
+    bool changeDevHeader(QString nameConnection, QString devName, QString devNewHeader);
     void removeAll();
-
-    void addDeviceToConnection(QString connName, QString devName);
-    void removeDeviceToConnection(int indexConnection, int indexDevice);
-    bool changeDeviceName(QString nameConnection, QString devName, QString devNewName);
-    bool changeDeviceHeader(QString nameConnection, QString devName, QString devNewHeader);
 
     int getDevIndex();
     int getIoIndex();
     void setDevIndex(int);
     void setIoIndex(int);
-
     void setDevStatus(int devIndex, int status);
-
     void setIoStatus(int ioIndex, int status);
 
 signals:
@@ -38,11 +35,10 @@ signals:
     void indexDevIsChanged(int ioIndex, int devIndex);
     void indexIoIsChanged(int ioIndex, int devIndex);
 
-
 private slots:
 
-    TreeItem *createTreeItem(QString nameInterface);
-    TreeItem *createTreeSubItem(QString nameDevice);
+    TreeItem* createTreeItem(QString nameInterface);
+    TreeItem* createTreeSubItem(QString nameDevice);
 
     void currentIndexIsChanged(bool isParent, TreeItem *pSender);
 
