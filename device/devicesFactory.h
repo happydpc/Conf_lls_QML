@@ -11,10 +11,10 @@ public:
     explicit DevicesFactory();
     ~DevicesFactory();
 
-    QStringList getAvailableTypeDevice() const;
+    std::list<std::string> getAvailableTypeDevice() const;
 
     // keyParam need 2 args - 'id' and 'header'
-    DeviceAbstract* newDevice(const QString devType, const QStringList keyParam, QStringList valueParam);
+    DeviceAbstract* newDevice(const std::string devType, const std::list<std::string> keyParam, std::list<std::string> valueParam);
 };
 
 #endif // DEVICESFACTORY_H

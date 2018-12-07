@@ -1,13 +1,13 @@
 #include "Progress_tmk24Service.h"
 
-Progress_tmk24Service::Progress_tmk24Service(QString ownDeviceName) {
+Progress_tmk24Service::Progress_tmk24Service(std::string ownDeviceName) {
     this->ownDeviceName = ownDeviceName;
 }
 
 Progress_tmk24Service::~Progress_tmk24Service() {
 }
 
-bool Progress_tmk24Service::addDevice(QString devTypeName, QString devId, QString devSn) {
+bool Progress_tmk24Service::addDevice(std::string devTypeName, std::string devId, std::string devSn) {
     bool isDuplicate = false;
     bool res = false;
     // поиск дубликата id
@@ -26,7 +26,7 @@ bool Progress_tmk24Service::addDevice(QString devTypeName, QString devId, QStrin
         idBlock.writeIsNormal = 0;
         idBlock.currData.isValid = false;
         // TODO: need uniqPtr
-        devList.push_back(new QPair<sDevIdentBlock, QList<sDevValues>*>(idBlock, new QList<sDevValues>()));
+        devList.push_back(new std::pair<sDevIdentBlock, QList<sDevValues>*>(idBlock, new QList<sDevValues>()));
         res = true;
     } else {
         lastError = "Не удалось добавить т.к. такой номер уже есть в списке!";
@@ -34,7 +34,7 @@ bool Progress_tmk24Service::addDevice(QString devTypeName, QString devId, QStrin
     return res;
 }
 
-void Progress_tmk24Service::removeDevice(QString devTypeName, QString devId) {
+void Progress_tmk24Service::removeDevice(std::string devTypeName, std::string devId) {
     for(auto it: devList) {
         if(it->first.devId == devId) {
             if(it->first.devTypeName == devTypeName) {
@@ -48,16 +48,16 @@ int Progress_tmk24Service::getDeviceCount() {
     return devList.size();
 }
 
-QStringList Progress_tmk24Service::getDeviceProperty(int index) {
-    QStringList res;
-    res << devList.at(index)->first.devTypeName;
-    res << devList.at(index)->first.devId;
-    res << devList.at(index)->first.devSn;
+std::list<std::string> Progress_tmk24Service::getDeviceProperty(int index) {
+    std::list<std::string> res;
+    res.push_back(devList.at(index)->first.devTypeName);
+    res.push_back(devList.at(index)->first.devId);
+    res.push_back(devList.at(index)->first.devSn);
     return res;
 }
 
-QList<QString> Progress_tmk24Service::requestGetTableFromAllDevice() {
-    QList<QString>list;
+QList<std::string> Progress_tmk24Service::requestGetTableFromAllDevice() {
+    QList<std::string>list;
     if(operation == OPERATION_IDLE){
         for(auto it: devList) {
             list.push_back(it->first.devId);
@@ -69,18 +69,20 @@ QList<QString> Progress_tmk24Service::requestGetTableFromAllDevice() {
 }
 
 
-void Progress_tmk24Service::placeTableFromDevice(QString deviceIdentName, QStringList keys, QStringList values) {
+void Progress_tmk24Service::placeTableFromDevice(std::string deviceIdentName, std::list<std::string> keys, std::list<std::string> values) {
     for(auto it: devList) {
         if(it->first.devId == deviceIdentName) {
             it->second->clear();
             sDevValues tDevValues;
-            for(int i=0; i<keys.size(); i++) {
-                if(keys[i] == "y") {
-                    tDevValues.valueFuelLevel = values[i].toUInt();
-                } else if (keys[i] == "x") {
-                    tDevValues.valueLiters = values[i].toUInt();
+            auto valueIter = values.begin();
+            for(auto itemKey:keys) {
+                if(itemKey == "y") {
+                    tDevValues.valueFuelLevel = std::stoi(*valueIter);
+                } else if (itemKey == "x") {
+                    tDevValues.valueLiters = std::stoi(*valueIter);
                     it->second->push_back(tDevValues);
                 }
+                valueIter++;
             }
             it->first.isWhitedResult = false;
         }
@@ -100,24 +102,24 @@ bool Progress_tmk24Service::readTableAllDeviceIsReady() {
     return isAllReplyReady;
 }
 
-QStringList Progress_tmk24Service::getTableAtDevice(int index) {
-    QStringList res;
+std::list<std::string> Progress_tmk24Service::getTableAtDevice(int index) {
+    std::list<std::string> res;
     int devsLen = devList.at(index)->second->size();
     for(int i=0; i<devsLen; i++ ) {
-        res << QString::number(devList.at(index)->second->at(i).valueLiters);
-        res << QString::number(devList.at(index)->second->at(i).valueFuelLevel);
+        res.push_back(std::to_string(devList.at(index)->second->at(i).valueLiters));
+        res.push_back(std::to_string(devList.at(index)->second->at(i).valueFuelLevel));
     }
     return res;
 }
 
-QPair<QStringList,QStringList> Progress_tmk24Service::getTableAtDeviceToPair(QString uniqDevNameId) {
-    QPair<QStringList,QStringList> res;
+std::pair<std::list<std::string>,std::list<std::string>> Progress_tmk24Service::getTableAtDeviceToPair(std::string uniqDevNameId) {
+    std::pair<std::list<std::string>,std::list<std::string>> res;
     for(auto it: devList) {
         if(it->first.devId == uniqDevNameId) {
             int devsLen = it->second->size();
             for(int i=0; i<devsLen; i++ ) {
-                res.first << QString::number(it->second->at(i).valueLiters);
-                res.second << QString::number(it->second->at(i).valueFuelLevel);
+                res.first.push_back(std::to_string(it->second->at(i).valueLiters));
+                res.second.push_back(std::to_string(it->second->at(i).valueFuelLevel));
             }
         }
     }
@@ -125,24 +127,24 @@ QPair<QStringList,QStringList> Progress_tmk24Service::getTableAtDeviceToPair(QSt
 }
 
 // TODO: !!!!!
-void Progress_tmk24Service::placeCurrenDataFromDevice(QString deviceIdentName, QPair<QStringList,QStringList>data) {
-    for(auto it: devList) {
-        if(it->first.devId == deviceIdentName) {
-            if(!data.first.isEmpty()) {
-                if(data.first.indexOf("fuelLevel") >= 0) {
-                    it->first.currData.fuelLevel = data.second.at(data.first.indexOf("fuelLevel")).toUInt();
-                }
-                if(data.first.indexOf("cnt") >= 0) {
-                    it->first.currData.cntValue = data.second.at(data.first.indexOf("cnt")).toUInt();
-                }
-                it->first.currData.liters = 0; // TODO: liters  не известны и заносятся юзером
-                it->first.currData.isValid = true;
-            }
-        }
-    }
+void Progress_tmk24Service::placeCurrenDataFromDevice(std::string deviceIdentName, std::pair<std::list<std::string>,std::list<std::string>>data) {
+//    for(auto it: devList) {
+//        if(it->first.devId == deviceIdentName) {
+//            if(!data.first.empty()) {
+//                if(data.first.indexOf("fuelLevel") >= 0) {
+//                    it->first.currData.fuelLevel = data.second.at(data.first.indexOf("fuelLevel")).toUInt();
+//                }
+//                if(data.first.indexOf("cnt") >= 0) {
+//                    it->first.currData.cntValue = data.second.at(data.first.indexOf("cnt")).toUInt();
+//                }
+//                it->first.currData.liters = 0; // TODO: liters  не известны и заносятся юзером
+//                it->first.currData.isValid = true;
+//            }
+//        }
+//    }
 }
 
-void Progress_tmk24Service::placeCurrentChartDataFromDevice(QString deviceIdentName, QList<int> currentChartData) {
+void Progress_tmk24Service::placeCurrentChartDataFromDevice(std::string deviceIdentName, QList<int> currentChartData) {
     for(auto it: devList) {
         if(it->first.devId == deviceIdentName) {
             if(!currentChartData.empty()) {
@@ -152,17 +154,17 @@ void Progress_tmk24Service::placeCurrentChartDataFromDevice(QString deviceIdentN
     }
 }
 
-QStringList Progress_tmk24Service::getCurrentDataDevice(int index) {
-    QStringList res;
-    if(devList.at(index)->first.currData.isValid) {
-        res << QString::number(devList.at(index)->first.currData.fuelLevel);
-        res << QString::number(devList.at(index)->first.currData.liters);
-        res << QString::number(devList.at(index)->first.currData.cntValue);
-    } else {
-        res << "0";
-        res << "0";
-    }
-    return res;
+std::list<std::string> Progress_tmk24Service::getCurrentDataDevice(int index) {
+    std::list<std::string> res;
+//    if(devList.at(index)->first.currData.isValid) {
+//        res << std::to_string(devList.at(index)->first.currData.fuelLevel);
+//        res << std::to_string(devList.at(index)->first.currData.liters);
+//        res << std::to_string(devList.at(index)->first.currData.cntValue);
+//    } else {
+//        res << "0";
+//        res << "0";
+//    }
+//    return res;
 }
 
 QList<int> Progress_tmk24Service::getCurrentChartDataDevice(int index) {
@@ -184,14 +186,18 @@ int Progress_tmk24Service::getMaxCountStep() {
     return res;
 }
 
-void Progress_tmk24Service::placeTableFromFrontEnd(QString deviceIdentName, QStringList valueLiters, QStringList valueFuelLevel) {
+void Progress_tmk24Service::placeTableFromFrontEnd(std::string deviceIdentName, std::list<std::string> valueLiters, std::list<std::string> valueFuelLevel) {
     for(auto it: devList) {
         if(it->first.devId == deviceIdentName) {
             it->second->clear();
-            sDevValues tDevValues;
-            for(int i=0; i<valueLiters.size(); i++) {
-                tDevValues.valueLiters = valueLiters.at(i).toUInt();
-                tDevValues.valueFuelLevel = valueFuelLevel.at(i).toUInt();
+            auto litersItem = valueLiters.begin();
+            auto fuelItem = valueLiters.begin();
+            while(litersItem != valueLiters.end()) {
+                sDevValues tDevValues;
+                tDevValues.valueLiters = std::stoi(*litersItem);
+                tDevValues.valueFuelLevel = std::stoi(*fuelItem);
+                litersItem++;
+                fuelItem++;
                 it->second->push_back(tDevValues);
             }
             it->first.isWhitedResult = false;
@@ -199,7 +205,7 @@ void Progress_tmk24Service::placeTableFromFrontEnd(QString deviceIdentName, QStr
     }
 }
 
-void Progress_tmk24Service::placeAckReplyOfWriteTableFromDevice(QString deviceIdentName, bool writeIsNormal) {
+void Progress_tmk24Service::placeAckReplyOfWriteTableFromDevice(std::string deviceIdentName, bool writeIsNormal) {
     for(auto it: devList) {
         if(it->first.devId == deviceIdentName) {
             it->first.isWhitedResult = false;
@@ -211,7 +217,7 @@ void Progress_tmk24Service::placeAckReplyOfWriteTableFromDevice(QString deviceId
     }
 }
 
-bool Progress_tmk24Service::getAckStatusDeviceAffterWriteTable(QString deviceIdentName) {
+bool Progress_tmk24Service::getAckStatusDeviceAffterWriteTable(std::string deviceIdentName) {
     bool res = false;
     for(auto it: devList) {
         if(it->first.devId == deviceIdentName) {
@@ -221,8 +227,8 @@ bool Progress_tmk24Service::getAckStatusDeviceAffterWriteTable(QString deviceIde
     return res;
 }
 
-QList<QString> Progress_tmk24Service::requestWriteTableToAllDevice() {
-    QList<QString>list;
+QList<std::string> Progress_tmk24Service::requestWriteTableToAllDevice() {
+    QList<std::string>list;
     if(operation == OPERATION_IDLE) {
         for(auto it: devList) {
             list.push_back(it->first.devId);

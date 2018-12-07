@@ -173,7 +173,7 @@ typedef struct{
 
     typedef struct {
         bool isValid;
-        QString value;
+        std::string value;
     }sValueText;
 
     typedef struct {
@@ -210,9 +210,9 @@ typedef struct{
         sValue cardState;
 
         struct {
-            QString clientToken;
-            QString clientUserName;
-            QString serverIp;
+            std::string clientToken;
+            std::string clientUserName;
+            std::string serverIp;
             uint16_t serverPort;
             uint32_t panid;
             bool isValid;

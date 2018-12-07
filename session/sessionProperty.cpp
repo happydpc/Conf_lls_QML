@@ -4,7 +4,7 @@ SessionProperty::SessionProperty() : sessionName("default") {
 
 }
 
-SessionProperty::SessionProperty(QString sessionName) {
+SessionProperty::SessionProperty(std::string sessionName) {
     this->sessionName = sessionName;
     this->isValid = false;
 }
@@ -17,11 +17,11 @@ bool SessionProperty::getIsValid() {
     return isValid;
 }
 
-void SessionProperty::setSessionName(QString sessionName) {
+void SessionProperty::setSessionName(std::string sessionName) {
     this->sessionName = sessionName;
 }
 
-QString SessionProperty::getSessionName() {
+std::string SessionProperty::getSessionName() {
     return sessionName;
 }
 

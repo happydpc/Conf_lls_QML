@@ -7,33 +7,25 @@ DevicesFactory::DevicesFactory() {}
 
 DevicesFactory::~DevicesFactory() {}
 
-DeviceAbstract* DevicesFactory::newDevice(const QString devType,
-                                  const QStringList keyParam, const QStringList valueParam) {
+DeviceAbstract* DevicesFactory::newDevice(const std::string devType,
+                                          const std::list<std::string> keyParam,
+                                          const std::list<std::string> valueParam) {
     std::shared_ptr<DeviceAbstract> device;
-    QString devId, devHeader;
-    for(int i=0; i<keyParam.size(); i++) {
-        if(keyParam[i] == "id") {
-            devId = valueParam[i];
+    try {
+        if(devType == std::string(Progress_tmk24::name)) {
+            device = std::make_shared<Progress_tmk24>(keyParam, valueParam);
+        } else if(devType == std::string(Nozzle_Revision_0_00_Oct_2018::name)) {
+            device = std::make_shared<Nozzle_Revision_0_00_Oct_2018>(keyParam, valueParam);
         }
-        if(keyParam[i] == "header") {
-            devHeader = valueParam[i];
-        }
-    }
-    if(!devId.isEmpty()) {
-        if(devHeader.isEmpty()) {
-            devHeader = "deviceHeader";
-        }
-        if(devType.toLower() == QString(Progress_tmk24::name).toLower()) {
-            device = std::make_shared<Progress_tmk24>(devId, devHeader, keyParam, valueParam);
-        } else if(devType.toLower() == QString(Nozzle_Revision_0_00_Oct_2018::name).toLower()) { // TODO: need uniqPtr
-            device = std::make_shared<Nozzle_Revision_0_00_Oct_2018>(devId, devHeader);
-        }
+    } catch(...) {
+        return nullptr;
     }
     return device.get();
 }
 
-QStringList DevicesFactory::getAvailableTypeDevice() const {
-    QStringList res;
-    res << QString(Progress_tmk24::name) << QString(Nozzle_Revision_0_00_Oct_2018::name);
+std::list<std::string> DevicesFactory::getAvailableTypeDevice() const {
+    std::list<std::string> res;
+    res.push_back(std::string(Progress_tmk24::name));
+    res.push_back(std::string(Nozzle_Revision_0_00_Oct_2018::name));
     return res;
 }

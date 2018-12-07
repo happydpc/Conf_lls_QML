@@ -3,40 +3,50 @@
 #include "other/crc.h"
 #include <QList>
 
-Progress_tmk24::Progress_tmk24(QString devId, QString header, QStringList keyValue, QStringList value) {
-    this->deviceIdent.id = devId;
-    this->deviceIdent.header = header;
-    this->state = STATE_DISCONNECTED;
-    for(int i=0; i<keyValue.length(); i++) {
-        if(keyValue.at(i) == "password") {
-            this->lls_data.password.session.value = value.at(i);
+Progress_tmk24::Progress_tmk24(std::list<std::string> keyValue, std::list<std::string> value) {
+    auto propIter = value.begin();
+    for(auto itemKey: keyValue) {
+        if(itemKey == "id") {
+            this->deviceIdent.id = *propIter;
+        }
+        if(itemKey == "header") {
+            this->deviceIdent.header = *propIter;
+        }
+        if(itemKey == "password") {
+            this->lls_data.password.session.value = *propIter;
             this->lls_data.password.session.isValid = true;
         }
+        propIter++;
     }
+    this->state = STATE_DISCONNECTED;
     this->service = std::make_shared<ServiceDevicesAbstract>();
     setDefaultValues();
+
+    if(deviceIdent.id.empty() || deviceIdent.header.empty()) {
+        throw std::string("if does not include all properties");
+    }
 }
 
 Progress_tmk24::~Progress_tmk24() {
 
 }
 
-QString Progress_tmk24::getDevTypeName() {
-    return QString::fromLocal8Bit(Progress_tmk24::name, strlen(Progress_tmk24::name));
+std::string Progress_tmk24::getDevTypeName() {
+    return std::string(Progress_tmk24::name);
 }
 
-QString Progress_tmk24::getDevHeader() {
+std::string Progress_tmk24::getDevHeader() {
     return deviceIdent.header;
 }
 
-void Progress_tmk24::setDevHeader(QString header) {
+void Progress_tmk24::setDevHeader(std::string header) {
     deviceIdent.header = header;
 }
 
 void Progress_tmk24::setDefaultValues() {
     this->settings.k1 = 0;
     this->settings.k2 = 0;
-    this->settings.netAddress = (uint8_t)deviceIdent.id.toInt();
+    this->settings.netAddress = std::stoi(deviceIdent.id);
     this->settings.thermoCompensationType = 0;
     this->settings.periodicSendType = 0;
     this->settings.periodicSendTime = 0;
@@ -72,18 +82,18 @@ ServiceDevicesAbstract* Progress_tmk24::getServiceAbstract() {
     return service.get();
 }
 
-QPair<QStringList,QStringList> Progress_tmk24::getPropertyData() {
-    QPair<QStringList,QStringList> res;
+std::pair<std::list<std::string>,std::list<std::string>> Progress_tmk24::getPropertyData() {
+    std::pair<std::list<std::string>,std::list<std::string>> res;
     res.first.push_back("devTypeName");
     res.second.push_back(getDevTypeName());
     res.first.push_back("serialNum");
-    res.second.push_back((lls_data.serialNum.value.isEmpty() || lls_data.serialNum.value.at(0) > 0x255) ? QString("Не присвоен") : lls_data.serialNum.value);
+    res.second.push_back((lls_data.serialNum.value.empty() || lls_data.serialNum.value.at(0) > 0x255) ? std::string("Не присвоен") : lls_data.serialNum.value);
     res.first.push_back("netAddress");
-    res.second.push_back(QString::number(settings.netAddress));
+    res.second.push_back(std::to_string(settings.netAddress));
     res.first.push_back("versionFirmare");
     res.second.push_back(lls_data.firmware.isValid ? lls_data.firmware.value : "NA");
     res.first.push_back("authIsNormal");
-    res.second.push_back(QString::number(lls_data.password.get.authIsNormal));
+    res.second.push_back(std::to_string(lls_data.password.get.authIsNormal));
     res.first.push_back("password");
     res.second.push_back(lls_data.password.get.value.value);
     res.first.push_back("id");
@@ -93,117 +103,117 @@ QPair<QStringList,QStringList> Progress_tmk24::getPropertyData() {
     return res;
 }
 
-QPair<QStringList,QStringList> Progress_tmk24::getCurrentData() {
-    QPair<QStringList,QStringList> res;
+std::pair<std::list<std::string>,std::list<std::string>> Progress_tmk24::getCurrentData() {
+    std::pair<std::list<std::string>,std::list<std::string>> res;
     res = getPropertyData();
     res.first.push_back("fuelLevel");
-    res.second.push_back(lls_data.fuelLevel.isValid == true ? QString::number(lls_data.fuelLevel.value.value_u32) : QString::number(0));
+    res.second.push_back(lls_data.fuelLevel.isValid == true ? std::to_string(lls_data.fuelLevel.value.value_u32) : std::to_string(0));
     res.first.push_back("fuelProcent");
-    res.second.push_back(lls_data.fuelProcent.isValid ? QString::number(lls_data.fuelProcent.value.value_u16) : QString::number(0));
+    res.second.push_back(lls_data.fuelProcent.isValid ? std::to_string(lls_data.fuelProcent.value.value_u16) : std::to_string(0));
     res.first.push_back("cnt");
-    res.second.push_back(lls_data.cnt.isValid ? QString::number(lls_data.cnt.value.value_u32) : QString::number(0));
+    res.second.push_back(lls_data.cnt.isValid ? std::to_string(lls_data.cnt.value.value_u32) : std::to_string(0));
     res.first.push_back("freq");
-    res.second.push_back(lls_data.freq.isValid ? QString::number(lls_data.freq.value.value_u16) : QString::number(0));
+    res.second.push_back(lls_data.freq.isValid ? std::to_string(lls_data.freq.value.value_u16) : std::to_string(0));
     res.first.push_back("temp");
-    res.second.push_back(lls_data.temp.isValid ? QString::number(lls_data.temp.value.value_i) : QString::number(0));
+    res.second.push_back(lls_data.temp.isValid ? std::to_string(lls_data.temp.value.value_i) : std::to_string(0));
     res.first.push_back("noiseDetected");
-    res.second.push_back(QString::number(lls_data.noiseDetected));
+    res.second.push_back(std::to_string(lls_data.noiseDetected));
     res.first.push_back("chartValue");
-    res.second.push_back(lls_data.freq.isValid == true ? QString::number(lls_data.freq.value.value_u32) : QString::number(0));
+    res.second.push_back(lls_data.freq.isValid == true ? std::to_string(lls_data.freq.value.value_u32) : std::to_string(0));
     return res;
 }
 
-QPair<QStringList,QStringList> Progress_tmk24::getSettings() {
-    QPair<QStringList,QStringList> res;
+std::pair<std::list<std::string>,std::list<std::string>> Progress_tmk24::getSettings() {
+    std::pair<std::list<std::string>,std::list<std::string>> res;
     if(lls_data.settings.get.isValid) {
         res.first.push_back("device_value");
         res.second.push_back(getDevTypeName());
         res.first.push_back("versionFirmare");
         res.second.push_back(lls_data.firmware.isValid ? lls_data.firmware.value : "NA");
         res.first.push_back("k1_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.k1, 'f'));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.k1));
         res.first.push_back("k2_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.k2, 'f'));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.k2));
         res.first.push_back("typeTempCompensation_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.thermoCompensationType));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.thermoCompensationType));
         res.first.push_back("periodicSendType_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.periodicSendType));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.periodicSendType));
         res.first.push_back("periodicSendTime_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.periodicSendTime));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.periodicSendTime));
         res.first.push_back("typeOutMessage_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.outputValue));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.outputValue));
         res.first.push_back("typeInterpolation_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.interpolationType));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.interpolationType));
         res.first.push_back("typeFiltration_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.filterType));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.filterType));
         res.first.push_back("filterLenghtMediana_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.medianLength));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.medianLength));
         res.first.push_back("filterAvarageValueSec_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.avarageLength));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.avarageLength));
         res.first.push_back("filterValueQ_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.q, 'f'));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.q));
         res.first.push_back("filterValueR_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.r, 'f'));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.r));
         res.first.push_back("minLevelValue_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.minLevel));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.minLevel));
         res.first.push_back("maxLevelValue_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.maxLevel));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.maxLevel));
         res.first.push_back("masterSlaveModes_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.masterMode));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.masterMode));
         res.first.push_back("baudrateRs232Values_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.rs232Speed));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.rs232Speed));
         res.first.push_back("baudrateRs485Values_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.rs485Speed));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.rs485Speed));
         res.first.push_back("masterSlaveFullCountes_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.slaveCount));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.slaveCount));
         res.first.push_back("masterSlaveSlaveId_1_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.slaveAddr[0]));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.slaveAddr[0]));
         res.first.push_back("masterSlaveSlaveId_2_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.slaveAddr[1]));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.slaveAddr[1]));
         res.first.push_back("masterSlaveSlaveId_3_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.slaveAddr[2]));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.slaveAddr[2]));
         res.first.push_back("masterSlaveSlaveId_4_value");
-        res.second.push_back(QString::number(lls_data.settings.get.value.slaveAddr[3]));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.slaveAddr[3]));
         res.first.push_back("typeFuel");
-        res.second.push_back(QString::number(lls_data.settings.get.value.waterMode));
+        res.second.push_back(std::to_string(lls_data.settings.get.value.waterMode));
     }
     return res;
 }
 
-QPair<QStringList,QStringList> Progress_tmk24::getErrors() {
-    QPair<QStringList,QStringList> ret;
+std::pair<std::list<std::string>,std::list<std::string>> Progress_tmk24::getErrors() {
+    std::pair<std::list<std::string>,std::list<std::string>> ret;
     if(lls_data.errors.isValid) {
         ret.first.push_back("GenFreq0");
-        ret.second.push_back(QString::number(lls_data.errors.errors.GenFreq0));
+        ret.second.push_back(std::to_string(lls_data.errors.errors.GenFreq0));
         ret.first.push_back("MaxFreqOut");
-        ret.second.push_back(QString::number(lls_data.errors.errors.MaxFreqOut));
+        ret.second.push_back(std::to_string(lls_data.errors.errors.MaxFreqOut));
         ret.first.push_back("MinFreqOut");
-        ret.second.push_back(QString::number(lls_data.errors.errors.MinFreqOut));
+        ret.second.push_back(std::to_string(lls_data.errors.errors.MinFreqOut));
         ret.first.push_back("NotCalibrated");
-        ret.second.push_back(QString::number(lls_data.errors.errors.NotCalibrated));
+        ret.second.push_back(std::to_string(lls_data.errors.errors.NotCalibrated));
         ret.first.push_back("QeueManagerError");
-        ret.second.push_back(QString::number(lls_data.errors.errors.QeueManagerError));
+        ret.second.push_back(std::to_string(lls_data.errors.errors.QeueManagerError));
         ret.first.push_back("ReplayNotComeRs232");
-        ret.second.push_back(QString::number(lls_data.errors.errors.ReplayNotComeRs232));
+        ret.second.push_back(std::to_string(lls_data.errors.errors.ReplayNotComeRs232));
         ret.first.push_back("ReplayNotComeRs485");
-        ret.second.push_back(QString::number(lls_data.errors.errors.ReplayNotComeRs485));
+        ret.second.push_back(std::to_string(lls_data.errors.errors.ReplayNotComeRs485));
         ret.first.push_back("Rs232Error");
-        ret.second.push_back(QString::number(lls_data.errors.errors.Rs232Error));
+        ret.second.push_back(std::to_string(lls_data.errors.errors.Rs232Error));
         ret.first.push_back("Rs485Error");
-        ret.second.push_back(QString::number(lls_data.errors.errors.Rs485Error));
+        ret.second.push_back(std::to_string(lls_data.errors.errors.Rs485Error));
         ret.first.push_back("Slave1Error");
-        ret.second.push_back(QString::number(lls_data.errors.errors.Slave1Error));
+        ret.second.push_back(std::to_string(lls_data.errors.errors.Slave1Error));
         ret.first.push_back("Slave2Error");
-        ret.second.push_back(QString::number(lls_data.errors.errors.Slave2Error));
+        ret.second.push_back(std::to_string(lls_data.errors.errors.Slave2Error));
         ret.first.push_back("Slave3Error");
-        ret.second.push_back(QString::number(lls_data.errors.errors.Slave3Error));
+        ret.second.push_back(std::to_string(lls_data.errors.errors.Slave3Error));
         ret.first.push_back("Slave4Error");
-        ret.second.push_back(QString::number(lls_data.errors.errors.Slave4Error));
+        ret.second.push_back(std::to_string(lls_data.errors.errors.Slave4Error));
     }
     return ret;
 }
 
-QList<int> Progress_tmk24::getChart() {
+std::list<int> Progress_tmk24::getChart() {
     return chartData;
 }
 
@@ -218,7 +228,7 @@ void Progress_tmk24::setState(DeviceAbstract::E_State value) {
     }
 }
 
-QString Progress_tmk24::getUniqId() {
+std::string Progress_tmk24::getUniqId() {
     return deviceIdent.id;
 }
 
@@ -427,7 +437,7 @@ QString Progress_tmk24::getUniqId() {
 //}
 
 //bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, CommandController::sCommandData commandReqData) {
-//    QPair<QStringList, QStringList> res;
+//    std::pair<std::list<std::string>, std::list<std::string>> res;
 //    bool replyIsValid = false;
 //    Crc crc;
 //    uint8_t crcRes = 0;
@@ -495,9 +505,9 @@ QString Progress_tmk24::getUniqId() {
 //            // обработка требуется для выполнения команд по записи/чтения настроек и пр.
 //        }
 //        if(replyIsValid) {
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        res.first << getCurrentData().first;
 //        res.second << getCurrentData().second;
@@ -556,10 +566,10 @@ QString Progress_tmk24::getUniqId() {
 //        if(replyIsValid) {
 //            if(lls_data.fuelLevel.isValid && lls_data.fuelProcent.isValid && lls_data.cnt.isValid
 //                    && lls_data.freq.isValid && lls_data.temp.isValid && lls_data.fuelLevel.isValid) {
-//                res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//                res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //            }
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        res.first << getCurrentData().first;
 //        res.second << getCurrentData().second;
@@ -577,10 +587,10 @@ QString Progress_tmk24::getUniqId() {
 //            if(commandReqData.devCommand == (uint8_t)commandArrayReplyData.at(2)) {
 //                if(commandArrayReplyData.size() > 22) {
 //                    char *pbuf = (commandArrayReplyData.data() + 4);
-//                    lls_data.serialNum.value = QString::fromUtf8(pbuf, Progress_tmk24Data::SERIALNUMBER_STRING_SIZE);
+//                    lls_data.serialNum.value = std::string::fromUtf8(pbuf, Progress_tmk24Data::SERIALNUMBER_STRING_SIZE);
 //                    lls_data.serialNum.isValid = true;
 //                    pbuf = (commandArrayReplyData.data() + 4 + Progress_tmk24Data::SERIALNUMBER_STRING_SIZE);
-//                    lls_data.firmware.value = QString::fromUtf8(pbuf,  Progress_tmk24Data::FIRMWARE_VERSION_STRING_SIZE);
+//                    lls_data.firmware.value = std::string::fromUtf8(pbuf,  Progress_tmk24Data::FIRMWARE_VERSION_STRING_SIZE);
 //                    lls_data.firmware.isValid = true;
 
 //                    // проверка типа
@@ -599,9 +609,9 @@ QString Progress_tmk24::getUniqId() {
 //            }
 //        }
 //        if(replyIsValid) {
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        res.first << getSettings().first;
 //        res.second << getSettings().second;
@@ -627,9 +637,9 @@ QString Progress_tmk24::getUniqId() {
 //            }
 //        }
 //        if(replyIsValid) {
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        res.first << getSettings().first;
 //        res.second << getSettings().second;
@@ -645,8 +655,8 @@ QString Progress_tmk24::getUniqId() {
 //            // если ожидаемая команда совпадает с пакетом
 //            if(commandReqData.devCommand == (uint8_t)commandArrayReplyData.at(2)) {
 //                if(commandArrayReplyData.size() > 45) {
-//                    QStringList keys;
-//                    QStringList values;
+//                    std::list<std::string> keys;
+//                    std::list<std::string> values;
 //                    memset(&lls_data.calibrateTable.get.table, 0, sizeof(Progress_tmk24Data::T_calibrationTable));
 //                    lls_data.calibrateTable.get.table.TableSize = commandArrayReplyData.at(3);
 //                    int index = 0;
@@ -660,9 +670,9 @@ QString Progress_tmk24::getUniqId() {
 //                        lls_data.calibrateTable.get.table.x[i] |= ((0xFF & commandArrayReplyData.at(index+4)) << 8);
 //                        index++;
 //                        keys.push_back("y");
-//                        values.push_back(QString::number(lls_data.calibrateTable.get.table.y[i]));
+//                        values.push_back(std::to_string(lls_data.calibrateTable.get.table.y[i]));
 //                        keys.push_back("x");
-//                        values.push_back(QString::number(lls_data.calibrateTable.get.table.x[i]));
+//                        values.push_back(std::to_string(lls_data.calibrateTable.get.table.x[i]));
 //                    }
 //                    lls_data.calibrateTable.get.isValid = true;
 //                    replyIsValid = true;
@@ -670,9 +680,9 @@ QString Progress_tmk24::getUniqId() {
 //            }
 //        }
 //        if(replyIsValid) {
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        res.first << getSettings().first;
 //        res.second << getSettings().second;
@@ -698,9 +708,9 @@ QString Progress_tmk24::getUniqId() {
 //            }
 //        }
 //        if(replyIsValid) {
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        res.first << getSettings().first;
 //        res.second << getSettings().second;
@@ -723,9 +733,9 @@ QString Progress_tmk24::getUniqId() {
 //            }
 //        }
 //        if(replyIsValid) {
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        res.first << getSettings().first;
 //        res.second << getSettings().second;
@@ -749,9 +759,9 @@ QString Progress_tmk24::getUniqId() {
 //            }
 //        }
 //        if(replyIsValid) {
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        res.first << getSettings().first;
 //        res.second << getSettings().second;
@@ -777,9 +787,9 @@ QString Progress_tmk24::getUniqId() {
 //            }
 //        }
 //        if(replyIsValid) {
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        res.first << getSettings().first;
 //        res.second << getSettings().second;
@@ -796,7 +806,7 @@ QString Progress_tmk24::getUniqId() {
 //            // возможно обращение к несуществующему элементу
 //            if(commandReqData.devCommand == (uint8_t)commandArrayReplyData.at(2)) {
 //                if(commandArrayReplyData.size() > 22) {
-//                    lls_data.serialNum.value = QString::fromUtf8((commandArrayReplyData.data() + 3),
+//                    lls_data.serialNum.value = std::string::fromUtf8((commandArrayReplyData.data() + 3),
 //                                                                 Progress_tmk24Data::SERIALNUMBER_STRING_SIZE);
 //                    lls_data.serialNum.isValid = true;
 //                }
@@ -804,9 +814,9 @@ QString Progress_tmk24::getUniqId() {
 //            }
 //        }
 //        if(replyIsValid) {
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        res.first << getSettings().first;
 //        res.second << getSettings().second;
@@ -832,9 +842,9 @@ QString Progress_tmk24::getUniqId() {
 //            }
 //        }
 //        if(replyIsValid) {
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        res.first << getSettings().first;
 //        res.second << getSettings().second;
@@ -863,9 +873,9 @@ QString Progress_tmk24::getUniqId() {
 //            }
 //        }
 //        if(replyIsValid) {
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        res.first << getSettings().first;
 //        res.second << getSettings().second;
@@ -920,9 +930,9 @@ QString Progress_tmk24::getUniqId() {
 //            }
 //        }
 //        if(replyIsValid) {
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        res.first << getCurrentData().first;
 //        res.second << getCurrentData().second;
@@ -1028,7 +1038,7 @@ QString Progress_tmk24::getUniqId() {
 //    return commandList;
 //}
 
-//QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(QString operation, QPair<QStringList, QStringList> data) {
+//QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(std::string operation, std::pair<std::list<std::string>, std::list<std::string>> data) {
 //    QList <CommandController::sCommandData> commandList;
 //    CommandController::sCommandData unitCommand;
 //    unitCommand.operationHeader = operation;
@@ -1044,7 +1054,7 @@ QString Progress_tmk24::getUniqId() {
 //        for(auto i:pService->requestWriteTableToAllDevice()) {
 //            // извлекаем данные из таблциц
 //            // отправляем всем dev из списка команду на запись таблиц
-//            QPair<QStringList,QStringList> table;
+//            std::pair<std::list<std::string>,std::list<std::string>> table;
 //            data = pService->getTableAtDeviceToPair(i);
 //            unitCommand.deviceIdent = getUniqId();
 //            unitCommand.isNeedAckMessage = true;
@@ -1180,17 +1190,17 @@ QString Progress_tmk24::getUniqId() {
 ////        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
 ////        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 ////        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
-////        QStringList exportList;
-////        QString str;
+////        std::list<std::string> exportList;
+////        std::string str;
 ////        if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
 ////            Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
 ////            int devAll = pService->getDeviceCount();
 ////            // id[devType], объем, уровень топлива
 ////            for(int devCounter=0; devCounter<devAll; devCounter++) {
-////                QStringList litersList;
-////                QStringList fuelLevelList;
+////                std::list<std::string> litersList;
+////                std::list<std::string> fuelLevelList;
 ////                // получаем стоблец с liters и fuelLevel
-////                QPair<QStringList,QStringList> tableData;
+////                std::pair<std::list<std::string>,std::list<std::string>> tableData;
 ////                tableData = pService->getTableAtDeviceToPair(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceIdTextByIndex(devCounter));
 ////                for(int tableCounter=0; tableCounter<tableData.first.size(); tableCounter++) {
 ////                    // lites
@@ -1199,15 +1209,15 @@ QString Progress_tmk24::getUniqId() {
 ////                    fuelLevelList << tableData.second.at(tableCounter);
 ////                }
 ////                str.clear();
-////                str.push_back("\"" + QString("ID/Тип") + "\"" + ",");
-////                str.push_back("\"" + QString("Объем") + "\"" + ",");
-////                str.push_back("\"" + QString("Уровень") + "\"");
+////                str.push_back("\"" + std::string("ID/Тип") + "\"" + ",");
+////                str.push_back("\"" + std::string("Объем") + "\"" + ",");
+////                str.push_back("\"" + std::string("Уровень") + "\"");
 ////                exportList.push_back(str);
 ////                for(int makeCounter=0; makeCounter<litersList.size(); makeCounter++) {
 ////                    str.clear();
-////                    str.push_back("\"" + QString("ID%1[%2]").arg(pService->getDeviceProperty(devCounter).at(1)).arg(pService->getDeviceProperty(devCounter).at(0)) + "\"" + ",");
-////                    str.push_back("\"" + ((litersList.size() >= makeCounter) ? (litersList.at(makeCounter) + "\"" + ",") : QString("Нет данных")));
-////                    str.push_back("\"" + ((fuelLevelList.size() >= makeCounter) ? (fuelLevelList.at(makeCounter) + "\"") : QString("Нет данных")));
+////                    str.push_back("\"" + std::string("ID%1[%2]").arg(pService->getDeviceProperty(devCounter).at(1)).arg(pService->getDeviceProperty(devCounter).at(0)) + "\"" + ",");
+////                    str.push_back("\"" + ((litersList.size() >= makeCounter) ? (litersList.at(makeCounter) + "\"" + ",") : std::string("Нет данных")));
+////                    str.push_back("\"" + ((fuelLevelList.size() >= makeCounter) ? (fuelLevelList.at(makeCounter) + "\"") : std::string("Нет данных")));
 ////                    exportList.push_back(str);
 ////                }
 ////            }
@@ -1243,7 +1253,7 @@ QString Progress_tmk24::getUniqId() {
 ////        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
 ////        pService->getMaxCountStep();
 
-////        //    QStringList resList;
+////        //    std::list<std::string> resList;
 ////        //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
 ////        //        int devCount = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
 ////        //        for(int i=0; i<devCount; i++) {
@@ -1262,8 +1272,8 @@ QString Progress_tmk24::getUniqId() {
 ////        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
 ////        pService->getMaxCountStep();
 
-////        QStringList ViewController::getAvailableDevTarrirAdd_DevId() {
-////            //    QStringList resList;
+////        std::list<std::string> ViewController::getAvailableDevTarrirAdd_DevId() {
+////            //    std::list<std::string> resList;
 ////            //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
 ////            //        int devCount = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
 ////            //        for(int i=0; i<devCount; i++) {
@@ -1284,14 +1294,14 @@ QString Progress_tmk24::getUniqId() {
 ////        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
 ////        pService->getMaxCountStep();
 
-////        QStringList ViewController::getAvailableDevTarrirAdd_DevSerialNumber() {
-////            //    QStringList resList;
+////        std::list<std::string> ViewController::getAvailableDevTarrirAdd_DevSerialNumber() {
+////            //    std::list<std::string> resList;
 ////            //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
 ////            //        int devCount = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
 ////            //        for(int i=0; i<devCount; i++) {
-////            //            QStringList keyList = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(i).first;
+////            //            std::list<std::string> keyList = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(i).first;
 ////            //            for(int i2 =0; i2<keyList.size(); i2++) {
-////            //                if(keyList.at(i2) == QString("serialNum")) {                                                                                 // TOOD:!!!!!
+////            //                if(keyList.at(i2) == std::string("serialNum")) {                                                                                 // TOOD:!!!!!
 ////            //                    resList << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(i).second.at(0);
 ////            //                }
 ////            //            }
@@ -1309,8 +1319,8 @@ QString Progress_tmk24::getUniqId() {
 ////        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 ////        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
 ////        pService->getMaxCountStep();
-////    QStringList ViewController::getTarCurrentDeviceData(int index) {
-////        //    QStringList res;
+////    std::list<std::string> ViewController::getTarCurrentDeviceData(int index) {
+////        //    std::list<std::string> res;
 ////        //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
 ////        //        if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
 ////        //            Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
@@ -1374,8 +1384,8 @@ QString Progress_tmk24::getUniqId() {
 ////        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 ////        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
 ////        pService->getMaxCountStep();
-////    QStringList ViewController::getStayedDevTarrir_DevProperty(QString propertyName) {
-////        //    QStringList res;
+////    std::list<std::string> ViewController::getStayedDevTarrir_DevProperty(std::string propertyName) {
+////        //    std::list<std::string> res;
 ////        //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
 ////        //        if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
 ////        //            Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
@@ -1406,7 +1416,7 @@ QString Progress_tmk24::getUniqId() {
 ////        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 ////        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
 ////        pService->getMaxCountStep();
-////    bool ViewController::addTarrirDev(QString devTypeName, QString devId) {
+////    bool ViewController::addTarrirDev(std::string devTypeName, std::string devId) {
 ////        //    bool res = false;
 ////        //    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
 ////        //        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
@@ -1424,7 +1434,7 @@ QString Progress_tmk24::getUniqId() {
 ////        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 ////        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
 ////        pService->getMaxCountStep();
-////    void ViewController::removeTarrirDev(QString devTypeName, QString devId) {
+////    void ViewController::removeTarrirDev(std::string devTypeName, std::string devId) {
 ////        //    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
 ////        //        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
 ////        //        if(pService != nullptr) {
@@ -1504,8 +1514,8 @@ QString Progress_tmk24::getUniqId() {
 ////        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 ////        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
 ////        pService->getMaxCountStep();
-////    QStringList ViewController::getTableAtDevice(int index) {
-////        //    QStringList res;
+////    std::list<std::string> ViewController::getTableAtDevice(int index) {
+////        //    std::list<std::string> res;
 ////        //    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
 ////        //        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
 ////        //        if(pService != nullptr) {
@@ -1539,7 +1549,7 @@ QString Progress_tmk24::getUniqId() {
 //    return commandList;
 //}
 
-QStringList Progress_tmk24::execCommand(QString operation, QPair<QStringList, QStringList>) {}
+std::list<std::string> Progress_tmk24::execCommand(std::string operation, std::pair<std::list<std::string>, std::list<std::string>>) {}
 
 //QList<CommandController::sCommandData> Progress_tmk24::getCommandListToCurrentData() {
 //    QList<CommandController::sCommandData> commandList;

@@ -18,7 +18,7 @@ void ConnectionComposition::removeIoAll() {
 
 }
 
-QPair<QString, QString> ConnectionComposition::getIoProperty(int ioIndex) const {
+std::pair<std::list<std::string>, std::list<std::string>> ConnectionComposition::getIoProperty(int ioIndex) const {
 
 }
 
@@ -46,11 +46,11 @@ uint16_t ConnectionComposition::getDevCount(int ioIndex) const {
 
 }
 
-QPair<QString, QString> ConnectionComposition::getDevProperty(int ioIndex, int devIndex) const {
+std::pair<std::list<std::string>, std::list<std::string>> ConnectionComposition::getDevProperty(int ioIndex, int devIndex) const {
 
 }
 
-bool ConnectionComposition::devExecFutureCommand(int ioIndex, int devIndex, const QString &comandType,
-                                                 const QStringList &keys, const QStringList &params) {
+bool ConnectionComposition::devExecFutureCommand(int ioIndex, int devIndex, const std::string &comandType,
+                                                 const std::list<std::string> &keys, const std::list<std::string> &params) {
 
 }

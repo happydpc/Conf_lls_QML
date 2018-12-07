@@ -3,30 +3,29 @@
 
 #include <QObject>
 #include <QVector>
-#include <QPair>
 
 class SessionProperty
 {
 public:
     SessionProperty();
-    SessionProperty(QString sessionName);
+    SessionProperty(std::string sessionName);
 
     typedef struct {
-        QString typeName;
-        QStringList propKey;
-        QStringList propValue;
+        std::string typeName;
+        std::list<std::string> propKey;
+        std::list<std::string> propValue;
     }sDevices;
 
     typedef struct {
-        QString name;
-        QString typeName;
-        QStringList propKey;
-        QStringList propValue;
+        std::string name;
+        std::string typeName;
+        std::list<std::string> propKey;
+        std::list<std::string> propValue;
         QList<sDevices>devices;
     }sInterface;
 
-    void setSessionName(QString sessionName);
-    QString getSessionName();
+    void setSessionName(std::string sessionName);
+    std::string getSessionName();
 
     void addInterface(sInterface value);
     void addDevice(sDevices device);
@@ -38,7 +37,7 @@ public:
 
 private:
     bool isValid;
-    QString sessionName;
+    std::string sessionName;
 
     QList<sInterface> session;
 };

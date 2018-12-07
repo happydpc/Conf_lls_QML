@@ -17,13 +17,13 @@ public slots:
     virtual void closeInterface() = 0;
     virtual bool sendData(QByteArray pData) = 0;
     virtual bool readData(QByteArray &pData) = 0;
-    virtual QString getType() = 0;
-    virtual QString getInterfaceName() = 0;
-    virtual QPair<QStringList,QStringList> getInterfaceProperty() = 0;
-    virtual QStringList getAvailableList() = 0;
+    virtual std::string getType() = 0;
+    virtual std::string getInterfaceName() = 0;
+    virtual std::pair<std::list<std::string>,std::list<std::string>> getInterfaceProperty() = 0;
+    virtual std::list<std::string> getAvailableList() = 0;
 
 signals:
-    void errorInterface(QString conTypeName, QString errorMessage);
+    void errorInterface(std::string conTypeName, std::string errorMessage);
     void openIsNormam();
     void closeIsNormal();
 

@@ -137,7 +137,7 @@ public:
 
     typedef struct {
         bool isValid;
-        QString value;
+        std::string value;
     }sValueText;
 
     typedef struct {

@@ -11,11 +11,11 @@ public:
     explicit Session(QObject *parent = nullptr);
 
     void resetSession();
-    bool removeSessionByName(QString sessionName);
-    QStringList getListSession();
-    bool loadSession(QString sessionName);
-    QString saveCurrentSession();
-    QString saveCurrentSessionAs(QString sessionName);
+    bool removeSessionByName(std::string sessionName);
+    std::list<std::string> getListSession();
+    bool loadSession(std::string sessionName);
+    std::string saveCurrentSession();
+    std::string saveCurrentSessionAs(std::string sessionName);
 
 private:
     SessionSecurity *sessionSecurity;

@@ -7,7 +7,7 @@ ConnectionFactory::ConnectionFactory() {
 }
 ConnectionFactory::~ConnectionFactory() {}
 
-IoAbstract* ConnectionFactory::createConnection(const QString ioTypeName, const QString ioName, QPair<QStringList,QStringList> param) {
+IoAbstract* ConnectionFactory::createConnection(const std::string ioTypeName, const std::string ioName, std::pair<std::list<std::string>,std::list<std::string>> param) {
 //    bool res = false;
 //    lockInterface->lock();
 //    try {
@@ -25,14 +25,14 @@ IoAbstract* ConnectionFactory::createConnection(const QString ioTypeName, const 
 }
 
 //bool res = false;
-//if(typeName.toLower() == QString("serial")) {
+//if(typeName.toLower() == std::string("serial")) {
 //    std::shared_ptr<IoAbstract> p_interface = std::make_shared<IoSerial>(name, param);
 //    if(p_interface.get() != nullptr) {
 //        res  = p_interface->openInterface();
 //        this->connAbstract = std::move(p_interface);
 //        this->deviceController = std::make_shared<DeviceController>(connAbstract.get());
 //        if(res) {
-//            connect(p_interface.get(), &IoAbstract::errorInterface, this, [&](QString ioTypeName, QString message) {
+//            connect(p_interface.get(), &IoAbstract::errorInterface, this, [&](std::string ioTypeName, std::string message) {
 //                emit errorConnection(ioTypeName, message);
 //            });
 //        }
@@ -40,14 +40,14 @@ IoAbstract* ConnectionFactory::createConnection(const QString ioTypeName, const 
 //}
 //if(!res) {
 //    qDebug() << "addConnection -ERR " + name;
-//    throw QString("error create connection");
+//    throw std::string("error create connection");
 //}
 
-QStringList ConnectionFactory::getAvailableName(QString typeName) const {
-    QStringList interfaceList;
+std::list<std::string> ConnectionFactory::getAvailableName(std::string typeName) const {
+    std::list<std::string> interfaceList;
     if(typeName == "serial") {
         IoAbstract* p_interface = nullptr;
-        p_interface = new IoSerial("", QPair<QStringList,QStringList>());
+        p_interface = new IoSerial("", std::pair<std::list<std::string>,std::list<std::string>>());
         if(p_interface != nullptr) {
             interfaceList = p_interface->getAvailableList();
             delete p_interface;
@@ -56,7 +56,7 @@ QStringList ConnectionFactory::getAvailableName(QString typeName) const {
     return interfaceList;
 }
 
-//void ConnectionFactory::removeConnection(QString name) {
+//void ConnectionFactory::removeConnection(std::string name) {
 //    lockInterface->lock();
 ////    for(auto it = connectionList.begin(); it!=connectionList.end(); it++) {
 ////        if((*it)->getInterfaceAbstract()->getInterfaceName() == name) {
@@ -100,7 +100,7 @@ QStringList ConnectionFactory::getAvailableName(QString typeName) const {
 //    return res;
 //}
 
-//QString ConnectionFactory::getIoName(int ioIndex) const {
+//std::string ConnectionFactory::getIoName(int ioIndex) const {
 ////    if(!connectionList.empty()) {
 ////        if(ioIndex <= connectionList.size()-1) {
 ////            auto p_ret = connectionList.begin();
@@ -108,10 +108,10 @@ QStringList ConnectionFactory::getAvailableName(QString typeName) const {
 ////            return p_ret->get()->getInterfaceAbstract()->getInterfaceName();
 ////        }
 ////    }
-//    return QString("undefined");
+//    return std::string("undefined");
 //}
 
-//bool ConnectionFactory::getIoNameIsExist(QString ioName) const{
+//bool ConnectionFactory::getIoNameIsExist(std::string ioName) const{
 ////    for(auto it = connectionList.begin(); it != connectionList.end(); it++) {
 ////        if(it->get()->getInterfaceAbstract()->getInterfaceName() == ioName) {
 ////            return true;
@@ -120,7 +120,7 @@ QStringList ConnectionFactory::getAvailableName(QString typeName) const {
 //    return false;
 //}
 
-//IoAbstract* ConnectionFactory::getIoAbstract(QString ioName) {
+//IoAbstract* ConnectionFactory::getIoAbstract(std::string ioName) {
 ////    for(auto it = connectionList.begin(); it!=connectionList.end(); it++) {
 ////        if(it->get()->getInterfaceAbstract()->getInterfaceName() == ioName) {
 ////            return it->get()->getInterfaceAbstract();
@@ -138,7 +138,7 @@ QStringList ConnectionFactory::getAvailableName(QString typeName) const {
 //    return nullptr;
 //}
 
-//DeviceController* ConnectionFactory::getDeviceController(const QString ioName) {
+//DeviceController* ConnectionFactory::getDeviceController(const std::string ioName) {
 ////    for(auto it = connectionList.begin(); it!=connectionList.end(); it++) {
 ////        if(it->get()->getInterfaceAbstract()->getInterfaceName() == ioName) {
 ////            return it->get()->getDeviceController();
@@ -156,6 +156,6 @@ QStringList ConnectionFactory::getAvailableName(QString typeName) const {
 //-----------------------------------------------------/
 //---------------         SLOTS             -----------/
 //-----------------------------------------------------/
-//void ConnectionFactory::errorFromConnection(QString conTypeName, QString errMessage) {
+//void ConnectionFactory::errorFromConnection(std::string conTypeName, std::string errMessage) {
 //    qDebug() << "errorFromConnection -"  << conTypeName << " " << errMessage;
 //}

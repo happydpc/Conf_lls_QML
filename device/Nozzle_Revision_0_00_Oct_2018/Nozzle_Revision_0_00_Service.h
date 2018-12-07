@@ -7,10 +7,10 @@
 class Nozzle_Rev_0_00_Service : public ServiceDevicesAbstract
 {
 public:
-    explicit Nozzle_Rev_0_00_Service(QString owDeviceName);
+    explicit Nozzle_Rev_0_00_Service(std::string owDeviceName);
 
 private:
-    QString lastError;
+    std::string lastError;
     Nozzle_Rev_0_00_Service* m_pinstance;
 };
 

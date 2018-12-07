@@ -15,7 +15,7 @@ public:
     void removeIo(int ioIndex);
     void removeIoAll();
     uint16_t getIoCount() const ;
-    QPair<QString, QString> getIoProperty(int ioIndex) const;
+    std::pair<std::list<std::string>, std::list<std::string>> getIoProperty(int ioIndex) const;
 
     bool addDev(int ioIndex, DeviceAbstract* dev);
     void removeDev(int ioIndex, int devIndex);
@@ -24,10 +24,10 @@ public:
     bool getIoIsConnected(int ioIndex) const;
     bool getDevIsConnected(int ioIndex, int devIndex) const;
 
-    QPair<QString, QString> getDevProperty(int ioIndex, int devIndex) const;
+    std::pair<std::list<std::string>, std::list<std::string>> getDevProperty(int ioIndex, int devIndex) const;
 
-    bool devExecFutureCommand(int ioIndex, int devIndex, const QString &comandType,
-                              const QStringList &keys, const QStringList &params);
+    bool devExecFutureCommand(int ioIndex, int devIndex, const std::string &comandType,
+                              const std::list<std::string> &keys, const std::list<std::string> &params);
 
 private:
     std::vector<IoAbstract*> ioList;

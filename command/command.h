@@ -9,19 +9,19 @@ class Command : public QObject
 public:
     explicit Command(QObject *parent = nullptr);
 
-    void setCommand(QString command);
-    void setArgs(QStringList keys, QStringList values);
+    void setCommand(std::string command);
+    void setArgs(std::list<std::string> keys, std::list<std::string> values);
     void setDelayRequstMs(int delay_ms);
-    QString getCommand();
-    QPair<QStringList,QStringList> getArgs();
+    std::string getCommand();
+    std::pair<std::vector<std::string>,std::vector<std::string>> getArgs();
     int getDelayRequstMs();
 private:
-    QString command;
+    std::string command;
 
     // buffer for transmit settings, firmware and other data
     struct {
-        QStringList key;
-        QStringList value;
+        std::vector<std::string> key;
+        std::vector<std::string> value;
     }args;
 
     int delay_request_ms;

@@ -7,40 +7,40 @@
 class Progress_tmk24Service : public ServiceDevicesAbstract
 {
 public:
-    Progress_tmk24Service(QString ownDeviceName);
+    Progress_tmk24Service(std::string ownDeviceName);
     ~Progress_tmk24Service();
 
-    bool addDevice(QString devTypeName, QString devId, QString devSn);
-    void removeDevice(QString devTypeName, QString devId);
+    bool addDevice(std::string devTypeName, std::string devId, std::string devSn);
+    void removeDevice(std::string devTypeName, std::string devId);
 
     // сколько всего dev
     int getDeviceCount();
-    QStringList getDeviceProperty(int index);
+    std::list<std::string> getDeviceProperty(int index);
 
     // запрос для считывание таблицы со всех уст-в
-    QList<QString> requestGetTableFromAllDevice();
-    void placeTableFromDevice(QString deviceIdentName, QStringList keys, QStringList values);
+    QList<std::string> requestGetTableFromAllDevice();
+    void placeTableFromDevice(std::string deviceIdentName, std::list<std::string> keys, std::list<std::string> values);
     bool readTableAllDeviceIsReady();
 
-    QList<QString> requestWriteTableToAllDevice();
-    void placeTableFromFrontEnd(QString deviceIdentName, QStringList valueLiters, QStringList valueFuelLevel);
-    void placeAckReplyOfWriteTableFromDevice(QString deviceIdentName, bool writeIsNormal);
-    bool getAckStatusDeviceAffterWriteTable(QString deviceIdentName);
+    QList<std::string> requestWriteTableToAllDevice();
+    void placeTableFromFrontEnd(std::string deviceIdentName, std::list<std::string> valueLiters, std::list<std::string> valueFuelLevel);
+    void placeAckReplyOfWriteTableFromDevice(std::string deviceIdentName, bool writeIsNormal);
+    bool getAckStatusDeviceAffterWriteTable(std::string deviceIdentName);
 
-    void placeCurrenDataFromDevice(QString deviceIdentName, QPair<QStringList,QStringList>);
-    void placeCurrentChartDataFromDevice(QString deviceIdentName, QList<int> currentChartData);
+    void placeCurrenDataFromDevice(std::string deviceIdentName, std::pair<std::list<std::string>,std::list<std::string>>);
+    void placeCurrentChartDataFromDevice(std::string deviceIdentName, QList<int> currentChartData);
 
-    QStringList getCurrentDataDevice(int index);
+    std::list<std::string> getCurrentDataDevice(int index);
     QList<int> getCurrentChartDataDevice(int index);
 
-    QStringList getTableAtDevice(int index);
-    QPair<QStringList,QStringList> getTableAtDeviceToPair(QString uniqDevNameId);
+    std::list<std::string> getTableAtDevice(int index);
+    std::pair<std::list<std::string>,std::list<std::string>> getTableAtDeviceToPair(std::string uniqDevNameId);
 
     // сколько самое больше кол-во ячеек в тарировки
     // для резервирования array в qml
     int getMaxCountStep();
 
-    QString getLastError();
+    std::string getLastError();
 
 private:
 
@@ -57,9 +57,9 @@ private:
     }sDevValues;
 
     typedef struct {
-        QString devTypeName;
-        QString devId;
-        QString devSn;
+        std::string devTypeName;
+        std::string devId;
+        std::string devSn;
         bool isWhitedResult;
         bool writeIsNormal;
         struct {
@@ -71,9 +71,9 @@ private:
         QList<int>chartData;
     }sDevIdentBlock;
 
-    QList<QPair<sDevIdentBlock, QList<sDevValues>*>*>devList;
+    QList<std::pair<sDevIdentBlock, QList<sDevValues>*>*>devList;
 
-    QString lastError;
+    std::string lastError;
 
     Progress_tmk24Service* m_pinstance;
 

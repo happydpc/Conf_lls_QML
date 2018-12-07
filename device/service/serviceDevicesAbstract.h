@@ -9,14 +9,14 @@ class ServiceDevicesAbstract : public QObject
 public:
     ServiceDevicesAbstract();
 
-    QString getDeviceType();
+    std::string getDeviceType();
 
 signals:
 
 public slots:
 
 protected:
-    QString ownDeviceName;
+    std::string ownDeviceName;
 };
 
 #endif // SERVICEDEVICESABSTRACT_H

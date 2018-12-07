@@ -13,10 +13,10 @@ public:
 
     ~Database();
 
-    QStringList getSessionsCountAvailable() const;
-    QStringList getSessionsAll() const;
-    bool sendRemoveSession(const QString sessionName);
-    bool sendSaveSession(const QString sessionName, const QString jsonData);
+    std::list<std::string> getSessionsCountAvailable() const;
+    std::list<std::string> getSessionsAll() const;
+    bool sendRemoveSession(const std::string sessionName);
+    bool sendSaveSession(const std::string sessionName, const std::string jsonData);
 
 private:
 

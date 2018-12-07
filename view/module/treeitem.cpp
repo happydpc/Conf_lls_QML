@@ -1,6 +1,6 @@
 #include "treeitem.h"
 
-TreeItem::TreeItem(QString content, bool isParent, QObject *parent) :
+TreeItem::TreeItem(std::string content, bool isParent, QObject *parent) :
     QObject(parent),
     m_content(content),
     m_childItems(QList<TreeItem*>()),
@@ -11,25 +11,25 @@ TreeItem::TreeItem(QString content, bool isParent, QObject *parent) :
     this->m_isParent = isParent;
 }
 
-const QString &TreeItem::content() const{
+const std::string &TreeItem::content() const{
     return m_content;
 }
 
-void TreeItem::setContent(const QString &content) {
+void TreeItem::setContent(const std::string &content) {
     if(content != m_content){
         m_content = content;
         emit contentChanged();
     }
 }
 
-void TreeItem::setHeader(const QString &header) {
+void TreeItem::setHeader(const std::string &header) {
     if(header != m_header){
         m_header = header;
         emit headerChanged();
     }
 }
 
-const QString &TreeItem::header() const{
+const std::string &TreeItem::header() const{
     return m_header;
 }
 

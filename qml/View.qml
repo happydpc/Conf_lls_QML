@@ -10,28 +10,28 @@ import "qrc:/qml/projectPanel"
 Item {
     id: root
 
-//    void addIoSucces(QString ioType, QStringList keyProperty, QStringList valueProperty);
+//    void addIoSucces(std::string ioType, std::stringList keyProperty, std::stringList valueProperty);
 //    void removeIoSucces(int ioIndex);
-//    void onAddDevSucces(int ioIndex, QString devType, QStringList devKeyProperty, QStringList devValueProperty);
+//    void onAddDevSucces(int ioIndex, std::string devType, std::stringList devKeyProperty, std::stringList devValueProperty);
 //    void onRemoveDeviceSucces(int ioIndex, int devIndex);
 //    void onIoTreeIsEmpty();
-//    void onDevSetActiveDeviceProperty(QString devType, int ioIndex, int devIndex);
-//    void onIoReadyProperties(QString ioType, int ioIndex, QStringList keyProperty, QStringList valueProperty);
-//    void onDevReadyProperties(QString typeDev, int ioIndex, int devIndex, QStringList keys, QStringList values);
-//    void onDevReadyPeriodicData(QString typeDev, int ioIndex, int devIndex, QStringList keys, QStringList values);
-//    void onDevConnected(int ioIndex, int devIndex, QString typeDev);
-//    void onDevReady(int ioIndex, int devIndex, QString typeDev);
-//    void onDevDisconnected(int ioIndex, int devIndex, QString typeDev);
+//    void onDevSetActiveDeviceProperty(std::string devType, int ioIndex, int devIndex);
+//    void onIoReadyProperties(std::string ioType, int ioIndex, std::stringList keyProperty, std::stringList valueProperty);
+//    void onDevReadyProperties(std::string typeDev, int ioIndex, int devIndex, std::stringList keys, std::stringList values);
+//    void onDevReadyPeriodicData(std::string typeDev, int ioIndex, int devIndex, std::stringList keys, std::stringList values);
+//    void onDevConnected(int ioIndex, int devIndex, std::string typeDev);
+//    void onDevReady(int ioIndex, int devIndex, std::string typeDev);
+//    void onDevDisconnected(int ioIndex, int devIndex, std::string typeDev);
 //    void onAddIoFail();
-//    void onAddDeviceFail(QString devName, QString errorMessage);
-//    void onDevCommandExecuted(QString typeDev, int ioIndex, int devIndex, QStringList keys, QStringList args);
-//    void onDevUpdateLogMessage(int ioIndex, int devIndex, QString codeMessage, QString message);
-//    void onDevReadyCheckCommand(int ioIndex, QString devTypeName, QString devId, QString devSn, QString result);
-//    void devUpdateLogMessage(int ioIndex, int devIndex, int codeMessage, QString message);
-//    void devReadyCheckCommand(int ioIndex, QString devTypeName, QString devId, QString devSn, bool result);
-//    void ioSetActiveProperty(int ioIndex, QString ioType);
+//    void onAddDeviceFail(std::string devName, std::string errorMessage);
+//    void onDevCommandExecuted(std::string typeDev, int ioIndex, int devIndex, std::stringList keys, std::stringList args);
+//    void onDevUpdateLogMessage(int ioIndex, int devIndex, std::string codeMessage, std::string message);
+//    void onDevReadyCheckCommand(int ioIndex, std::string devTypeName, std::string devId, std::string devSn, std::string result);
+//    void devUpdateLogMessage(int ioIndex, int devIndex, int codeMessage, std::string message);
+//    void devReadyCheckCommand(int ioIndex, std::string devTypeName, std::string devId, std::string devSn, bool result);
+//    void ioSetActiveProperty(int ioIndex, std::string ioType);
 //    void ioAndDeviceListIsEmpty();
-//    void isAvailableNewVersion(QString downloadUrl);
+//    void isAvailableNewVersion(std::string downloadUrl);
 
     Connections {
         target: controller

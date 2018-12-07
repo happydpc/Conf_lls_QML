@@ -10,10 +10,17 @@ CommandController::~CommandController() {
     handlerThread.reset();
 }
 
-bool CommandController::addCommandToStack(QList<Command*> commandData) {
+bool CommandController::addCommandToStack(Command* commandData) {
+    std::lock_guard<std::mutex> guard(*lock.get());
+    commandQueue->push_back(commandData);
+    return !commandQueue->empty();
+}
+
+bool CommandController::addCommandToStack(std::vector<Command*> commandData) {
     std::lock_guard<std::mutex> guard(*lock.get());
     while(!(commandQueue->empty())) {
-        commandQueue->push_back(commandData.takeLast());
+        commandQueue->push_back(commandData.back());
+        commandData.pop_back();
     }
     return !commandQueue->empty();
 }
@@ -50,13 +57,11 @@ void CommandController::handlerFunction(std::mutex* pMutex, std::deque<Command*>
 }
 
 void CommandController::commandInterprerator(Command* command, Peripherals* peripherals) {
-    if(command->getCommand() == "getIoAddTypes") {
-        //QStringList Controller::getIoAddTypes(QString typeName) {
-        ////    return peripherals->getAvailableIo(typeName);
-        //}
+    if(command->getCommand() == "requestGetIoAddTypes") {
+        std::string requestResult = peripherals->getAvailableIo(typeName);
     }
     if(command->getCommand() == "addIo") {
-        //bool Controller::addIo(QString ioTypeName, QString ioName, QStringList keys, QStringList values) {
+        //bool Controller::addIo(std::string ioTypeName, std::string ioName, std::stringList keys, std::stringList values) {
         //    Command tcommand;
         //    tcommand.setDelayRequstMs(0);
         ////    std::shared_ptr<Command> command = std::make_shared<Command>();
@@ -76,7 +81,7 @@ void CommandController::commandInterprerator(Command* command, Peripherals* peri
         //}
     }
     if(command->getCommand() == "addDevToIo") {
-        //bool Controller::addDevToIo(int ioIndex, QString devTypeName, QStringList keys, QStringList param) {
+        //bool Controller::addDevToIo(int ioIndex, std::string devTypeName, std::stringList keys, std::stringList param) {
         ////    bool res = peripherals->addDev(ioIndex, devTypeName, keys, param);
         ////    if(res) {
         ////        ioTreeModel.addDevToIo(ioIndex, devTypeName);
@@ -95,13 +100,13 @@ void CommandController::commandInterprerator(Command* command, Peripherals* peri
         //}
     }
     if(command->getCommand() == "getDevAddTypes") {
-        //QStringList Controller::getDevAddTypes() const {
+        //std::stringList Controller::getDevAddTypes() const {
         ////    return peripherals->getAvailableDev();
         //}
     }
     if(command->getCommand() == "devExecCommand") {
-        //bool Controller::devExecCommand(int ioIndex, int devIndex, const QString commandType,
-        //                                const QStringList keys, const QStringList params) {
+        //bool Controller::devExecCommand(int ioIndex, int devIndex, const std::string commandType,
+        //                                const std::stringList keys, const std::stringList params) {
         ////    return peripherals->devExecCommand(ioIndex, devIndex, commandType, keys, params);
         //}
     }

@@ -20,7 +20,7 @@ public:
     void checkNewUpdate();
 
 signals:
-    void needUpdate(QString path);
+    void needUpdate(std::string path);
 
 private slots:
     void downloaded(QNetworkReply*);

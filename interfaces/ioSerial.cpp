@@ -1,7 +1,7 @@
 #include "./interfaces/ioSerial.h"
-#include "QDebug"
+#include <iostream>
 
-IoSerial::IoSerial(QString name, QPair<QStringList,QStringList>param) {
+IoSerial::IoSerial(std::string name, std::pair<std::list<std::string>,std::list<std::string>>param) {
     this->portHandler = std::make_shared<QSerialPort>();
     this->name = name;
     this->param = param;
@@ -21,14 +21,16 @@ void IoSerial::initInterface()  {
 
 bool IoSerial::openInterface() {
     bool res = false;
-    QString baudrate;
-    for(int key=0; key<param.second.size(); key++) {
-        if(param.first[key] == "baudrate") {
-            baudrate = param.second[key];
+    std::string baudrate;
+    auto iterValue = param.second.begin();
+    for(auto iterKey: param.first) {
+        if(iterKey == "baudrate") {
+            baudrate = *iterValue;
         }
+        iterValue++;
     }
-    portHandler->setPortName(name);
-    portHandler->setBaudRate(baudrate.toInt());
+    portHandler->setPortName(name.c_str());
+    portHandler->setBaudRate(std::stoi(baudrate));
     portHandler->setDataBits(QSerialPort::Data8);
     portHandler->setParity(QSerialPort::NoParity);
     portHandler->setStopBits(QSerialPort::OneStop);
@@ -38,7 +40,7 @@ bool IoSerial::openInterface() {
         connect(portHandler.get(), SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(errorHanler(QSerialPort::SerialPortError)));
         isManualClosed = false;
     }
-    qDebug() << "openInterface = " << ((res) ? (QString("-Ok")) : (QString("-ERR")));
+    std::cout << "openInterface = " << ((res) ? ("-Ok") : ("-ERR"));
     return res;
 }
 
@@ -79,36 +81,33 @@ bool IoSerial::readData(QByteArray &pData) {
     return !pData.isEmpty();
 }
 
-QString IoSerial::getInterfaceName() {
-    return portHandler->portName();
+std::string IoSerial::getInterfaceName() {
+    return std::string(portHandler->portName().toLocal8Bit());
 }
 
-QPair<QStringList,QStringList> IoSerial::getInterfaceProperty() {
-    QPair<QStringList,QStringList> res;
-    QString description;
-    QString manufacturer;
-    QString serialNumber;
-    QString baudrate;
+std::pair<std::list<std::string>,std::list<std::string>> IoSerial::getInterfaceProperty() {
+    std::pair<std::list<std::string>,std::list<std::string>> res;
     if(portHandler->isOpen()) {
         const auto infos = QSerialPortInfo::availablePorts();
         for(const QSerialPortInfo &info : infos) {
             if(info.portName().contains(portHandler->portName())) {
-                description = info.description();
-                manufacturer = info.manufacturer();
-                serialNumber = info.serialNumber();
+                QString description = info.description();
+                QString manufacturer = info.manufacturer();
+                QString serialNumber = info.serialNumber();
+                std::string baudrate;
                 if(portHandler->isOpen()) {
-                    baudrate = QString::number(portHandler->baudRate());
+                    baudrate = std::to_string(portHandler->baudRate());
                 }
                 res.first.push_back("info.portName()");
-                res.second.push_back(info.portName());
+                res.second.push_back(std::string(info.portName().toLocal8Bit()));
                 res.first.push_back("baudrate");
                 res.second.push_back(baudrate);
                 res.first.push_back("description");
-                res.second.push_back(description);
+                res.second.push_back(std::string(description.toLocal8Bit()));
                 res.first.push_back("manufacturer");
-                res.second.push_back(manufacturer);
+                res.second.push_back(std::string(manufacturer.toLocal8Bit()));
                 res.first.push_back("serialNumber");
-                res.second.push_back(serialNumber);
+                res.second.push_back(std::string(serialNumber.toLocal8Bit()));
                 break;
             }
         }
@@ -116,13 +115,13 @@ QPair<QStringList,QStringList> IoSerial::getInterfaceProperty() {
     return res;
 }
 
-QStringList IoSerial::getAvailableList() {
-    QStringList list;
+std::list<std::string> IoSerial::getAvailableList() {
+    std::list<std::string> list;
     const auto infos = QSerialPortInfo::availablePorts();
     for(const QSerialPortInfo &info : infos) {
         if(portHandler != nullptr) {
             if(!portHandler->isOpen()) {
-                list << info.portName();
+                list.push_back(std::string(info.portName().toLocal8Bit()));
             }
         }
     }
@@ -130,14 +129,14 @@ QStringList IoSerial::getAvailableList() {
 }
 
 void IoSerial::errorHanler(QSerialPort::SerialPortError err) {
-    qDebug() << "InterfaseSerial -ERR=" << err;
+    std::cout << "InterfaseSerial -ERR";
     if(err != QSerialPort::NoError) {
         disconnect(portHandler.get(), SIGNAL(error(QSerialPort::SerialPortError)), this, NULL);
         portHandler->close();
-        emit errorInterface(portHandler->portName(), tr("Ошибка интерфейса\nПроверьте соединение"));
+        emit errorInterface(std::string(portHandler->portName().toLocal8Bit()), "Ошибка интерфейса\nПроверьте соединение");
     }
 }
 
-QString IoSerial::getType() {
-    return QString::fromLocal8Bit(typeName, strlen(typeName));
+std::string IoSerial::getType() {
+    return std::string(typeName);
 }

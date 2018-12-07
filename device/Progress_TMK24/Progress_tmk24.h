@@ -13,22 +13,22 @@
 class Progress_tmk24 : public DeviceAbstract
 {
 public:
-    explicit Progress_tmk24(QString uniqIdentId, QString header, QStringList keyValue, QStringList value);
+    explicit Progress_tmk24(std::list<std::string> keyValue, std::list<std::string> value);
     ~Progress_tmk24();
 
     static constexpr char* name = (char*)"PROGRESS TMK24";
 
-    QString getDevTypeName() override;
-    QString getDevHeader() override;
-    void setDevHeader(QString header) override;
+    std::string getDevTypeName() override;
+    std::string getDevHeader() override;
+    void setDevHeader(std::string header) override;
 
-    QPair<QStringList,QStringList> getPropertyData() override;
-    QPair<QStringList,QStringList> getCurrentData() override;
+    std::pair<std::list<std::string>,std::list<std::string>> getPropertyData() override;
+    std::pair<std::list<std::string>,std::list<std::string>> getCurrentData() override;
     DeviceAbstract::E_State getState() override;
     void setState(DeviceAbstract::E_State) override;
-    QPair<QStringList,QStringList> getSettings() override;
-    QPair<QStringList,QStringList> getErrors() override;
-    QString getUniqId() override;
+    std::pair<std::list<std::string>,std::list<std::string>> getSettings() override;
+    std::pair<std::list<std::string>,std::list<std::string>> getErrors() override;
+    std::string getUniqId() override;
 //    bool makeDataToCommand(CommandController::sCommandData &commandData) override;
 //    bool placeDataReplyToCommand(QByteArray &commandArrayReplyData, CommandController::sCommandData commandReqData) override;
 
@@ -38,11 +38,11 @@ public:
 //    QList<CommandController::sCommandData> getCommandListToInit() override;
 //    QList<CommandController::sCommandData> getCommandListToUpdate() override;
 //    QList<CommandController::sCommandData> getCommandListToCurrentData() override;
-//    QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList> data) override;
-    QStringList execCommand(QString operation, QPair<QStringList, QStringList>) override;
-    QList<int> getChart() override;
+//    QList<CommandController::sCommandData> getCommandCustom(std::string operation, std::pair<std::list<std::string>, std::list<std::string>> data) override;
+    std::list<std::string> execCommand(std::string operation, std::pair<std::list<std::string>, std::list<std::string>>) override;
+    std::list<int> getChart() override;
     ServiceDevicesAbstract* getServiceAbstract() override;
-    QList<QString>getCurrentOtherData();
+    QList<std::string>getCurrentOtherData();
 private slots:
     void setDefaultValues();
 
@@ -52,11 +52,11 @@ private:
     Progress_tmk24Data::T_settings settings;
     Progress_tmk24Data::S_lls_data lls_data;
 
-    QList<int>chartData;
+    std::list<int>chartData;
 
     struct {
-        QString id;
-        QString header;
+        std::string id;
+        std::string header;
     }deviceIdent;
 };
 

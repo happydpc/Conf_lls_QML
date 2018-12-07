@@ -14,7 +14,7 @@ Peripherals::Peripherals(QObject *parent) : QObject(parent) {
 }
 
 //    return connFactory->getAvailableName(typeIoName);
-QStringList Peripherals::getAvailableIo(const QString typeIoName) const {
+std::list<std::string> Peripherals::getAvailableIo(const std::string typeIoName) const {
 //    CommandController::sCommandData command;
 //    command.command = "getAvailableIo";
 //    command.args.key << "typeIoName";
@@ -23,11 +23,11 @@ QStringList Peripherals::getAvailableIo(const QString typeIoName) const {
 //    commandController->addCommandToStack(command);
 }
 
-//    return connComposition->addIo(connFactory->createConnection(typeIoName, ioName, QPair<QStringList,QStringList>(keyParam, valueParam)));
-bool Peripherals::addIo(const QString typeIoName,
-                        const QString ioName,
-                        const QStringList keyParam,
-                        const QStringList valueParam) {
+//    return connComposition->addIo(connFactory->createConnection(typeIoName, ioName, std::pair<std::list<std::string>,std::list<std::string>>(keyParam, valueParam)));
+bool Peripherals::addIo(const std::string typeIoName,
+                        const std::string ioName,
+                        const std::list<std::string> keyParam,
+                        const std::list<std::string> valueParam) {
 //    CommandController::sCommandData command;
 //    command.command = "addIo";
 //    command.args.key << "typeIoName" << "ioName" << "keyParam" << "valueParam";
@@ -40,11 +40,11 @@ void Peripherals::removeIo(int ioIndex) {
     connComposition->removeIo(ioIndex);
 }
 
-QPair<QStringList, QStringList> Peripherals::getIoProperty(int ioIndex) const {
+std::pair<std::list<std::string>, std::list<std::string>> Peripherals::getIoProperty(int ioIndex) const {
     return connComposition->getIoProperty(ioIndex);
 }
 
-bool Peripherals::addDev(int ioIndex, const QString devTypeName, const QStringList keyParam, const QStringList valueParam) {
+bool Peripherals::addDev(int ioIndex, const std::string devTypeName, const std::list<std::string> keyParam, const std::list<std::string> valueParam) {
     bool res = false;
     std::shared_ptr<DevicesFactory> devFactory = std::make_shared<DevicesFactory>();
     auto dev = devFactory->newDevice(devTypeName, keyParam, valueParam);
@@ -58,19 +58,19 @@ void Peripherals::removeDev(int ioIndex, int devIndex) {
     connComposition->removeDev(ioIndex, devIndex);
 }
 
-QPair<QStringList, QStringList> Peripherals::getDevProperty(int ioIndex, int devIndex) const {
+std::pair<std::list<std::string>, std::list<std::string>> Peripherals::getDevProperty(int ioIndex, int devIndex) const {
     return connComposition->getDevProperty(ioIndex, devIndex);
 }
 
-QStringList Peripherals::getAvailableDev() const {
+std::list<std::string> Peripherals::getAvailableDev() const {
     std::shared_ptr<DevicesFactory> devFactory = std::make_shared<DevicesFactory>();
     return devFactory->getAvailableTypeDevice();
 }
 
 bool Peripherals::devExecCommand(int ioIndex, int devIndex,
-                                 QString commandType, QStringList keys, QStringList params) {
+                                 std::string commandType, std::list<std::string> keys, std::list<std::string> params) {
 //    bool res = connComposition->devExecCommand(ioIndex, devIndex, commandType, keys, params);
 //    QObject::connect(connComposition, ConnectionComposition::devExecFutureCommand())
-//    void devExecComamndReadySignal(int ioIndex, int devIndex, QStringList keys, QStringList values);
+//    void devExecComamndReadySignal(int ioIndex, int devIndex, std::list<std::string> keys, std::list<std::string> values);
 //    return res;
 }

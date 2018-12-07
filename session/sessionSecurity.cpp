@@ -13,13 +13,13 @@ SessionSecurity::~SessionSecurity() {
 //    delete database.release();
 }
 
-QStringList SessionSecurity::getAvailableSessions() const {
-//    QStringList res;
+std::list<std::string> SessionSecurity::getAvailableSessions() const {
+//    std::list<std::string> res;
 //    res = database->getSessionsCountAvailable();
 //    return res;
 }
 
-SessionProperty SessionSecurity::getSessionByName(const QString name) {
+SessionProperty SessionSecurity::getSessionByName(const std::string name) {
 //    auto res = getSessionAll();
 //    for(auto it:res) {
 //        if(it.getSessionName() == name) {
@@ -29,13 +29,13 @@ SessionProperty SessionSecurity::getSessionByName(const QString name) {
 //    return SessionProperty();
 }
 
-bool SessionSecurity::removeSession(QString sessionName) {
+bool SessionSecurity::removeSession(std::string sessionName) {
 //    return database->sendRemoveSession(sessionName);
 }
 
 QList<SessionProperty> SessionSecurity::getSessionAll() const {
 //    QList<SessionProperty> res;
-//    QStringList jsonRes = database->getSessionsAll();
+//    std::list<std::string> jsonRes = database->getSessionsAll();
 //    if(!jsonRes.empty()) {
 //        for(auto rootIt:jsonRes) {
 //            if(!rootIt.isEmpty()) {
@@ -101,8 +101,8 @@ QList<SessionProperty> SessionSecurity::getSessionAll() const {
 //    return res;
 }
 
-QString SessionSecurity::saveSession(SessionProperty & session) {
-//    QString jsonResult;
+std::string SessionSecurity::saveSession(SessionProperty & session) {
+//    std::string jsonResult;
 //    QJsonArray attributesArray;
 //    session.setIsValid(true);
 //    if(session.getIsValid()) {
@@ -135,12 +135,12 @@ QString SessionSecurity::saveSession(SessionProperty & session) {
 //                }
 //                devPropertyValue = jsonValueObj;
 //                devPropertyObj["property"] = devPropertyValue;
-//                devObj[QString("dev_%1").arg(devCounter)] = devPropertyObj;
+//                devObj[std::string("dev_%1").arg(devCounter)] = devPropertyObj;
 //                devArray.push_back(devObj);
 //                ioSubProperty["devices"] = devArray;
 //                devCounter++;
 //            }
-//            interfaceObj[QString("interface_%1").arg(interfaceCount)] = ioSubProperty;
+//            interfaceObj[std::string("interface_%1").arg(interfaceCount)] = ioSubProperty;
 //            interfaceCount++;
 //        }
 //        attributesArray.append(interfaceObj);

@@ -30,15 +30,15 @@ public:
         Type_DeviceEvent_LogMessage
     }E_DeviceEvent;
 
-    virtual QString getDevTypeName() = 0;
-    virtual QString getDevHeader() = 0;
-    virtual void setDevHeader(QString header) = 0;
+    virtual std::string getDevTypeName() = 0;
+    virtual std::string getDevHeader() = 0;
+    virtual void setDevHeader(std::string header) = 0;
 
-    virtual QPair<QStringList,QStringList> getPropertyData() = 0;
-    virtual QPair<QStringList,QStringList> getCurrentData() = 0;
-    virtual QString getUniqId() = 0;
-    virtual QPair<QStringList,QStringList> getSettings() = 0;
-    virtual QPair<QStringList,QStringList> getErrors() = 0;
+    virtual std::pair<std::list<std::string>,std::list<std::string>> getPropertyData() = 0;
+    virtual std::pair<std::list<std::string>,std::list<std::string>> getCurrentData() = 0;
+    virtual std::string getUniqId() = 0;
+    virtual std::pair<std::list<std::string>,std::list<std::string>> getSettings() = 0;
+    virtual std::pair<std::list<std::string>,std::list<std::string>> getErrors() = 0;
     virtual E_State getState() = 0;
     virtual void setState(DeviceAbstract::E_State) = 0;
 
@@ -50,10 +50,10 @@ public:
 //    virtual QList<CommandController::sCommandData> getCommandListToInit() = 0;
 //    virtual QList<CommandController::sCommandData> getCommandListToUpdate() = 0;
 //    virtual QList<CommandController::sCommandData> getCommandListToCurrentData() = 0;
-//    virtual QList<CommandController::sCommandData> getCommandCustom(QString operation, QPair<QStringList, QStringList>) = 0;
-    virtual QStringList execCommand(QString operation, QPair<QStringList, QStringList>) = 0;
+//    virtual QList<CommandController::sCommandData> getCommandCustom(std::string operation, std::pair<std::list<std::string>, std::list<std::string>>) = 0;
+    virtual std::list<std::string> execCommand(std::string operation, std::pair<std::list<std::string>, std::list<std::string>>) = 0;
 
-    virtual QList<int> getChart() = 0;
+    virtual std::list<int> getChart() = 0;
     virtual ServiceDevicesAbstract* getServiceAbstract() = 0;
 
     int getPriority();
@@ -62,8 +62,8 @@ public:
     DeviceAbstract::E_State state;
 
 signals:
-//    void eventDeviceUpdateState(DeviceAbstract::E_DeviceEvent typeEvent, QString deviceUniqueId,
-//                                QStringList keyCustomData, QStringList valueCustomData,
+//    void eventDeviceUpdateState(DeviceAbstract::E_DeviceEvent typeEvent, std::string deviceUniqueId,
+//                                std::list<std::string> keyCustomData, std::list<std::string> valueCustomData,
 //                                CommandController::sCommandData commandData);
 private:
     int priority = 0;

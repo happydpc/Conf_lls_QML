@@ -1,17 +1,29 @@
-#include <QDebug>
+#include <stdio.h>
+#include <iostream>
+#include <sstream>
 #include "Nozzle_Revision_0_00_Oct_2018.h"
 #include "other/crc.h"
-#include <QList>
 #include <qmath.h>
 
-Nozzle_Revision_0_00_Oct_2018::Nozzle_Revision_0_00_Oct_2018(QString devId, QString header) {
-    this->deviceIdent.header = header;
-    this->deviceIdent.id = devId;
+Nozzle_Revision_0_00_Oct_2018::Nozzle_Revision_0_00_Oct_2018(std::list<std::string> keys, std::list<std::string> values) {
+    auto propIter = values.begin();
+    for(auto itemKey: keys) {
+        if(itemKey == "id") {
+            this->deviceIdent.id = *propIter;
+        }
+        if(itemKey == "header") {
+            this->deviceIdent.header = *propIter;
+        }
+        propIter++;
+    }
     this->state = STATE_DISCONNECTED;
-    qDebug() << QString("Console size eTypeData = %1\n").arg(sizeof(uint8_t));
-    qDebug() << QString("Console size sConsoleBufData = %1\n").arg(sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleBufData));
-    qDebug() << QString("Console size sConsoleReplyBuff = %1\n").arg(sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsoleReplyBuff));
-    qDebug() << QString("Console size sConsole = %1\n").arg(sizeof(Nozzle_Revision_0_00_Oct_2018_Data::sConsole));
+    setDefaultValues();
+
+    if(deviceIdent.id.empty() || deviceIdent.header.empty()) {
+        throw std::string("if does not include all properties");
+    }
+
+    this->state = STATE_DISCONNECTED;
     setDefaultValues();
 }
 
@@ -19,15 +31,15 @@ Nozzle_Revision_0_00_Oct_2018::~Nozzle_Revision_0_00_Oct_2018() {
 
 }
 
-QString Nozzle_Revision_0_00_Oct_2018::getDevTypeName() {
-    return QString::fromLocal8Bit(Nozzle_Revision_0_00_Oct_2018::name, strlen(Nozzle_Revision_0_00_Oct_2018::name));
+std::string Nozzle_Revision_0_00_Oct_2018::getDevTypeName() {
+    return std::string(Nozzle_Revision_0_00_Oct_2018::name);
 }
 
-QString Nozzle_Revision_0_00_Oct_2018::getDevHeader() {
+std::string Nozzle_Revision_0_00_Oct_2018::getDevHeader() {
     return deviceIdent.header;
 }
 
-void Nozzle_Revision_0_00_Oct_2018::setDevHeader(QString header) {
+void Nozzle_Revision_0_00_Oct_2018::setDevHeader(std::string header) {
     deviceIdent.header = header;
 }
 
@@ -54,16 +66,16 @@ ServiceDevicesAbstract* Nozzle_Revision_0_00_Oct_2018::getServiceAbstract() {
     return nullptr;
 }
 
-QList<int> Nozzle_Revision_0_00_Oct_2018::getChart() {
-    return QList<int>();
+std::list<int> Nozzle_Revision_0_00_Oct_2018::getChart() {
+    return std::list<int>();
 }
 
-QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getPropertyData() {
-    QPair<QStringList,QStringList> res;
+std::pair<std::list<std::string>,std::list<std::string>> Nozzle_Revision_0_00_Oct_2018::getPropertyData() {
+    std::pair<std::list<std::string>,std::list<std::string>> res;
     res.first.push_back("devTypeName");
     res.second.push_back(getDevTypeName());
     res.first.push_back("serialNum");
-    res.second.push_back(serialNumber.isEmpty() ? QString("Не присвоен") : serialNumber);
+    res.second.push_back(serialNumber.empty() ? std::string("Не присвоен") : serialNumber);
     res.first.push_back("id");
     res.second.push_back(deviceIdent.id);
     res.first.push_back("header");
@@ -73,57 +85,58 @@ QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getPropertyData() 
     return res;
 }
 
-QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getCurrentData() {
-    QPair<QStringList,QStringList> res;
+std::pair<std::list<std::string>,std::list<std::string>> Nozzle_Revision_0_00_Oct_2018::getCurrentData() {
+    std::pair<std::list<std::string>,std::list<std::string>> res;
     res.first.push_back("id");
     res.second.push_back(deviceIdent.id);
     res.first.push_back("accelX");
-    res.second.push_back(dev_data.accelX.isValid == true ? QString::number(dev_data.accelX.value.value_i) : "NA");
+    res.second.push_back(dev_data.accelX.isValid == true ? std::to_string(dev_data.accelX.value.value_i) : "NA");
     res.first.push_back("accelY");
-    res.second.push_back(dev_data.accelY.isValid == true ? QString::number(dev_data.accelY.value.value_i) : "NA");
+    res.second.push_back(dev_data.accelY.isValid == true ? std::to_string(dev_data.accelY.value.value_i) : "NA");
     res.first.push_back("accelZ");
-    res.second.push_back(dev_data.accelZ.isValid == true ? QString::number(dev_data.accelZ.value.value_i) : "NA");
+    res.second.push_back(dev_data.accelZ.isValid == true ? std::to_string(dev_data.accelZ.value.value_i) : "NA");
     res.first.push_back("cardNumber");
     res.second.push_back(dev_data.cardNumber.isValid == true ? dev_data.cardNumber.value : "NA");
     res.first.push_back("cardState");
-    res.second.push_back(dev_data.cardState.isValid == true ? QString::number(dev_data.cardState.value.value_i) : "NA");
+    res.second.push_back(dev_data.cardState.isValid == true ? std::to_string(dev_data.cardState.value.value_i) : "NA");
     res.first.push_back("networkCurrentIp");
     res.second.push_back(dev_data.networkCurrentIp.isValid == true ? dev_data.networkCurrentIp.value : "NA");
     res.first.push_back("networkState");
     res.second.push_back(dev_data.networkState.isValid == true ? (dev_data.networkState.value.value_i == true ? "Подключено" : "Не подключено") : "NA");
     res.first.push_back("temperature");
-    res.second.push_back(dev_data.temperature.isValid == true ? QString::number(dev_data.temperature.value.value_f) : "NA");
+    res.second.push_back(dev_data.temperature.isValid == true ? std::to_string(dev_data.temperature.value.value_f) : "NA");
     res.first.push_back("powerVoltage");
-    res.second.push_back(dev_data.powerVoltage.isValid == true ? QString::number(dev_data.powerVoltage.value.value_f) : "NA");
+    res.second.push_back(dev_data.powerVoltage.isValid == true ? std::to_string(dev_data.powerVoltage.value.value_f) : "NA");
     res.first.push_back("powertypeBattery");
     res.second.push_back(dev_data.powertypeBattery.isValid == true ? dev_data.powertypeBattery.value : "NA");
     res.first.push_back("powerCurrentAccumulate");
-    res.second.push_back(dev_data.powerCurrentAccumulate_uAh.isValid == true ? QString::number(dev_data.powerCurrentAccumulate_uAh.value.value_f) : "NA");
+    res.second.push_back(dev_data.powerCurrentAccumulate_uAh.isValid == true ? std::to_string(dev_data.powerCurrentAccumulate_uAh.value.value_f) : "NA");
     res.first.push_back("powerCurrentResouresAvailable");
-    res.second.push_back(dev_data.powerCurrentResouresAvailable_mA.isValid == true ? QString::number(dev_data.powerCurrentResouresAvailable_mA.value.value_f) : "NA");
+    res.second.push_back(dev_data.powerCurrentResouresAvailable_mA.isValid == true ? std::to_string(dev_data.powerCurrentResouresAvailable_mA.value.value_f) : "NA");
     res.first.push_back("powerCurrent");
-    res.second.push_back(dev_data.powerCurrent.isValid == true ? QString::number(dev_data.powerCurrent.value.value_f) : "NA");
+    res.second.push_back(dev_data.powerCurrent.isValid == true ? std::to_string(dev_data.powerCurrent.value.value_f) : "NA");
     res.first.push_back("versionFirmare");
     res.second.push_back(dev_data.versionFirmware.isValid ? dev_data.versionFirmware.value : "NA");
     res.first.push_back("rssiValue");
-    res.second.push_back(dev_data.rssi.isValid ? QString::number(dev_data.rssi.value.value_i) : "0");
+    res.second.push_back(dev_data.rssi.isValid ? std::to_string(dev_data.rssi.value.value_i) : "0");
     return res;
 }
 
-QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getSettings() {
-    QPair<QStringList,QStringList> res;
+std::pair<std::list<std::string>,std::list<std::string>> Nozzle_Revision_0_00_Oct_2018::getSettings() {
+    std::pair<std::list<std::string>,std::list<std::string>> res;
+    std::stringstream sstream;
     res.first.push_back("accelConfX");
     // accel
-    res.second.push_back(dev_data.accelThresholdX.isValid == true ? QString::number(dev_data.accelThresholdX.value.value_i) : "NA");
+    res.second.push_back(dev_data.accelThresholdX.isValid == true ? std::to_string(dev_data.accelThresholdX.value.value_i) : "NA");
     res.first.push_back("accelConfY");
-    res.second.push_back(dev_data.accelThresholdY.isValid == true ? QString::number(dev_data.accelThresholdY.value.value_i) : "NA");
+    res.second.push_back(dev_data.accelThresholdY.isValid == true ? std::to_string(dev_data.accelThresholdY.value.value_i) : "NA");
     res.first.push_back("accelConfZ");
-    res.second.push_back(dev_data.accelThresholdZ.isValid == true ? QString::number(dev_data.accelThresholdZ.value.value_i) : "NA");
+    res.second.push_back(dev_data.accelThresholdZ.isValid == true ? std::to_string(dev_data.accelThresholdZ.value.value_i) : "NA");
     res.first.push_back("accelAngle");
-    res.second.push_back(dev_data.accelDelta.isValid == true ? QString::number(dev_data.accelDelta.value.value_i) : "NA");
+    res.second.push_back(dev_data.accelDelta.isValid == true ? std::to_string(dev_data.accelDelta.value.value_i) : "NA");
     // security
     res.first.push_back("securityPasswordIsUsed");
-    res.second.push_back(dev_data.security.passwordIsUsed.isValid == true ? QString::number(dev_data.security.passwordIsUsed.value.value_i) : "NA");
+    res.second.push_back(dev_data.security.passwordIsUsed.isValid == true ? std::to_string(dev_data.security.passwordIsUsed.value.value_i) : "NA");
     res.first.push_back("securityPassword");
     res.second.push_back(dev_data.networkConfig.isValid ? dev_data.security.password.value : "NA");
     // network
@@ -134,14 +147,15 @@ QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getSettings() {
     res.first.push_back("networkServerIp");
     res.second.push_back(dev_data.networkConfig.isValid ? dev_data.networkConfig.serverIp : "NA");
     res.first.push_back("networkServerPort");
-    res.second.push_back(dev_data.networkConfig.isValid ? QString::number(dev_data.networkConfig.serverPort) : "NA");
+    res.second.push_back(dev_data.networkConfig.isValid ? std::to_string(dev_data.networkConfig.serverPort) : "NA");
     res.first.push_back("networkPanid");
-    res.second.push_back(dev_data.networkConfig.isValid ? QString::number(dev_data.networkConfig.panid, 16) : "NA");
+    sstream << std::hex << std::to_string(dev_data.networkConfig.panid);
+    res.second.push_back(dev_data.networkConfig.isValid ?  sstream.str() : "NA");
     return res;
 }
 
-QPair<QStringList,QStringList> Nozzle_Revision_0_00_Oct_2018::getErrors() {
-    return QPair<QStringList,QStringList>();
+std::pair<std::list<std::string>,std::list<std::string>> Nozzle_Revision_0_00_Oct_2018::getErrors() {
+    return std::pair<std::list<std::string>,std::list<std::string>>();
 }
 
 DeviceAbstract::E_State Nozzle_Revision_0_00_Oct_2018::getState() {
@@ -155,7 +169,7 @@ void Nozzle_Revision_0_00_Oct_2018::setState(DeviceAbstract::E_State value) {
     }
 }
 
-QString Nozzle_Revision_0_00_Oct_2018::getUniqId() {
+std::string Nozzle_Revision_0_00_Oct_2018::getUniqId() {
     return deviceIdent.id;
 }
 
@@ -340,29 +354,29 @@ QByteArray Nozzle_Revision_0_00_Oct_2018::packData(QByteArray *pCommandData){
 }
 
 // found dead frames and delete it
-QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QByteArray &data) {
-    QList<QPair<QString,QByteArray>> res;
+QList<std::pair<std::string,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QByteArray &data) {
+    QList<std::pair<std::string,QByteArray>> res;
     int startIndexBuf = 0;
     int endIndexBuf = 0;
     // 1 find first tag
     // 2 it will make clear type data
     for(int i=0; i<data.size(); i++) {
         //  find type log
-        auto value = findTag(QString::fromUtf8(Nozzle_Revision_0_00_Oct_2018_Data::logHeaderBegind),
-                             QString::fromUtf8(Nozzle_Revision_0_00_Oct_2018_Data::logHeaderEnd), data);
+        auto value = findTag(std::string(Nozzle_Revision_0_00_Oct_2018_Data::logHeaderBegind),
+                             std::string(Nozzle_Revision_0_00_Oct_2018_Data::logHeaderEnd), data);
         if(value.first) {
-            startIndexBuf = value.second.first + QString::fromUtf8(Nozzle_Revision_0_00_Oct_2018_Data::logHeaderBegind).length();
+            startIndexBuf = value.second.first + std::string(Nozzle_Revision_0_00_Oct_2018_Data::logHeaderBegind).length();
             endIndexBuf = value.second.second;
-            res.push_back(QPair<QString,QByteArray>("logData", QByteArray(data.mid(startIndexBuf, endIndexBuf - startIndexBuf))));
-            data.remove(0, endIndexBuf + QString::fromUtf8(Nozzle_Revision_0_00_Oct_2018_Data::logHeaderEnd).length());
+            res.push_back(std::pair<std::string,QByteArray>("logData", QByteArray(data.mid(startIndexBuf, endIndexBuf - startIndexBuf))));
+            data.remove(0, endIndexBuf + std::string(Nozzle_Revision_0_00_Oct_2018_Data::logHeaderEnd).length());
         } else { //  find type data
-            value = findTag(QString::fromUtf8(Nozzle_Revision_0_00_Oct_2018_Data::logCommandBegind),
-                            QString::fromUtf8(Nozzle_Revision_0_00_Oct_2018_Data::logCommandEnd), data);
+            value = findTag(std::string(Nozzle_Revision_0_00_Oct_2018_Data::logCommandBegind),
+                            std::string(Nozzle_Revision_0_00_Oct_2018_Data::logCommandEnd), data);
             if(value.first) {
-                startIndexBuf = value.second.first + QString::fromUtf8(Nozzle_Revision_0_00_Oct_2018_Data::logCommandBegind).length();
+                startIndexBuf = value.second.first + std::string(Nozzle_Revision_0_00_Oct_2018_Data::logCommandBegind).length();
                 endIndexBuf = value.second.second;
-                res.push_back(QPair<QString,QByteArray>("commandData", QByteArray(data.mid(startIndexBuf, endIndexBuf - startIndexBuf))));
-                data.remove(0, endIndexBuf + QString::fromUtf8(Nozzle_Revision_0_00_Oct_2018_Data::logCommandEnd).length());
+                res.push_back(std::pair<std::string,QByteArray>("commandData", QByteArray(data.mid(startIndexBuf, endIndexBuf - startIndexBuf))));
+                data.remove(0, endIndexBuf + std::string(Nozzle_Revision_0_00_Oct_2018_Data::logCommandEnd).length());
             }
         }
     }
@@ -380,14 +394,14 @@ QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QBy
 //            if(!it.first.isEmpty()) {
 //                if(state == DeviceAbstract::STATE_DISCONNECTED) {
 //                    emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Connected, commandReqData.deviceIdent,
-//                                                QStringList("Status"), QStringList("Connected"), commandReqData);
+//                                                std::list<std::string>("Status"), std::list<std::string>("Connected"), commandReqData);
 //                }
 //                if(it.first == "logData") {
-//                    emit eventDeviceUpdateState(Type_DeviceEvent_LogMessage, commandReqData.deviceIdent, QStringList("LogMessage"), QStringList(it.second), commandReqData);
+//                    emit eventDeviceUpdateState(Type_DeviceEvent_LogMessage, commandReqData.deviceIdent, std::list<std::string>("LogMessage"), std::list<std::string>(it.second), commandReqData);
 //                } else if (it.first  == "commandData") {
 //                    parseCommandReply(it.second, commandReqData);
 //                } else {
-//                    qDebug() << "unknown type";
+//                    std::cout  << "unknown type";
 //                }
 //            }
 //        }
@@ -396,7 +410,7 @@ QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QBy
 //            disconnect_counter = 0;
 //            setState(DeviceAbstract::STATE_DISCONNECTED);
 //            emit eventDeviceUpdateState(DeviceAbstract::Type_DeviceEvent_Disconnected, commandReqData.deviceIdent,
-//                                    QStringList("Status"), QStringList("disconnected"), commandReqData);
+//                                    std::list<std::string>("Status"), std::list<std::string>("disconnected"), commandReqData);
 //        } else {
 //            disconnect_counter++;
 //        }
@@ -405,7 +419,7 @@ QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QBy
 //}
 
 //void Nozzle_Revision_0_00_Oct_2018::parseCommandReply(QByteArray data, CommandController::sCommandData commandReqData) {
-//    QPair<QStringList, QStringList> res;
+//    std::pair<std::list<std::string>, std::list<std::string>> res;
 //    bool replyIsValid = false;
 //    Nozzle_Revision_0_00_Oct_2018_Data::sConsoleReplyBuff *t_reply =
 //            (Nozzle_Revision_0_00_Oct_2018_Data::sConsoleReplyBuff*)(data.data());
@@ -430,9 +444,9 @@ QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QBy
 //            dev_data.powerCurrent.isValid = true;
 //            dev_data.powerCurrentAccumulate_uAh.isValid = true;
 //            dev_data.powerCurrentResouresAvailable_mA.isValid = true;
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        res.first << getCurrentData().first;
 //        res.second << getCurrentData().second;
@@ -453,9 +467,9 @@ QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QBy
 //            dev_data.accelThresholdY.isValid = true;
 //            dev_data.accelThresholdZ.isValid = true;
 //            dev_data.accelDelta.isValid = true;
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        res.first << getSettings().first;
 //        res.second << getSettings().second;
@@ -474,9 +488,9 @@ QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QBy
 //            dev_data.accelX.isValid = true;
 //            dev_data.accelY.isValid = true;
 //            dev_data.accelZ.isValid = true;
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        res.first << getCurrentData().first;
 //        res.second << getCurrentData().second;
@@ -489,11 +503,11 @@ QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QBy
 //        res.second << "getOtherData";
 //        if(replyIsValid) {
 //            Nozzle_Revision_0_00_Oct_2018_Data::sOtherData *tbuf = (Nozzle_Revision_0_00_Oct_2018_Data::sOtherData*)t_reply->data.data;
-//            dev_data.versionFirmware.value = QString::fromUtf8(tbuf->version);
+//            dev_data.versionFirmware.value = std::string::fromUtf8(tbuf->version);
 //            dev_data.versionFirmware.isValid = true;
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        res.first << getCurrentData().first;
 //        res.second << getCurrentData().second;
@@ -510,13 +524,13 @@ QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QBy
 //        res.second << "getCardData";
 //        if(replyIsValid) {
 //            Nozzle_Revision_0_00_Oct_2018_Data::sCardData *tbuf = (Nozzle_Revision_0_00_Oct_2018_Data::sCardData*)t_reply->data.data;
-//            dev_data.cardNumber.value = QString::fromUtf8(tbuf->cardNumber, tbuf->len);
+//            dev_data.cardNumber.value = std::string::fromUtf8(tbuf->cardNumber, tbuf->len);
 //            dev_data.cardState.value.value_i = tbuf->status;
 //            dev_data.cardNumber.isValid = true;
 //            dev_data.cardState.isValid = true;
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        res.first << getCurrentData().first;
 //        res.second << getCurrentData().second;
@@ -529,16 +543,16 @@ QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QBy
 //        res.second << "getNetworkData";
 //        if(replyIsValid) {
 //            Nozzle_Revision_0_00_Oct_2018_Data::sNetworkData *tbuf = (Nozzle_Revision_0_00_Oct_2018_Data::sNetworkData*)t_reply->data.data;
-//            dev_data.networkCurrentIp.value = QString::fromUtf8(tbuf->networkCurrentIp);
+//            dev_data.networkCurrentIp.value = std::string::fromUtf8(tbuf->networkCurrentIp);
 //            dev_data.networkCurrentIp.isValid = true;
 //            dev_data.rssi.value.value_i = tbuf->rssi;
 //            dev_data.rssi.history.push_back(tbuf->rssi);
 //            dev_data.rssi.isValid = true;
 //            dev_data.networkState.value.value_i = tbuf->status;
 //            dev_data.networkState.isValid = true;
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        res.first << getCurrentData().first;
 //        res.second << getCurrentData().second;
@@ -551,15 +565,15 @@ QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QBy
 //        res.second << "getNetworkConfig";
 //        if(replyIsValid) {
 //            Nozzle_Revision_0_00_Oct_2018_Data::sNetworkConfig *tbuf = (Nozzle_Revision_0_00_Oct_2018_Data::sNetworkConfig*)t_reply->data.data;
-//            dev_data.networkConfig.clientToken = QString::fromUtf8(tbuf->clientToken);
-//            dev_data.networkConfig.clientUserName = QString::fromUtf8(tbuf->clientUserName);
-//            dev_data.networkConfig.serverIp = QString::fromUtf8(tbuf->serverIp);
+//            dev_data.networkConfig.clientToken = std::string::fromUtf8(tbuf->clientToken);
+//            dev_data.networkConfig.clientUserName = std::string::fromUtf8(tbuf->clientUserName);
+//            dev_data.networkConfig.serverIp = std::string::fromUtf8(tbuf->serverIp);
 //            dev_data.networkConfig.serverPort = tbuf->serverPort;
 //            dev_data.networkConfig.panid = tbuf->panid;
 //            dev_data.networkConfig.isValid  = true;
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        res.first << getSettings().first;
 //        res.second << getSettings().second;
@@ -571,9 +585,9 @@ QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QBy
 //    case Nozzle_Revision_0_00_Oct_2018_Data::E_ConsoleCommandType_getIsReadyCommand: {
 //        res.first << "typeCommand" << "resultCommand" << "isNeedAckMessage";
 //        if(replyIsValid) {
-//            res.second << "getIsReadyCommand" << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "getIsReadyCommand" << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "getIsReadyCommand" << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "getIsReadyCommand" << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
 //                                    res.first, res.second, commandReqData);
@@ -583,9 +597,9 @@ QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QBy
 //        res.second << "setAccelConfig";
 //        res.first << "typeCommand" << "resultCommand" << "isNeedAckMessage";
 //        if(replyIsValid) {
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
 //                                    res.first, res.second, commandReqData);
@@ -594,9 +608,9 @@ QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QBy
 //        res.second << "setNetworkConfig";
 //        res.first << "typeCommand" << "resultCommand" << "isNeedAckMessage";
 //        if(replyIsValid) {
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
 //                                    res.first, res.second, commandReqData);
@@ -605,9 +619,9 @@ QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QBy
 //        res.second << "setSecurityData";
 //        res.first << "typeCommand" << "resultCommand" << "isNeedAckMessage";
 //        if(replyIsValid) {
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
 //                                    res.first, res.second, commandReqData);
@@ -616,9 +630,9 @@ QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QBy
 //        res.second << "setBatteryNewAccum";
 //        res.first << "typeCommand" << "resultCommand" << "isNeedAckMessage";
 //        if(replyIsValid) {
-//            res.second << "normal" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "normal" << std::to_string(commandReqData.isNeedAckMessage);
 //        } else {
-//            res.second << "error" << QString::number(commandReqData.isNeedAckMessage);
+//            res.second << "error" << std::to_string(commandReqData.isNeedAckMessage);
 //        }
 //        emit eventDeviceUpdateState(Type_DeviceEvent_ExectCustomCommand, commandReqData.deviceIdent,
 //                                    res.first, res.second, commandReqData);
@@ -636,14 +650,14 @@ QList<QPair<QString,QByteArray>> Nozzle_Revision_0_00_Oct_2018::prepareReply(QBy
 //    }
 //}
 
-QPair<bool, QPair<int,int>> Nozzle_Revision_0_00_Oct_2018::findTag(QString regExpValueBegin, QString regExpValueEnd, QByteArray data) {
-    QPair<bool, QPair<int,int>> res;
+std::pair<bool, std::pair<int,int>> Nozzle_Revision_0_00_Oct_2018::findTag(std::string regExpValueBegin, std::string regExpValueEnd, QByteArray data) {
+    std::pair<bool, std::pair<int,int>> res;
     int indexBegin = 0, indexEnd = 0;
     res.first = false;
-    indexBegin = data.indexOf(regExpValueBegin);
+    indexBegin = data.indexOf(QString(regExpValueBegin.c_str()));
     if(indexBegin >=0){
         res.second.first = indexBegin;
-        indexEnd = data.indexOf(regExpValueEnd);
+        indexEnd = data.indexOf(QString(regExpValueEnd.c_str()));
         if(indexEnd >= 0) {
             res.second.second = indexEnd;
             res.first = true;
@@ -750,7 +764,7 @@ QPair<bool, QPair<int,int>> Nozzle_Revision_0_00_Oct_2018::findTag(QString regEx
 //    return listCommand;
 //}
 
-//QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommandCustom(QString operation, QPair<QStringList, QStringList> data) {
+//QList<CommandController::sCommandData> Nozzle_Revision_0_00_Oct_2018::getCommandCustom(std::string operation, std::pair<std::list<std::string>, std::list<std::string>> data) {
 //    QList <CommandController::sCommandData> command;
 //    CommandController::sCommandData tcommand;
 //    tcommand.operationHeader = operation;
@@ -818,11 +832,11 @@ QPair<bool, QPair<int,int>> Nozzle_Revision_0_00_Oct_2018::findTag(QString regEx
 //        makeDataToCommand(tcommand);
 //        command.push_back(tcommand);
 //    } else {
-//        qDebug() << "getCommandCustom -type unknown!";
+//        std::cout  << "getCommandCustom -type unknown!";
 //    }
 //    return command;
 //}
 
-QStringList Nozzle_Revision_0_00_Oct_2018::execCommand(QString operation, QPair<QStringList, QStringList>) {
+std::list<std::string> Nozzle_Revision_0_00_Oct_2018::execCommand(std::string operation, std::pair<std::list<std::string>, std::list<std::string>>) {
 
 }

@@ -17,7 +17,7 @@ signals:
 
 public:
     // Метод установки перевода, который будет доступен в QML
-    Q_INVOKABLE void setTranslation(QString translation);
+    Q_INVOKABLE void setTranslation(std::string translation);
 
 private:
     QTranslator m_translator;

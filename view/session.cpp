@@ -19,15 +19,15 @@ void Session::resetSession() {
 //    emit clearAllFrontEndItems();
 }
 
-bool Session::removeSessionByName(QString sessionName) {
+bool Session::removeSessionByName(std::string sessionName) {
     return sessionSecurity->removeSession(sessionName);
 }
 
-QStringList Session::getListSession() {
+std::list<std::string> Session::getListSession() {
     return sessionSecurity->getAvailableSessions();
 }
 
-bool Session::loadSession(QString sessionName) {
+bool Session::loadSession(std::string sessionName) {
 //    Session t_load_session = sessionSecurity->getSessionByName(sessionName);
 //    if(t_load_session.getIsValid()) {
 //        for(auto itInteface:t_load_session.getInterfaces()) {
@@ -43,7 +43,7 @@ bool Session::loadSession(QString sessionName) {
 //    return t_load_session.getIsValid();
 }
 
-QString Session::saveCurrentSession() {
+std::string Session::saveCurrentSession() {
 //    Session session;
 //    Session::sDevices t_session_dev;
 //    Session::sInterface t_session_io;
@@ -71,16 +71,16 @@ QString Session::saveCurrentSession() {
 //            }
 //        }
 //    }
-//    QString resNameSession = sessionSecurity->saveSession(session);
+//    std::string resNameSession = sessionSecurity->saveSession(session);
 //    return resNameSession;
 }
 
-QString Session::saveCurrentSessionAs(QString sessionName) {
+std::string Session::saveCurrentSessionAs(std::string sessionName) {
 //    Session session;
 //    Session::sDevices t_session_dev;
 //    Session::sInterface t_session_io;
 //    int connAll = connFactory->getCountConnection();
-//    session.setSessionName(QString("%1_%2").arg(sessionName).arg(QDateTime::currentDateTimeUtc().toString("yyyy/M/d/hh:mm:ss:z")));
+//    session.setSessionName(std::string("%1_%2").arg(sessionName).arg(QDateTime::currentDateTimeUtc().toString("yyyy/M/d/hh:mm:ss:z")));
 //    for(int ioCounter=0; ioCounter<connAll; ioCounter++) {
 //        DevicesFactory *p_dev_factory = nullptr;
 //        // interfaces
@@ -103,6 +103,6 @@ QString Session::saveCurrentSessionAs(QString sessionName) {
 //            }
 //        }
 //    }
-//    QString resNameSession = sessionSecurity->saveSession(session);
+//    std::string resNameSession = sessionSecurity->saveSession(session);
 //    return resNameSession;
 }

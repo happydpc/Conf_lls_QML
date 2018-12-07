@@ -34,12 +34,16 @@ void Updater::downloaded(QNetworkReply* pReply) {
         qDebug() << "Updater: lastVersion=" << res.toString();
         if(res.toString().toDouble() > version) {
 #ifdef PROGRESS
-            qDebug() << "Updater: need update" << (QString(prefix_pg).arg(res.toString()));
-            emit needUpdate(QString(prefix_pg).arg(res.toString()));
+            std::string updatePathUrl(prefix_pg);
+            auto beginVersion = updatePathUrl.find("%1");
+            updatePathUrl.replace(beginVersion, (beginVersion + sizeof("%1")), res.toString().toStdString());
+            emit needUpdate(updatePathUrl);
 #endif
 #ifdef GLOSSAV
-            qDebug() << "Updater: need update" << (QString(prefix_gs).arg(res.toString()));
-            emit needUpdate(QString(prefix_gs).arg(res.toString()));
+            std::string updatePathUrl(prefix_gs);
+            auto beginVersion = updatePathUrl.find("%1");
+            updatePathUrl.replace(beginVersion, (beginVersion + sizeof("%1")), res.toString().toStdString());
+            emit needUpdate(updatePathUrl);
 #endif
         }
     }

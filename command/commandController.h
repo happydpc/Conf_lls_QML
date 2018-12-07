@@ -16,11 +16,16 @@ public:
     explicit CommandController(QObject *parent = nullptr);
     ~CommandController();
 
-    bool addCommandToStack(const QList<Command*> command);
+    bool addCommandToStack(Command* command);
+    bool addCommandToStack(std::vector<Command*> command);
     Command* getFirstCommand() const;
     void removeFirstCommand();
     bool getIsEmpty();
 
+signals:
+    commandExecuted(Command *command);
+
+private:
     static void handlerFunction(std::mutex* pMutex, std::deque<Command*>* commandQueue);
     static void commandInterprerator(Command* command, Peripherals* peripherals);
 private:

@@ -13,33 +13,33 @@ public:
     explicit Peripherals(QObject *parent = nullptr);
 
     // io
-    bool addIo(const QString typeIoName, const QString ioName, const QStringList keyParam, const QStringList valueParam);
+    bool addIo(const std::string typeIoName, const std::string ioName, const std::list<std::string> keyParam, const std::list<std::string> valueParam);
     void removeIo(int ioIndex);
-    QPair<QStringList, QStringList> getIoProperty(int ioIndex) const;
-    QStringList getAvailableIo(const QString IoTypeName) const;
+    std::pair<std::list<std::string>, std::list<std::string>> getIoProperty(int ioIndex) const;
+    std::list<std::string> getAvailableIo(const std::string IoTypeName) const;
 
     // dev
-    bool addDev(int ioIndex, const QString devTypeName, const QStringList keyParam, const QStringList valueParam);
+    bool addDev(int ioIndex, const std::string devTypeName, const std::list<std::string> keyParam, const std::list<std::string> valueParam);
     void removeDev(int ioIndex, int devIndex);
-    QPair<QStringList, QStringList> getDevProperty(int ioIndex, int devIndex) const;
-    QStringList getAvailableDev() const;
+    std::pair<std::list<std::string>, std::list<std::string>> getDevProperty(int ioIndex, int devIndex) const;
+    std::list<std::string> getAvailableDev() const;
 
     bool devExecCommand(int ioIndex, int devIndex,
-                        QString comandType, QStringList keys, QStringList params);
+                        std::string comandType, std::list<std::string> keys, std::list<std::string> params);
 
 signals:
     // io
-    void ioUpdatePropertySignal(QString ioType, int ioIndex, QStringList keyProperty, QStringList valueProperty);
-    void ioActivateSignal(int ioIndex, QStringList keyProperty, QStringList valueProperty);
+    void ioUpdatePropertySignal(std::string ioType, int ioIndex, std::list<std::string> keyProperty, std::list<std::string> valueProperty);
+    void ioActivateSignal(int ioIndex, std::list<std::string> keyProperty, std::list<std::string> valueProperty);
     void ioTreeIsEmptySignal();
     // dev
-    void devExecComamndReadySignal(int ioIndex, int devIndex, QStringList keys, QStringList values);
-    void devConnectedSignal(int ioIndex, int devIndex, QString typeDev);
-    void devReadySignal(int ioIndex, int devIndex, QString typeDev);
-    void devDisconnectedSignal(int ioIndex, int devIndex, QString typeDev);
-    void devActivatePropertySignal(QString devType, int ioIndex, int devIndex);
-    void devUpdatePeriodicDataSignal(QString devType, int ioIndex, int devIndex, QStringList keys, QStringList values);
-    void devUpdateLogMessageSignal(int ioIndex, int devIndex, QString codeMessage, QString message);
+    void devExecComamndReadySignal(int ioIndex, int devIndex, std::list<std::string> keys, std::list<std::string> values);
+    void devConnectedSignal(int ioIndex, int devIndex, std::string typeDev);
+    void devReadySignal(int ioIndex, int devIndex, std::string typeDev);
+    void devDisconnectedSignal(int ioIndex, int devIndex, std::string typeDev);
+    void devActivatePropertySignal(std::string devType, int ioIndex, int devIndex);
+    void devUpdatePeriodicDataSignal(std::string devType, int ioIndex, int devIndex, std::list<std::string> keys, std::list<std::string> values);
+    void devUpdateLogMessageSignal(int ioIndex, int devIndex, std::string codeMessage, std::string message);
 
 private:
     std::shared_ptr<ConnectionFactory> connFactory;

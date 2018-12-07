@@ -2,6 +2,6 @@
 
 ServiceDevicesAbstract::ServiceDevicesAbstract() {}
 
-QString ServiceDevicesAbstract::getDeviceType() {
+std::string ServiceDevicesAbstract::getDeviceType() {
     return ownDeviceName;
 }

@@ -15,12 +15,12 @@ public:
     const QList<TreeItem*> &tree() const;
     const QList<QObject*> treeAsQObjects() const;
 
-    void addIo(QString ioName);
+    void addIo(std::string ioName);
     void removeIo(int ioIndex);
-    void addDevToIo(int ioIndex, QString devName);
+    void addDevToIo(int ioIndex, std::string devName);
     void removeDevToConnection(int indexConnection, int indexDevice);
-    bool changeDevName(QString nameConnection, QString devName, QString devNewName);
-    bool changeDevHeader(QString nameConnection, QString devName, QString devNewHeader);
+    bool changeDevName(std::string nameConnection, std::string devName, std::string devNewName);
+    bool changeDevHeader(std::string nameConnection, std::string devName, std::string devNewHeader);
     void removeAll();
 
     int getDevIndex();
@@ -37,8 +37,8 @@ signals:
 
 private slots:
 
-    TreeItem* createTreeItem(QString nameInterface);
-    TreeItem* createTreeSubItem(QString nameDevice);
+    TreeItem* createTreeItem(std::string nameInterface);
+    TreeItem* createTreeSubItem(std::string nameDevice);
 
     void currentIndexIsChanged(bool isParent, TreeItem *pSender);
 
