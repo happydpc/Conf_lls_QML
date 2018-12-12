@@ -12,7 +12,7 @@ class IoSerial : public IoAbstract
 {
     Q_OBJECT
 public:
-    IoSerial(std::string name, std::pair<std::list<std::string>,std::list<std::string>>param);
+    IoSerial(std::string name, std::pair<std::vector<std::string>,std::vector<std::string>>param);
     ~IoSerial() override;
 
 public slots:
@@ -23,8 +23,8 @@ public slots:
     bool sendData(QByteArray pData) override;
     bool readData(QByteArray &pData) override;
     std::string getInterfaceName() override;
-    std::pair<std::list<std::string>,std::list<std::string>> getInterfaceProperty() override;
-    std::list<std::string> getAvailableList() override;
+    std::pair<std::vector<std::string>,std::vector<std::string>> getInterfaceProperty() override;
+    std::vector<std::string> getAvailableList() override;
     std::string getType() override;
 
 private slots:
@@ -34,7 +34,7 @@ private:
     bool isManualClosed;
     std::shared_ptr<QSerialPort> portHandler = nullptr;
     std::string name;
-    std::pair<std::list<std::string>,std::list<std::string>>param;
+    std::pair<std::vector<std::string>,std::vector<std::string>>param;
 };
 
 #endif

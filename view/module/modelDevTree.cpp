@@ -6,19 +6,19 @@ ModelDevTree::ModelDevTree(QObject *parent) :
     m_tree(QList<TreeItem*>()) {
 }
 
-TreeItem * ModelDevTree::createTreeItem(std::string nameInterface) {
+TreeItem * ModelDevTree::createTreeItem(QString nameInterface) {
     auto res = new TreeItem(nameInterface, true);
     res->setIsCurrent(true);
     return res;
 }
 
-TreeItem * ModelDevTree::createTreeSubItem(std::string nameDevice) {
+TreeItem * ModelDevTree::createTreeSubItem(QString nameDevice) {
     auto res = new TreeItem(nameDevice, false);
     connect(res, SIGNAL(currentIndexIsChanged(bool, TreeItem*)), this, SLOT(currentIndexIsChanged(bool, TreeItem*)));
     return res;
 }
 
-void ModelDevTree::addIo(std::string connectionName) {
+void ModelDevTree::addIo(QString connectionName) {
     if(!m_tree.empty()) {
         for(auto it:m_tree) {
             it->setIsCurrent(false);
@@ -54,7 +54,7 @@ void ModelDevTree::removeAll() {
     treeChanged();
 }
 
-void ModelDevTree::addDevToIo(int ioIndex, std::string devName) {
+void ModelDevTree::addDevToIo(int ioIndex, QString devName) {
     if(!m_tree.empty()) {
         if(ioIndex < (m_tree.size()-1)) {
             TreeItem * tDevItem = createTreeSubItem(devName);
@@ -68,7 +68,7 @@ void ModelDevTree::addDevToIo(int ioIndex, std::string devName) {
     }
 }
 
-bool ModelDevTree::changeDevName(std::string nameConnection, std::string devName, std::string devNewName) {
+bool ModelDevTree::changeDevName(QString nameConnection, QString devName, QString devNewName) {
     bool res = false;
     for(auto it: m_tree) {
         if(it->content() == nameConnection) {
@@ -84,7 +84,7 @@ bool ModelDevTree::changeDevName(std::string nameConnection, std::string devName
     return res;
 }
 
-bool ModelDevTree::changeDevHeader(std::string nameConnection, std::string devName, std::string devNewHeader) {
+bool ModelDevTree::changeDevHeader(QString nameConnection, QString devName, QString devNewHeader) {
     bool res = false;
     for(auto it: m_tree) {
         if(it->content() == nameConnection) {

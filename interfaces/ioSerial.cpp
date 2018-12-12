@@ -1,7 +1,7 @@
 #include "./interfaces/ioSerial.h"
 #include <iostream>
 
-IoSerial::IoSerial(std::string name, std::pair<std::list<std::string>,std::list<std::string>>param) {
+IoSerial::IoSerial(std::string name, std::pair<std::vector<std::string>,std::vector<std::string>>param) {
     this->portHandler = std::make_shared<QSerialPort>();
     this->name = name;
     this->param = param;
@@ -85,8 +85,8 @@ std::string IoSerial::getInterfaceName() {
     return std::string(portHandler->portName().toLocal8Bit());
 }
 
-std::pair<std::list<std::string>,std::list<std::string>> IoSerial::getInterfaceProperty() {
-    std::pair<std::list<std::string>,std::list<std::string>> res;
+std::pair<std::vector<std::string>,std::vector<std::string>> IoSerial::getInterfaceProperty() {
+    std::pair<std::vector<std::string>,std::vector<std::string>> res;
     if(portHandler->isOpen()) {
         const auto infos = QSerialPortInfo::availablePorts();
         for(const QSerialPortInfo &info : infos) {
@@ -115,17 +115,17 @@ std::pair<std::list<std::string>,std::list<std::string>> IoSerial::getInterfaceP
     return res;
 }
 
-std::list<std::string> IoSerial::getAvailableList() {
-    std::list<std::string> list;
+std::vector<std::string> IoSerial::getAvailableList() {
+    std::vector<std::string> res;
     const auto infos = QSerialPortInfo::availablePorts();
     for(const QSerialPortInfo &info : infos) {
         if(portHandler != nullptr) {
             if(!portHandler->isOpen()) {
-                list.push_back(std::string(info.portName().toLocal8Bit()));
+                res.push_back(std::string(info.portName().toLocal8Bit()));
             }
         }
     }
-    return list;
+    return res;
 }
 
 void IoSerial::errorHanler(QSerialPort::SerialPortError err) {

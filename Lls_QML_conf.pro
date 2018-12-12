@@ -57,7 +57,9 @@ SOURCES += \
     connection/connectionComposition.cpp \
     interfaces/ioAbstract.cpp \
     interfaces/ioSerial.cpp \
-    command/command.cpp
+    command/command.cpp \
+    other/convert.cpp \
+    command/commandinterpretator.cpp
 
 RESOURCES += \
     qml.qrc \
@@ -108,6 +110,8 @@ HEADERS += \
     connection/connectionComposition.h \
     interfaces/ioAbstract.h \
     interfaces/ioSerial.h \
-    command/command.h
+    command/command.h \
+    other/convert.h \
+    command/commandinterpretator.h
 
 DISTFILES += device/service/serviceDevicesAbstract

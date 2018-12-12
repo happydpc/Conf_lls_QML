@@ -1,6 +1,6 @@
 #include "treeitem.h"
 
-TreeItem::TreeItem(std::string content, bool isParent, QObject *parent) :
+TreeItem::TreeItem(QString content, bool isParent, QObject *parent) :
     QObject(parent),
     m_content(content),
     m_childItems(QList<TreeItem*>()),
@@ -11,33 +11,33 @@ TreeItem::TreeItem(std::string content, bool isParent, QObject *parent) :
     this->m_isParent = isParent;
 }
 
-const std::string &TreeItem::content() const{
+QString &TreeItem::content() {
     return m_content;
 }
 
-void TreeItem::setContent(const std::string &content) {
+void TreeItem::setContent(const QString &content) {
     if(content != m_content){
         m_content = content;
         emit contentChanged();
     }
 }
 
-void TreeItem::setHeader(const std::string &header) {
+void TreeItem::setHeader(const QString &header) {
     if(header != m_header){
         m_header = header;
         emit headerChanged();
     }
 }
 
-const std::string &TreeItem::header() const{
+QString &TreeItem::header() {
     return m_header;
 }
 
-const QList<TreeItem *> &TreeItem::childItems() const{
+QList<TreeItem *> &TreeItem::childItems() {
     return m_childItems;
 }
 
-const QList<QObject *> TreeItem::childItemsAsQObject() const{
+QList<QObject *> TreeItem::childItemsAsQObject() const{
     QList<QObject *> res;
     res.reserve(m_childItems.count());
     for(auto i : m_childItems)

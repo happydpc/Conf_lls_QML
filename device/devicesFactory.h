@@ -11,10 +11,9 @@ public:
     explicit DevicesFactory();
     ~DevicesFactory();
 
-    std::list<std::string> getAvailableTypeDevice() const;
+    std::vector<std::string> getAvailableTypeDevice() const;
 
-    // keyParam need 2 args - 'id' and 'header'
-    DeviceAbstract* newDevice(const std::string devType, const std::list<std::string> keyParam, std::list<std::string> valueParam);
+    DeviceAbstract* newDevice(const std::vector<std::string> keyParam, std::vector<std::string> valueParam);
 };
 
 #endif // DEVICESFACTORY_H

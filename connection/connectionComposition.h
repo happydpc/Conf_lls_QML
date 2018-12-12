@@ -15,19 +15,22 @@ public:
     void removeIo(int ioIndex);
     void removeIoAll();
     uint16_t getIoCount() const ;
-    std::pair<std::list<std::string>, std::list<std::string>> getIoProperty(int ioIndex) const;
+    std::pair<std::vector<std::string>, std::vector<std::string>> getIoProperty(int ioIndex) const;
 
     bool addDev(int ioIndex, DeviceAbstract* dev);
     void removeDev(int ioIndex, int devIndex);
     uint16_t getDevCount(int ioIndex) const;
 
-    bool getIoIsConnected(int ioIndex) const;
-    bool getDevIsConnected(int ioIndex, int devIndex) const;
+    std::string getIoStatus(int ioIndex) const;
+    std::string getDevStatus(int ioIndex, int devIndex) const;
 
-    std::pair<std::list<std::string>, std::list<std::string>> getDevProperty(int ioIndex, int devIndex) const;
+    std::pair<std::vector<std::string>, std::vector<std::string>> getDevProperty(int ioIndex, int devIndex) const;
 
     bool devExecFutureCommand(int ioIndex, int devIndex, const std::string &comandType,
-                              const std::list<std::string> &keys, const std::list<std::string> &params);
+                              const std::vector<std::string> &keys, const std::vector<std::string> &params);
+
+signals:
+    void devExecReadyCommand(const std::string commandType);
 
 private:
     std::vector<IoAbstract*> ioList;

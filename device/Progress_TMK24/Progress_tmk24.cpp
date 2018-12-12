@@ -1,9 +1,8 @@
 #include <QDebug>
 #include "Progress_tmk24.h"
 #include "other/crc.h"
-#include <QList>
 
-Progress_tmk24::Progress_tmk24(std::list<std::string> keyValue, std::list<std::string> value) {
+Progress_tmk24::Progress_tmk24(std::vector<std::string> keyValue, std::vector<std::string> value) {
     auto propIter = value.begin();
     for(auto itemKey: keyValue) {
         if(itemKey == "id") {
@@ -82,8 +81,8 @@ ServiceDevicesAbstract* Progress_tmk24::getServiceAbstract() {
     return service.get();
 }
 
-std::pair<std::list<std::string>,std::list<std::string>> Progress_tmk24::getPropertyData() {
-    std::pair<std::list<std::string>,std::list<std::string>> res;
+std::pair<std::vector<std::string>,std::vector<std::string>> Progress_tmk24::getPropertyData() {
+    std::pair<std::vector<std::string>,std::vector<std::string>> res;
     res.first.push_back("devTypeName");
     res.second.push_back(getDevTypeName());
     res.first.push_back("serialNum");
@@ -103,8 +102,8 @@ std::pair<std::list<std::string>,std::list<std::string>> Progress_tmk24::getProp
     return res;
 }
 
-std::pair<std::list<std::string>,std::list<std::string>> Progress_tmk24::getCurrentData() {
-    std::pair<std::list<std::string>,std::list<std::string>> res;
+std::pair<std::vector<std::string>,std::vector<std::string>> Progress_tmk24::getCurrentData() {
+    std::pair<std::vector<std::string>,std::vector<std::string>> res;
     res = getPropertyData();
     res.first.push_back("fuelLevel");
     res.second.push_back(lls_data.fuelLevel.isValid == true ? std::to_string(lls_data.fuelLevel.value.value_u32) : std::to_string(0));
@@ -123,8 +122,8 @@ std::pair<std::list<std::string>,std::list<std::string>> Progress_tmk24::getCurr
     return res;
 }
 
-std::pair<std::list<std::string>,std::list<std::string>> Progress_tmk24::getSettings() {
-    std::pair<std::list<std::string>,std::list<std::string>> res;
+std::pair<std::vector<std::string>,std::vector<std::string>> Progress_tmk24::getSettings() {
+    std::pair<std::vector<std::string>,std::vector<std::string>> res;
     if(lls_data.settings.get.isValid) {
         res.first.push_back("device_value");
         res.second.push_back(getDevTypeName());
@@ -180,8 +179,8 @@ std::pair<std::list<std::string>,std::list<std::string>> Progress_tmk24::getSett
     return res;
 }
 
-std::pair<std::list<std::string>,std::list<std::string>> Progress_tmk24::getErrors() {
-    std::pair<std::list<std::string>,std::list<std::string>> ret;
+std::pair<std::vector<std::string>,std::vector<std::string>> Progress_tmk24::getErrors() {
+    std::pair<std::vector<std::string>,std::vector<std::string>> ret;
     if(lls_data.errors.isValid) {
         ret.first.push_back("GenFreq0");
         ret.second.push_back(std::to_string(lls_data.errors.errors.GenFreq0));
@@ -213,7 +212,7 @@ std::pair<std::list<std::string>,std::list<std::string>> Progress_tmk24::getErro
     return ret;
 }
 
-std::list<int> Progress_tmk24::getChart() {
+std::vector<int> Progress_tmk24::getChart() {
     return chartData;
 }
 
@@ -437,7 +436,7 @@ std::string Progress_tmk24::getUniqId() {
 //}
 
 //bool Progress_tmk24::placeDataReplyToCommand(QByteArray &commandArrayReplyData, CommandController::sCommandData commandReqData) {
-//    std::pair<std::list<std::string>, std::list<std::string>> res;
+//    std::pair<std::vector<std::string>, std::vector<std::string>> res;
 //    bool replyIsValid = false;
 //    Crc crc;
 //    uint8_t crcRes = 0;
@@ -655,8 +654,8 @@ std::string Progress_tmk24::getUniqId() {
 //            // если ожидаемая команда совпадает с пакетом
 //            if(commandReqData.devCommand == (uint8_t)commandArrayReplyData.at(2)) {
 //                if(commandArrayReplyData.size() > 45) {
-//                    std::list<std::string> keys;
-//                    std::list<std::string> values;
+//                    std::vector<std::string> keys;
+//                    std::vector<std::string> values;
 //                    memset(&lls_data.calibrateTable.get.table, 0, sizeof(Progress_tmk24Data::T_calibrationTable));
 //                    lls_data.calibrateTable.get.table.TableSize = commandArrayReplyData.at(3);
 //                    int index = 0;
@@ -907,7 +906,7 @@ std::string Progress_tmk24::getUniqId() {
 //                    if(lls_data.cnt.isValid) {
 //                        lls_data.cnt.value.value_u32 = cnt;
 //                        lls_data.cnt.history.push_back(lls_data.cnt.value.value_u32);
-//                        if(lls_data.cnt.history.size() > Progress_tmk24Data::MAX_SIZE_HISTORY_CNT_LIST) {
+//                        if(lls_data.cnt.history.size() > Progress_tmk24Data::MAX_SIZE_HISTORY_CNT_vector) {
 //                            lls_data.cnt.history.pop_front();
 //                        }
 //                    }
@@ -954,8 +953,8 @@ std::string Progress_tmk24::getUniqId() {
 //    return replyIsValid;
 //}
 
-//QList<CommandController::sCommandData> Progress_tmk24::getCommandToCheckConnected() {
-//    QList<CommandController::sCommandData> commandList;
+//Qvector<CommandController::sCommandData> Progress_tmk24::getCommandToCheckConnected() {
+//    Qvector<CommandController::sCommandData> commandvector;
 //    CommandController::sCommandData unitCommand;
 //    unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 //    unitCommand.deviceIdent = getUniqId();
@@ -964,12 +963,12 @@ std::string Progress_tmk24::getUniqId() {
 //    unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_errors;
 //    unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 //    makeDataToCommand(unitCommand);
-//    commandList.push_back(unitCommand);
-//    return commandList;
+//    commandvector.push_back(unitCommand);
+//    return commandvector;
 //}
 
-//QList<CommandController::sCommandData> Progress_tmk24::getCommandtoCheckPassword() {
-//    QList<CommandController::sCommandData> commandList;
+//Qvector<CommandController::sCommandData> Progress_tmk24::getCommandtoCheckPassword() {
+//    Qvector<CommandController::sCommandData> commandvector;
 //    CommandController::sCommandData unitCommand;
 //    unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 //    unitCommand.deviceIdent = getUniqId();
@@ -978,12 +977,12 @@ std::string Progress_tmk24::getUniqId() {
 //    unitCommand.devCommand = (int)Progress_tmk24Data::lls_check_address_and_pass;
 //    unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 //    makeDataToCommand(unitCommand);
-//    commandList.push_back(unitCommand);
-//    return commandList;
+//    commandvector.push_back(unitCommand);
+//    return commandvector;
 //}
 
-//QList<CommandController::sCommandData> Progress_tmk24::getCommandListToInit() {
-//    QList<CommandController::sCommandData> commandList;
+//Qvector<CommandController::sCommandData> Progress_tmk24::getCommandvectorToInit() {
+//    Qvector<CommandController::sCommandData> commandvector;
 //    CommandController::sCommandData unitCommand;
 //    unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 //    unitCommand.deviceIdent = getUniqId();
@@ -992,27 +991,27 @@ std::string Progress_tmk24::getUniqId() {
 //    unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 //    unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;
 //    makeDataToCommand(unitCommand);
-//    commandList.push_back(unitCommand);
+//    commandvector.push_back(unitCommand);
 //    unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
 //    makeDataToCommand(unitCommand);
-//    commandList.push_back(unitCommand);
+//    commandvector.push_back(unitCommand);
 //    unitCommand.devCommand = (int)Progress_tmk24Data::lls_check_address_and_pass;
 //    makeDataToCommand(unitCommand);
-//    commandList.push_back(unitCommand);
+//    commandvector.push_back(unitCommand);
 //    unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_errors;
 //    makeDataToCommand(unitCommand);
-//    commandList.push_back(unitCommand);
+//    commandvector.push_back(unitCommand);
 //    unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_lvl_all;
 //    makeDataToCommand(unitCommand);
-//    commandList.push_back(unitCommand);
+//    commandvector.push_back(unitCommand);
 //    unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_lvl_once;
 //    makeDataToCommand(unitCommand);
-//    commandList.push_back(unitCommand);
-//    return commandList;
+//    commandvector.push_back(unitCommand);
+//    return commandvector;
 //}
 
-//QList<CommandController::sCommandData> Progress_tmk24::getCommandListToUpdate() {
-//    QList<CommandController::sCommandData> listCommand;
+//Qvector<CommandController::sCommandData> Progress_tmk24::getCommandvectorToUpdate() {
+//    Qvector<CommandController::sCommandData> vectorCommand;
 //    CommandController::sCommandData unitCommand;
 //    unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 //    unitCommand.deviceIdent = getUniqId();
@@ -1021,12 +1020,12 @@ std::string Progress_tmk24::getUniqId() {
 //    unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_lvl_all;
 //    unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 //    makeDataToCommand(unitCommand);
-//    listCommand.push_back(unitCommand);
-//    return listCommand;
+//    vectorCommand.push_back(unitCommand);
+//    return vectorCommand;
 //}
 
-//QList<CommandController::sCommandData> Progress_tmk24::getCommandToGetType() {
-//    QList<CommandController::sCommandData> commandList;
+//Qvector<CommandController::sCommandData> Progress_tmk24::getCommandToGetType() {
+//    Qvector<CommandController::sCommandData> commandvector;
 //    CommandController::sCommandData unitCommand;
 //    unitCommand.deviceIdent = getUniqId();
 //    unitCommand.isNeedAckMessage = false;
@@ -1034,16 +1033,16 @@ std::string Progress_tmk24::getUniqId() {
 //    unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;
 //    unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 //    makeDataToCommand(unitCommand);
-//    commandList.push_back(unitCommand);
-//    return commandList;
+//    commandvector.push_back(unitCommand);
+//    return commandvector;
 //}
 
-//QList<CommandController::sCommandData> Progress_tmk24::getCommandCustom(std::string operation, std::pair<std::list<std::string>, std::list<std::string>> data) {
-//    QList <CommandController::sCommandData> commandList;
+//Qvector<CommandController::sCommandData> Progress_tmk24::getCommandCustom(std::string operation, std::pair<std::vector<std::string>, std::vector<std::string>> data) {
+//    Qvector <CommandController::sCommandData> commandvector;
 //    CommandController::sCommandData unitCommand;
 //    unitCommand.operationHeader = operation;
 //    if(operation == "update device") {
-//        commandList = getCommandListToUpdate();
+//        commandvector = getCommandvectorToUpdate();
 //    }
 //    if(operation == "setTableFromFrontEnd") {
 //        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
@@ -1054,7 +1053,7 @@ std::string Progress_tmk24::getUniqId() {
 //        for(auto i:pService->requestWriteTableToAllDevice()) {
 //            // извлекаем данные из таблциц
 //            // отправляем всем dev из списка команду на запись таблиц
-//            std::pair<std::list<std::string>,std::list<std::string>> table;
+//            std::pair<std::vector<std::string>,std::vector<std::string>> table;
 //            data = pService->getTableAtDeviceToPair(i);
 //            unitCommand.deviceIdent = getUniqId();
 //            unitCommand.isNeedAckMessage = true;
@@ -1064,7 +1063,7 @@ std::string Progress_tmk24::getUniqId() {
 //            unitCommand.args.key << data.first;
 //            unitCommand.args.value << data.second;
 //            makeDataToCommand(unitCommand);
-//            commandList.push_back(unitCommand);
+//            commandvector.push_back(unitCommand);
 //        }
 //    }
 //    if(operation == "set current level value as min") {
@@ -1073,7 +1072,7 @@ std::string Progress_tmk24::getUniqId() {
 //        unitCommand.devCommand = (int)Progress_tmk24Data::lls_calibrate_min;
 //        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 //        makeDataToCommand(unitCommand);
-//        commandList.push_back(unitCommand);
+//        commandvector.push_back(unitCommand);
 //    }
 //    if(operation == "check device is connected") {
 //        unitCommand.deviceIdent = getUniqId();
@@ -1081,7 +1080,7 @@ std::string Progress_tmk24::getUniqId() {
 //        unitCommand.commandType = CommandController::E_CommandType_command_without_request;
 //        unitCommand.devCommand = (int)Progress_tmk24Data::lls_check_address_and_pass;
 //        makeDataToCommand(unitCommand);
-//        commandList.push_back(unitCommand);
+//        commandvector.push_back(unitCommand);
 //    }
 //    if(operation == "set current level value as max") {
 //        unitCommand.deviceIdent = getUniqId();
@@ -1089,7 +1088,7 @@ std::string Progress_tmk24::getUniqId() {
 //        unitCommand.devCommand = (int)Progress_tmk24Data::lls_calibrate_max;
 //        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 //        makeDataToCommand(unitCommand);
-//        commandList.push_back(unitCommand);
+//        commandvector.push_back(unitCommand);
 //    }
 //    if(operation == "get current dev settings") {
 //        unitCommand.deviceIdent = getUniqId();
@@ -1097,7 +1096,7 @@ std::string Progress_tmk24::getUniqId() {
 //        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;
 //        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 //        makeDataToCommand(unitCommand);
-//        commandList.push_back(unitCommand);
+//        commandvector.push_back(unitCommand);
 //    }
 //    if(operation == "get get available dev tarrir id") {
 //        unitCommand.deviceIdent = getUniqId();
@@ -1105,7 +1104,7 @@ std::string Progress_tmk24::getUniqId() {
 //        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;
 //        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 //        makeDataToCommand(unitCommand);
-//        commandList.push_back(unitCommand);
+//        commandvector.push_back(unitCommand);
 //    }
 //    if(operation == "get current dev settings without ack dialog") {
 //        unitCommand.deviceIdent = getUniqId();
@@ -1113,7 +1112,7 @@ std::string Progress_tmk24::getUniqId() {
 //        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_settings;
 //        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 //        makeDataToCommand(unitCommand);
-//        commandList.push_back(unitCommand);
+//        commandvector.push_back(unitCommand);
 //    }
 //    if(operation == "set current dev settings") {
 //        unitCommand.deviceIdent = getUniqId();
@@ -1124,7 +1123,7 @@ std::string Progress_tmk24::getUniqId() {
 //        unitCommand.args.key << data.first;
 //        unitCommand.args.value << data.second;
 //        makeDataToCommand(unitCommand);
-//        commandList.push_back(unitCommand);
+//        commandvector.push_back(unitCommand);
 //    }
 //    if(operation == "read current dev errors") {
 //        unitCommand.deviceIdent = getUniqId();
@@ -1132,7 +1131,7 @@ std::string Progress_tmk24::getUniqId() {
 //        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_errors;
 //        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 //        makeDataToCommand(unitCommand);
-//        commandList.push_back(unitCommand);
+//        commandvector.push_back(unitCommand);
 //    }
 //    if(operation == "read current dev tar table") {
 //        unitCommand.deviceIdent = getUniqId();
@@ -1140,7 +1139,7 @@ std::string Progress_tmk24::getUniqId() {
 //        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
 //        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 //        makeDataToCommand(unitCommand);
-//        commandList.push_back(unitCommand);
+//        commandvector.push_back(unitCommand);
 //    }
 //    if(operation == "change current dev id") {
 //        // first read settings
@@ -1151,7 +1150,7 @@ std::string Progress_tmk24::getUniqId() {
 //        unitCommand.args.key.clear();
 //        unitCommand.args.value.clear();
 //        makeDataToCommand(unitCommand);
-//        commandList.push_back(unitCommand);
+//        commandvector.push_back(unitCommand);
 //        // потоm запись id
 //        unitCommand.deviceIdent = getUniqId();
 //        unitCommand.devCommand = (int)Progress_tmk24Data::lls_write_settings;
@@ -1161,7 +1160,7 @@ std::string Progress_tmk24::getUniqId() {
 //        unitCommand.args.key << data.first;
 //        unitCommand.args.value << data.second;
 //        makeDataToCommand(unitCommand);
-//        commandList.push_back(unitCommand);
+//        commandvector.push_back(unitCommand);
 //    }
 ////    // TODO:
 ////    if(operation == "getTarMaxCountStep") {
@@ -1190,38 +1189,38 @@ std::string Progress_tmk24::getUniqId() {
 ////        unitCommand.devCommand = (int)Progress_tmk24Data::lls_read_cal_table;
 ////        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 ////        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
-////        std::list<std::string> exportList;
+////        std::vector<std::string> exportvector;
 ////        std::string str;
 ////        if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
 ////            Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
 ////            int devAll = pService->getDeviceCount();
 ////            // id[devType], объем, уровень топлива
 ////            for(int devCounter=0; devCounter<devAll; devCounter++) {
-////                std::list<std::string> litersList;
-////                std::list<std::string> fuelLevelList;
+////                std::vector<std::string> litersvector;
+////                std::vector<std::string> fuelLevelvector;
 ////                // получаем стоблец с liters и fuelLevel
-////                std::pair<std::list<std::string>,std::list<std::string>> tableData;
+////                std::pair<std::vector<std::string>,std::vector<std::string>> tableData;
 ////                tableData = pService->getTableAtDeviceToPair(getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceIdTextByIndex(devCounter));
 ////                for(int tableCounter=0; tableCounter<tableData.first.size(); tableCounter++) {
 ////                    // lites
-////                    litersList << tableData.first.at(tableCounter);
+////                    litersvector << tableData.first.at(tableCounter);
 ////                    // fuelLevel
-////                    fuelLevelList << tableData.second.at(tableCounter);
+////                    fuelLevelvector << tableData.second.at(tableCounter);
 ////                }
 ////                str.clear();
 ////                str.push_back("\"" + std::string("ID/Тип") + "\"" + ",");
 ////                str.push_back("\"" + std::string("Объем") + "\"" + ",");
 ////                str.push_back("\"" + std::string("Уровень") + "\"");
-////                exportList.push_back(str);
-////                for(int makeCounter=0; makeCounter<litersList.size(); makeCounter++) {
+////                exportvector.push_back(str);
+////                for(int makeCounter=0; makeCounter<litersvector.size(); makeCounter++) {
 ////                    str.clear();
 ////                    str.push_back("\"" + std::string("ID%1[%2]").arg(pService->getDeviceProperty(devCounter).at(1)).arg(pService->getDeviceProperty(devCounter).at(0)) + "\"" + ",");
-////                    str.push_back("\"" + ((litersList.size() >= makeCounter) ? (litersList.at(makeCounter) + "\"" + ",") : std::string("Нет данных")));
-////                    str.push_back("\"" + ((fuelLevelList.size() >= makeCounter) ? (fuelLevelList.at(makeCounter) + "\"") : std::string("Нет данных")));
-////                    exportList.push_back(str);
+////                    str.push_back("\"" + ((litersvector.size() >= makeCounter) ? (litersvector.at(makeCounter) + "\"" + ",") : std::string("Нет данных")));
+////                    str.push_back("\"" + ((fuelLevelvector.size() >= makeCounter) ? (fuelLevelvector.at(makeCounter) + "\"") : std::string("Нет данных")));
+////                    exportvector.push_back(str);
 ////                }
 ////            }
-////            if(!exportList.empty()) {
+////            if(!exportvector.empty()) {
 ////                if(pathFile.size() > 0) {
 ////                    if(!pathFile.contains(".csv")) {
 ////                        pathFile.push_back(".csv");
@@ -1234,8 +1233,8 @@ std::string Progress_tmk24::getUniqId() {
 ////                    QFile file(pathFile);
 ////                    if (file.open(QFile::WriteOnly | QFile::Text)) {
 ////                        QTextStream s(&file);
-////                        for (int counterExport=0; counterExport<exportList.size(); ++counterExport) {
-////                            s << exportList.at(counterExport) << '\n';
+////                        for (int counterExport=0; counterExport<exportvector.size(); ++counterExport) {
+////                            s << exportvector.at(counterExport) << '\n';
 ////                        }
 ////                    }
 ////                    file.close();
@@ -1253,14 +1252,14 @@ std::string Progress_tmk24::getUniqId() {
 ////        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
 ////        pService->getMaxCountStep();
 
-////        //    std::list<std::string> resList;
+////        //    std::vector<std::string> resvector;
 ////        //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
 ////        //        int devCount = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
 ////        //        for(int i=0; i<devCount; i++) {
-////        //            resList << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(i);
+////        //            resvector << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceName(i);
 ////        //        }
 ////        //    }
-////        //    return resList;
+////        //    return resvector;
 ////    }
 
 ////    // TODO:
@@ -1272,15 +1271,15 @@ std::string Progress_tmk24::getUniqId() {
 ////        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
 ////        pService->getMaxCountStep();
 
-////        std::list<std::string> ViewController::getAvailableDevTarrirAdd_DevId() {
-////            //    std::list<std::string> resList;
+////        std::vector<std::string> ViewController::getAvailableDevTarrirAdd_DevId() {
+////            //    std::vector<std::string> resvector;
 ////            //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
 ////            //        int devCount = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
 ////            //        for(int i=0; i<devCount; i++) {
-////            //            resList << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceIdTextByIndex(i);
+////            //            resvector << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceIdTextByIndex(i);
 ////            //        }
 ////            //    }
-////            //    return resList;
+////            //    return resvector;
 ////        }
 ////    }
 
@@ -1294,20 +1293,20 @@ std::string Progress_tmk24::getUniqId() {
 ////        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
 ////        pService->getMaxCountStep();
 
-////        std::list<std::string> ViewController::getAvailableDevTarrirAdd_DevSerialNumber() {
-////            //    std::list<std::string> resList;
+////        std::vector<std::string> ViewController::getAvailableDevTarrirAdd_DevSerialNumber() {
+////            //    std::vector<std::string> resvector;
 ////            //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
 ////            //        int devCount = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDeviceCount();
 ////            //        for(int i=0; i<devCount; i++) {
-////            //            std::list<std::string> keyList = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(i).first;
-////            //            for(int i2 =0; i2<keyList.size(); i2++) {
-////            //                if(keyList.at(i2) == std::string("serialNum")) {                                                                                 // TOOD:!!!!!
-////            //                    resList << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(i).second.at(0);
+////            //            std::vector<std::string> keyvector = getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(i).first;
+////            //            for(int i2 =0; i2<keyvector.size(); i2++) {
+////            //                if(keyvector.at(i2) == std::string("serialNum")) {                                                                                 // TOOD:!!!!!
+////            //                    resvector << getDeviceFactoryByIndex(interfaceTree->getIoIndex())->getDevicePropertyByIndex(i).second.at(0);
 ////            //                }
 ////            //            }
 ////            //        }
 ////            //    }
-////            //    return resList;
+////            //    return resvector;
 ////        }
 ////    }
 
@@ -1319,8 +1318,8 @@ std::string Progress_tmk24::getUniqId() {
 ////        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 ////        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
 ////        pService->getMaxCountStep();
-////    std::list<std::string> ViewController::getTarCurrentDeviceData(int index) {
-////        //    std::list<std::string> res;
+////    std::vector<std::string> ViewController::getTarCurrentDeviceData(int index) {
+////        //    std::vector<std::string> res;
 ////        //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
 ////        //        if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
 ////        //            Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
@@ -1341,8 +1340,8 @@ std::string Progress_tmk24::getUniqId() {
 ////        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 ////        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
 ////        pService->getMaxCountStep();
-////    QList<int> ViewController::getTarCurrentDeviceChartData(int index) {
-////        //    QList<int> res;
+////    Qvector<int> ViewController::getTarCurrentDeviceChartData(int index) {
+////        //    Qvector<int> res;
 ////        //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
 ////        //        if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
 ////        //            Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
@@ -1384,8 +1383,8 @@ std::string Progress_tmk24::getUniqId() {
 ////        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 ////        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
 ////        pService->getMaxCountStep();
-////    std::list<std::string> ViewController::getStayedDevTarrir_DevProperty(std::string propertyName) {
-////        //    std::list<std::string> res;
+////    std::vector<std::string> ViewController::getStayedDevTarrir_DevProperty(std::string propertyName) {
+////        //    std::vector<std::string> res;
 ////        //    if(getInterfaceCount() > 0 && getDeviceCount() > 0) {
 ////        //        if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
 ////        //            Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
@@ -1514,8 +1513,8 @@ std::string Progress_tmk24::getUniqId() {
 ////        unitCommand.commandType = CommandController::E_CommandType_send_typical_request;
 ////        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getServiceAbstract());
 ////        pService->getMaxCountStep();
-////    std::list<std::string> ViewController::getTableAtDevice(int index) {
-////        //    std::list<std::string> res;
+////    std::vector<std::string> ViewController::getTableAtDevice(int index) {
+////        //    std::vector<std::string> res;
 ////        //    if(getCurrentDeviceToAbstract()->getDevTypeName() == "PROGRESS TMK24") {
 ////        //        Progress_tmk24Service* pService = dynamic_cast<Progress_tmk24Service*>(getCurrentDeviceToAbstract()->getServiceAbstract());
 ////        //        if(pService != nullptr) {
@@ -1546,13 +1545,13 @@ std::string Progress_tmk24::getUniqId() {
 ////    }
 ////    }
 
-//    return commandList;
+//    return commandvector;
 //}
 
-std::list<std::string> Progress_tmk24::execCommand(std::string operation, std::pair<std::list<std::string>, std::list<std::string>>) {}
+std::vector<std::string> Progress_tmk24::execCommand(std::string operation, std::pair<std::vector<std::string>, std::vector<std::string>>) {}
 
-//QList<CommandController::sCommandData> Progress_tmk24::getCommandListToCurrentData() {
-//    QList<CommandController::sCommandData> commandList;
+//Qvector<CommandController::sCommandData> Progress_tmk24::getCommandvectorToCurrentData() {
+//    Qvector<CommandController::sCommandData> commandvector;
 //    CommandController::sCommandData command;
 //    command.commandOptionData.clear();
 //    command.deviceIdent = getUniqId();
@@ -1560,10 +1559,10 @@ std::list<std::string> Progress_tmk24::execCommand(std::string operation, std::p
 //    command.isNeedAckMessage = false;
 //    command.devCommand = (int)Progress_tmk24Data::lls_read_lvl_once;
 //    command.commandType = CommandController::E_CommandType_send_typical_request;
-//    commandList.push_back(command);
+//    commandvector.push_back(command);
 //    command.devCommand = (int)Progress_tmk24Data::lls_read_cnt;
-//    commandList.push_back(command);
+//    commandvector.push_back(command);
 //    command.devCommand = (int)Progress_tmk24Data::lls_read_lvl_all;
-//    commandList.push_back(command);
-//    return commandList;
+//    commandvector.push_back(command);
+//    return commandvector;
 //}

@@ -10,7 +10,7 @@
 class Nozzle_Revision_0_00_Oct_2018 : public DeviceAbstract
 {
 public:
-    Nozzle_Revision_0_00_Oct_2018(std::list<std::string> keys, std::list<std::string> values);
+    Nozzle_Revision_0_00_Oct_2018(std::vector<std::string> keys, std::vector<std::string> values);
     ~Nozzle_Revision_0_00_Oct_2018();
 
     static constexpr char* name = "Nozzle Rev 0.0";
@@ -23,27 +23,27 @@ public:
     std::string getDevHeader() override;
     std::string getUniqId() override;
     void setDevHeader(std::string header) override;
-    std::pair<std::list<std::string>,std::list<std::string>> getPropertyData() override;
-    std::pair<std::list<std::string>,std::list<std::string>> getCurrentData() override;
+    std::pair<std::vector<std::string>,std::vector<std::string>> getPropertyData() override;
+    std::pair<std::vector<std::string>,std::vector<std::string>> getCurrentData() override;
     DeviceAbstract::E_State getState() override;
     void setState(DeviceAbstract::E_State) override;
-    std::pair<std::list<std::string>,std::list<std::string>> getSettings() override;
-    std::pair<std::list<std::string>,std::list<std::string>> getErrors() override;
+    std::pair<std::vector<std::string>,std::vector<std::string>> getSettings() override;
+    std::pair<std::vector<std::string>,std::vector<std::string>> getErrors() override;
 //    bool makeDataToCommand(CommandController::sCommandData &commandData) override;
 //    bool placeDataReplyToCommand(QByteArray &commandArray, CommandController::sCommandData commandReqData) override;
 
-//    QList<CommandController::sCommandData> getCommandToCheckConnected() override;
-//    QList<CommandController::sCommandData> getCommandToGetType() override;
-//    QList<CommandController::sCommandData> getCommandtoCheckPassword() override;
-//    QList<CommandController::sCommandData> getCommandListToInit() override;
-//    QList<CommandController::sCommandData> getCommandListToUpdate() override;
-//    QList<CommandController::sCommandData> getCommandListToCurrentData() override;
-//    QList<CommandController::sCommandData> getCommandCustom(std::string operation, std::pair<std::list<std::string>, std::list<std::string>> data) override;
-    std::list<std::string> execCommand(std::string operation, std::pair<std::list<std::string>, std::list<std::string>>) override;
+//    Qvector<CommandController::sCommandData> getCommandToCheckConnected() override;
+//    Qvector<CommandController::sCommandData> getCommandToGetType() override;
+//    Qvector<CommandController::sCommandData> getCommandtoCheckPassword() override;
+//    Qvector<CommandController::sCommandData> getCommandvectorToInit() override;
+//    Qvector<CommandController::sCommandData> getCommandvectorToUpdate() override;
+//    Qvector<CommandController::sCommandData> getCommandvectorToCurrentData() override;
+//    Qvector<CommandController::sCommandData> getCommandCustom(std::string operation, std::pair<std::vector<std::string>, std::vector<std::string>> data) override;
+    std::vector<std::string> execCommand(std::string operation, std::pair<std::vector<std::string>, std::vector<std::string>>) override;
     ServiceDevicesAbstract* getServiceAbstract() override;
-    std::list<int> getChart() override;
-    QList<std::string> getCurrentOtherData() const;
-    QList<std::pair<std::string,QByteArray>> prepareReply(QByteArray &data);
+    std::vector<int> getChart() override;
+    std::vector<std::string> getCurrentOtherData() const;
+    std::vector<std::pair<std::string,QByteArray>> prepareReply(QByteArray &data);
 //    void parseCommandReply(const QByteArray data, const CommandController::sCommandData commandReqData);
 
 private slots:

@@ -1,8 +1,12 @@
 #include "commandController.h"
+#include "commandinterpretator.h"
+#include <iostream>
+#include <stdio.h>
 
 CommandController::CommandController(QObject *parent) : QObject(parent) {
-    this->commandQueue = std::make_shared<std::deque<Command*>>();
-    this->handlerThread = std::make_shared<std::thread>(handlerFunction, lock.get(), commandQueue.get());
+    this->lock = std::make_shared<std::mutex>();
+    this->commandQueue = std::make_shared<std::vector<Command>>();
+    this->handlerThread = std::make_shared<std::thread>(handlerFunction, lock.get(), commandQueue);
     this->handlerThread->detach();
 }
 
@@ -10,105 +14,159 @@ CommandController::~CommandController() {
     handlerThread.reset();
 }
 
-bool CommandController::addCommandToStack(Command* commandData) {
-    std::lock_guard<std::mutex> guard(*lock.get());
-    commandQueue->push_back(commandData);
-    return !commandQueue->empty();
+/*
+ * Function:  addCommandToStack
+ * --------------------
+ * add command to stack
+ * and and wait while executed
+ *
+ *  commandData: command struct
+ *
+ *  returns: future
+ */
+std::future<Command*> CommandController::addCommandToStack(Command commandData) {
+    lock->lock();
+    commandQueue->push_back(std::move(commandData));
+    auto replyHandle = [&]() {
+        bool commandIsExecuted = false;
+        Command *p = &commandQueue->back();
+        while(!commandIsExecuted) {
+            if(lock->try_lock()) {
+                commandIsExecuted = p->getIsExecuted();
+                lock->unlock();
+            } else {
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+        }
+        return p;
+    };
+    lock->unlock();
+    std::packaged_task<Command*()> task(replyHandle);
+    auto future = task.get_future();
+    std::thread thread(std::move(task));
+    thread.detach();
+    return std::move(future);
 }
 
-bool CommandController::addCommandToStack(std::vector<Command*> commandData) {
-    std::lock_guard<std::mutex> guard(*lock.get());
-    while(!(commandQueue->empty())) {
-        commandQueue->push_back(commandData.back());
-        commandData.pop_back();
-    }
-    return !commandQueue->empty();
-}
-
+/*
+ * Function:  addCommandToStack
+ * --------------------
+ * add command to stack
+ * and and wait while executed
+ *
+ *  commandData: command struct
+ *
+ *  returns: future
+ */
 Command* CommandController::getFirstCommand() const {
     std::lock_guard<std::mutex> guard(*lock.get());
     if(!commandQueue->empty()) {
-        return commandQueue->front();
+        return &commandQueue->front();
     }
     return nullptr;
 }
 
+/*
+ * Function:  addCommandToStack
+ * --------------------
+ * add command to stack
+ * and and wait while executed
+ *
+ *  commandData: command struct
+ *
+ *  returns: future
+ */
 void CommandController::removeFirstCommand() {
     std::lock_guard<std::mutex> guard(*lock.get());
     if(!commandQueue->empty()) {
-        commandQueue->pop_front();
+        commandQueue->pop_back();
     }
 }
 
+/*
+ * Function:  addCommandToStack
+ * --------------------
+ * add command to stack
+ * and and wait while executed
+ *
+ *  commandData: command struct
+ *
+ *  returns: future
+ */
 bool CommandController::getIsEmpty() {
     return commandQueue->empty();
 }
 
-void CommandController::handlerFunction(std::mutex* pMutex, std::deque<Command*>* queue) {
+/*
+ * Function:  addCommandToStack
+ * --------------------
+ * add command to stack
+ * and and wait while executed
+ *
+ *  commandData: command struct
+ *
+ *  returns: future
+ */
+void CommandController::handlerFunction(std::mutex* pMutex, std::shared_ptr<std::vector<Command>> queue) {
     std::shared_ptr<Peripherals> peripherals = std::make_shared<Peripherals>();
     while(1) {
         if(pMutex->try_lock()) {
             if(!queue->empty()) {
-                CommandController::commandInterprerator(queue->front(), peripherals.get());
+                for(auto queItem = queue->begin(); queItem != queue->end(); queItem++) {
+                    if(!(queItem)->getIsExecuted()) {
+                        commandInterprerator(&(*queItem), peripherals.get());
+                        (*queItem).setIsExecuted();
+                    }
+                }
             }
+            pMutex->unlock();
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 }
 
+
+/*
+ * Function:  addCommandToStack
+ * --------------------
+ * add command to stack
+ * and and wait while executed
+ *
+ *  commandData: command struct
+ *      requestGetIoAddTypes
+ *      1) ioTypeName
+ *
+ *  returns: non
+ */
 void CommandController::commandInterprerator(Command* command, Peripherals* peripherals) {
+    CommandInterpretator interperator(peripherals);
     if(command->getCommand() == "requestGetIoAddTypes") {
-        std::string requestResult = peripherals->getAvailableIo(typeName);
+        interperator.requestGetIoAddTypes(*command);
     }
     if(command->getCommand() == "addIo") {
-        //bool Controller::addIo(std::string ioTypeName, std::string ioName, std::stringList keys, std::stringList values) {
-        //    Command tcommand;
-        //    tcommand.setDelayRequstMs(0);
-        ////    std::shared_ptr<Command> command = std::make_shared<Command>();
-        ////    command->setCommand("addIo");
-        ////    keys << "ioTypeName" << "ioName";
-        ////    values << ioTypeName << ioName;
-        ////    command->setArgs(keys, values);
-        ////    comma
-        //    return true;
-        //}
+        interperator.requestAddIo(*command);
     }
     if(command->getCommand() == "removeIo") {
-        //void Controller::removeIo(int ioIndex) {
-        ////    peripherals->removeIo(ioIndex);
-        ////    ioTreeModel.removeIo(ioIndex);
-        //    emit removeIoSuccesSignal(ioIndex);
-        //}
+        interperator.requestRemoveIo(*command);
     }
     if(command->getCommand() == "addDevToIo") {
-        //bool Controller::addDevToIo(int ioIndex, std::string devTypeName, std::stringList keys, std::stringList param) {
-        ////    bool res = peripherals->addDev(ioIndex, devTypeName, keys, param);
-        ////    if(res) {
-        ////        ioTreeModel.addDevToIo(ioIndex, devTypeName);
-        ////        emit addDevSuccesSignal(ioIndex, devTypeName, keys, param);
-        ////    } else {
-        ////        emit addDevFailSignal(devTypeName, tr("Ошибка добавления устройства"));
-        ////    }
-        ////    return res;
-        //}
+        interperator.requestAddDevToIo(*command);
     }
     if(command->getCommand() == "removeDev") {
-        //void Controller::removeDev(int ioIndex, int devIndex) {
-        ////    peripherals->removeDev(ioIndex, devIndex);
-        ////    ioTreeModel.removeDevToConnection(ioIndex, devIndex);
-        ////    emit removeDevSuccesSignal(ioIndex, devIndex);
-        //}
+        interperator.requestRemoveDevFromIo(*command);
     }
     if(command->getCommand() == "getDevAddTypes") {
-        //std::stringList Controller::getDevAddTypes() const {
-        ////    return peripherals->getAvailableDev();
-        //}
+        interperator.requestGetDevAddTypes(*command);
     }
     if(command->getCommand() == "devExecCommand") {
-        //bool Controller::devExecCommand(int ioIndex, int devIndex, const std::string commandType,
-        //                                const std::stringList keys, const std::stringList params) {
-        ////    return peripherals->devExecCommand(ioIndex, devIndex, commandType, keys, params);
-        //}
+        interperator.requestExecCommand(*command);
+    }
+
+    if(command->getCommand() == "getIoStatus") {
+        interperator.requestRemoveIo(*command);
+    }
+    if(command->getCommand() == "getDevStatus") {
+        interperator.requestRemoveIo(*command);
     }
 }
 

@@ -64,10 +64,13 @@ Rectangle {
         Button {
             id: addDevButton
             text: qsTr("Добавить устройство")
-            onClicked: {
-                var list = controller.getDeviceAvailableType()
-                addDeviceDialog.setListAvailableDevices(list)
-                addDeviceDialog.open()
+            onClicked: {               
+                controller.onSignal_add_dev_to_Io.connect(function func(resultKey, resultValue) {
+                    controller.onSignal_get_availableIo.disconnect(func);
+                    addDeviceDialog.setListAvailableDevices(resultValue);
+                    addDeviceDialog.open();
+                });
+                controller.requestGetDevAddTypes("serial");
             }
         }
     }

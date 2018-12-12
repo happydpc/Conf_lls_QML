@@ -16,8 +16,8 @@ public:
 
 public slots:
 
-    IoAbstract* createConnection(const std::string ioTypeName, const std::string ioName, const std::pair<std::list<std::string>,std::list<std::string>> param);
-    std::list<std::string> getAvailableName(const std::string ioTypeName) const;
+    IoAbstract* createConnection(const std::pair<std::vector<std::string>,std::vector<std::string>> param);
+    std::vector<std::string> getAvailableName(const std::string ioTypeName) const;
 
 private:
     std::shared_ptr<QMutex> lockInterface;

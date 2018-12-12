@@ -19,8 +19,8 @@ public slots:
     virtual bool readData(QByteArray &pData) = 0;
     virtual std::string getType() = 0;
     virtual std::string getInterfaceName() = 0;
-    virtual std::pair<std::list<std::string>,std::list<std::string>> getInterfaceProperty() = 0;
-    virtual std::list<std::string> getAvailableList() = 0;
+    virtual std::pair<std::vector<std::string>,std::vector<std::string>> getInterfaceProperty() = 0;
+    virtual std::vector<std::string> getAvailableList() = 0;
 
 signals:
     void errorInterface(std::string conTypeName, std::string errorMessage);

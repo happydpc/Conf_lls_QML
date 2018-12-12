@@ -7,19 +7,19 @@ class TreeItem : public QObject
 {
     Q_OBJECT
 public:
-    explicit TreeItem(std::string content, bool isParent, QObject *parent = 0);
+    explicit TreeItem(QString content, bool isParent, QObject *parent = 0);
 
-    Q_PROPERTY(std::string content READ content NOTIFY contentChanged)
-    const std::string & content() const;
-    void setContent(const std::string & content);
+    Q_PROPERTY(QString content READ content NOTIFY contentChanged)
+    QString & content();
+    void setContent(const QString & content);
 
-    Q_PROPERTY(std::string header READ header NOTIFY headerChanged)
-    const std::string & header() const;
-    void setHeader(const std::string & header);
+    Q_PROPERTY(QString header READ header NOTIFY headerChanged)
+    QString & header();
+    void setHeader(const QString & header);
 
     Q_PROPERTY(QList<QObject*> childItems READ childItemsAsQObject NOTIFY childItemsChanged)
-    const QList<TreeItem *> &childItems() const;
-    const QList<QObject *> childItemsAsQObject() const;
+    QList<TreeItem *> &childItems();
+    QList<QObject *> childItemsAsQObject() const;
     void addChildItem(TreeItem * childItem);
 
     Q_PROPERTY(bool isOpen READ isOpen WRITE setIsOpen NOTIFY isOpenChanged)
@@ -56,8 +56,8 @@ signals:
     void hasChildChanged();
 public slots:
 private:
-    std::string m_content;
-    std::string m_header;
+    QString m_content;
+    QString m_header;
     QList<TreeItem *> m_childItems;
 
     bool m_isParent;

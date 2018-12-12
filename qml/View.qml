@@ -10,100 +10,85 @@ import "qrc:/qml/projectPanel"
 Item {
     id: root
 
-//    void addIoSucces(std::string ioType, std::stringList keyProperty, std::stringList valueProperty);
-//    void removeIoSucces(int ioIndex);
-//    void onAddDevSucces(int ioIndex, std::string devType, std::stringList devKeyProperty, std::stringList devValueProperty);
-//    void onRemoveDeviceSucces(int ioIndex, int devIndex);
-//    void onIoTreeIsEmpty();
-//    void onDevSetActiveDeviceProperty(std::string devType, int ioIndex, int devIndex);
-//    void onIoReadyProperties(std::string ioType, int ioIndex, std::stringList keyProperty, std::stringList valueProperty);
-//    void onDevReadyProperties(std::string typeDev, int ioIndex, int devIndex, std::stringList keys, std::stringList values);
-//    void onDevReadyPeriodicData(std::string typeDev, int ioIndex, int devIndex, std::stringList keys, std::stringList values);
-//    void onDevConnected(int ioIndex, int devIndex, std::string typeDev);
-//    void onDevReady(int ioIndex, int devIndex, std::string typeDev);
-//    void onDevDisconnected(int ioIndex, int devIndex, std::string typeDev);
-//    void onAddIoFail();
-//    void onAddDeviceFail(std::string devName, std::string errorMessage);
-//    void onDevCommandExecuted(std::string typeDev, int ioIndex, int devIndex, std::stringList keys, std::stringList args);
-//    void onDevUpdateLogMessage(int ioIndex, int devIndex, std::string codeMessage, std::string message);
-//    void onDevReadyCheckCommand(int ioIndex, std::string devTypeName, std::string devId, std::string devSn, std::string result);
-//    void devUpdateLogMessage(int ioIndex, int devIndex, int codeMessage, std::string message);
-//    void devReadyCheckCommand(int ioIndex, std::string devTypeName, std::string devId, std::string devSn, bool result);
-//    void ioSetActiveProperty(int ioIndex, std::string ioType);
-//    void ioAndDeviceListIsEmpty();
-//    void isAvailableNewVersion(std::string downloadUrl);
-
     Connections {
         target: controller
 
-        onAddIoSucces: {
-            projectPanel.devicePropertyPanel.intefaceAdded(ioType, keyProperty, valueProperty)
+        onSignal_add_Io:{
+            projectPanel.devicePropertyPanel.intefaceAdded(resultKey, resultValue)
         }
-        onRemoveIoSucces: {
-            projectPanel.devicePropertyPanel.intefaceDeleted(ioIndex)
-        }
-        onAddDevSucces: {
-            projectPanel.devicePropertyPanel.deviceAdded(ioIndex, devType, devKeyProperty, devValueProperty)
-        }
-        onRemoveDeviceSucces: {
-            projectPanel.devicePropertyPanel.deviceDeleted(ioIndex, devIndex)
-        }
+        onSignal_remove_Io:{}//(QVector<QString> resultKey, QVector<QString> resultValue);
+        onSignal_add_dev_to_Io:{}//(QVector<QString> resultKey, QVector<QString> resultValue);
+        onSignal_get_add_types:{}//(QVector<QString> resultKey, QVector<QString> resultValue);
+        onSignal_remove_dev_of_Io:{}//(QVector<QString> resultKey, QVector<QString> resultValue);
+        onSignal_exec_dev_command:{}//(QVector<QString> resultKey, QVector<QString> resultValue);
+
+
         onIoTreeIsEmpty: {
             projectPanel.devicePropertyPanel.setActiveLogoPanel()
         }
-        onDevSetActiveDeviceProperty: {
-            projectPanel.devicePropertyPanel.setActiveDevicePanelType(devType, ioIndex, devIndex)
-        }
-        onIoReadyProperties: {
-            projectPanel.devicePropertyPanel.setInterfaceProperites(ioType, ioIndex, keyProperty, valueProperty)
-        }
-        onDevReadyProperties: {
-            projectPanel.devicePropertyPanel.setDevReadyProperties(typeDev, ioIndex, devIndex, keys, values)
-        }
-        onDevReadyPeriodicData: {
-            projectPanel.devicePropertyPanel.setReadyPeriodicData(typeDev, ioIndex, devIndex, keys, values)
-        }
-        onDevConnected: {
-            projectPanel.devicePropertyPanel.setDevConnected(ioIndex, devIndex, typeDev)
-        }
-        onDevReady: {
-            projectPanel.devicePropertyPanel.setDevReady(ioIndex, devIndex, typeDev)
-        }
-        onDevDisconnected: {
-            projectPanel.devicePropertyPanel.setDevDisconnected(ioIndex, devIndex, typeDev)
-        }
-        onAddIoFail: {
-            projectPanel.devicePropertyPanel.dialogAddInterfaceFail.open()
-        }
-        onAddDeviceFail: {
-            projectPanel.devicePropertyPanel.showDeviceAddError(devName, errorMessage)
-        }
-        onDevCommandExecuted: {
-            try {                
-                projectPanel.devicePropertyPanel.setDevCustomCommandExecuted(typeDev, ioIndex, devIndex, keys, args)
-            } catch (error) {
-                console.log ("Error loading QML : ")
-                for (var i = 0; i < error.qmlErrors.length; i++) {
-                    console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
-                    console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
-                    console.log("fileName: " + error.qmlErrors[i].fileName)
-                    console.log("message: " + error.qmlErrors[i].message)
-                }
-            }
-        }
-        onDevUpdateLogMessage: {
-            projectPanel.devicePropertyPanel.addDeviceLog(ioIndex, devIndex, codeMessage, message)
-        }
-        onDevReadyCheckCommand: {
-            projectPanel.devicePropertyPanel.intefaceSetResultCheckDevice(ioIndex, devTypeName, devId, devSn, result)
-        }
-        onRemoveAllContent: {
-            projectPanel.devicePropertyPanel.setCrearAllItems()
-        }
-        onIsAvailableNewVersion: {
-            projectPanel.devicePropertyPanel.updateVersionDialog.url = downloadUrl
-            projectPanel.devicePropertyPanel.updateVersionDialog.open()
-        }
+
+//        onRemoveIoSucces: {
+//            projectPanel.devicePropertyPanel.intefaceDeleted(ioIndex)
+//        }
+//        onAddDevSucces: {
+//            projectPanel.devicePropertyPanel.deviceAdded(ioIndex, devType, devKeyProperty, devValueProperty)
+//        }
+//        onRemoveDeviceSucces: {
+//            projectPanel.devicePropertyPanel.deviceDeleted(ioIndex, devIndex)
+//        }
+//        onDevSetActiveDeviceProperty: {
+//            projectPanel.devicePropertyPanel.setActiveDevicePanelType(devType, ioIndex, devIndex)
+//        }
+//        onIoReadyProperties: {
+//            projectPanel.devicePropertyPanel.setInterfaceProperites(ioType, ioIndex, keyProperty, valueProperty)
+//        }
+//        onDevReadyProperties: {
+//            projectPanel.devicePropertyPanel.setDevReadyProperties(typeDev, ioIndex, devIndex, keys, values)
+//        }
+//        onDevReadyPeriodicData: {
+//            projectPanel.devicePropertyPanel.setReadyPeriodicData(typeDev, ioIndex, devIndex, keys, values)
+//        }
+//        onDevConnected: {
+//            projectPanel.devicePropertyPanel.setDevConnected(ioIndex, devIndex, typeDev)
+//        }
+//        onDevReady: {
+//            projectPanel.devicePropertyPanel.setDevReady(ioIndex, devIndex, typeDev)
+//        }
+//        onDevDisconnected: {
+//            projectPanel.devicePropertyPanel.setDevDisconnected(ioIndex, devIndex, typeDev)
+//        }
+//        onAddIoFail: {
+//            projectPanel.devicePropertyPanel.dialogAddInterfaceFail.open()
+//        }
+//        onAddDeviceFail: {
+//            projectPanel.devicePropertyPanel.showDeviceAddError(devName, errorMessage)
+//        }
+//        onDevCommandExecuted: {
+//            try {
+//                projectPanel.devicePropertyPanel.setDevCustomCommandExecuted(typeDev, ioIndex, devIndex, keys, args)
+//            } catch (error) {
+//                console.log ("Error loading QML : ")
+//                for (var i = 0; i < error.qmlErrors.length; i++) {
+//                    console.log("lineNumber: " + error.qmlErrors[i].lineNumber)
+//                    console.log("columnNumber: " + error.qmlErrors[i].columnNumber)
+//                    console.log("fileName: " + error.qmlErrors[i].fileName)
+//                    console.log("message: " + error.qmlErrors[i].message)
+//                }
+//            }
+//        }
+//        onDevUpdateLogMessage: {
+//            projectPanel.devicePropertyPanel.addDeviceLog(ioIndex, devIndex, codeMessage, message)
+//        }
+//        onDevReadyCheckCommand: {
+//            projectPanel.devicePropertyPanel.intefaceSetResultCheckDevice(ioIndex, devTypeName, devId, devSn, result)
+//        }
+//        onRemoveAllContent: {
+//            projectPanel.devicePropertyPanel.setCrearAllItems()
+//        }
+//        onIsAvailableNewVersion: {
+//            projectPanel.devicePropertyPanel.updateVersionDialog.url = downloadUrl
+//            projectPanel.devicePropertyPanel.updateVersionDialog.open()
+//        }
     }
 
     Rectangle {
@@ -126,17 +111,7 @@ Item {
                     anchors.right: parent.right
                     height: 50
                     width: parent.width
-                    //                    Image {
-                    //                        anchors.left: parent.left
-                    //                        anchors.top: parent.top
-                    //                        anchors.topMargin: -65
-                    //                        source: "logo.png"
-                    //                        width: 256
-                    //                        height: 160
-                    //                        visible: false
-                    //                    }
                 }
-
                 DevListPanel {
                     id:projectPanel
                     anchors.top: upBar.bottom
@@ -144,10 +119,12 @@ Item {
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
                     onAddNewConnection: {
-                        var list = controller.getAvailableIoToAdd("serial")
-                        console.log("Available interface-" + list)
-                        addInterface.setListInterfaces(list)
-                        addInterface.open()
+                        controller.onSignal_get_availableIo.connect(function func(resultKey, resultValue) {
+                            controller.onSignal_get_availableIo.disconnect(func);
+                            addInterface.setListInterfaces(resultValue)
+                            addInterface.open()
+                        });
+                        controller.requestGetIoAddTypes("serial")
                     }
                 }
                 AddSerialPort {
@@ -160,10 +137,11 @@ Item {
                         var keyList = []
                         keyList.push("baudrate")
                         paramList.push(baudrate)
-                        var res = controller.addIo("serial", name, keyList, paramList)
-                        if(res) {
+                        controller.onSignal_add_Io.connect(function func(resultKey, resultValue) {
+                            controller.onSignal_get_availableIo.disconnect(func);
                             close()
-                        }
+                        });
+                        controller.requestAddIo("serial", name, keyList, paramList)
                     }
                     onAbortConnectButton: {
                         close()

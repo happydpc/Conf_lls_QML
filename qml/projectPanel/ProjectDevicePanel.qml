@@ -45,21 +45,26 @@ Rectangle {
     }
 
     // *************  interfaces  **************/
-    function intefaceAdded(ioType, keyProperty, valueProperty) {
+    function intefaceAdded(keyProperty, valueProperty) {
         try {
-            switch(ioType.toLowerCase()) {
-            case "serial":
-                var componentQml = Qt.createComponent("qrc:/qml/interfaces/DevPropertySerialPort.qml");
-                var item = componentQml.createObject(interfaceView)
-                item.setPropertyValues(keyProperty, valueProperty)
-                interfaceItemArray.push(item);
-                interfaceView.addItem(item)
-                modeSelectView.setCurrentIndex(indexItem_Intefaces)
-                var devItem = Qt.createQmlObject('import QtQuick.Controls 2.4;SwipeView{interactive:false;clip:true;}', deviceRootView);
-                deviceItemArray.push([])
-                deviceRootView.addItem(devItem)
-                break;
-            default: break;
+            for(var itemCount=0; itemCount<keyProperty.length; itemCount++) {
+                if(keyProperty[itemCount] === "ioTypeName") {
+                    var ioType = valueProperty[itemCount];
+                    switch(ioType.toLowerCase()) {
+                    case "serial":
+                        var componentQml = Qt.createComponent("qrc:/qml/interfaces/DevPropertySerialPort.qml");
+                        var item = componentQml.createObject(interfaceView)
+                        item.setPropertyValues(keyProperty, valueProperty)
+                        interfaceItemArray.push(item);
+                        interfaceView.addItem(item)
+                        modeSelectView.setCurrentIndex(indexItem_Intefaces)
+                        var devItem = Qt.createQmlObject('import QtQuick.Controls 2.4;SwipeView{interactive:false;clip:true;}', deviceRootView);
+                        deviceItemArray.push([])
+                        deviceRootView.addItem(devItem)
+                        break;
+                    default: break;
+                    }
+                }
             }
         } catch (error) {
             console.log ("Error loading QML : ")

@@ -2,11 +2,12 @@
 #define COMMANDCONTROLLER_H
 
 #include <QObject>
-#include <deque>
+#include <queue>
 #include <thread>
 #include <mutex>
 #include <memory>
 #include "command.h"
+#include <future>
 #include "../view/peripherals.h"
 
 class CommandController : public QObject
@@ -16,8 +17,8 @@ public:
     explicit CommandController(QObject *parent = nullptr);
     ~CommandController();
 
-    bool addCommandToStack(Command* command);
-    bool addCommandToStack(std::vector<Command*> command);
+    std::future<Command*> addCommandToStack(Command command);
+    // bool addCommandToStack(std::vector<Command*> command); // TODO:
     Command* getFirstCommand() const;
     void removeFirstCommand();
     bool getIsEmpty();
@@ -26,10 +27,10 @@ signals:
     commandExecuted(Command *command);
 
 private:
-    static void handlerFunction(std::mutex* pMutex, std::deque<Command*>* commandQueue);
-    static void commandInterprerator(Command* command, Peripherals* peripherals);
+    static void handlerFunction(std::mutex* pMutex, std::shared_ptr<std::vector<Command>> commandQueue);
+    static void commandInterprerator(Command *command, Peripherals *peripherals);
 private:
-    std::shared_ptr<std::deque<Command*>> commandQueue;
+    std::shared_ptr<std::vector<Command>> commandQueue;
     std::shared_ptr<std::thread> handlerThread;
     std::shared_ptr<std::mutex> lock;
 };
